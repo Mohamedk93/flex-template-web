@@ -116,6 +116,7 @@ export class SearchMapComponent extends Component {
     const {
       className,
       rootClassName,
+      mapRootClassName,
       reusableContainerClassName,
       bounds,
       center,
