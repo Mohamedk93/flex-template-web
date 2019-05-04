@@ -19,8 +19,8 @@ import {
 } from '../../components';
 import { TopbarContainer } from '../../containers';
 
-import facebookImage from '../../assets/saunatimeFacebook-1200x630.jpg';
-import twitterImage from '../../assets/saunatimeTwitter-600x314.jpg';
+import facebookImage from '../../assets/HotdeskFacebook1200.jpg';
+import twitterImage from '../../assets/HotdeskTwitter-600.jpg';
 import css from './LandingPage.css';
 
 export const LandingPageComponent = props => {
@@ -41,9 +41,9 @@ export const LandingPageComponent = props => {
       contentType="website"
       description={schemaDescription}
       title={schemaTitle}
-      facebookImages={[{ url: facebookImage, width: 1200, height: 630 }]}
+      facebookImages={[{ url: facebookImage, width: 1200, height: 470 }]}
       twitterImages={[
-        { url: `${config.canonicalRootURL}${twitterImage}`, width: 600, height: 314 },
+        { url: `${config.canonicalRootURL}${twitterImage}`, width: 600, height: 235 },
       ]}
       schema={{
         '@context': 'http://schema.org',
