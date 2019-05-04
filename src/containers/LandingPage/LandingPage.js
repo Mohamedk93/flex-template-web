@@ -20,7 +20,7 @@ import {
 import { TopbarContainer } from '../../containers';
 
 import facebookImage from '../../assets/HotdeskFacebook1200.jpg';
-import twitterImage from '../../assets/HotdeskTwitter-600.jpg';
+import twitterImage from '../../assets/HotdeskTwitter600.jpg';
 import css from './LandingPage.css';
 
 export const LandingPageComponent = props => {
