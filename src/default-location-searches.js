@@ -21,4 +21,5 @@ export default [
       address: 'Financial District, SF',
       bounds: new LatLngBounds(new LatLng(37.798916, -122.3951365), new LatLng(37.7866303, -122.4070479)),
     },
+  },
 ];
