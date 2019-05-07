@@ -27,14 +27,6 @@ export const amenities = [
     key: 'pantry',
     label: 'Pantry',
   },
-  {
-    key: 'barbeque',
-    label: 'Barbeque',
-  },
-  {
-    key: 'own_food_allowed',
-    label: 'Own food allowed',
-  },
 ];
 
 export const categories = [
