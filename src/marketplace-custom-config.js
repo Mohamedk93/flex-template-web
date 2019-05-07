@@ -4,28 +4,28 @@
 
 export const amenities = [
   {
-    key: 'towels',
-    label: 'Towels',
+    key: 'wifi',
+    label: 'WiFi',
   },
   {
-    key: 'bathroom',
-    label: 'Bathroom',
+    key: 'projector',
+    label: 'Projector',
   },
   {
-    key: 'swimming_pool',
-    label: 'Swimming pool',
+    key: 'printer',
+    label: 'Printer',
   },
   {
-    key: 'own_drinks',
-    label: 'Own drinks allowed',
+    key: 'writing_board',
+    label: 'Writing board',
   },
   {
-    key: 'jacuzzi',
-    label: 'Jacuzzi',
+    key: 'coffee',
+    label: 'Coffee',
   },
   {
-    key: 'audiovisual_entertainment',
-    label: 'Audiovisual entertainment',
+    key: 'pantry',
+    label: 'Pantry',
   },
   {
     key: 'barbeque',
@@ -38,16 +38,14 @@ export const amenities = [
 ];
 
 export const categories = [
-  { key: 'smoke', label: 'Smoke' },
-  { key: 'electric', label: 'Electric' },
-  { key: 'wood', label: 'Wood' },
-  { key: 'other', label: 'Other' },
+  { key: 'meeting_room', label: 'Meeting room' },
+  { key: 'seat', label: 'Seat' },
 ];
 
 // Price filter configuration
 // Note: unlike most prices this is not handled in subunits
 export const priceFilterConfig = {
-  min: 0,
+  min: 5,
   max: 1000,
   step: 5,
 };
