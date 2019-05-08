@@ -25,7 +25,7 @@ const AboutPage = () => {
       schema={{
         '@context': 'http://schema.org',
         '@type': 'AboutPage',
-        description: 'About Saunatime',
+        description: 'About Hotdesk',
         name: 'About page',
       }}
     >
@@ -53,7 +53,7 @@ const AboutPage = () => {
                 Hosts can upload their work spaces in a few clicks, and they can be accessed instantly by customers looking for a place to work.
               </p>
 
-              <h3 className={css.subtitle}>Are you a sauna owner?</h3>
+              <h3 className={css.subtitle}>Do you have extra work spaces??</h3>
 
               <p>
                 Hotdesk offers you a good way to earn some extra cash! If you're not fully
