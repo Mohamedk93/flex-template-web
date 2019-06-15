@@ -9,17 +9,17 @@ const { LatLng, LatLngBounds } = sdkTypes;
 // `predictionPlace` (util.types.place) properties.
 export default [
   {
-    id: 'default-sf',
+    id: 'default-nc',
     predictionPlace: {
-      address: 'All San Francisco',
-      bounds: new LatLngBounds(new LatLng(37.9298239, -122.28178), new LatLng(37.6398299, -123.173825)),
+      address: 'New Cairo',
+      bounds: new LatLngBounds(new LatLng(30.1022173, 31.6126441), new LatLng(29.933515, 31.362276)),
     },
   },
   {
-    id: 'default-fd',
+    id: 'default-ma',
     predictionPlace: {
-      address: 'Financial District, SF',
-      bounds: new LatLngBounds(new LatLng(37.798916, -122.3951365), new LatLng(37.7866303, -122.4070479)),
+      address: 'Maadi',
+      bounds: new LatLngBounds(new LatLng(29.9726801, 31.3495562), new LatLng(29.945829, 31.240139)),
     },
   },
 ];
