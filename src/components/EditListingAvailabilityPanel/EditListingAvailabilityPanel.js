@@ -27,15 +27,16 @@ const EditListingAvailabilityPanel = props => {
   const currentListing = ensureOwnListing(listing);
   const isPublished = currentListing.id && currentListing.attributes.state !== LISTING_STATE_DRAFT;
   const defaultAvailabilityPlan = {
-    type: 'availability-plan/day',
+    type: 'availability-plan/time',
+    timezone: 'America/New_York'
     entries: [
-      { dayOfWeek: 'mon', seats: 1 },
-      { dayOfWeek: 'tue', seats: 1 },
-      { dayOfWeek: 'wed', seats: 1 },
-      { dayOfWeek: 'thu', seats: 1 },
-      { dayOfWeek: 'fri', seats: 1 },
-      { dayOfWeek: 'sat', seats: 1 },
-      { dayOfWeek: 'sun', seats: 1 },
+      {dayOfWeek: 'mon', seats: 1, startTime: '09:00', endTime: '17:00'},
+      {dayOfWeek: 'tue', seats: 1, startTime: '09:00', endTime: '17:00'},
+      {dayOfWeek: 'wed', seats: 1, startTime: '09:00', endTime: '17:00'},
+      {dayOfWeek: 'wed', seats: 1, startTime: '09:00', endTime: '17:30'},
+      {dayOfWeek: 'thu', seats: 1, startTime: '09:00', endTime: '17:00'},
+      {dayOfWeek: 'fri', seats: 1, startTime: '09:00', endTime: '17:00'},
+      {dayOfWeek: 'sat', seats: 1, startTime: '09:00', endTime: '17:00'},
     ],
   };
   const availabilityPlan = currentListing.attributes.availabilityPlan || defaultAvailabilityPlan;
