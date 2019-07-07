@@ -27,6 +27,7 @@ import {
 import { richText } from '../../util/richText';
 import { getMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import { manageDisableScrolling, isScrollingDisabled } from '../../ducks/UI.duck';
+import { initializeCardPaymentData } from '../../ducks/stripe.duck.js';
 import {
   Page,
   NamedLink,
@@ -90,7 +91,13 @@ export class ListingPageComponent extends Component {
   }
 
   handleSubmit(values) {
-    const { history, getListing, params, useInitialValues } = this.props;
+    const {
+      history,
+      getListing,
+      params,
+      callSetInitialValues,
+      onInitializeCardPaymentData,
+    } = this.props;
     const listingId = new UUID(params.id);
     const listing = getListing(listingId);
 
@@ -103,12 +110,16 @@ export class ListingPageComponent extends Component {
         bookingStart: bookingDates.startDate,
         bookingEnd: bookingDates.endDate,
       },
+      confirmPaymentError: null,
     };
 
     const routes = routeConfiguration();
     // Customize checkout page state with current listing and selected bookingDates
     const { setInitialValues } = findRouteByRouteName('CheckoutPage', routes);
-    useInitialValues(setInitialValues, initialValues);
+    callSetInitialValues(setInitialValues, initialValues);
+
+    // Clear previous Stripe errors from store if there is any
+    onInitializeCardPaymentData();
 
     // Redirect to CheckoutPage
     history.push(
@@ -122,14 +133,14 @@ export class ListingPageComponent extends Component {
   }
 
   onContactUser() {
-    const { currentUser, history, useInitialValues, params, location } = this.props;
+    const { currentUser, history, callSetInitialValues, params, location } = this.props;
 
     if (!currentUser) {
       const state = { from: `${location.pathname}${location.search}${location.hash}` };
 
       // We need to log in before showing the modal, but first we need to ensure
       // that modal does open when user is redirected back to this listingpage
-      useInitialValues(setInitialValues, { enquiryModalOpenForListingId: params.id });
+      callSetInitialValues(setInitialValues, { enquiryModalOpenForListingId: params.id });
 
       // signup and return back to listingPage.
       history.push(createResourceLocatorString('SignupPage', routeConfiguration(), {}, {}), state);
@@ -504,7 +515,7 @@ ListingPageComponent.propTypes = {
   scrollingDisabled: bool.isRequired,
   enquiryModalOpenForListingId: string,
   showListingError: propTypes.error,
-  useInitialValues: func.isRequired,
+  callSetInitialValues: func.isRequired,
   reviews: arrayOf(propTypes.review),
   fetchReviewsError: propTypes.error,
   timeSlots: arrayOf(propTypes.timeSlot),
@@ -512,6 +523,7 @@ ListingPageComponent.propTypes = {
   sendEnquiryInProgress: bool.isRequired,
   sendEnquiryError: propTypes.error,
   onSendEnquiry: func.isRequired,
+  onInitializeCardPaymentData: func.isRequired,
 
   categoriesConfig: array,
   amenitiesConfig: array,
@@ -563,8 +575,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
   onManageDisableScrolling: (componentId, disableScrolling) =>
     dispatch(manageDisableScrolling(componentId, disableScrolling)),
-  useInitialValues: (setInitialValues, values) => dispatch(setInitialValues(values)),
+  callSetInitialValues: (setInitialValues, values) => dispatch(setInitialValues(values)),
   onSendEnquiry: (listingId, message) => dispatch(sendEnquiry(listingId, message)),
+  onInitializeCardPaymentData: () => dispatch(initializeCardPaymentData()),
 });
 
 // Note: it is important that the withRouter HOC is **outside** the

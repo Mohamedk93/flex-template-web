@@ -10,7 +10,6 @@ import {
   Footer,
   ExternalLink,
 } from '../../components';
-
 import css from './AboutPage.css';
 import image from './about-us-1056.jpg';
 
@@ -59,6 +58,9 @@ const AboutPage = () => {
                 Hotdesk offers you a good way to earn some extra cash! If you're not fully
                 using your work space, why not rent it to other people while it's free. And even if
                 you are using your work space every morning, why don't you rent it out in the afternoon?
+                You can also checkout our{' '}
+                <ExternalLink href={siteFacebookPage}>Facebook</ExternalLink> and{' '}
+                <ExternalLink href={siteTwitterPage}>Twitter</ExternalLink>.
               </p>
 
             </div>

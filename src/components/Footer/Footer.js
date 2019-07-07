@@ -20,12 +20,23 @@ const renderSocialMediaLinks = intl => {
   const siteTwitterPage = twitterPageURL(siteTwitterHandle);
 
   const goToFb = intl.formatMessage({ id: 'Footer.goToFacebook' });
-  const goToInsta = intl.formatMessage({ id: 'Footer.goToInstagram' });
   const goToTwitter = intl.formatMessage({ id: 'Footer.goToTwitter' });
+  const goToInsta = intl.formatMessage({ id: 'Footer.goToInstagram' });
 
   const fbLink = siteFacebookPage ? (
     <ExternalLink key="linkToFacebook" href={siteFacebookPage} className={css.icon} title={goToFb}>
       <IconSocialMediaFacebook />
+    </ExternalLink>
+  ) : null;
+
+  const instragramLink = siteInstagramPage ? (
+    <ExternalLink
+      key="linkToInstagram"
+      href={siteInstagramPage}
+      className={css.icon}
+      title={goToInsta}
+    >
+      <IconSocialMediaInstagram />
     </ExternalLink>
   ) : null;
 
@@ -40,17 +51,7 @@ const renderSocialMediaLinks = intl => {
     </ExternalLink>
   ) : null;
 
-  const instragramLink = siteInstagramPage ? (
-    <ExternalLink
-      key="linkToInstagram"
-      href={siteInstagramPage}
-      className={css.icon}
-      title={goToInsta}
-    >
-      <IconSocialMediaInstagram />
-    </ExternalLink>
-  ) : null;
-  return [fbLink, twitterLink, instragramLink].filter(v => v != null);
+  return [fbLink, instragramLink, twitterLink, ].filter(v => v != null);
 };
 
 const Footer = props => {

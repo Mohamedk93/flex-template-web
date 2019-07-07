@@ -155,6 +155,7 @@ export class BookingDatesFormComponent extends Component {
           return (
             <Form onSubmit={handleSubmit} className={classes}>
               {timeSlotsError}
+
               <FieldDateRangeInput
                 className={css.bookingDates}
                 name="bookingDates"
@@ -175,6 +176,7 @@ export class BookingDatesFormComponent extends Component {
                   bookingDatesRequired(startDateErrorMessage, endDateErrorMessage)
                 )}
               />
+
               {bookingInfo}
               <p className={css.smallPrint}>
                 <FormattedMessage
@@ -185,6 +187,7 @@ export class BookingDatesFormComponent extends Component {
                   }
                 />
               </p>
+
               <div className={submitButtonClasses}>
                 <PrimaryButton type="submit">
                   <FormattedMessage id="BookingDatesForm.requestToBook" />

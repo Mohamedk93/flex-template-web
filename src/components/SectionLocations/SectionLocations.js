@@ -8,9 +8,9 @@ import { NamedLink } from '../../components';
 
 import css from './SectionLocations.css';
 
-import helsinkiImage from './images/location_helsinki.jpg';
-import rovaniemiImage from './images/location_rovaniemi.jpg';
-import rukaImage from './images/location_ruka.jpg';
+import helsinkiImage from './images/SF-bayarea.jpg';
+import rovaniemiImage from './images/SF-financialdistrict.jpg';
+import rukaImage from './images/SF-southsf.jpg';
 
 class LocationImage extends Component {
   render() {
@@ -51,19 +51,19 @@ const SectionLocations = props => {
       </div>
       <div className={css.locations}>
         {locationLink(
-          'Helsinki',
+          'Bay Area',
           helsinkiImage,
-          '?address=Helsinki%2C%20Finland&bounds=60.2978389%2C25.254484899999966%2C59.9224887%2C24.782875800000056&origin=60.16985569999999%2C24.93837910000002'
+          '?address=San%20Francisco%20Bay%20Area%2C%20CA%2C%20USA&bounds=38.8642448%2C-121.20817799999998%2C36.8941549%2C-123.632497'
         )}
         {locationLink(
-          'Rovaniemi',
+          'Financial District',
           rovaniemiImage,
-          '?address=Rovaniemi%2C%20Finland&bounds=67.18452510000002%2C27.32667850000007%2C66.1553745%2C24.736871199999996&origin=66.50394779999999%2C25.729390599999988'
+          '?address=Financial%20District%2C%20San%20Francisco%2C%20CA%2C%20USA&bounds=37.798916%2C-122.39513650000004%2C37.7866303%2C-122.40704790000001'
         )}
         {locationLink(
-          'Ruka',
+          'South SF',
           rukaImage,
-          '?address=Ruka%2C%20Finland&bounds=66.1704578%2C29.14246849999995%2C66.1614402%2C29.110453699999994&origin=66.16594940000002%2C29.12646110000003'
+          '?address=South%20San%20Francisco%2C%20CA%2C%20USA&bounds=37.6728499%2C-122.22053110000002%2C37.6324597%2C-122.47168399999998'
         )}
       </div>
     </div>
