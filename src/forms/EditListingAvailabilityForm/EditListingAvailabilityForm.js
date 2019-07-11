@@ -7,9 +7,9 @@ import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 import { propTypes } from '../../util/types';
 import config from '../../config';
-import { Form, FieldCheckboxSelectGroup, Button } from '../../components';
+import { Form, Button } from '../../components';
 
-import ManageAvailabilityCalendar from './ManageAvailabilityCalendar';
+import ManageAvailabilitySelectGroup from './ManageAvailabilitySelectGroup';
 import css from './EditListingAvailabilityForm.css';
 
 export class EditListingAvailabilityFormComponent extends Component {
@@ -58,7 +58,7 @@ export class EditListingAvailabilityFormComponent extends Component {
                   {/*availabilityPlan={availabilityPlan}*/}
                   {/*listingId={listingId}*/}
                 {/*/>*/}
-                <FieldCheckboxSelectGroup
+                <ManageAvailabilitySelectGroup
                   className={css.days}
                   id={name}
                   intl={intl}

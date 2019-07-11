@@ -15,7 +15,7 @@ import moment from 'moment';
 import * as validators from '../../util/validators';
 import { FieldCheckbox, FieldSelect, ValidationError } from '../../components';
 
-import css from './FieldCheckboxGroup.css';
+import css from './EditListingAvailabilityForm.css';
 
 const HOUR_FORMAT = 'hh:mm a';
 
@@ -68,7 +68,7 @@ const generateHourOptions = (date, startTime, endTime) => {
   return options;
 };
 
-const FieldCheckboxSelectRenderer = props => {
+const ManageAvailabilitySelectRenderer = props => {
   const {
     className,
     rootClassName,
@@ -85,7 +85,6 @@ const FieldCheckboxSelectRenderer = props => {
     listingId,
   } = props;
 
-console.log(values)
   const classes = classNames(rootClassName || css.root, className);
   const listClasses = twoColumns ? classNames(css.list, css.twoColumns) : css.list;
   const hourStartLabel = intl.formatMessage({ id: 'BookingDatesForm.hourStartLabel' });
@@ -149,14 +148,14 @@ console.log(values)
   );
 };
 
-FieldCheckboxSelectRenderer.defaultProps = {
+ManageAvailabilitySelectRenderer.defaultProps = {
   rootClassName: null,
   className: null,
   label: null,
   twoColumns: false,
 };
 
-FieldCheckboxSelectRenderer.propTypes = {
+ManageAvailabilitySelectRenderer.propTypes = {
   rootClassName: string,
   className: string,
   id: string.isRequired,
@@ -170,12 +169,12 @@ FieldCheckboxSelectRenderer.propTypes = {
   twoColumns: bool,
 };
 
-const FieldCheckboxSelectGroup = props => <FieldArray component={FieldCheckboxSelectRenderer} {...props} />;
+const ManageAvailabilitySelectGroup = props => <FieldArray component={ManageAvailabilitySelectRenderer} {...props} />;
 
 // Name and component are required fields for FieldArray.
 // Component-prop we define in this file, name needs to be passed in
-FieldCheckboxSelectGroup.propTypes = {
+ManageAvailabilitySelectGroup.propTypes = {
   name: string.isRequired,
 };
 
-export default FieldCheckboxSelectGroup;
+export default ManageAvailabilitySelectGroup;

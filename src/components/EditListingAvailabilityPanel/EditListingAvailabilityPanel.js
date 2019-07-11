@@ -32,13 +32,13 @@ const EditListingAvailabilityPanel = props => {
     type: 'availability-plan/time',
     timezone: 'Europe/Kiev',
     entries: [
-      { dayOfWeek: 'mon', seats: 1, startTime: '00:00', endTime: '00:00', },
-      { dayOfWeek: 'tue', seats: 1, startTime: '00:00', endTime: '00:00', },
-      { dayOfWeek: 'wed', seats: 1, startTime: '00:00', endTime: '00:00', },
-      { dayOfWeek: 'thu', seats: 1, startTime: '00:00', endTime: '00:00', },
-      { dayOfWeek: 'fri', seats: 1, startTime: '00:00', endTime: '00:00', },
-      { dayOfWeek: 'sat', seats: 1, startTime: '00:00', endTime: '00:00', },
-      { dayOfWeek: 'sun', seats: 1, startTime: '00:00', endTime: '00:00', },
+      { dayOfWeek: 'mon', seats: 1, startTime: '00:00', endTime: '23:59', },
+      { dayOfWeek: 'tue', seats: 1, startTime: '00:00', endTime: '23:59', },
+      { dayOfWeek: 'wed', seats: 1, startTime: '00:00', endTime: '23:59', },
+      { dayOfWeek: 'thu', seats: 1, startTime: '00:00', endTime: '23:59', },
+      { dayOfWeek: 'fri', seats: 1, startTime: '00:00', endTime: '23:59', },
+      { dayOfWeek: 'sat', seats: 1, startTime: '00:00', endTime: '23:59', },
+      { dayOfWeek: 'sun', seats: 1, startTime: '00:00', endTime: '23:59', },
     ],
   };
   const availabilityPlan = currentListing.attributes.availabilityPlan || defaultAvailabilityPlan;
@@ -68,8 +68,8 @@ const EditListingAvailabilityPanel = props => {
             return {
               dayOfWeek: day,
               seats: 1,
-              startTime: values[day] ? values[day].startTime : "09:00",
-              endTime: values[day] ? values[day].endTime : "17:00",
+              startTime: values[day] ? values[day].startTime : "00:00",
+              endTime: values[day] ? values[day].endTime : "23:59",
             }
           });
 
