@@ -28,6 +28,10 @@
   margin-bottom: 24px;
 }
 
+.days {
+  margin-bottom: 24px;
+}
+
 .submitButton {
   margin-top: auto;
   margin-bottom: 24px;
@@ -40,6 +44,9 @@
     margin-top: -16px;
   }
   .title {
+    margin-bottom: 32px;
+  }
+  .days {
     margin-bottom: 32px;
   }
 }

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { bool, func, object, string } from 'prop-types';
 import { compose } from 'redux';
+import arrayMutators from 'final-form-arrays';
 import { Form as FinalForm } from 'react-final-form';
 import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 import { propTypes } from '../../util/types';
-import { Form, Button } from '../../components';
+import config from '../../config';
+import { Form, FieldCheckboxSelectGroup, Button } from '../../components';
 
 import ManageAvailabilityCalendar from './ManageAvailabilityCalendar';
 import css from './EditListingAvailabilityForm.css';
@@ -15,14 +17,16 @@ export class EditListingAvailabilityFormComponent extends Component {
     return (
       <FinalForm
         {...this.props}
+        mutators={{ ...arrayMutators }}
         render={fieldRenderProps => {
           const {
             className,
             rootClassName,
             disabled,
             handleSubmit,
-            //intl,
+            intl,
             invalid,
+            name,
             pristine,
             saveActionMsg,
             updated,
@@ -30,6 +34,7 @@ export class EditListingAvailabilityFormComponent extends Component {
             updateInProgress,
             availability,
             availabilityPlan,
+            values,
             listingId,
           } = fieldRenderProps;
 
@@ -48,7 +53,18 @@ export class EditListingAvailabilityFormComponent extends Component {
             <Form className={classes} onSubmit={handleSubmit}>
               {errorMessage}
               <div className={css.calendarWrapper}>
-                <ManageAvailabilityCalendar
+                {/*<ManageAvailabilityCalendar*/}
+                  {/*availability={availability}*/}
+                  {/*availabilityPlan={availabilityPlan}*/}
+                  {/*listingId={listingId}*/}
+                {/*/>*/}
+                <FieldCheckboxSelectGroup
+                  className={css.days}
+                  id={name}
+                  intl={intl}
+                  name={name}
+                  values={values}
+                  options={config.custom.weekDays}
                   availability={availability}
                   availabilityPlan={availabilityPlan}
                   listingId={listingId}

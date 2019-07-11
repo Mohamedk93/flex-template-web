@@ -9,6 +9,8 @@ import { EditListingAvailabilityForm } from '../../forms';
 
 import css from './EditListingAvailabilityPanel.css';
 
+const AVAILABILITY_NAME = 'days';
+
 const EditListingAvailabilityPanel = props => {
   const {
     className,
@@ -27,18 +29,20 @@ const EditListingAvailabilityPanel = props => {
   const currentListing = ensureOwnListing(listing);
   const isPublished = currentListing.id && currentListing.attributes.state !== LISTING_STATE_DRAFT;
   const defaultAvailabilityPlan = {
-    type: 'availability-plan/day',
+    type: 'availability-plan/time',
+    timezone: 'Europe/Kiev',
     entries: [
-      { dayOfWeek: 'mon', seats: 1 },
-      { dayOfWeek: 'tue', seats: 1 },
-      { dayOfWeek: 'wed', seats: 1 },
-      { dayOfWeek: 'thu', seats: 1 },
-      { dayOfWeek: 'fri', seats: 1 },
-      { dayOfWeek: 'sat', seats: 1 },
-      { dayOfWeek: 'sun', seats: 1 },
+      { dayOfWeek: 'mon', seats: 1, startTime: '00:00', endTime: '00:00', },
+      { dayOfWeek: 'tue', seats: 1, startTime: '00:00', endTime: '00:00', },
+      { dayOfWeek: 'wed', seats: 1, startTime: '00:00', endTime: '00:00', },
+      { dayOfWeek: 'thu', seats: 1, startTime: '00:00', endTime: '00:00', },
+      { dayOfWeek: 'fri', seats: 1, startTime: '00:00', endTime: '00:00', },
+      { dayOfWeek: 'sat', seats: 1, startTime: '00:00', endTime: '00:00', },
+      { dayOfWeek: 'sun', seats: 1, startTime: '00:00', endTime: '00:00', },
     ],
   };
   const availabilityPlan = currentListing.attributes.availabilityPlan || defaultAvailabilityPlan;
+  console.log(availabilityPlan)
 
   return (
     <div className={classes}>
@@ -54,16 +58,31 @@ const EditListingAvailabilityPanel = props => {
       </h1>
       <EditListingAvailabilityForm
         className={css.form}
+        name={AVAILABILITY_NAME}
         listingId={currentListing.id}
         initialValues={{ availabilityPlan }}
         availability={availability}
         availabilityPlan={availabilityPlan}
-        onSubmit={() => {
+        onSubmit={(values) => {
+          const updatedValues = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map(function(day) {
+            return {
+              dayOfWeek: day,
+              seats: 1,
+              startTime: values[day] ? values[day].startTime : "09:00",
+              endTime: values[day] ? values[day].endTime : "17:00",
+            }
+          });
+
+
           // We save the default availability plan
           // I.e. this listing is available every night.
           // Exceptions are handled with live edit through a calendar,
           // which is visible on this panel.
-          onSubmit({ availabilityPlan });
+          onSubmit({ availabilityPlan: {
+            type: 'availability-plan/time',
+            timezone: 'Europe/Kiev',
+            entries: updatedValues
+          } });
         }}
         onChange={onChange}
         saveActionMsg={submitButtonText}
