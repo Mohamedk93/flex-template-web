@@ -12,9 +12,8 @@ import {
   LINE_ITEM_PROVIDER_COMMISSION,
 } from '../../util/types';
 
-import LineItemUnitPriceMaybe from './LineItemUnitPriceMaybe';
-import LineItemBookingPeriod from './LineItemBookingPeriod';
-import LineItemUnitsMaybe from './LineItemUnitsMaybe';
+import LineItemUnitPrice from './LineItemUnitPrice';
+import LineItemBookingHours from './LineItemBookingHours';
 import LineItemSubTotalMaybe from './LineItemSubTotalMaybe';
 import LineItemCustomerCommissionMaybe from './LineItemCustomerCommissionMaybe';
 import LineItemCustomerCommissionRefundMaybe from './LineItemCustomerCommissionRefundMaybe';
@@ -22,7 +21,6 @@ import LineItemProviderCommissionMaybe from './LineItemProviderCommissionMaybe';
 import LineItemProviderCommissionRefundMaybe from './LineItemProviderCommissionRefundMaybe';
 import LineItemRefundMaybe from './LineItemRefundMaybe';
 import LineItemTotalPrice from './LineItemTotalPrice';
-import LineItemUnknownItemsMaybe from './LineItemUnknownItemsMaybe';
 
 import css from './BookingBreakdown.css';
 
@@ -42,11 +40,8 @@ export const BookingBreakdownComponent = props => {
 
   return (
     <div className={classes}>
-      <LineItemUnitPriceMaybe transaction={transaction} unitType={unitType} intl={intl} />
-      <LineItemBookingPeriod transaction={transaction} booking={booking} unitType={unitType} />
-      <LineItemUnitsMaybe transaction={transaction} unitType={unitType} />
-
-      <LineItemUnknownItemsMaybe transaction={transaction} intl={intl} />
+      <LineItemUnitPrice transaction={transaction} unitType={unitType} intl={intl} />
+      <LineItemBookingHours transaction={transaction} booking={booking} unitType={unitType} />
 
       <LineItemSubTotalMaybe
         transaction={transaction}
@@ -54,7 +49,7 @@ export const BookingBreakdownComponent = props => {
         userRole={userRole}
         intl={intl}
       />
-      <LineItemRefundMaybe transaction={transaction} intl={intl} />
+      <LineItemRefundMaybe transaction={transaction} unitType={unitType} intl={intl} />
 
       <LineItemCustomerCommissionMaybe
         transaction={transaction}
@@ -81,10 +76,10 @@ export const BookingBreakdownComponent = props => {
       <hr className={css.totalDivider} />
       <LineItemTotalPrice transaction={transaction} isProvider={isProvider} intl={intl} />
       {hasCommissionLineItem ? (
-        <span className={css.feeInfo}>
+          <span className={css.feeInfo}>
           <FormattedMessage id="BookingBreakdown.commissionFeeNote" />
         </span>
-      ) : null}
+        ) : null}
     </div>
   );
 };
@@ -109,3 +104,8 @@ const BookingBreakdown = injectIntl(BookingBreakdownComponent);
 BookingBreakdown.displayName = 'BookingBreakdown';
 
 export default BookingBreakdown;
+
+
+
+// WEBPACK FOOTER //
+// ./src/components/BookingBreakdown/BookingBreakdown.js

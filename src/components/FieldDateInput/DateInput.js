@@ -128,7 +128,7 @@ class DateInputComponent extends Component {
   }
 
   onDateChange(date) {
-    const selectedDate = date instanceof moment ? date.toDate() : null;
+    const selectedDate = moment.isMoment(date) || date instanceof moment ? date.toDate() : null;
     this.props.onChange({ date: selectedDate });
   }
 
@@ -160,6 +160,7 @@ class DateInputComponent extends Component {
       screenReaderInputMessage,
       useMobileMargins,
       value,
+      focused,
       children,
       render,
       timeSlots,
@@ -197,7 +198,7 @@ class DateInputComponent extends Component {
       <div className={classes}>
         <SingleDatePicker
           {...datePickerProps}
-          focused={this.state.focused}
+          focused={this.state.focused || focused}
           onFocusChange={this.onFocusChange}
           date={date}
           onDateChange={this.onDateChange}

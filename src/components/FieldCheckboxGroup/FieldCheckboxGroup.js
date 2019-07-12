@@ -27,7 +27,6 @@ const FieldCheckboxRenderer = props => {
       <ul className={listClasses}>
         {options.map((option, index) => {
           const fieldId = `${id}.${option.key}`;
-          console.log(option)
           return (
             <li key={fieldId} className={css.item}>
               <FieldCheckbox

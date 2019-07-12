@@ -1,11 +1,11 @@
 import React from 'react';
-import { bool, func, object, shape, string } from 'prop-types';
+import {bool, func, object, shape, string} from 'prop-types';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
-import { ensureOwnListing } from '../../util/data';
-import { LISTING_STATE_DRAFT } from '../../util/types';
-import { ListingLink } from '../../components';
-import { EditListingAvailabilityForm } from '../../forms';
+import {FormattedMessage} from 'react-intl';
+import {ensureOwnListing} from '../../util/data';
+import {LISTING_STATE_DRAFT} from '../../util/types';
+import {ListingLink} from '../../components';
+import {EditListingAvailabilityForm} from '../../forms';
 
 import css from './EditListingAvailabilityPanel.css';
 
@@ -32,39 +32,39 @@ const EditListingAvailabilityPanel = props => {
     type: 'availability-plan/time',
     timezone: 'Europe/Kiev',
     entries: [
-      { dayOfWeek: 'mon', seats: 1, startTime: '00:00', endTime: '23:59', },
-      { dayOfWeek: 'tue', seats: 1, startTime: '00:00', endTime: '23:59', },
-      { dayOfWeek: 'wed', seats: 1, startTime: '00:00', endTime: '23:59', },
-      { dayOfWeek: 'thu', seats: 1, startTime: '00:00', endTime: '23:59', },
-      { dayOfWeek: 'fri', seats: 1, startTime: '00:00', endTime: '23:59', },
-      { dayOfWeek: 'sat', seats: 1, startTime: '00:00', endTime: '23:59', },
-      { dayOfWeek: 'sun', seats: 1, startTime: '00:00', endTime: '23:59', },
+      {dayOfWeek: 'mon', seats: 1, startTime: '00:00', endTime: '23:59',},
+      {dayOfWeek: 'tue', seats: 1, startTime: '00:00', endTime: '23:59',},
+      {dayOfWeek: 'wed', seats: 1, startTime: '00:00', endTime: '23:59',},
+      {dayOfWeek: 'thu', seats: 1, startTime: '00:00', endTime: '23:59',},
+      {dayOfWeek: 'fri', seats: 1, startTime: '00:00', endTime: '23:59',},
+      {dayOfWeek: 'sat', seats: 1, startTime: '00:00', endTime: '23:59',},
+      {dayOfWeek: 'sun', seats: 1, startTime: '00:00', endTime: '23:59',},
     ],
   };
   const availabilityPlan = currentListing.attributes.availabilityPlan || defaultAvailabilityPlan;
-  console.log(availabilityPlan)
 
   return (
     <div className={classes}>
       <h1 className={css.title}>
         {isPublished ? (
-          <FormattedMessage
-            id="EditListingAvailabilityPanel.title"
-            values={{ listingTitle: <ListingLink listing={listing} /> }}
-          />
-        ) : (
-          <FormattedMessage id="EditListingAvailabilityPanel.createListingTitle" />
-        )}
+            <FormattedMessage
+              id="EditListingAvailabilityPanel.title"
+              values={{listingTitle: <ListingLink listing={listing}/>}}
+            />
+          ) : (
+            <FormattedMessage id="EditListingAvailabilityPanel.createListingTitle"/>
+          )}
       </h1>
       <EditListingAvailabilityForm
         className={css.form}
         name={AVAILABILITY_NAME}
         listingId={currentListing.id}
-        initialValues={{ availabilityPlan }}
+        initialValues={{availabilityPlan}}
         availability={availability}
         availabilityPlan={availabilityPlan}
         onSubmit={(values) => {
-          const updatedValues = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map(function(day) {
+          const usersTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          const updatedValues = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map(function (day) {
             return {
               dayOfWeek: day,
               seats: 1,
@@ -78,11 +78,16 @@ const EditListingAvailabilityPanel = props => {
           // I.e. this listing is available every night.
           // Exceptions are handled with live edit through a calendar,
           // which is visible on this panel.
-          onSubmit({ availabilityPlan: {
-            type: 'availability-plan/time',
-            timezone: 'Europe/Kiev',
-            entries: updatedValues
-          } });
+          onSubmit({
+            availabilityPlan: {
+              type: 'availability-plan/time',
+              timezone: usersTimeZone,
+              entries: updatedValues
+            },
+            publicData: {
+              timezone: usersTimeZone
+            }
+          });
         }}
         onChange={onChange}
         saveActionMsg={submitButtonText}

@@ -246,7 +246,6 @@ export class BookingDatesFormComponent extends Component {
           } = fieldRenderProps;
           const { firstDate, extraDays = [] } = values;
 
-
           let totalHours = 0;
           try {
             totalHours = countHours(values);
@@ -432,9 +431,12 @@ BookingDatesFormComponent.propTypes = {
   datePlaceholder: string,
 };
 
-const BookingDatesForm = compose(injectIntl)(BookingDatesFormComponent);
-BookingDatesForm.displayName = 'BookingDatesForm';
+const BookingDatesForm2 = compose(injectIntl)(BookingDatesFormComponent);
+BookingDatesForm2.displayName = 'BookingDatesForm2';
 
-export default BookingDatesForm;
+export default BookingDatesForm2;
 
 
+
+// WEBPACK FOOTER //
+// ./src/forms/BookingDatesForm/BookingDatesForm.js

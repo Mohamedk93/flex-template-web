@@ -12,6 +12,7 @@ import { parse, stringify } from '../../util/urlHelpers';
 import config from '../../config';
 import { ModalInMobile, Button } from '../../components';
 import { BookingDatesForm } from '../../forms';
+import moment from 'moment';
 
 import css from './BookingPanel.css';
 
@@ -85,14 +86,57 @@ const BookingPanel = props => {
   const isNightly = unitType === LINE_ITEM_NIGHT;
   const isDaily = unitType === LINE_ITEM_DAY;
 
-  const unitTranslationKey = isNightly
-    ? 'BookingPanel.perNight'
-    : isDaily
-    ? 'BookingPanel.perDay'
-    : 'BookingPanel.perUnit';
+  const unitTranslationKey = 'BookingPanel.perHour';
 
   const classes = classNames(rootClassName || css.root, className);
   const titleClasses = classNames(titleClassName || css.bookingTitle);
+
+  let $avails = [];
+  if(timeSlots) {
+    let $days = [];
+    timeSlots.forEach(function(item) {
+      let $day = moment(item.attributes.start).format("dddd");
+      if($days.indexOf($day) === -1) {
+        $days.push($day);
+        let $start_time = moment(item.attributes.start).format("LT");
+        let $end_time = moment(item.attributes.end).format("LT");
+        $avails.push({day: $day, hours: $start_time + " - " + $end_time});
+      }
+    });
+  };
+
+  const sorter = {
+    "monday": 1,
+    "tuesday": 2,
+    "wednesday": 3,
+    "thursday": 4,
+    "friday": 5,
+    "saturday": 6,
+    "sunday": 7
+  }
+
+  $avails.sort(function sortByDay(a, b) {
+    let day1 = a.day.toLowerCase();
+    let day2 = b.day.toLowerCase();
+    return sorter[day1] - sorter[day2];
+  });
+
+  const availsView = $avails ? (
+      <div className={css.availsBox}>
+        <h3 className={css.availsTitle}>
+          <FormattedMessage id="BookingPanel.availsTitle" />
+        </h3>
+
+        {$avails.map((item, i) => {
+          return (
+            <p key={i} className={css.availsItem}>
+              <span>{item.day}: </span>
+              <span>{item.hours}</span>
+            </p>
+          );
+        })}
+      </div>
+    ) : null;
 
   return (
     <div className={classes}>
@@ -115,6 +159,7 @@ const BookingPanel = props => {
           <h2 className={titleClasses}>{title}</h2>
           {subTitleText ? <div className={css.bookingHelp}>{subTitleText}</div> : null}
         </div>
+        {availsView}
         {showBookingDatesForm ? (
           <BookingDatesForm
             className={css.bookingForm}

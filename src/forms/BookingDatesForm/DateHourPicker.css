@@ -1,0 +1,173 @@
+/* Fonts */
+/* These are imported into marketplace.css */
+:root {
+  /*
+    These variables are available in global scope through ":root"
+    element (<html> tag). Variables with the same names are going to
+    overwrite each other if CSS Properties' (PostCSS plugin)
+    configuration "preserve: true" is used - meaning that variables
+    are left to CSS bundle. We are planning to enable it in the future
+    since browsers support CSS Properties already.
+ */
+
+  /* ================ Default font ================ */
+
+  /* ================ Body font ================ */
+
+  /* ================ Hero title ================ */
+
+  /* ================ Modal title ================ */
+
+  /* ================ H1, H2, H3, H4, H5 & H6 ================ */
+
+  /* ================ Other fonts ================ */
+
+  /* ================ Tabbed navigation font styles ================ */
+
+  /* ============== Studiotime ===============*/
+}
+/* prettier-ignore */
+/* ================ Custom properties aka variables ================ */
+:root {
+  /*
+    These variables are available in global scope through ":root"
+    element (<html> tag). Variables with the same names are going to
+    overwrite each other if CSS Properties' (PostCSS plugin)
+    configuration "preserve: true" is used - meaning that variables
+    are left to CSS bundle. We are planning to enable it in the future
+    since browsers support CSS Properties already.
+ */
+
+  /**
+   * Font variables are separated to different file so that the amount of font styling rules
+   * doesn't overflow this one.
+   * see ./marketplaceFonts.css
+   * Usage example: .root { @apply --marketplaceH1FontStyles; }
+   */
+
+  /* Full screen Background image located in root-folder/src/assets */
+
+  /* ================ Colors ================ */
+
+  /* Used with inline CSS SVGs */
+
+  /* ================ Spacing unites ================ */
+
+  /* Multiples of mobile and desktop spacing units should be used with margins and paddings. */
+
+  /* Shadows */
+
+  /* ================ Z-index base levels ================ */
+
+  /* topbar is positioned slightly above content */
+  /* small popups on UI should use z-indexes above 50 */
+  /* modals and UI overlays should use z-indexes above 100 */
+  /* generic error message should overlay even modals */
+
+  /* ================ Border radius ================ */
+
+  /* ================ Transition styles ================ */
+
+  /* ================ Topbar heights ================ */
+
+  /* ================ Modal default padding ================ */
+
+  /* ================ LocationAutocompleteInput bottom attribution padding ================ */
+
+  /* ================ Clearfix solution ================ */
+
+  /* ================ Links ================ */
+
+  /* ================ Buttons ================ */
+
+  /* ================ Inputs ================ */
+
+  /* ================ Modals ================ */
+
+  /* Modal title */
+
+  /* Modal message */
+
+  /* Bottom wrapper for the modal */
+
+  /* Adjust the bottomWrapper's margin to match modals without the helper text */
+
+  /* Modal Close icon */
+}
+/* ================ Custom media queries ================ */
+.root {
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  margin-bottom: 46px;
+
+  /* Ensure that calendar dropdown gets some stacking context relative to other form items below */
+  z-index: 1;
+}
+.bookingExtraDate {
+  margin: 0 24px;
+}
+@media (min-width: 768px) {
+  .bookingExtraDate {
+    margin: 0;
+  }
+}
+.hourRow {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+
+  margin: 24px 24px 0 24px;
+}
+@media (min-width: 768px) {
+  .hourRow {
+    margin: 24px 0 0 0;
+  }
+}
+.hourRowExtraDate {
+  margin-top: 8px;
+}
+.hourStart,
+.hourEnd {
+  -ms-flex-preferred-size: calc(50% - 12px);
+  flex-basis: calc(50% - 12px);
+}
+.hourStartSelect,
+.hourEndSelect {
+  border-bottom-width: 2px;
+}
+@media (min-width: 768px) {
+  .hourStartSelect,
+  .hourEndSelect {
+    border-bottom-width: 3px;
+  }
+}
+.error {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0;
+  /* margin-top + n * line-height + margin-bottom => x * 6px */
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+@media (min-width: 768px) {
+  .error {
+    font-weight: 500;/* margin-top + n * line-height + margin-bottom => x * 8px */
+    margin-top: 17px;
+    margin-bottom: 15px;
+  }
+}
+.error {
+  color: #ff0000;
+  overflow: hidden;
+  margin: 6px 24px 12px 24px;
+}
+@media (min-width: 768px) {
+  .error {
+    margin: 6px 0 10px 0;
+  }
+}
+

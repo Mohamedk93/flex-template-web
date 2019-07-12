@@ -45,3 +45,8 @@ LineItemUnitPrice.propTypes = {
 };
 
 export default LineItemUnitPrice;
+
+
+
+// WEBPACK FOOTER //
+// ./src/components/BookingBreakdown/LineItemTotalPrice.js
