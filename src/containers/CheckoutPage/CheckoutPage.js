@@ -164,7 +164,7 @@ export class CheckoutPageComponent extends Component {
         listingId,
         bookingStart,
         bookingEnd,
-        quantity: 1
+        quantity: pageData.bookingData.hours,
       });
     }
 

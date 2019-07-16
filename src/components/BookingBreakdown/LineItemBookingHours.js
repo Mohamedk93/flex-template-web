@@ -100,6 +100,3 @@ LineItemBookingHours.propTypes = {
 
 export default LineItemBookingHours;
 
-
-// WEBPACK FOOTER //
-// ./src/components/BookingBreakdown/LineItemBookingHours.js
