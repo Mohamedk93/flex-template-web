@@ -106,6 +106,3 @@ BookingBreakdown.displayName = 'BookingBreakdown';
 export default BookingBreakdown;
 
 
-
-// WEBPACK FOOTER //
-// ./src/components/BookingBreakdown/BookingBreakdown.js

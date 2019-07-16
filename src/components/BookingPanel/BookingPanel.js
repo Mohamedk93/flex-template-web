@@ -91,16 +91,16 @@ const BookingPanel = props => {
   const classes = classNames(rootClassName || css.root, className);
   const titleClasses = classNames(titleClassName || css.bookingTitle);
 
-  let $avails = [];
+  let avails = [];
   if(timeSlots) {
-    let $days = [];
+    let days = [];
     timeSlots.forEach(function(item) {
-      let $day = moment(item.attributes.start).format("dddd");
-      if($days.indexOf($day) === -1) {
-        $days.push($day);
-        let $start_time = moment(item.attributes.start).format("LT");
-        let $end_time = moment(item.attributes.end).format("LT");
-        $avails.push({day: $day, hours: $start_time + " - " + $end_time});
+      let day = moment(item.attributes.start).format("dddd");
+      if(days.indexOf(day) === -1) {
+        days.push(day);
+        let startTime = moment(item.attributes.start).format("LT");
+        let endTime = moment(item.attributes.end).format("LT");
+        avails.push({day: day, hours: startTime + " - " + endTime});
       }
     });
   };
@@ -113,21 +113,20 @@ const BookingPanel = props => {
     "friday": 5,
     "saturday": 6,
     "sunday": 7
-  }
+  };
 
-  $avails.sort(function sortByDay(a, b) {
+  avails.sort(function sortByDay(a, b) {
     let day1 = a.day.toLowerCase();
     let day2 = b.day.toLowerCase();
     return sorter[day1] - sorter[day2];
   });
 
-  const availsView = $avails ? (
+  const availsView = avails ? (
       <div className={css.availsBox}>
         <h3 className={css.availsTitle}>
           <FormattedMessage id="BookingPanel.availsTitle" />
         </h3>
-
-        {$avails.map((item, i) => {
+        {avails.map((item, i) => {
           return (
             <p key={i} className={css.availsItem}>
               <span>{item.day}: </span>

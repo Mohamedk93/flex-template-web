@@ -169,6 +169,7 @@ export class CheckoutPageComponent extends Component {
         listingId,
         bookingStart: bookingStartForAPI,
         bookingEnd: bookingEndForAPI,
+        quantity: 1
       });
     }
 

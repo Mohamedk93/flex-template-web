@@ -142,11 +142,11 @@ export class BookingDatesFormComponent extends Component {
 
       var sdt = new Date(bookingDate.date).setHours(Number(firstDate.hourStart.split(':')[0]));
       var sdtWithMin = new Date(sdt).setMinutes(Number(firstDate.hourStart.split(':')[1]));
-      var sdtFinal = new Date(sdtWithMin).toUTCString();
+      var sdtFinal = new Date(sdtWithMin);
 
       var edt = new Date(bookingDate.date).setHours(Number(firstDate.hourEnd.split(':')[0]));
       var edtWithMin = new Date(edt).setMinutes(Number(firstDate.hourEnd.split(':')[1]));
-      var edtFinal = new Date(edtWithMin).toUTCString();
+      var edtFinal = new Date(edtWithMin);
 
       const formatMessageLine = dateData => {
         //be sure to convert to UTC time from local timezone!
@@ -183,8 +183,8 @@ export class BookingDatesFormComponent extends Component {
 
       this.props.onSubmit({
         bookingDates: {
-          startDate,
-          endDate,
+          startDate: sdtFinal,
+          endDate: edtFinal,
         },
         bookingDatesWithTimes: {
           dateHourStart: sdtFinal,
@@ -229,7 +229,6 @@ export class BookingDatesFormComponent extends Component {
         unitPrice={unitPrice}
         onSubmit={this.handleFormSubmit}
         mutators={{
-          // potentially other mutators could be merged here
           ...arrayMutators,
         }}
         render={fieldRenderProps => {
@@ -254,8 +253,27 @@ export class BookingDatesFormComponent extends Component {
             // No need to react - totalHours is just 0
           }
 
-          const startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
-          const endDate = rangeEndDate(values);
+          let startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
+          let endDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
+
+
+          if(firstDate){
+            var hourStart = values.firstDate.hourStart;
+            var hourEnd = values.firstDate.hourEnd;
+
+            if(hourStart){
+              var hourStartHH = parseInt(hourStart.substr(0, 2));
+              var hourStartMM = parseInt(hourStart.substr(3, 4));
+              startDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourStartMM).hours(hourStartHH).toDate()
+            }
+
+            if(hourEnd){
+              var hourEndtHH = parseInt(hourEnd.substr(0, 2));
+              var hourEndMM = parseInt(hourEnd.substr(3, 4));
+              endDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourEndMM).hours(hourEndtHH).toDate()
+            }
+          }
+
           // This is the place to collect breakdown estimation data. See the
           // EstimatedBreakdownMaybe component to change the calculations
           // for customised payment processes.

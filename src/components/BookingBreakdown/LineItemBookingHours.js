@@ -1,13 +1,13 @@
 import React from 'react';
-import { FormattedMessage, FormattedHTMLMessage, FormattedDate } from 'react-intl';
+import {FormattedMessage, FormattedHTMLMessage, FormattedDate} from 'react-intl';
 import moment from 'moment';
-import { propTypes } from '../../util/types';
-import { daysBetween, dateFromAPIToLocalNoon } from '../../util/dates';
+import {propTypes} from '../../util/types';
+import { daysBetween } from '../../util/dates';
 
 import css from './BookingBreakdown.css';
 
 const BookingPeriod = props => {
-  const { isSingleDay, startDate, endDate } = props;
+  const {isSingleDay, startDate, endDate} = props;
   const dateFormatOptions = {
     weekday: 'short',
     month: 'short',
@@ -26,43 +26,69 @@ const BookingPeriod = props => {
           <span className={css.nowrap}>
             <FormattedDate value={startDate} {...dateFormatOptions} />
           </span>
-        ),
-        bookingEnd: (
+        )
+      }}
+    />
+  );
+};
+
+const BookingTimes = props => {
+  const {startDate, endDate} = props;
+  return (
+    <FormattedMessage
+      id="BookingBreakdown.bookingTimes"
+      values={{
+        bookingStartTime: (
           <span className={css.nowrap}>
-            <FormattedDate value={endDate} {...dateFormatOptions} />
+            {moment(startDate).format('hh:mm A')}
           </span>
         ),
+        bookingEndTime: (
+          <span className={css.nowrap}>
+            {moment(endDate).format('hh:mm A')}
+          </span>
+        )
       }}
     />
   );
 };
 
 const LineItemBookingHours = props => {
-  const { transaction, booking, unitType } = props;
+  const {transaction, booking, unitType} = props;
+  const {start: startDate, end: endDateRaw} = booking.attributes;
 
-  const { start: startDate, end: endDateRaw } = booking.attributes;
-  const localStartDate = dateFromAPIToLocalNoon(startDate);
-  const localEndDateRaw = dateFromAPIToLocalNoon(endDateRaw);
-
-  const dayCount = daysBetween(localStartDate, localEndDateRaw);
+  const dayCount = daysBetween(startDate, endDateRaw);
   const isSingleDay = dayCount === 1;
-  const endDay = moment(localEndDateRaw).subtract(1, 'days');
 
   const unitPurchase = transaction.attributes.lineItems.find(
     item => item.code === unitType && !item.reversal
   );
 
   const count = unitPurchase.quantity.toFixed();
+  const hoursLabelMessage = (
+    <FormattedHTMLMessage id="BookingBreakdown.hourLabel"/>
+  );
   const unitCountMessage = (
-    <FormattedHTMLMessage id="BookingBreakdown.hourCount" values={{ count }} />
+    <FormattedHTMLMessage id="BookingBreakdown.hourCount" values={{count}}/>
   );
 
   return (
-    <div className={css.lineItem}>
+    <div>
+      <div className={css.lineItem}>
+        <span className={css.itemLabel}>
+          <BookingPeriod isSingleDay={isSingleDay} startDate={startDate} endDate={endDateRaw}/>
+        </span>
+        <span>
+          <BookingTimes startDate={startDate} endDate={endDateRaw}/>
+        </span>
+      </div>
+
+      <div className={css.lineItem}>
       <span className={css.itemLabel}>
-        <BookingPeriod isSingleDay={isSingleDay} startDate={localStartDate} endDate={endDay} />
+        {hoursLabelMessage}
       </span>
-      <span className={css.itemValue}>{unitCountMessage}</span>
+        <span className={css.itemValue}>{unitCountMessage}</span>
+      </div>
     </div>
   );
 };
@@ -73,7 +99,6 @@ LineItemBookingHours.propTypes = {
 };
 
 export default LineItemBookingHours;
-
 
 
 // WEBPACK FOOTER //

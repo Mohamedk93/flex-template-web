@@ -111,8 +111,8 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
       id: new UUID('estimated-booking'),
       type: 'booking',
       attributes: {
-        start: serverDayStart,
-        end: serverDayEnd,
+        start: bookingStart,
+        end: bookingEnd,
       },
     },
   };
