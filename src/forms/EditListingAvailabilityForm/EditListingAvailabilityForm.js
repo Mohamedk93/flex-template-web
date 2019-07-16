@@ -53,11 +53,6 @@ export class EditListingAvailabilityFormComponent extends Component {
             <Form className={classes} onSubmit={handleSubmit}>
               {errorMessage}
               <div className={css.calendarWrapper}>
-                {/*<ManageAvailabilityCalendar*/}
-                  {/*availability={availability}*/}
-                  {/*availabilityPlan={availabilityPlan}*/}
-                  {/*listingId={listingId}*/}
-                {/*/>*/}
                 <ManageAvailabilitySelectGroup
                   className={css.days}
                   id={name}
