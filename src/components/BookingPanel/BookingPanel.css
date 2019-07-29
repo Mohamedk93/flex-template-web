@@ -25,12 +25,13 @@
 }
 
 .modalHeading {
-  margin-top: 89px;
-  margin-bottom: 36px;
+  margin-top: 62px;
   padding: 0 24px;
 
   @media (--viewportMedium) {
     padding: 0;
+    margin-top: 89px;
+    margin-bottom: 36px;
   }
 
   @media (--viewportLarge) {

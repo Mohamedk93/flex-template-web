@@ -90,7 +90,7 @@ const siteTitle = 'Hotdesk';
 const siteTwitterHandle = '@thehotdeskapp';
 
 // Instagram page is used in SEO schema (http://schema.org/Organization)
-const siteInstagramPage = null;
+const siteInstagramPage = 'https://www.instagram.com/hotdesk.app/';
 
 // Facebook page is used in SEO schema (http://schema.org/Organization)
 const siteFacebookPage = 'https://www.facebook.com/hotdeskapp/';

@@ -85,3 +85,14 @@
     width: 100%;
   }
 }
+
+.extraDay {
+  position: relative;
+}
+
+.removeLastDay {
+  position: absolute;
+  top: 0;
+  right: 24px;
+  border: none;
+}

@@ -25,6 +25,11 @@
 
 .inlineTextButtonRoot {
   @apply --marketplaceLinkStyles;
+  padding: 0 24px;
+
+  @media (--viewportMedium) {
+    padding-left: 0;
+  }
 }
 
 .primaryButton {
