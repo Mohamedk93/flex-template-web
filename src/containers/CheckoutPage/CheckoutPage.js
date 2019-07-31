@@ -155,7 +155,8 @@ export class CheckoutPageComponent extends Component {
 
     sendOrderRequest(requestParams, initialMessage, processAlias)
       .then(values => {
-        const { orderId, initialMessageSuccess } = values;
+        const { id, initialMessageSuccess } = values;
+
         this.setState({ submitting: false });
         const routes = routeConfiguration();
         const OrderPage = findRouteByRouteName('OrderDetailsPage', routes);
@@ -164,11 +165,11 @@ export class CheckoutPageComponent extends Component {
         // sending failed, we tell it to the OrderDetailsPage.
         dispatch(
           OrderPage.setInitialValues({
-            initialMessageFailedToTransaction: initialMessageSuccess ? null : orderId,
+            initialMessageFailedToTransaction: initialMessageSuccess ? null : id,
           })
         );
         const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, {
-          id: orderId.uuid,
+          id: id.uuid,
         });
         clearData(STORAGE_KEY);
         history.push(orderDetailsPath);
@@ -187,7 +188,7 @@ export class CheckoutPageComponent extends Component {
     const cardToken = values.token;
     const initialMessage = values.message;
     const { history, sendOrderRequest, speculatedTransaction, dispatch, bookingData } = this.props;
-    const processAlias = config.config.bookingProcessAlias;
+    const processAlias = config.bookingProcessAlias;
 
     // Create order aka transaction
     // NOTE: if unit type is line-item/units, quantity needs to be added.
@@ -202,7 +203,7 @@ export class CheckoutPageComponent extends Component {
 
     sendOrderRequest(requestParams, initialMessage, processAlias)
       .then(values => {
-        const { orderId, initialMessageSuccess } = values;
+        const { id, initialMessageSuccess } = values;
         this.setState({ submitting: false });
         const routes = routeConfiguration();
         const OrderPage = findRouteByRouteName('OrderDetailsPage', routes);
@@ -211,11 +212,11 @@ export class CheckoutPageComponent extends Component {
         // sending failed, we tell it to the OrderDetailsPage.
         dispatch(
           OrderPage.setInitialValues({
-            initialMessageFailedToTransaction: initialMessageSuccess ? null : orderId,
+            initialMessageFailedToTransaction: initialMessageSuccess ? null : id,
           })
         );
         const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, {
-          id: orderId.uuid,
+          id: id.uuid,
         });
         clearData(STORAGE_KEY);
         history.push(orderDetailsPath);
