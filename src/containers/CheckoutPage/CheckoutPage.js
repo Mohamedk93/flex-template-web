@@ -9,7 +9,6 @@ import routeConfiguration from '../../routeConfiguration';
 import { pathByRouteName, findRouteByRouteName } from '../../util/routes';
 import { propTypes } from '../../util/types';
 import { ensureListing, ensureUser, ensureTransaction, ensureBooking } from '../../util/data';
-import { dateFromLocalToAPI } from '../../util/dates';
 import { createSlug } from '../../util/urlHelpers';
 import {
   isTransactionInitiateAmountTooLowError,
@@ -26,9 +25,9 @@ import {
   Page,
   ResponsiveImage,
 } from '../../components';
-import { StripePaymentForm } from '../../forms';
+import { StripePaymentForm, CashPaymentForm } from '../../forms';
 import { isScrollingDisabled } from '../../ducks/UI.duck';
-import { initiateOrder, setInitialValues, speculateTransaction } from './CheckoutPage.duck';
+import { initiateOrder, setInitialValues, speculateTransaction, speculateCashTransaction } from './CheckoutPage.duck';
 import config from '../../config';
 
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
@@ -48,6 +47,7 @@ export class CheckoutPageComponent extends Component {
 
     this.loadInitialData = this.loadInitialData.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCashSubmit = this.handleCashSubmit.bind(this);
   }
 
   componentWillMount() {
@@ -73,7 +73,8 @@ export class CheckoutPageComponent extends Component {
    * based on this initial data.
    */
   loadInitialData() {
-    const { bookingData, bookingDates, listing, fetchSpeculatedTransaction, history } = this.props;
+    const { bookingData, paymentMethod, bookingDates, listing, fetchSpeculatedTransaction, fetchSpeculatedCashTransaction, history } = this.props;
+
     // Browser's back navigation should not rewrite data in session store.
     // Action is 'POP' on both history.back() and page refresh cases.
     // Action is 'PUSH' when user has directed through a link
@@ -81,6 +82,7 @@ export class CheckoutPageComponent extends Component {
     const hasNavigatedThroughLink = history.action === 'PUSH' || history.action === 'REPLACE';
 
     const hasDataInProps = !!(bookingData && bookingDates && listing) && hasNavigatedThroughLink;
+
     if (hasDataInProps) {
       // Store data only if data is passed through props and user has navigated through a link.
       storeData(bookingData, bookingDates, listing, STORAGE_KEY);
@@ -88,7 +90,7 @@ export class CheckoutPageComponent extends Component {
 
     // NOTE: stored data can be empty if user has already successfully completed transaction.
     const pageData = hasDataInProps
-      ? { bookingData, bookingDates, listing }
+      ? { bookingData, bookingDates, listing, paymentMethod }
       : storedData(STORAGE_KEY);
 
     const hasData =
@@ -98,24 +100,82 @@ export class CheckoutPageComponent extends Component {
       pageData.bookingData &&
       pageData.bookingDates &&
       pageData.bookingDates.bookingStart &&
+      pageData.paymentMethod &&
       pageData.bookingDates.bookingEnd;
 
     if (hasData) {
       const listingId = pageData.listing.id;
       const { bookingStart, bookingEnd } = pageData.bookingDates;
 
+
       // Fetch speculated transaction for showing price in booking breakdown
       // NOTE: if unit type is line-item/units, quantity needs to be added.
       // The way to pass it to checkout page is through pageData.bookingData
-      fetchSpeculatedTransaction({
-        listingId,
-        bookingStart,
-        bookingEnd,
-        quantity: pageData.bookingData.hours,
-      });
+      if(paymentMethod === 'credit card') {
+        fetchSpeculatedTransaction({
+          listingId,
+          bookingStart,
+          bookingEnd,
+          quantity: pageData.bookingData.hours,
+        });
+      }
+
+      if(paymentMethod === 'cash') {
+        fetchSpeculatedCashTransaction({
+          listingId,
+          bookingStart,
+          bookingEnd,
+          quantity: pageData.bookingData.hours,
+        });
+      }
     }
 
     this.setState({ pageData: pageData || {}, dataLoaded: true });
+  }
+
+  handleCashSubmit(values){
+    if (this.state.submitting) {
+      return;
+    }
+    this.setState({ submitting: true });
+    const initialMessage = '';
+    const { history, sendOrderRequest, speculatedTransaction, dispatch, bookingData } = this.props;
+
+    // Create order aka transaction
+    // NOTE: if unit type is line-item/units, quantity needs to be added.
+    // The way to pass it to checkout page is through pageData.bookingData
+    const requestParams = {
+      listingId: this.state.pageData.listing.id,
+      bookingStart: speculatedTransaction.booking.attributes.start,
+      bookingEnd: speculatedTransaction.booking.attributes.end,
+      quantity: bookingData.hours,
+    };
+
+    const processAlias = config.cashBookingProcessAlias;
+
+    sendOrderRequest(requestParams, initialMessage, processAlias)
+      .then(values => {
+        const { orderId, initialMessageSuccess } = values;
+        this.setState({ submitting: false });
+        const routes = routeConfiguration();
+        const OrderPage = findRouteByRouteName('OrderDetailsPage', routes);
+
+        // Transaction is already created, but if the initial message
+        // sending failed, we tell it to the OrderDetailsPage.
+        dispatch(
+          OrderPage.setInitialValues({
+            initialMessageFailedToTransaction: initialMessageSuccess ? null : orderId,
+          })
+        );
+        const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, {
+          id: orderId.uuid,
+        });
+        clearData(STORAGE_KEY);
+        history.push(orderDetailsPath);
+      })
+      .catch(() => {
+        this.setState({ submitting: false });
+      });
   }
 
   handleSubmit(values) {
@@ -127,6 +187,7 @@ export class CheckoutPageComponent extends Component {
     const cardToken = values.token;
     const initialMessage = values.message;
     const { history, sendOrderRequest, speculatedTransaction, dispatch, bookingData } = this.props;
+    const processAlias = config.config.bookingProcessAlias;
 
     // Create order aka transaction
     // NOTE: if unit type is line-item/units, quantity needs to be added.
@@ -139,7 +200,7 @@ export class CheckoutPageComponent extends Component {
       quantity: bookingData.hours,
     };
 
-    sendOrderRequest(requestParams, initialMessage)
+    sendOrderRequest(requestParams, initialMessage, processAlias)
       .then(values => {
         const { orderId, initialMessageSuccess } = values;
         this.setState({ submitting: false });
@@ -173,6 +234,8 @@ export class CheckoutPageComponent extends Component {
       initiateOrderError,
       intl,
       params,
+      bookingData,
+      paymentMethod,
       currentUser,
     } = this.props;
 
@@ -247,7 +310,10 @@ export class CheckoutPageComponent extends Component {
     );
 
     const listingTitle = currentListing.attributes.title;
+    const bookingTime = bookingData.message[1];
     const title = intl.formatMessage({ id: 'CheckoutPage.title' }, { listingTitle });
+    const formTitle = intl.formatMessage({ id: 'EnquiryForm.heading' }, { listingTitle });
+    const timeTitle = intl.formatMessage({ id: 'CheckoutPage.bookingTime' }, { bookingTime });
 
     const firstImage =
       currentListing.images && currentListing.images.length > 0 ? currentListing.images[0] : null;
@@ -390,16 +456,24 @@ export class CheckoutPageComponent extends Component {
               {initiateOrderErrorMessage}
               {listingNotFoundErrorMessage}
               {speculateErrorMessage}
-              {showPaymentForm ? (
+              {showPaymentForm && paymentMethod !== 'cash' ? (
                 <StripePaymentForm
                   className={css.paymentForm}
                   onSubmit={this.handleSubmit}
+                  paymentMethod={paymentMethod}
                   inProgress={this.state.submitting}
                   formId="CheckoutPagePaymentForm"
                   paymentInfo={intl.formatMessage({ id: 'CheckoutPage.paymentInfo' })}
                   authorDisplayName={currentAuthor.attributes.profile.displayName}
                 />
-              ) : null}
+              ) : <CashPaymentForm
+                    className={css.enquiryForm}
+                    submitButtonWrapperClassName={css.enquirySubmitButtonWrapper}
+                    listingTitle={formTitle}
+                    timeTitle={timeTitle}
+                    bookingData={bookingData}
+                    onSubmit={this.handleCashSubmit}
+                />}
             </section>
           </div>
 
@@ -440,6 +514,7 @@ CheckoutPageComponent.defaultProps = {
   initiateOrderError: null,
   listing: null,
   bookingData: {},
+  paymentMethod: '',
   bookingDates: null,
   speculateTransactionError: null,
   speculatedTransaction: null,
@@ -449,12 +524,14 @@ CheckoutPageComponent.defaultProps = {
 CheckoutPageComponent.propTypes = {
   scrollingDisabled: bool.isRequired,
   listing: propTypes.listing,
+  paymentMethod: string,
   bookingData: object,
   bookingDates: shape({
     bookingStart: instanceOf(Date).isRequired,
     bookingEnd: instanceOf(Date).isRequired,
   }),
   fetchSpeculatedTransaction: func.isRequired,
+  fetchSpeculatedCashTransaction: func.isRequired,
   speculateTransactionInProgress: bool.isRequired,
   speculateTransactionError: propTypes.error,
   speculatedTransaction: propTypes.transaction,
@@ -483,6 +560,7 @@ const mapStateToProps = state => {
     listing,
     bookingData,
     bookingDates,
+    paymentMethod,
     speculateTransactionInProgress,
     speculateTransactionError,
     speculatedTransaction,
@@ -494,6 +572,7 @@ const mapStateToProps = state => {
     currentUser,
     bookingData,
     bookingDates,
+    paymentMethod,
     speculateTransactionInProgress,
     speculateTransactionError,
     speculatedTransaction,
@@ -504,8 +583,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   dispatch,
-  sendOrderRequest: (params, initialMessage) => dispatch(initiateOrder(params, initialMessage)),
+  sendOrderRequest: (params, initialMessage, processAlias) => dispatch(initiateOrder(params, initialMessage, processAlias)),
   fetchSpeculatedTransaction: params => dispatch(speculateTransaction(params)),
+  fetchSpeculatedCashTransaction: params => dispatch(speculateCashTransaction(params)),
 });
 
 const CheckoutPage = compose(withRouter, connect(mapStateToProps, mapDispatchToProps), injectIntl)(

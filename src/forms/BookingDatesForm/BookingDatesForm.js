@@ -9,8 +9,9 @@ import classNames from 'classnames';
 import moment from 'moment';
 import Decimal from 'decimal.js';
 import { propTypes } from '../../util/types';
+import * as validators from '../../util/validators';
 import config from '../../config';
-import { Form, IconClose, PrimaryButton, InlineTextButton } from '../../components';
+import { Form, IconClose, PrimaryButton, InlineTextButton, FieldSelect } from '../../components';
 
 import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
@@ -110,9 +111,8 @@ export class BookingDatesFormComponent extends Component {
   // focus on that input, otherwise continue with the
   // default handleSubmit function.
   handleFormSubmit(values) {
-    //e.preventDefault();
     const { intl } = this.props;
-    const { firstDate, extraDays = [] } = values;
+    const { firstDate, extraDays = [], paymentMethod } = values;
     const bookingDate = firstDate ? firstDate.bookingDate : null;
 
     let totalHours = 0;
@@ -182,6 +182,7 @@ export class BookingDatesFormComponent extends Component {
       });
 
       this.props.onSubmit({
+        paymentMethod,
         bookingDates: {
           startDate: sdtFinal,
           endDate: edtFinal,
@@ -244,7 +245,7 @@ export class BookingDatesFormComponent extends Component {
             values,
           } = fieldRenderProps;
           const { firstDate, extraDays = [] } = values;
-
+          const required = validators.required('This field is required');
 
           let totalHours = 0;
           try {
@@ -341,6 +342,13 @@ export class BookingDatesFormComponent extends Component {
                   this.handleFieldBlur(e);
                 }}
               />
+              {hoursValid(values) ? (
+                  <FieldSelect id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={required}>
+                    <option value="">Select payment</option>
+                    <option value="credit card">Credit card</option>
+                    <option value="cash">Cash</option>
+                  </FieldSelect>
+                ): null}
               <FieldArray
                 name="extraDays"
                 render={fieldArrayProps => {

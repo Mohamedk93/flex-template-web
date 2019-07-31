@@ -32,6 +32,9 @@ const sortSearchByDistance = false;
 // this particular web application is able to handle.
 const bookingProcessAlias = 'preauth-unit-time-booking/release-1';
 
+
+const cashBookingProcessAlias = 'cash-unit-time-booking/release-1';
+
 // The transaction line item code for the main unit type in bookings.
 //
 // Possible values: ['line-item/night', 'line-item/day', 'line-item/units';]
@@ -184,6 +187,7 @@ const config = {
   dev,
   locale,
   bookingProcessAlias,
+  cashBookingProcessAlias,
   bookingUnitType,
   enableAvailability,
   dayCountAvailableForBooking,

@@ -32,6 +32,7 @@ const initialState = {
   listing: null,
   bookingData: null,
   bookingDates: null,
+  paymentMethod: '',
   speculateTransactionInProgress: false,
   speculateTransactionError: null,
   speculatedTransaction: null,
@@ -138,7 +139,7 @@ export const speculateTransactionError = e => ({
 
 /* ================ Thunks ================ */
 
-export const initiateOrder = (orderParams, transactionId) => (dispatch, getState, sdk) => {
+export const initiateOrder = (orderParams, transactionId, processAlias) => (dispatch, getState, sdk) => {
   dispatch(initiateOrderRequest());
   const bodyParams = transactionId
     ? {
@@ -147,7 +148,7 @@ export const initiateOrder = (orderParams, transactionId) => (dispatch, getState
         params: orderParams,
       }
     : {
-        processAlias: config.bookingProcessAlias,
+        processAlias,
         transition: TRANSITION_REQUEST_PAYMENT,
         params: orderParams,
       };
@@ -246,6 +247,40 @@ export const speculateTransaction = params => (dispatch, getState, sdk) => {
     params: {
       ...params,
       cardToken: 'CheckoutPage_speculative_card_token',
+    },
+  };
+  const queryParams = {
+    include: ['booking', 'provider'],
+    expand: true,
+  };
+  return sdk.transactions
+    .initiateSpeculative(bodyParams, queryParams)
+    .then(response => {
+      const entities = denormalisedResponseEntities(response);
+      if (entities.length !== 1) {
+        throw new Error('Expected a resource in the sdk.transactions.initiateSpeculative response');
+      }
+      const tx = entities[0];
+      dispatch(speculateTransactionSuccess(tx));
+    })
+    .catch(e => {
+      const { listingId, bookingStart, bookingEnd } = params;
+      log.error(e, 'speculate-transaction-failed', {
+        listingId: listingId.uuid,
+        bookingStart,
+        bookingEnd,
+      });
+      return dispatch(speculateTransactionError(storableError(e)));
+    });
+};
+
+export const speculateCashTransaction = params => (dispatch, getState, sdk) => {
+  dispatch(speculateTransactionRequest());
+  const bodyParams = {
+    transition: TRANSITION_REQUEST_PAYMENT,
+    processAlias: config.cashBookingProcessAlias,
+    params: {
+      ...params,
     },
   };
   const queryParams = {
