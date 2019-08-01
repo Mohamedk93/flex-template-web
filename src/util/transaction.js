@@ -10,24 +10,13 @@ import { ensureTransaction } from './data';
  */
 
 // When a customer makes a booking to a listing, a transaction is
-// created with the initial request-payment transition.
-// At this transition a PaymentIntent is created by Marketplace API.
-// After this transition, the actual payment must be made on client-side directly to Stripe.
-export const TRANSITION_REQUEST_PAYMENT = 'transition/request';
+// created with the initial request transition.
+export const TRANSITION_REQUEST = 'transition/request';
 
 // A customer can also initiate a transaction with an enquiry, and
 // then transition that with a request.
 export const TRANSITION_ENQUIRE = 'transition/enquire';
-export const TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY = 'transition/request-payment-after-enquiry';
-
-// Stripe SDK might need to ask 3D security from customer, in a separate front-end step.
-// Therefore we need to make another transition to Marketplace API,
-// to tell that the payment is confirmed.
-export const TRANSITION_CONFIRM_PAYMENT = 'transition/confirm-payment';
-
-// If the payment is not confirmed in the time limit set in transaction process (by default 15min)
-// the transaction will expire automatically.
-export const TRANSITION_EXPIRE_PAYMENT = 'transition/expire-payment';
+export const TRANSITION_REQUEST_AFTER_ENQUIRY = 'transition/request-after-enquiry';
 
 // When the provider accepts or declines a transaction from the
 // SalePage, it is transitioned with the accept or decline transition.
@@ -84,8 +73,6 @@ export const TX_TRANSITION_ACTORS = [
  */
 const STATE_INITIAL = 'initial';
 const STATE_ENQUIRY = 'enquiry';
-const STATE_PENDING_PAYMENT = 'pending-payment';
-const STATE_PAYMENT_EXPIRED = 'payment-expired';
 const STATE_PREAUTHORIZED = 'preauthorized';
 const STATE_DECLINED = 'declined';
 const STATE_ACCEPTED = 'accepted';
@@ -118,23 +105,15 @@ const stateDescription = {
     [STATE_INITIAL]: {
       on: {
         [TRANSITION_ENQUIRE]: STATE_ENQUIRY,
-        [TRANSITION_REQUEST_PAYMENT]: STATE_PENDING_PAYMENT,
+        [TRANSITION_REQUEST]: STATE_PREAUTHORIZED,
       },
     },
     [STATE_ENQUIRY]: {
       on: {
-        [TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY]: STATE_PENDING_PAYMENT,
+        [TRANSITION_REQUEST_AFTER_ENQUIRY]: STATE_PREAUTHORIZED,
       },
     },
 
-    [STATE_PENDING_PAYMENT]: {
-      on: {
-        [TRANSITION_EXPIRE_PAYMENT]: STATE_PAYMENT_EXPIRED,
-        [TRANSITION_CONFIRM_PAYMENT]: STATE_PREAUTHORIZED,
-      },
-    },
-
-    [STATE_PAYMENT_EXPIRED]: {},
     [STATE_PREAUTHORIZED]: {
       on: {
         [TRANSITION_DECLINE]: STATE_DECLINED,
@@ -209,9 +188,11 @@ const getTransitionsToStateFn = stateDesc => state =>
 // Get all the transitions that lead to specified state.
 const getTransitionsToState = getTransitionsToStateFn(stateDescription);
 
+
 // This is needed to fetch transactions that need response from provider.
 // I.e. transactions which provider needs to accept or decline
 export const transitionsToRequested = getTransitionsToState(STATE_PREAUTHORIZED);
+console.log(transitionsToRequested)
 
 /**
  * Helper functions to figure out if transaction is in a specific state.
@@ -220,19 +201,20 @@ export const transitionsToRequested = getTransitionsToState(STATE_PREAUTHORIZED)
 
 const txLastTransition = tx => ensureTransaction(tx).attributes.lastTransition;
 
+// DEPRECATED: use txIsDelivered instead
+export const txIsCompleted = tx => txLastTransition(tx) === TRANSITION_COMPLETE;
+
 export const txIsEnquired = tx =>
   getTransitionsToState(STATE_ENQUIRY).includes(txLastTransition(tx));
 
-export const txIsPaymentPending = tx =>
-  getTransitionsToState(STATE_PENDING_PAYMENT).includes(txLastTransition(tx));
-
-export const txIsPaymentExpired = tx =>
-  getTransitionsToState(STATE_PAYMENT_EXPIRED).includes(txLastTransition(tx));
-
 // Note: state name used in Marketplace API docs (and here) is actually preauthorized
 // However, word "requested" is used in many places so that we decided to keep it.
-export const txIsRequested = tx =>
-  getTransitionsToState(STATE_PREAUTHORIZED).includes(txLastTransition(tx));
+export const txIsRequested = tx => {
+  console.log(getTransitionsToState(STATE_PREAUTHORIZED))
+  console.log(txLastTransition(tx))
+  return getTransitionsToState(STATE_PREAUTHORIZED).includes(txLastTransition(tx));
+}
+
 
 export const txIsAccepted = tx =>
   getTransitionsToState(STATE_ACCEPTED).includes(txLastTransition(tx));
@@ -270,7 +252,7 @@ const hasPassedTransition = (transitionName, tx) =>
   !!txTransitions(tx).find(t => t.transition === transitionName);
 
 const hasPassedStateFn = state => tx =>
-  getTransitionsToState(state).filter(t => hasPassedTransition(t, tx)).length > 0;
+getTransitionsToState(state).filter(t => hasPassedTransition(t, tx)).length > 0;
 
 export const txHasBeenAccepted = hasPassedStateFn(STATE_ACCEPTED);
 export const txHasBeenDelivered = hasPassedStateFn(STATE_DELIVERED);
@@ -301,9 +283,10 @@ export const isRelevantPastTransition = transition => {
     TRANSITION_ACCEPT,
     TRANSITION_CANCEL,
     TRANSITION_COMPLETE,
-    TRANSITION_CONFIRM_PAYMENT,
     TRANSITION_DECLINE,
     TRANSITION_EXPIRE,
+    TRANSITION_REQUEST,
+    TRANSITION_REQUEST_AFTER_ENQUIRY,
     TRANSITION_REVIEW_1_BY_CUSTOMER,
     TRANSITION_REVIEW_1_BY_PROVIDER,
     TRANSITION_REVIEW_2_BY_CUSTOMER,

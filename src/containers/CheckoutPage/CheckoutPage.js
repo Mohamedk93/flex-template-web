@@ -74,6 +74,7 @@ export class CheckoutPageComponent extends Component {
    */
   loadInitialData() {
     const { bookingData, paymentMethod, bookingDates, listing, fetchSpeculatedTransaction, fetchSpeculatedCashTransaction, history } = this.props;
+    console.log(bookingDates)
 
     // Browser's back navigation should not rewrite data in session store.
     // Action is 'POP' on both history.back() and page refresh cases.
@@ -289,6 +290,7 @@ export class CheckoutPageComponent extends Component {
 
     // Show breakdown only when transaction and booking are loaded
     // (i.e. have an id)
+    console.log(currentTransaction)
     const breakdown =
       currentTransaction.id && currentBooking.id ? (
         <BookingBreakdown

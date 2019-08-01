@@ -30,7 +30,7 @@ import moment from 'moment';
 import Decimal from 'decimal.js';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import { dateFromLocalToAPI, nightsBetween, daysBetween } from '../../util/dates';
-import { TRANSITION_REQUEST_PAYMENT, TX_TRANSITION_ACTOR_CUSTOMER } from '../../util/transaction';
+import { TRANSITION_REQUEST, TX_TRANSITION_ACTOR_CUSTOMER } from '../../util/transaction';
 import { LINE_ITEM_DAY, LINE_ITEM_NIGHT, LINE_ITEM_UNITS } from '../../util/types';
 import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit } from '../../util/currency';
 import { BookingBreakdown } from '../../components';
@@ -86,7 +86,7 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
     attributes: {
       createdAt: now,
       lastTransitionedAt: now,
-      lastTransition: TRANSITION_REQUEST_PAYMENT,
+      lastTransition: TRANSITION_REQUEST,
       payinTotal: totalPrice,
       payoutTotal: totalPrice,
       lineItems: [
@@ -103,7 +103,7 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
         {
           createdAt: now,
           by: TX_TRANSITION_ACTOR_CUSTOMER,
-          transition: TRANSITION_REQUEST_PAYMENT,
+          transition: TRANSITION_REQUEST,
         },
       ],
     },
@@ -111,8 +111,8 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
       id: new UUID('estimated-booking'),
       type: 'booking',
       attributes: {
-        start: bookingStart,
-        end: bookingEnd,
+        start: serverDayStart,
+        end: serverDayEnd,
       },
     },
   };

@@ -12,7 +12,8 @@ import {
   TRANSITION_COMPLETE,
   TRANSITION_DECLINE,
   TRANSITION_EXPIRE,
-  TRANSITION_CONFIRM_PAYMENT,
+  TRANSITION_REQUEST,
+  TRANSITION_REQUEST_AFTER_ENQUIRY,
   TRANSITION_REVIEW_1_BY_CUSTOMER,
   TRANSITION_REVIEW_1_BY_PROVIDER,
   TRANSITION_REVIEW_2_BY_CUSTOMER,
@@ -24,7 +25,6 @@ import {
   isCustomerReview,
   isProviderReview,
   txRoleIsProvider,
-  txRoleIsCustomer,
   getUserTxRole,
   isRelevantPastTransition,
 } from '../../util/transaction';
@@ -94,10 +94,10 @@ Review.propTypes = {
 };
 
 const hasUserLeftAReviewFirst = (userRole, transaction) => {
-  // Because function txIsInFirstReviewBy uses isCustomer to check in which state the reviews are
-  // we should also use isCustomer insted of isProvider
-  const isCustomer = txRoleIsCustomer(userRole);
-  return txIsInFirstReviewBy(transaction, isCustomer);
+  const isProvider = txRoleIsProvider(userRole);
+  return isProvider
+    ? txIsInFirstReviewBy(transaction, isProvider)
+    : txIsInFirstReviewBy(transaction, !isProvider);
 };
 
 const resolveTransitionMessage = (
@@ -114,7 +114,7 @@ const resolveTransitionMessage = (
   const displayName = otherUsersName;
 
   switch (currentTransition) {
-    case TRANSITION_CONFIRM_PAYMENT:
+    case TRANSITION_REQUEST:
       return isOwnTransition ? (
         <FormattedMessage id="ActivityFeed.ownTransitionRequest" values={{ listingTitle }} />
       ) : (
@@ -123,6 +123,15 @@ const resolveTransitionMessage = (
           values={{ displayName, listingTitle }}
         />
       );
+    case TRANSITION_REQUEST_AFTER_ENQUIRY:
+      return isOwnTransition ? (
+          <FormattedMessage id="ActivityFeed.ownTransitionRequest" values={{ listingTitle }} />
+        ) : (
+          <FormattedMessage
+            id="ActivityFeed.transitionRequest"
+            values={{ displayName, listingTitle }}
+          />
+        );
     case TRANSITION_ACCEPT:
       return isOwnTransition ? (
         <FormattedMessage id="ActivityFeed.ownTransitionAccept" />
@@ -146,19 +155,18 @@ const resolveTransitionMessage = (
     case TRANSITION_COMPLETE:
       // Show the leave a review link if the state is delivered and if the current user is the first to leave a review
       const reviewPeriodJustStarted = txIsDelivered(transaction);
+      const reviewPeriodIsOver = txIsReviewed(transaction);
+      const userHasLeftAReview = hasUserLeftAReviewFirst(ownRole, transaction);
 
-      const reviewAsFirstLink = reviewPeriodJustStarted ? (
-        <InlineTextButton onClick={onOpenReviewModal}>
-          <FormattedMessage id="ActivityFeed.leaveAReview" values={{ displayName }} />
-        </InlineTextButton>
-      ) : null;
+      const reviewLink =
+        reviewPeriodJustStarted || !(reviewPeriodIsOver || userHasLeftAReview) ? (
+            <InlineTextButton onClick={onOpenReviewModal}>
+              <FormattedMessage id="ActivityFeed.leaveAReview" values={{ displayName }} />
+            </InlineTextButton>
+          ) : null;
 
-      return (
-        <FormattedMessage
-          id="ActivityFeed.transitionComplete"
-          values={{ reviewLink: reviewAsFirstLink }}
-        />
-      );
+
+      return <FormattedMessage id="ActivityFeed.transitionComplete" values={{ reviewLink }} />;
 
     case TRANSITION_REVIEW_1_BY_PROVIDER:
     case TRANSITION_REVIEW_1_BY_CUSTOMER:
@@ -169,7 +177,7 @@ const resolveTransitionMessage = (
         // one to leave a review
         const reviewPeriodIsOver = txIsReviewed(transaction);
         const userHasLeftAReview = hasUserLeftAReviewFirst(ownRole, transaction);
-        const reviewAsSecondLink = !(reviewPeriodIsOver || userHasLeftAReview) ? (
+        const reviewLink = !(reviewPeriodIsOver || userHasLeftAReview) ? (
           <InlineTextButton onClick={onOpenReviewModal}>
             <FormattedMessage id="ActivityFeed.leaveAReviewSecond" values={{ displayName }} />
           </InlineTextButton>
@@ -177,7 +185,7 @@ const resolveTransitionMessage = (
         return (
           <FormattedMessage
             id="ActivityFeed.transitionReview"
-            values={{ displayName, reviewLink: reviewAsSecondLink }}
+            values={{ displayName, reviewLink }}
           />
         );
       }

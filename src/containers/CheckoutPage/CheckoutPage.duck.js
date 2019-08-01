@@ -2,11 +2,7 @@ import pick from 'lodash/pick';
 import config from '../../config';
 import { denormalisedResponseEntities } from '../../util/data';
 import { storableError } from '../../util/errors';
-import {
-  TRANSITION_REQUEST_PAYMENT,
-  TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
-  TRANSITION_CONFIRM_PAYMENT,
-} from '../../util/transaction';
+import { TRANSITION_REQUEST, TRANSITION_REQUEST_AFTER_ENQUIRY } from '../../util/transaction';
 import * as log from '../../util/log';
 import { fetchCurrentUserHasOrdersSuccess } from '../../ducks/user.duck';
 
@@ -76,13 +72,13 @@ export default function checkoutPageReducer(state = initialState, action = {}) {
       console.error(payload); // eslint-disable-line no-console
       return { ...state, initiateOrderError: payload };
 
-    case CONFIRM_PAYMENT_REQUEST:
-      return { ...state, confirmPaymentError: null };
-    case CONFIRM_PAYMENT_SUCCESS:
-      return state;
-    case CONFIRM_PAYMENT_ERROR:
-      console.error(payload); // eslint-disable-line no-console
-      return { ...state, confirmPaymentError: payload };
+    // case CONFIRM_PAYMENT_REQUEST:
+    //   return { ...state, confirmPaymentError: null };
+    // case CONFIRM_PAYMENT_SUCCESS:
+    //   return state;
+    // case CONFIRM_PAYMENT_ERROR:
+    //   console.error(payload); // eslint-disable-line no-console
+    //   return { ...state, confirmPaymentError: payload };
 
     default:
       return state;
@@ -111,18 +107,18 @@ const initiateOrderError = e => ({
   payload: e,
 });
 
-const confirmPaymentRequest = () => ({ type: CONFIRM_PAYMENT_REQUEST });
-
-const confirmPaymentSuccess = orderId => ({
-  type: CONFIRM_PAYMENT_SUCCESS,
-  payload: orderId,
-});
-
-const confirmPaymentError = e => ({
-  type: CONFIRM_PAYMENT_ERROR,
-  error: true,
-  payload: e,
-});
+// const confirmPaymentRequest = () => ({ type: CONFIRM_PAYMENT_REQUEST });
+//
+// const confirmPaymentSuccess = orderId => ({
+//   type: CONFIRM_PAYMENT_SUCCESS,
+//   payload: orderId,
+// });
+//
+// const confirmPaymentError = e => ({
+//   type: CONFIRM_PAYMENT_ERROR,
+//   error: true,
+//   payload: e,
+// });
 
 export const speculateTransactionRequest = () => ({ type: SPECULATE_TRANSACTION_REQUEST });
 
@@ -144,12 +140,12 @@ export const initiateOrder = (orderParams, transactionId, processAlias) => (disp
   const bodyParams = transactionId
     ? {
         id: transactionId,
-        transition: TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
+        transition: TRANSITION_REQUEST_AFTER_ENQUIRY,
         params: orderParams,
       }
     : {
         processAlias,
-        transition: TRANSITION_REQUEST_PAYMENT,
+        transition: TRANSITION_REQUEST,
         params: orderParams,
       };
   const queryParams = {
@@ -181,11 +177,11 @@ export const initiateOrder = (orderParams, transactionId, processAlias) => (disp
 };
 
 export const confirmPayment = orderParams => (dispatch, getState, sdk) => {
-  dispatch(confirmPaymentRequest());
+  // dispatch(confirmPaymentRequest());
 
   const bodyParams = {
     id: orderParams.transactionId,
-    transition: TRANSITION_CONFIRM_PAYMENT,
+    // transition: TRANSITION_CONFIRM_PAYMENT,
     params: {},
   };
 
@@ -193,11 +189,11 @@ export const confirmPayment = orderParams => (dispatch, getState, sdk) => {
     .transition(bodyParams)
     .then(response => {
       const order = response.data.data;
-      dispatch(confirmPaymentSuccess(order.id));
+      // dispatch(confirmPaymentSuccess(order.id));
       return order;
     })
     .catch(e => {
-      dispatch(confirmPaymentError(storableError(e)));
+      // dispatch(confirmPaymentError(storableError(e)));
       const transactionIdMaybe = orderParams.transactionId
         ? { transactionId: orderParams.transactionId.uuid }
         : {};
@@ -242,7 +238,7 @@ export const sendMessage = params => (dispatch, getState, sdk) => {
 export const speculateTransaction = params => (dispatch, getState, sdk) => {
   dispatch(speculateTransactionRequest());
   const bodyParams = {
-    transition: TRANSITION_REQUEST_PAYMENT,
+    transition: TRANSITION_REQUEST,
     processAlias: config.bookingProcessAlias,
     params: {
       ...params,
@@ -277,7 +273,7 @@ export const speculateTransaction = params => (dispatch, getState, sdk) => {
 export const speculateCashTransaction = params => (dispatch, getState, sdk) => {
   dispatch(speculateTransactionRequest());
   const bodyParams = {
-    transition: TRANSITION_REQUEST_PAYMENT,
+    transition: TRANSITION_REQUEST,
     processAlias: config.cashBookingProcessAlias,
     params: {
       ...params,

@@ -13,8 +13,7 @@ import {
   TRANSITION_COMPLETE,
   TRANSITION_DECLINE,
   TRANSITION_EXPIRE_REVIEW_PERIOD,
-  TRANSITION_REQUEST_PAYMENT,
-  TRANSITION_CONFIRM_PAYMENT,
+  TRANSITION_REQUEST,
   TRANSITION_REVIEW_1_BY_CUSTOMER,
   TRANSITION_REVIEW_1_BY_PROVIDER,
   TRANSITION_REVIEW_2_BY_CUSTOMER,
@@ -85,12 +84,7 @@ export const WithTransitions = {
         createTxTransition({
           createdAt: new Date(Date.UTC(2017, 10, 9, 8, 10)),
           by: TX_TRANSITION_ACTOR_CUSTOMER,
-          transition: TRANSITION_REQUEST_PAYMENT,
-        }),
-        createTxTransition({
-          createdAt: new Date(Date.UTC(2017, 10, 9, 8, 10)),
-          by: TX_TRANSITION_ACTOR_CUSTOMER,
-          transition: TRANSITION_CONFIRM_PAYMENT,
+          transition: TRANSITION_REQUEST,
         }),
         createTxTransition({
           createdAt: new Date(Date.UTC(2017, 10, 9, 8, 12)),
@@ -127,12 +121,7 @@ export const WithMessagesTransitionsAndReviews = {
         createTxTransition({
           createdAt: new Date(Date.UTC(2017, 10, 9, 8, 10)),
           by: TX_TRANSITION_ACTOR_CUSTOMER,
-          transition: TRANSITION_REQUEST_PAYMENT,
-        }),
-        createTxTransition({
-          createdAt: new Date(Date.UTC(2017, 10, 9, 8, 10)),
-          by: TX_TRANSITION_ACTOR_CUSTOMER,
-          transition: TRANSITION_CONFIRM_PAYMENT,
+          transition: TRANSITION_REQUEST,
         }),
         createTxTransition({
           createdAt: new Date(Date.UTC(2017, 10, 9, 8, 12)),
@@ -269,22 +258,18 @@ class PagedFeed extends Component {
     const trans1 = createTxTransition({
       createdAt: dates[0],
       by: TX_TRANSITION_ACTOR_CUSTOMER,
-      transition: TRANSITION_REQUEST_PAYMENT,
+      transition: TRANSITION_REQUEST,
     });
     const trans2 = createTxTransition({
       createdAt: dates[0],
-      by: TX_TRANSITION_ACTOR_CUSTOMER,
-      transition: TRANSITION_CONFIRM_PAYMENT,
-    });
-    const trans3 = createTxTransition({
-      createdAt: dates[2],
       by: TX_TRANSITION_ACTOR_PROVIDER,
       transition: TRANSITION_ACCEPT,
     });
 
+
     // Last transition timestamp is interleaved between the last two
     // messages.
-    const trans4 = createTxTransition({
+    const trans3 = createTxTransition({
       createdAt: dates[5],
       by: TX_TRANSITION_ACTOR_CUSTOMER,
       transition: TRANSITION_COMPLETE,
@@ -302,7 +287,7 @@ class PagedFeed extends Component {
       id: 'tx1',
       lastTransition: TRANSITION_COMPLETE,
       lastTransitionedAt: dates[5],
-      transitions: [trans1, trans2, trans3, trans4],
+      transitions: [trans1, trans2, trans3],
       listing: createListing('listing'),
       customer,
       provider,
