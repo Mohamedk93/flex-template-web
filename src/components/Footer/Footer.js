@@ -114,9 +114,9 @@ const Footer = props => {
               <div className={css.legalMatters}>
                 <ul className={css.tosAndPrivacy}>
                   <li>
-                    <NamedLink name="TermsOfServicePage" className={css.legalLink}>
+                    <a href="/static/Hotdesk_Terms_of_Service.pdf" className={css.legalLink} target="_blank">
                       <FormattedMessage id="Footer.termsOfUse" />
-                    </NamedLink>
+                    </a>
                   </li>
                   <li>
                     <NamedLink name="PrivacyPolicyPage" className={css.legalLink}>
