@@ -13,6 +13,14 @@
   z-index: 1;
 }
 
+.paymentMethod {
+  padding: 0 24px;
+
+  @media (--viewportMedium) {
+    padding: 0;
+  }
+}
+
 .priceBreakdownContainer {
   padding: 0 24px;
   margin-bottom: 40px;

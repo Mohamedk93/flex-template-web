@@ -343,7 +343,7 @@ export class BookingDatesFormComponent extends Component {
                 }}
               />
               {hoursValid(values) ? (
-                  <FieldSelect id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={required}>
+                  <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={required}>
                     <option value="">Select payment</option>
                     <option value="credit card">Credit card</option>
                     <option value="cash">Cash</option>
