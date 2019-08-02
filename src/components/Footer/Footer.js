@@ -135,9 +135,9 @@ const Footer = props => {
               <NamedLink name="PrivacyPolicyPage" className={css.privacy}>
                 <FormattedMessage id="Footer.privacy" />
               </NamedLink>
-              <NamedLink name="TermsOfServicePage" className={css.terms}>
+              <a href="/static/Hotdesk_Terms_of_Service.pdf" className={css.terms} target="_blank">
                 <FormattedMessage id="Footer.terms" />
-              </NamedLink>
+              </a>
             </div>
           </div>
         </div>
