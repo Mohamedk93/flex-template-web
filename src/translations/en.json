@@ -155,7 +155,7 @@
   "EditListingAvailabilityForm.updateFailed": "Failed to update listing. Please try again.",
   "EditListingAvailabilityPanel.title": "Edit the availability of {listingTitle}",
   "EditListingAvailabilityPanel.createListingTitle": "When is it available?",
-  "EditListingDescriptionForm.categoryLabel": "Hotdesk type",
+  "EditListingDescriptionForm.categoryLabel": "Workspace type",
   "EditListingDescriptionForm.categoryPlaceholder": "Choose the type of your work space…",
   "EditListingDescriptionForm.categoryRequired": "You need to select a category for your work space.",
   "EditListingDescriptionForm.createListingDraftError": "Failed to create a draft listing. Please try again.",
