@@ -31,6 +31,7 @@ export const amenities = [
 
 export const categories = [
   { key: 'meeting_room', label: 'Meeting room' },
+  { key: 'Office', label: 'Office' },
   { key: 'seat', label: 'Seat' },
 ];
 
