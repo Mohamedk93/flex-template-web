@@ -8,9 +8,9 @@ import { NamedLink } from '../../components';
 
 import css from './SectionLocations.css';
 
-import helsinkiImage from './images/SF-bayarea.jpg';
-import rovaniemiImage from './images/SF-financialdistrict.jpg';
-import rukaImage from './images/SF-southsf.jpg';
+import helsinkiImage from './images/americas.png';
+import rovaniemiImage from './images/Europe.png';
+import rukaImage from './images/MEA.png';
 
 class LocationImage extends Component {
   render() {
@@ -51,17 +51,17 @@ const SectionLocations = props => {
       </div>
       <div className={css.locations}>
         {locationLink(
-          'Bay Area',
+          'United States & Canada',
           helsinkiImage,
           '?address=San%20Francisco%20Bay%20Area%2C%20CA%2C%20USA&bounds=38.8642448%2C-121.20817799999998%2C36.8941549%2C-123.632497'
         )}
         {locationLink(
-          'Financial District',
+          'Europe',
           rovaniemiImage,
           '?address=Financial%20District%2C%20San%20Francisco%2C%20CA%2C%20USA&bounds=37.798916%2C-122.39513650000004%2C37.7866303%2C-122.40704790000001'
         )}
         {locationLink(
-          'South SF',
+          'Middle East & Africa',
           rukaImage,
           '?address=South%20San%20Francisco%2C%20CA%2C%20USA&bounds=37.6728499%2C-122.22053110000002%2C37.6324597%2C-122.47168399999998'
         )}
