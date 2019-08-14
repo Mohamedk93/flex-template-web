@@ -94,6 +94,7 @@ const EditListingWizardTab = props => {
     updatedTab,
     updateInProgress,
     intl,
+    currentUser,
   } = props;
 
   const { type } = params;
@@ -105,6 +106,9 @@ const EditListingWizardTab = props => {
   const imageIds = images => {
     return images ? images.map(img => img.imageId || img.id) : null;
   };
+
+  const stripeConnected =
+    currentUser && currentUser.stripeAccount && !!currentUser.stripeAccount.id;
 
   const onCompleteEditListingWizardTab = (tab, updateValues) => {
     // Normalize images for API call
@@ -219,7 +223,14 @@ const EditListingWizardTab = props => {
           {...panelProps(PRICING)}
           submitButtonText={intl.formatMessage({ id: submitButtonTranslationKey })}
           onSubmit={values => {
-            onCompleteEditListingWizardTab(tab, values);
+            // Store listing attribute stripeConnected 
+            // to handle listings with the only payment method cash
+            onCompleteEditListingWizardTab(tab, {
+              price: values.price,
+              publicData: {
+                stripeConnected: stripeConnected
+              }
+            });
           }}
         />
       );
