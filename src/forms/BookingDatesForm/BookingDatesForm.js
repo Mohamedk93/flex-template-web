@@ -312,7 +312,8 @@ export class BookingDatesFormComponent extends Component {
             submitButtonWrapperClassName
           );
 
-          const stripeConnected = this.props.listing.attributes.publicData.stripeConnected == true
+          const stripeConnected = (this.props.listing.author.
+            attributes.profile.publicData.stripeEnabled == true)
 
           return (
             <Form

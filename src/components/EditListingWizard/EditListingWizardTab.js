@@ -223,14 +223,7 @@ const EditListingWizardTab = props => {
           {...panelProps(PRICING)}
           submitButtonText={intl.formatMessage({ id: submitButtonTranslationKey })}
           onSubmit={values => {
-            // Store listing attribute stripeConnected 
-            // to handle listings with the only payment method cash
-            onCompleteEditListingWizardTab(tab, {
-              price: values.price,
-              publicData: {
-                stripeConnected: stripeConnected
-              }
-            });
+            onCompleteEditListingWizardTab(tab, values);
           }}
         />
       );
