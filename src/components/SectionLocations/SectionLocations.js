@@ -53,17 +53,17 @@ const SectionLocations = props => {
         {locationLink(
           'United States & Canada',
           helsinkiImage,
-          '?address=San%20Francisco%20Bay%20Area%2C%20CA%2C%20USA&bounds=38.8642448%2C-121.20817799999998%2C36.8941549%2C-123.632497'
+          '?address=United%20States&bounds=73.29192803%2C-52.4228125%2C6.54033047%2C-147.3446875&mapSearch=true'
         )}
         {locationLink(
           'Europe',
           rovaniemiImage,
-          '?address=Financial%20District%2C%20San%20Francisco%2C%20CA%2C%20USA&bounds=37.798916%2C-122.39513650000004%2C37.7866303%2C-122.40704790000001'
+          '?address=Europe&bounds=65%2C55%2C34%2C-11'
         )}
         {locationLink(
           'Middle East & Africa',
           rukaImage,
-          '?address=South%20San%20Francisco%2C%20CA%2C%20USA&bounds=37.6728499%2C-122.22053110000002%2C37.6324597%2C-122.47168399999998'
+          '?address=Middle%20East&bounds=37.60801936%2C58.73156797%2C-10.97046286%2C11.27063047&mapSearch=true'
         )}
       </div>
     </div>
