@@ -157,14 +157,18 @@ class EditListingWizard extends Component {
     const { onPublishListingDraft, currentUser } = this.props;
     const stripeConnected =
       currentUser && currentUser.stripeAccount && !!currentUser.stripeAccount.id;
-    if (stripeConnected) {
-      onPublishListingDraft(id);
-    } else {
-      this.setState({
-        draftId: id,
-        showPayoutDetails: true,
-      });
-    }
+    
+    // Allow creating listings for users without Stripe account set up (#35817)
+    return onPublishListingDraft(id);
+    
+    // if (stripeConnected) {
+    //   onPublishListingDraft(id);
+    // } else {
+    //   this.setState({
+    //     draftId: id,
+    //     showPayoutDetails: true,
+    //   });
+    // }
   }
 
   handlePayoutModalClose() {
@@ -197,6 +201,7 @@ class EditListingWizard extends Component {
       fetchInProgress,
       onManageDisableScrolling,
       onPayoutDetailsFormChange,
+      currentUser,
       ...rest
     } = this.props;
 
@@ -265,6 +270,7 @@ class EditListingWizard extends Component {
                 handleCreateFlowTabScrolling={this.handleCreateFlowTabScrolling}
                 handlePublishListing={this.handlePublishListing}
                 fetchInProgress={fetchInProgress}
+                currentUser={currentUser}
               />
             );
           })}

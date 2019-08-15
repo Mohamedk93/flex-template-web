@@ -312,6 +312,9 @@ export class BookingDatesFormComponent extends Component {
             submitButtonWrapperClassName
           );
 
+          const stripeConnected = (this.props.listing.author.
+            attributes.profile.publicData.stripeEnabled == true)
+
           return (
             <Form
               onSubmit={e => {
@@ -345,7 +348,7 @@ export class BookingDatesFormComponent extends Component {
               {hoursValid(values) ? (
                   <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={required}>
                     <option value="">Select payment</option>
-                    <option value="credit card">Credit card</option>
+                    {stripeConnected ? (<option value="credit card">Credit card</option>) : null}
                     <option value="cash">Cash</option>
                   </FieldSelect>
                 ): null}
@@ -453,6 +456,8 @@ BookingDatesFormComponent.propTypes = {
 
   // from injectIntl
   intl: intlShape.isRequired,
+
+  listing: propTypes.listing,
 
   // for tests
   datePlaceholder: string,

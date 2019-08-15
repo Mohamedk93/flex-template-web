@@ -168,6 +168,7 @@ const BookingPanel = props => {
             price={price}
             isOwnListing={isOwnListing}
             timeSlots={timeSlots}
+            listing={listing}
             fetchTimeSlotsError={fetchTimeSlotsError}
           />
         ) : null}
