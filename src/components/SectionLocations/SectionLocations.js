@@ -53,7 +53,7 @@ const SectionLocations = props => {
         {locationLink(
           'United States & Canada',
           helsinkiImage,
-          '?address=United%20States&bounds=73.29192803%2C-52.4228125%2C6.54033047%2C-147.3446875&mapSearch=true'
+          '?address=United%20States&bounds=49.38%2C-66.94%2C25.82%2C-124.38999999999999'
         )}
         {locationLink(
           'Europe',
@@ -63,7 +63,7 @@ const SectionLocations = props => {
         {locationLink(
           'Middle East & Africa',
           rukaImage,
-          '?address=Middle%20East&bounds=37.60801936%2C58.73156797%2C-10.97046286%2C11.27063047&mapSearch=true'
+          '?address=Middle%20East&bounds=37.60801936%2C58.73156797%2C-10.97046286%2C11.27063047'
         )}
       </div>
     </div>
