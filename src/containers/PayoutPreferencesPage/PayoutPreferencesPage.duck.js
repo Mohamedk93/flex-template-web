@@ -55,7 +55,12 @@ export const savePayoutDetails = values => (dispatch, getState, sdk) => {
   dispatch(savePayoutDetailsRequest());
 
   return dispatch(createStripeAccount(values))
-    .then(() => dispatch(savePayoutDetailsSuccess()))
+    .then(() => {
+      dispatch(savePayoutDetailsSuccess());
+      sdk.currentUser.updateProfile(
+        { publicData: { stripeEnabled: true } }
+      );
+    })
     .catch(() => dispatch(savePayoutDetailsError()));
 };
 
