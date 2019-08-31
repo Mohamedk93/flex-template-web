@@ -8,9 +8,9 @@ import { NamedLink } from '../../components';
 
 import css from './SectionLocations.css';
 
-import helsinkiImage from './images/americas2.jpg';
-import rovaniemiImage from './images/Europe2.jpg';
-import rukaImage from './images/MEA2.jpg';
+import helsinkiImage from './images/americas.jpg';
+import rovaniemiImage from './images/Europe.jpg';
+import rukaImage from './images/MEA.jpg';
 
 class LocationImage extends Component {
   render() {
