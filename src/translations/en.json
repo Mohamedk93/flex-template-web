@@ -191,7 +191,7 @@
   "EditListingPoliciesForm.rulesPlaceholder": "Describe the no-nos",
   "EditListingPoliciesForm.showListingFailed": "Fetching listing data failed",
   "EditListingPoliciesForm.updateFailed": "Failed to update listing. Please try again.",
-  "EditListingPoliciesPanel.createListingTitle": "Time to set some ground rules for the bathers.",
+  "EditListingPoliciesPanel.createListingTitle": "Time to set some rules.",
   "EditListingPoliciesPanel.title": "Edit the rules of {listingTitle}",
   "EditListingPricingForm.priceInputPlaceholder": "Choose your price…",
   "EditListingPricingForm.pricePerDay": "Price per day in USD",
