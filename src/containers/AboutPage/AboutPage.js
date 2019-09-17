@@ -39,20 +39,20 @@ const AboutPage = () => {
 
           <div className={css.contentWrapper}>
             <div className={css.contentSide}>
-              <p>Freelancer growth is booming, and they need easy and affordable places to work - Mohamed K, CEO & Founder</p>
+              <p>We envision a world where people have access to book workspaces from their fingertips. We envision to be the gateway that puts unused workspaces on the market. The Co-Founders: Mohamed K. & Ali Shweki</p>
             </div>
 
             <div className={css.contentMain}>
               <h2>
-                Booming start-ups, increase in free lancers, there are many reasons that are causing the workforce to decentralize. These people need access to flexible work spaces.
+                Booming start-ups, increase in the number of freelancers, there are many reasons that are causing the workforce to decentralize. These people need access to flexible work spaces.
               </h2>
 
               <p>
-                Hotdesk is a marketplace platform for those who want spaces to work, and those with additional spaces that would like to make more income.
-                Hosts can upload their work spaces in a few clicks, and they can be accessed instantly by customers looking for a place to work.
+                Hotdesk is an Online Platform for Workspaces. We connect Office Owners to those who are looking for places to work.
+                Hosts can upload their work spaces in a few clicks, and they can be accessed instantly by customers.
               </p>
 
-              <h3 className={css.subtitle}>Do you have extra work spaces??</h3>
+              <h3 className={css.subtitle}>Do you have extra work spaces?</h3>
 
               <p>
                 Hotdesk offers you a good way to earn some extra cash! If you're not fully
