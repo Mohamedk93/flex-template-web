@@ -200,13 +200,8 @@ export class CheckoutPageComponent extends Component {
       if(paymentMethod === 'credit card') {
         fetchSpeculatedTransaction({          
           listingId,
-
-          // Update: Maybe we need use:
           bookingStart,
           bookingEnd,
-
-          bookingStart: bookingStartForAPI,
-          bookingEnd: bookingEndForAPI,
           quantity: pageData.bookingData.hours,
         });
       };
@@ -214,8 +209,8 @@ export class CheckoutPageComponent extends Component {
       if(paymentMethod === 'cash') {
         fetchSpeculatedCashTransaction({
           listingId,
-          bookingStart: bookingStartForAPI,
-          bookingEnd: bookingEndForAPI,
+          bookingStart,
+          bookingEnd,
           quantity: pageData.bookingData.hours,
         });
       };
@@ -497,6 +492,7 @@ export class CheckoutPageComponent extends Component {
       });
   }
 
+  // Update: New handler for submitting
   handleSubmitNew(values) {
     if (this.state.submitting) {
       return;

@@ -10,6 +10,7 @@ import { FieldDateInput, FieldSelect } from '../../components';
 import css from './DateHourPicker.css';
 
 const HOUR_FORMAT = 'hh:mm a';
+const identity = v => v;
 
 export const getHours = dateHour => {
   const { bookingDate, hourStart, hourEnd } = dateHour || {};
@@ -175,7 +176,7 @@ const DateHourPicker = props => {
             name={`${id}.bookingDate`}
             label={bookingDateLabel}
             placeholderText={datePlaceholderText}
-            format={null}
+            format={identity}
             onBlur={onFieldBlur}
             onChange={onDateChange}
             useMobileMargins
