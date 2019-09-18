@@ -53,6 +53,7 @@ exports[`CheckoutPage matches snapshot 1`] = `
               },
             },
             "id": UUID {
+              "_sdkType": "UUID",
               "uuid": "author",
             },
             "type": "user",
@@ -76,21 +77,26 @@ exports[`CheckoutPage matches snapshot 1`] = `
           />
         </div>
       </div>
-      <div>
-        <h3>
-          <FormattedMessage
-            id="CheckoutPage.priceBreakdownTitle"
-            values={Object {}}
-          />
-        </h3>
-      </div>
+      <div />
       <section>
-        <InjectIntl(StripePaymentForm)
+        <injectIntl(StripePaymentForm)
           authorDisplayName="author display name"
+          confirmPaymentError={null}
+          defaultPaymentMethod={null}
           formId="CheckoutPagePaymentForm"
+          hasHandledCardPayment={null}
           inProgress={false}
+          initialValues={
+            Object {
+              "name": "currentUser first name currentUser last name",
+            }
+          }
+          initiateOrderError={null}
+          loadingData={true}
+          onStripeInitialized={[Function]}
           onSubmit={[Function]}
           paymentInfo="CheckoutPage.paymentInfo"
+          paymentIntent={null}
           showInitialMessageInput={true}
         />
       </section>
@@ -125,6 +131,7 @@ exports[`CheckoutPage matches snapshot 1`] = `
                 },
               },
               "id": UUID {
+                "_sdkType": "UUID",
                 "uuid": "author",
               },
               "type": "user",
@@ -140,12 +147,6 @@ exports[`CheckoutPage matches snapshot 1`] = `
           55 CheckoutPage.perNight
         </p>
       </div>
-      <h3>
-        <FormattedMessage
-          id="CheckoutPage.priceBreakdownTitle"
-          values={Object {}}
-        />
-      </h3>
     </div>
   </div>
 </Page>

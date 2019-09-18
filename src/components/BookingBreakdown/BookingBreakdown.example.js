@@ -6,10 +6,17 @@ import {
   TRANSITION_COMPLETE,
   TRANSITION_DECLINE,
   TRANSITION_EXPIRE,
-  TRANSITION_REQUEST,
+  TRANSITION_REQUEST_PAYMENT,
+  TRANSITION_CONFIRM_PAYMENT,
   TX_TRANSITION_ACTOR_CUSTOMER,
 } from '../../util/transaction';
-import { LINE_ITEM_DAY, LINE_ITEM_NIGHT, LINE_ITEM_UNITS } from '../../util/types';
+import {
+  LINE_ITEM_DAY,
+  LINE_ITEM_NIGHT,
+  LINE_ITEM_UNITS,
+  DATE_TYPE_DATE,
+  DATE_TYPE_DATETIME,
+} from '../../util/types';
 import config from '../../config';
 import BookingBreakdown from './BookingBreakdown';
 
@@ -34,12 +41,17 @@ const exampleTransaction = params => {
     attributes: {
       createdAt: created,
       lastTransitionedAt: created,
-      lastTransition: TRANSITION_REQUEST,
+      lastTransition: TRANSITION_CONFIRM_PAYMENT,
       transitions: [
         {
           createdAt: created,
           by: TX_TRANSITION_ACTOR_CUSTOMER,
-          transition: TRANSITION_REQUEST,
+          transition: TRANSITION_REQUEST_PAYMENT,
+        },
+        {
+          createdAt: confirmed,
+          by: TX_TRANSITION_ACTOR_CUSTOMER,
+          transition: TRANSITION_CONFIRM_PAYMENT,
         },
       ],
 
@@ -54,6 +66,7 @@ export const Checkout = {
   props: {
     userRole: 'customer',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       payinTotal: new Money(9000, CURRENCY),
       payoutTotal: new Money(9000, CURRENCY),
@@ -80,6 +93,7 @@ export const CustomerOrder = {
   props: {
     userRole: 'customer',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       payinTotal: new Money(9000, CURRENCY),
       payoutTotal: new Money(9000, CURRENCY),
@@ -106,6 +120,7 @@ export const ProviderSale = {
   props: {
     userRole: 'provider',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       payinTotal: new Money(9000, CURRENCY),
       payoutTotal: new Money(7000, CURRENCY),
@@ -139,6 +154,7 @@ export const ProviderSaleZeroCommission = {
   props: {
     userRole: 'provider',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       payinTotal: new Money(9000, CURRENCY),
       payoutTotal: new Money(9000, CURRENCY),
@@ -172,6 +188,7 @@ export const ProviderSaleSingleNight = {
   props: {
     userRole: 'provider',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATE,
     transaction: exampleTransaction({
       payinTotal: new Money(4500, CURRENCY),
       payoutTotal: new Money(2500, CURRENCY),
@@ -205,8 +222,9 @@ export const ProviderSalePreauthorized = {
   props: {
     userRole: 'provider',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
-      lastTransition: TRANSITION_REQUEST,
+      lastTransition: TRANSITION_CONFIRM_PAYMENT,
       payinTotal: new Money(4500, CURRENCY),
       payoutTotal: new Money(2500, CURRENCY),
       lineItems: [
@@ -239,6 +257,7 @@ export const ProviderSaleAccepted = {
   props: {
     userRole: 'provider',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       lastTransition: TRANSITION_ACCEPT,
       payinTotal: new Money(4500, CURRENCY),
@@ -273,6 +292,7 @@ export const ProviderSaleDeclined = {
   props: {
     userRole: 'provider',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       lastTransition: TRANSITION_DECLINE,
       payinTotal: new Money(4500, CURRENCY),
@@ -307,6 +327,7 @@ export const ProviderSaleAutoDeclined = {
   props: {
     userRole: 'provider',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       lastTransition: TRANSITION_EXPIRE,
       payinTotal: new Money(4500, CURRENCY),
@@ -341,6 +362,7 @@ export const ProviderSaleDelivered = {
   props: {
     userRole: 'provider',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       lastTransition: TRANSITION_COMPLETE,
       payinTotal: new Money(4500, CURRENCY),
@@ -375,6 +397,7 @@ export const ProviderSaleCanceled = {
   props: {
     userRole: 'provider',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       lastTransition: TRANSITION_CANCEL,
       payinTotal: new Money(0, CURRENCY),
@@ -426,6 +449,7 @@ export const SingleDay = {
   props: {
     userRole: 'customer',
     unitType: LINE_ITEM_DAY,
+    dateType: DATE_TYPE_DATE,
     transaction: exampleTransaction({
       payinTotal: new Money(4500, CURRENCY),
       payoutTotal: new Money(4500, CURRENCY),
@@ -452,6 +476,7 @@ export const MultipleDays = {
   props: {
     userRole: 'customer',
     unitType: LINE_ITEM_DAY,
+    dateType: DATE_TYPE_DATE,
     transaction: exampleTransaction({
       payinTotal: new Money(9000, CURRENCY),
       payoutTotal: new Money(9000, CURRENCY),
@@ -478,6 +503,7 @@ export const UnitsType = {
   props: {
     userRole: 'customer',
     unitType: LINE_ITEM_UNITS,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       payinTotal: new Money(9000, CURRENCY),
       payoutTotal: new Money(9000, CURRENCY),
@@ -504,6 +530,7 @@ export const CustomPricing = {
   props: {
     userRole: 'customer',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       payinTotal: new Money(12800, CURRENCY),
       payoutTotal: new Money(12600, CURRENCY),
@@ -554,6 +581,7 @@ export const CustomPricingWithRefund = {
   props: {
     userRole: 'customer',
     unitType: LINE_ITEM_NIGHT,
+    dateType: DATE_TYPE_DATETIME,
     transaction: exampleTransaction({
       payinTotal: new Money(0, CURRENCY),
       payoutTotal: new Money(0, CURRENCY),

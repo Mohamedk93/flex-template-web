@@ -4,7 +4,8 @@ import { compose } from 'redux';
 import { Form as FinalForm } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import { FieldArray } from 'react-final-form-arrays';
-import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+// import { FormattedMessage, intlShape, injectIntl } from 'react-intl'; Update: Old version
+import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
 import moment from 'moment';
 import Decimal from 'decimal.js';
@@ -94,6 +95,8 @@ const hoursValid = dateHour => {
 
   return hoursSelected(dateHour) && totalHours > 0 && isFullHours(totalHours);
 };
+
+const identity = v => v;
 
 export class BookingDatesFormComponent extends Component {
   constructor(props) {
@@ -236,6 +239,12 @@ export class BookingDatesFormComponent extends Component {
           const {
             datePlaceholder,
             form,
+
+            // new update:
+            endDatePlaceholder,
+            startDatePlaceholder,
+            formId,
+
             handleSubmit,
             intl,
             isOwnListing,
@@ -316,6 +325,30 @@ export class BookingDatesFormComponent extends Component {
             attributes.profile.publicData.stripeEnabled == true)
 
           return (
+            
+            // Update: 
+            // <Form onSubmit={handleSubmit} className={classes}>
+            //   {timeSlotsError}
+            //   <FieldDateRangeInput
+            //     className={css.bookingDates}
+            //     name="bookingDates"
+            //     unitType={unitType}
+            //     startDateId={`${formId}.bookingStartDate`}
+            //     startDateLabel={bookingStartLabel}
+            //     startDatePlaceholderText={startDatePlaceholderText}
+            //     endDateId={`${formId}.bookingEndDate`}
+            //     endDateLabel={bookingEndLabel}
+            //     endDatePlaceholderText={endDatePlaceholderText}
+            //     focusedInput={this.state.focusedInput}
+            //     onFocusedInputChange={this.onFocusedInputChange}
+            //     format={identity}
+            //     timeSlots={timeSlots}
+            //     useMobileMargins
+            //     validate={composeValidators(
+            //       required(requiredMessage),
+            //       bookingDatesRequired(startDateErrorMessage, endDateErrorMessage)
+            //     )}
+
             <Form
               onSubmit={e => {
                 if (firstDate && firstDate.bookingDate) {

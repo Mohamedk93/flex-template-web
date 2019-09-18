@@ -1,6 +1,6 @@
 import React from 'react';
 import { string } from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { NamedLink } from '../../components';
 
@@ -24,6 +24,7 @@ const SectionHero = props => {
           name="SearchPage"
           to={{
             search:
+              // Update: without s?
               's?address=San%20Francisco%2C%20CA%2C%20USA&bounds=37.812%2C-122.34820000000002%2C37.70339999999999%2C-122.52699999999999',
           }}
           className={css.heroButton}
