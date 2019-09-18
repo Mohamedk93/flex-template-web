@@ -8,10 +8,6 @@ import classNames from 'classnames';
 import config from '../../config';
 import routeConfiguration from '../../routeConfiguration';
 import { pathByRouteName, findRouteByRouteName } from '../../util/routes';
-
-import { ensureListing, ensureUser, ensureTransaction, ensureBooking } from '../../util/data';
-
-// import { propTypes } from '../../util/types'; Update: old version
 import { propTypes, LINE_ITEM_NIGHT, LINE_ITEM_DAY, DATE_TYPE_DATE } from '../../util/types';
 import {
   ensureListing,
