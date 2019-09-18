@@ -1,5 +1,5 @@
 import React from 'react';
-import {FormattedMessage, FormattedHTMLMessage, FormattedDate} from 'react-intl';
+import {FormattedMessage, FormattedHTMLMessage, FormattedDate} from '../../util/reactIntl';
 import moment from 'moment';
 import {propTypes} from '../../util/types';
 import { daysBetween } from '../../util/dates';
