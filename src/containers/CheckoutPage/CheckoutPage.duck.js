@@ -189,19 +189,19 @@ export const initiateOrder = (orderParams, transactionId, processAlias) => (disp
         id: transactionId,
 
     // Update: new version
-    //     transition: TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
-    //     params: orderParams,
-    //   }
-    // : {
-    //     processAlias: config.bookingProcessAlias,
-    //     transition: TRANSITION_REQUEST_PAYMENT,
-
-        transition: TRANSITION_REQUEST_AFTER_ENQUIRY,
+        transition: TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
         params: orderParams,
       }
     : {
-        processAlias,
-        transition: TRANSITION_REQUEST,
+        processAlias: config.bookingProcessAlias,
+        transition: TRANSITION_REQUEST_PAYMENT,
+
+    //     transition: TRANSITION_REQUEST_AFTER_ENQUIRY,
+    //     params: orderParams,
+    //   }
+    // : {
+    //     processAlias,
+    //     transition: TRANSITION_REQUEST,
         params: orderParams,
       };
   const queryParams = {

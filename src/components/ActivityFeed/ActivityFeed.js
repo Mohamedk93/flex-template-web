@@ -17,6 +17,7 @@ import {
   TRANSITION_REVIEW_1_BY_PROVIDER,
   TRANSITION_REVIEW_2_BY_CUSTOMER,
   TRANSITION_REVIEW_2_BY_PROVIDER,
+  TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
   transitionIsReviewed,
   txIsDelivered,
   txIsInFirstReviewBy,
@@ -114,8 +115,7 @@ const resolveTransitionMessage = (
   const displayName = otherUsersName;
 
   switch (currentTransition) {
-    case TRANSITION_REQUEST:
-    // case TRANSITION_CONFIRM_PAYMENT: Update: new version
+    case TRANSITION_CONFIRM_PAYMENT:
       return isOwnTransition ? (
         <FormattedMessage id="ActivityFeed.ownTransitionRequest" values={{ listingTitle }} />
       ) : (
@@ -124,7 +124,7 @@ const resolveTransitionMessage = (
           values={{ displayName, listingTitle }}
         />
       );
-    case TRANSITION_REQUEST_AFTER_ENQUIRY:
+    case TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY:
       return isOwnTransition ? (
           <FormattedMessage id="ActivityFeed.ownTransitionRequest" values={{ listingTitle }} />
         ) : (
@@ -157,13 +157,13 @@ const resolveTransitionMessage = (
       // Show the leave a review link if the state is delivered and if the current user is the first to leave a review
       const reviewPeriodJustStarted = txIsDelivered(transaction);
 
-      const reviewLink =
-        reviewPeriodJustStarted || !(reviewPeriodIsOver || userHasLeftAReview) ? (
-            <InlineTextButton onClick={onOpenReviewModal}>
-              <FormattedMessage id="ActivityFeed.leaveAReview" values={{ displayName }} />
-            </InlineTextButton>
-          ) : null;
-
+      // Old version: 
+      // const reviewLink =
+      //   reviewPeriodJustStarted || !(reviewPeriodIsOver || userHasLeftAReview) ? (
+      //       <InlineTextButton onClick={onOpenReviewModal}>
+      //         <FormattedMessage id="ActivityFeed.leaveAReview" values={{ displayName }} />
+      //       </InlineTextButton>
+      //     ) : null;
       // New version: 
       const reviewAsFirstLink = reviewPeriodJustStarted ? (
         <InlineTextButton onClick={onOpenReviewModal}>
