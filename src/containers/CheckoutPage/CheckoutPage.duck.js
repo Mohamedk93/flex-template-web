@@ -329,7 +329,7 @@ export const speculateTransaction = params => (dispatch, getState, sdk) => {
 export const speculateCashTransaction = params => (dispatch, getState, sdk) => {
   dispatch(speculateTransactionRequest());
   const bodyParams = {
-    transition: TRANSITION_REQUEST,
+    transition: TRANSITION_REQUEST_PAYMENT,
     processAlias: config.cashBookingProcessAlias,
     params: {
       ...params,

@@ -42,8 +42,6 @@ import {
 } from '../../components';
 import { StripePaymentForm, CashPaymentForm } from '../../forms';
 import { isScrollingDisabled } from '../../ducks/UI.duck';
-import { initiateOrder, setInitialValues, speculateTransaction, speculateCashTransaction } from './CheckoutPage.duck';
-import config from '../../config';
 
 import { handleCardPayment, retrievePaymentIntent } from '../../ducks/stripe.duck';
 import { savePaymentMethod } from '../../ducks/paymentMethods.duck';
@@ -55,7 +53,9 @@ import {
   stripeCustomer,
   confirmPayment,
   sendMessage,
+  speculateCashTransaction,
 } from './CheckoutPage.duck';
+
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
 import css from './CheckoutPage.css';
 
@@ -512,13 +512,14 @@ export class CheckoutPageComponent extends Component {
           })
         );
         const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, {
-          id: id.uuid,
+          // id: id.uuid, Update: old version
+          id: orderId.uuid
         });
 
         // Update: New version
         const routes = routeConfiguration();
         const initialMessageFailedToTransaction = messageSuccess ? null : orderId;
-        const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: orderId.uuid });
+
         const initialValues = {
           initialMessageFailedToTransaction,
           savePaymentMethodFailed: !paymentMethodSaved,
@@ -614,7 +615,6 @@ export class CheckoutPageComponent extends Component {
     const currentListing = ensureListing(listing);
     const currentAuthor = ensureUser(currentListing.author);
 
-    const listingTitle = currentListing.attributes.title;
     const title = intl.formatMessage({ id: 'CheckoutPage.title' }, { listingTitle });
 
     const pageProps = { title, scrollingDisabled };
@@ -705,7 +705,7 @@ export class CheckoutPageComponent extends Component {
 
     const listingTitle = currentListing.attributes.title;
     const bookingTime = bookingData.message[1];
-    const title = intl.formatMessage({ id: 'CheckoutPage.title' }, { listingTitle });
+
     const formTitle = intl.formatMessage({ id: 'EnquiryForm.heading' }, { listingTitle });
     const timeTitle = intl.formatMessage({ id: 'CheckoutPage.bookingTime' }, { bookingTime });
 
@@ -800,26 +800,8 @@ export class CheckoutPageComponent extends Component {
           <FormattedMessage id="CheckoutPage.speculateFailedMessage" />
         </p>
       );
-    }
+    };
 
-    const topbar = (
-      <div className={css.topbar}>
-        <NamedLink className={css.home} name="LandingPage">
-          <Logo
-            className={css.logoMobile}
-            title={intl.formatMessage({ id: 'CheckoutPage.goToLandingPage' })}
-            format="mobile"
-          />
-          <Logo
-            className={css.logoDesktop}
-            alt={intl.formatMessage({ id: 'CheckoutPage.goToLandingPage' })}
-            format="desktop"
-          />
-        </NamedLink>
-      </div>
-    );
-
-    const pageProps = { title, scrollingDisabled };
     const unitType = config.bookingUnitType;
     const isNightly = unitType === LINE_ITEM_NIGHT;
     const isDaily = unitType === LINE_ITEM_DAY;
@@ -1045,9 +1027,6 @@ const mapStateToProps = state => {
     speculateTransactionError,
     speculatedTransaction,
     stripeCustomerFetched,
-    speculateTransactionInProgress,
-    speculateTransactionError,
-    speculatedTransaction,
     transaction,
     initiateOrderError,
     confirmPaymentError,
