@@ -312,19 +312,18 @@ const personTokenParams = (personData, companyConfig) => {
   const personalIdNumberRequired = companyConfig && companyConfig.personalIdNumberRequired;
   const ssnLast4Required = companyConfig && companyConfig.ssnLast4Required;
 
-  const idNumberMaybe =
-    country === 'US'
-      ? { ssn_last_4: personalIdNumber }
-      : personalIdNumber
-      ? { id_number: personalIdNumber }
-      : {};
-
+  // const idNumberMaybe =
+  //   country === 'US'
+  //     ? { ssn_last_4: personalIdNumber }
+  //     : personalIdNumber
+  //     ? { id_number: personalIdNumber }
+  //     : {};
   // Update: new version
-  // const idNumberMaybe = ssnLast4Required
-  //   ? { ssn_last_4: personalIdNumber }
-  //   : personalIdNumberRequired
-  //   ? { id_number: personalIdNumber }
-  //   : {};
+  const idNumberMaybe = ssnLast4Required
+    ? { ssn_last_4: personalIdNumber }
+    : personalIdNumberRequired
+    ? { id_number: personalIdNumber }
+    : {};
 
   const accountOpenerMaybe = isAccountOpener ? { account_opener: true } : {};
   const jobTitleMaybe = title ? { title } : {};
@@ -534,19 +533,18 @@ const accountTokenParamsForIndividual = (individual, individualConfig) => {
   const personalIdNumberRequired = individualConfig && individualConfig.personalIdNumberRequired;
   const ssnLast4Required = individualConfig && individualConfig.ssnLast4Required;
 
-  const idNumberMaybe =
-    country === 'US'
-      ? { ssn_last_4: personalIdNumber }
-      : personalIdNumber
-      ? { id_number: personalIdNumber }
-      : {};
-
+  // const idNumberMaybe =
+  //   country === 'US'
+  //     ? { ssn_last_4: personalIdNumber }
+  //     : personalIdNumber
+  //     ? { id_number: personalIdNumber }
+  //     : {};
   // Update: new version
-  // const idNumberMaybe = ssnLast4Required
-  //   ? { ssn_last_4: personalIdNumber }
-  //   : personalIdNumberRequired
-  //   ? { id_number: personalIdNumber }
-  //   : {};
+  const idNumberMaybe = ssnLast4Required
+    ? { ssn_last_4: personalIdNumber }
+    : personalIdNumberRequired
+    ? { id_number: personalIdNumber }
+    : {};
 
   return {
     business_type: 'individual',
