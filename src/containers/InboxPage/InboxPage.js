@@ -153,31 +153,31 @@ export const txState = (intl, tx, type) => {
   }
 };
 
-const bookingData = (unitType, tx, isOrder, intl) => {
-  // Attributes: displayStart and displayEnd can be used to differentiate shown time range
-  // from actual start and end times used for availability reservation. It can help in situations
-  // where there are preparation time needed between bookings.
-  // Read more: https://www.sharetribe.com/api-reference/#bookings
-  const { start, end, displayStart, displayEnd } = tx.booking.attributes;
-  const startDate = displayStart || start;
-  const endDateRaw = displayEnd || end;
-  const isDaily = unitType === LINE_ITEM_DAY;
-  const isUnits = unitType === LINE_ITEM_UNITS;
-  const isSingleDay = isDaily && daysBetween(startDate, endDateRaw) === 1;
-  const bookingStart = formatDate(intl, startDate);
+// const bookingData = (unitType, tx, isOrder, intl) => {
+//   // Attributes: displayStart and displayEnd can be used to differentiate shown time range
+//   // from actual start and end times used for availability reservation. It can help in situations
+//   // where there are preparation time needed between bookings.
+//   // Read more: https://www.sharetribe.com/api-reference/#bookings
+//   const { start, end, displayStart, displayEnd } = tx.booking.attributes;
+//   const startDate = displayStart || start;
+//   const endDateRaw = displayEnd || end;
+//   const isDaily = unitType === LINE_ITEM_DAY;
+//   const isUnits = unitType === LINE_ITEM_UNITS;
+//   const isSingleDay = isDaily && daysBetween(startDate, endDateRaw) === 1;
+//   const bookingStart = formatDate(intl, startDate);
 
-  // Shift the exclusive API end date with daily bookings
-  const endDate =
-    isDaily || isUnits
-      ? moment(endDateRaw)
-          .subtract(1, 'days')
-          .toDate()
-      : endDateRaw;
-  const bookingEnd = formatDate(intl, endDate);
-  const bookingPrice = isOrder ? tx.attributes.payinTotal : tx.attributes.payoutTotal;
-  const price = formatMoney(intl, bookingPrice);
-  return { bookingStart, bookingEnd, price, isSingleDay };
-};
+//   // Shift the exclusive API end date with daily bookings
+//   const endDate =
+//     isDaily || isUnits
+//       ? moment(endDateRaw)
+//           .subtract(1, 'days')
+//           .toDate()
+//       : endDateRaw;
+//   const bookingEnd = formatDate(intl, endDate);
+//   const bookingPrice = isOrder ? tx.attributes.payinTotal : tx.attributes.payoutTotal;
+//   const price = formatMoney(intl, bookingPrice);
+//   return { bookingStart, bookingEnd, price, isSingleDay };
+// };
 
 // Functional component as internal helper to print BookingInfo if that is needed
 // Update: Functional component as internal helper to print BookingTimeInfo if that is needed
