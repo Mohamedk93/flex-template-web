@@ -88,14 +88,6 @@ export default function checkoutPageReducer(state = initialState, action = {}) {
     // case CONFIRM_PAYMENT_ERROR:
     //   console.error(payload); // eslint-disable-line no-console
     //   return { ...state, confirmPaymentError: payload };
-    // Update: new version
-    // case CONFIRM_PAYMENT_REQUEST:
-    //   return { ...state, confirmPaymentError: null };
-    // case CONFIRM_PAYMENT_SUCCESS:
-    //   return state;
-    // case CONFIRM_PAYMENT_ERROR:
-    //   console.error(payload); // eslint-disable-line no-console
-    //   return { ...state, confirmPaymentError: payload };
 
     case STRIPE_CUSTOMER_REQUEST:
       return { ...state, stripeCustomerFetched: false };
@@ -133,20 +125,6 @@ const initiateOrderError = e => ({
 });
 
 // const confirmPaymentRequest = () => ({ type: CONFIRM_PAYMENT_REQUEST });
-//
-// const confirmPaymentSuccess = orderId => ({
-//   type: CONFIRM_PAYMENT_SUCCESS,
-//   payload: orderId,
-// });
-//
-// const confirmPaymentError = e => ({
-//   type: CONFIRM_PAYMENT_ERROR,
-//   error: true,
-//   payload: e,
-// });
-
-// Update: new vesrion
-// const confirmPaymentRequest = () => ({ type: CONFIRM_PAYMENT_REQUEST });
 
 // const confirmPaymentSuccess = orderId => ({
 //   type: CONFIRM_PAYMENT_SUCCESS,
@@ -182,26 +160,17 @@ export const stripeCustomerError = e => ({
 
 /* ================ Thunks ================ */
 
-export const initiateOrder = (orderParams, transactionId, processAlias) => (dispatch, getState, sdk) => {
+export const initiateOrder = (orderParams, transactionId) => (dispatch, getState, sdk) => {
   dispatch(initiateOrderRequest());
   const bodyParams = transactionId
     ? {
         id: transactionId,
-
-    // Update: new version
         transition: TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
         params: orderParams,
       }
     : {
-        processAlias: config.bookingProcessAlias,
+        processAlias: config.cashBookingProcessAlias,
         transition: TRANSITION_REQUEST_PAYMENT,
-
-    //     transition: TRANSITION_REQUEST_AFTER_ENQUIRY,
-    //     params: orderParams,
-    //   }
-    // : {
-    //     processAlias,
-    //     transition: TRANSITION_REQUEST,
         params: orderParams,
       };
   const queryParams = {

@@ -304,6 +304,8 @@ export class CheckoutPageComponent extends Component {
 
     const selectedPaymentFlow = paymentFlow(selectedPaymentMethod, saveAfterOnetimePayment);
 
+    const { bookingData, bookingDates, listing } = pageData; // Update: replacing
+
     // Step 1: initiate order by requesting payment from Marketplace API
     const fnRequestPayment = fnParams => {
       // fnParams should be { listingId, bookingStart, bookingEnd }
@@ -321,7 +323,7 @@ export class CheckoutPageComponent extends Component {
       const order = ensureTransaction(fnParams);
       if (order.id) {
         // Store order.
-        const { bookingData, bookingDates, listing } = pageData;
+        // const { bookingData, bookingDates, listing } = pageData;
         storeData(bookingData, bookingDates, listing, order, STORAGE_KEY);
         this.setState({ pageData: { ...pageData, transaction: order } });
       }
@@ -438,62 +440,14 @@ export class CheckoutPageComponent extends Component {
       listingId: pageData.listing.id,
       bookingStart: tx.booking.attributes.start,
       bookingEnd: tx.booking.attributes.end,
+      quantity: bookingData.hours,
       ...optionalPaymentParams,
     };
 
     return handlePaymentIntentCreation(orderParams);
   }
-
-  // Update: old version
+  
   handleSubmit(values) {
-    if (this.state.submitting) {
-      return;
-    }
-    this.setState({ submitting: true });
-
-    const cardToken = values.token;
-    const initialMessage = values.message;
-    const { history, sendOrderRequest, speculatedTransaction, dispatch, bookingData } = this.props;
-    const processAlias = config.bookingProcessAlias;
-
-    // Create order aka transaction
-    // NOTE: if unit type is line-item/units, quantity needs to be added.
-    // The way to pass it to checkout page is through pageData.bookingData
-    const requestParams = {
-      listingId: this.state.pageData.listing.id,
-      cardToken,
-      bookingStart: speculatedTransaction.booking.attributes.start,
-      bookingEnd: speculatedTransaction.booking.attributes.end,
-      quantity: bookingData.hours,
-    };
-
-    sendOrderRequest(requestParams, initialMessage, processAlias)
-      .then(values => {
-        const { id, initialMessageSuccess } = values;
-        this.setState({ submitting: false });
-        const routes = routeConfiguration();
-        const OrderPage = findRouteByRouteName('OrderDetailsPage', routes);
-
-        // Transaction is already created, but if the initial message
-        // sending failed, we tell it to the OrderDetailsPage.
-        dispatch(
-          OrderPage.setInitialValues({
-            initialMessageFailedToTransaction: initialMessageSuccess ? null : id,
-          })
-        );
-        const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, {
-          id: id.uuid,
-        });
-        clearData(STORAGE_KEY);
-        history.push(orderDetailsPath);
-      })
-      .catch(() => {
-        this.setState({ submitting: false });
-      });
-  }
-
-  // Update: New handler for submitting
-  handleSubmitNew(values) {
     if (this.state.submitting) {
       return;
     }
@@ -511,6 +465,46 @@ export class CheckoutPageComponent extends Component {
       country,
       saveAfterOnetimePayment,
     } = formValues;
+
+    // Update: Old version
+    // const cardToken = values.token;
+    // const initialMessage = values.message;
+    // const { history, sendOrderRequest, speculatedTransaction, dispatch, bookingData } = this.props;
+    // const processAlias = config.bookingProcessAlias;
+    // Create order aka transaction
+    // NOTE: if unit type is line-item/units, quantity needs to be added.
+    // The way to pass it to checkout page is through pageData.bookingData
+    // const requestParams = {
+    //   listingId: this.state.pageData.listing.id,
+    //   cardToken,
+    //   bookingStart: speculatedTransaction.booking.attributes.start,
+    //   bookingEnd: speculatedTransaction.booking.attributes.end,
+    //   quantity: bookingData.hours,
+    // };
+
+    // sendOrderRequest(requestParams, initialMessage, processAlias)
+    //   .then(values => {
+    //     const { id, initialMessageSuccess } = values;
+    //     this.setState({ submitting: false });
+    //     const routes = routeConfiguration();
+    //     const OrderPage = findRouteByRouteName('OrderDetailsPage', routes);
+
+    //     // Transaction is already created, but if the initial message
+    //     // sending failed, we tell it to the OrderDetailsPage.
+    //     dispatch(
+    //       OrderPage.setInitialValues({
+    //         initialMessageFailedToTransaction: initialMessageSuccess ? null : id,
+    //       })
+    //     );
+    //     const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, {
+    //       id: id.uuid,
+    //     });
+    //     clearData(STORAGE_KEY);
+    //     history.push(orderDetailsPath);
+    //   })
+    //   .catch(() => {
+    //     this.setState({ submitting: false });
+    //   });
 
     // Billing address is recommended.
     // However, let's not assume that <StripePaymentAddress> data is among formValues.
@@ -858,7 +852,11 @@ export class CheckoutPageComponent extends Component {
 
     const initalValuesForStripePayment = { name: userName };
 
-    const bookingTime = bookingData.message[1];
+
+    // TO DO UPDATE
+    // const bookingTime = "wefwef";
+    const bookingTime = bookingData && bookingData.message[1] ? bookingData.message[1] : null;
+
     const formTitle = intl.formatMessage({ id: 'EnquiryForm.heading' }, { listingTitle });
     const timeTitle = intl.formatMessage({ id: 'CheckoutPage.bookingTime' }, { bookingTime });
 

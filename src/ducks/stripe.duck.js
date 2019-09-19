@@ -672,11 +672,8 @@ export const handleCardPayment = params => dispatch => {
     ? [stripePaymentIntentClientSecret, card, paymentParams]
     : [stripePaymentIntentClientSecret];
 
-  // Update: new version
-  // return stripe
-  //   .handleCardPayment(...args)
   return stripe
-    .handleCardPayment(stripePaymentIntentClientSecret, card, paymentParams)
+    .handleCardPayment(...args)
     .then(response => {
       if (response.error) {
         return Promise.reject(response);
