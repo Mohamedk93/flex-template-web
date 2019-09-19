@@ -80,7 +80,6 @@ const paymentFlow = (selectedPaymentMethod, saveAfterOnetimePayment) => {
 
 const initializeOrderPage = (initialValues, routes, dispatch) => {
   const OrderPage = findRouteByRouteName('OrderDetailsPage', routes);
-
   // Transaction is already created, but if the initial message
   // sending failed, we tell it to the OrderDetailsPage.
   dispatch(OrderPage.setInitialValues(initialValues));
@@ -236,26 +235,17 @@ export class CheckoutPageComponent extends Component {
       quantity: bookingData.hours,
     };
 
-    const processAlias = config.cashBookingProcessAlias;
-
-    sendOrderRequest(requestParams, initialMessage, processAlias)
-      .then(values => {
-        const { id, initialMessageSuccess } = values;
-
+    sendOrderRequest(requestParams, initialMessage)
+      .then(res => {
+        const { id, messageSuccess } = res; //Update: check data
         this.setState({ submitting: false });
         const routes = routeConfiguration();
-        const OrderPage = findRouteByRouteName('OrderDetailsPage', routes);
-
-        // Transaction is already created, but if the initial message
-        // sending failed, we tell it to the OrderDetailsPage.
-        dispatch(
-          OrderPage.setInitialValues({
-            initialMessageFailedToTransaction: initialMessageSuccess ? null : id,
-          })
-        );
-        const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, {
-          id: id.uuid,
-        });
+        const initialMessageFailedToTransaction = messageSuccess ? null : id;
+        const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: id.uuid });
+        const initialValues = {
+          initialMessageFailedToTransaction,
+        };
+        initializeOrderPage(initialValues, routes, dispatch);
         clearData(STORAGE_KEY);
         history.push(orderDetailsPath);
       })
@@ -543,7 +533,7 @@ export class CheckoutPageComponent extends Component {
 
     this.handlePaymentIntent(requestPaymentParams)
       .then(res => {
-        const { orderId, messageSuccess, paymentMethodSaved } = res;
+        const { orderId, messageSuccess, paymentMethodSaved } = res; // Update: check data
         this.setState({ submitting: false });
 
         const routes = routeConfiguration();
@@ -852,10 +842,8 @@ export class CheckoutPageComponent extends Component {
 
     const initalValuesForStripePayment = { name: userName };
 
-
-    // TO DO UPDATE
-    // const bookingTime = "wefwef";
-    const bookingTime = bookingData && bookingData.message[1] ? bookingData.message[1] : null;
+    const bookingTime = "Test text";
+    // const bookingTime = bookingData && bookingData.message[1] ? bookingData.message[1] : null;
 
     const formTitle = intl.formatMessage({ id: 'EnquiryForm.heading' }, { listingTitle });
     const timeTitle = intl.formatMessage({ id: 'CheckoutPage.bookingTime' }, { bookingTime });
