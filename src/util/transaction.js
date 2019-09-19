@@ -15,6 +15,8 @@ import { ensureTransaction } from './data';
 // After this transition, the actual payment must be made on client-side directly to Stripe.
 export const TRANSITION_REQUEST_PAYMENT = 'transition/request-payment';
 
+export const TRANSITION_REQUEST = 'transition/request';
+
 // A customer can also initiate a transaction with an enquiry, and
 // then transition that with a request.
 export const TRANSITION_ENQUIRE = 'transition/enquire';

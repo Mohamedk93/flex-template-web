@@ -106,21 +106,8 @@ export const TransactionPageComponent = props => {
     );
   };
 
-
-  // Update: TO DO: Need get correct alias
-  const aliasName = transaction &&
-  transaction.attributes &&
-  transaction.attributes.processName ?
-    transaction.attributes.processName : null;
-  console.log("ALiassss", aliasName);
-  // const isCashPayment = (aliasName === config.cashBookingProcessAlias) ? true : false;
-  const isCashPayment = false;
-
-
-
-  // If payment is pending and if payment not with cash, redirect to CheckoutPage
+  // If payment is pending redirect to CheckoutPage
   if (
-    !isCashPayment &&
     txIsPaymentPending(currentTransaction) &&
     isCustomerRole &&
     currentTransaction.attributes.lineItems

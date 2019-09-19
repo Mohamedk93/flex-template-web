@@ -3,6 +3,7 @@ import config from '../../config';
 import { denormalisedResponseEntities } from '../../util/data';
 import { storableError } from '../../util/errors';
 import {
+  TRANSITION_REQUEST,
   TRANSITION_REQUEST_PAYMENT,
   TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
   TRANSITION_CONFIRM_PAYMENT,
@@ -162,6 +163,7 @@ export const stripeCustomerError = e => ({
 
 export const initiateOrder = (orderParams, transactionId, processAlias) => (dispatch, getState, sdk) => {
   dispatch(initiateOrderRequest());
+  const transition = (processAlias === config.cashBookingProcessAlias) ? TRANSITION_REQUEST : TRANSITION_REQUEST_PAYMENT;
   const bodyParams = transactionId
     ? {
         id: transactionId,
@@ -170,7 +172,7 @@ export const initiateOrder = (orderParams, transactionId, processAlias) => (disp
       }
     : {
         processAlias,
-        transition: TRANSITION_REQUEST_PAYMENT,
+        transition,
         params: orderParams,
       };
   const queryParams = {
@@ -298,7 +300,7 @@ export const speculateTransaction = params => (dispatch, getState, sdk) => {
 export const speculateCashTransaction = params => (dispatch, getState, sdk) => {
   dispatch(speculateTransactionRequest());
   const bodyParams = {
-    transition: TRANSITION_REQUEST_PAYMENT,
+    transition: TRANSITION_REQUEST,
     processAlias: config.cashBookingProcessAlias,
     params: {
       ...params,

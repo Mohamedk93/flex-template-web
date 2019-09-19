@@ -260,10 +260,22 @@ export class TransactionPanelComponent extends Component {
           showDetailCardHeadings: isCustomer,
           showAddress: isCustomer,
         };
+      } else if(false) {
+        return { 
+          headingState: HEADING_ACCEPTED,
+          showDetailCardHeadings: isCustomer,
+          showAddress: isCustomer,
+        };
       } else {
-        return { headingState: 'unknown' };
+        return { 
+          // headingState: 'unknown' // Update: TO DO
+          headingState: HEADING_ACCEPTED,
+          showDetailCardHeadings: isCustomer,
+          showAddress: isCustomer,
+        };
       }
     };
+
     const stateData = stateDataFn(currentTransaction);
 
     const deletedListingTitle = intl.formatMessage({
