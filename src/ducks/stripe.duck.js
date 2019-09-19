@@ -290,7 +290,7 @@ const formatAddress = address => {
 };
 
 // Util: rename personToken params to match Stripe API specifications
-const personTokenParams = (personData, companyConfig) => {
+const personTokenParams = (personData, companyConfig, country) => {
   const {
     isAccountOpener,
     fname: firstName,
@@ -312,18 +312,19 @@ const personTokenParams = (personData, companyConfig) => {
   const personalIdNumberRequired = companyConfig && companyConfig.personalIdNumberRequired;
   const ssnLast4Required = companyConfig && companyConfig.ssnLast4Required;
 
-  // const idNumberMaybe =
-  //   country === 'US'
-  //     ? { ssn_last_4: personalIdNumber }
-  //     : personalIdNumber
-  //     ? { id_number: personalIdNumber }
-  //     : {};
+  const idNumberMaybe =
+    country === 'US'
+      ? { ssn_last_4: personalIdNumber }
+      : personalIdNumberRequired
+      ? { id_number: personalIdNumber }
+      : {};
+
   // Update: new version
-  const idNumberMaybe = ssnLast4Required
-    ? { ssn_last_4: personalIdNumber }
-    : personalIdNumberRequired
-    ? { id_number: personalIdNumber }
-    : {};
+  // const idNumberMaybe = ssnLast4Required
+  //   ? { ssn_last_4: personalIdNumber }
+  //   : personalIdNumberRequired
+  //   ? { id_number: personalIdNumber }
+  //   : {};
 
   const accountOpenerMaybe = isAccountOpener ? { account_opener: true } : {};
   const jobTitleMaybe = title ? { title } : {};
@@ -358,11 +359,11 @@ const personTokenParams = (personData, companyConfig) => {
   };
 };
 
-const createStripePerson = (personParams, companyConfig, stripe) => (dispatch, getState, sdk) => {
+const createStripePerson = (personParams, companyConfig, stripe, country) => (dispatch, getState, sdk) => {
   const { isAccountOpener } = personParams;
   let personToken = 'no-token';
   return stripe
-    .createToken('person', personTokenParams(personParams, companyConfig))
+    .createToken('person', personTokenParams(personParams, companyConfig, country))
     .then(response => {
       personToken = response.token.id;
 
@@ -451,9 +452,9 @@ export const createStripeCompanyAccount = (payoutDetails, companyConfig, stripe)
   const createPersons = () => {
     return Promise.all([
       dispatch(
-        createStripePerson({ ...accountOpener, isAccountOpener: true }, companyConfig, stripe)
+        createStripePerson({ ...accountOpener, isAccountOpener: true }, companyConfig, stripe, country)
       ),
-      ...persons.map(p => dispatch(createStripePerson(p, companyConfig, stripe))),
+      ...persons.map(p => dispatch(createStripePerson(p, companyConfig, stripe, country))),
     ]);
   };
 
@@ -514,7 +515,7 @@ export const createStripeCompanyAccount = (payoutDetails, companyConfig, stripe)
     });
 };
 
-const accountTokenParamsForIndividual = (individual, individualConfig) => {
+const accountTokenParamsForIndividual = (individual, individualConfig, country) => {
   const {
     fname: firstName,
     lname: lastName,
@@ -533,18 +534,19 @@ const accountTokenParamsForIndividual = (individual, individualConfig) => {
   const personalIdNumberRequired = individualConfig && individualConfig.personalIdNumberRequired;
   const ssnLast4Required = individualConfig && individualConfig.ssnLast4Required;
 
-  // const idNumberMaybe =
-  //   country === 'US'
-  //     ? { ssn_last_4: personalIdNumber }
-  //     : personalIdNumber
-  //     ? { id_number: personalIdNumber }
-  //     : {};
+  const idNumberMaybe =
+    country === 'US'
+      ? { ssn_last_4: personalIdNumber }
+      : personalIdNumberRequired
+      ? { id_number: personalIdNumber }
+      : {};
+
   // Update: new version
-  const idNumberMaybe = ssnLast4Required
-    ? { ssn_last_4: personalIdNumber }
-    : personalIdNumberRequired
-    ? { id_number: personalIdNumber }
-    : {};
+  // const idNumberMaybe = ssnLast4Required
+  //   ? { ssn_last_4: personalIdNumber }
+  //   : personalIdNumberRequired
+  //   ? { id_number: personalIdNumber }
+  //   : {};
 
   return {
     business_type: 'individual',
@@ -571,7 +573,7 @@ export const createStripeIndividualAccount = (payoutDetails, individualConfig, s
   dispatch(stripeAccountCreateRequest());
 
   return stripe
-    .createToken('account', accountTokenParamsForIndividual(individual, individualConfig))
+    .createToken('account', accountTokenParamsForIndividual(individual, individualConfig, country))
     .then(response => {
       const accountToken = response.token.id;
       const bankAccountToken = bankAccountTokenParams(individual);
