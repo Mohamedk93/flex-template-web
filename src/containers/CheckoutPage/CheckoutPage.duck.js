@@ -206,7 +206,7 @@ export const confirmPayment = orderParams => (dispatch, getState, sdk) => {
 
   const bodyParams = {
     id: orderParams.transactionId,
-    // transition: TRANSITION_CONFIRM_PAYMENT,
+    transition: TRANSITION_CONFIRM_PAYMENT,
     params: {},
   };
 
