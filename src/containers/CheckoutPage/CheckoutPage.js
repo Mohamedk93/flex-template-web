@@ -112,7 +112,6 @@ export class CheckoutPageComponent extends Component {
     this.handleCashSubmit = this.handleCashSubmit.bind(this);
   }
 
-  // Update: Will -> Did
   componentDidMount() {
     if (window) {
       this.loadInitialData();
@@ -304,7 +303,7 @@ export class CheckoutPageComponent extends Component {
 
     const selectedPaymentFlow = paymentFlow(selectedPaymentMethod, saveAfterOnetimePayment);
 
-    const { bookingData, bookingDates, listing } = pageData; // Update: replacing
+    const { bookingData, bookingDates, listing } = pageData;
 
     // Step 1: initiate order by requesting payment from Marketplace API
     const fnRequestPayment = fnParams => {
@@ -323,7 +322,6 @@ export class CheckoutPageComponent extends Component {
       const order = ensureTransaction(fnParams);
       if (order.id) {
         // Store order.
-        // const { bookingData, bookingDates, listing } = pageData;
         storeData(bookingData, bookingDates, listing, order, STORAGE_KEY);
         this.setState({ pageData: { ...pageData, transaction: order } });
       }
@@ -505,6 +503,8 @@ export class CheckoutPageComponent extends Component {
     //   .catch(() => {
     //     this.setState({ submitting: false });
     //   });
+    // End
+
 
     // Billing address is recommended.
     // However, let's not assume that <StripePaymentAddress> data is among formValues.

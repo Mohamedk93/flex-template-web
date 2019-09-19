@@ -179,8 +179,7 @@ export const txState = (intl, tx, type) => {
 //   return { bookingStart, bookingEnd, price, isSingleDay };
 // };
 
-// Functional component as internal helper to print BookingInfo if that is needed
-// Update: Functional component as internal helper to print BookingTimeInfo if that is needed
+// Functional component as internal helper to print BookingTimeInfo if that is needed
 const BookingInfoMaybe = props => {
   const { bookingClassName, isOrder, intl, tx, unitType } = props;
   const isEnquiry = txIsEnquired(tx);
