@@ -15,6 +15,7 @@ import { txIsPaymentPending } from '../../util/transaction';
 import { getMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import { isScrollingDisabled, manageDisableScrolling } from '../../ducks/UI.duck';
 import { initializeCardPaymentData } from '../../ducks/stripe.duck.js';
+import config from '../../config';
 import {
   NamedRedirect,
   TransactionPanel,
@@ -105,8 +106,13 @@ export const TransactionPageComponent = props => {
     );
   };
 
-  // If payment is pending, redirect to CheckoutPage
+  const processName = config.cashBookingProcessAlias;
+
+  const isCashPayment = (processName === config.cashBookingProcessAlias) ? true : false;
+
+  // If payment is pending and if payment not with cash, redirect to CheckoutPage
   if (
+    !isCashPayment &&
     txIsPaymentPending(currentTransaction) &&
     isCustomerRole &&
     currentTransaction.attributes.lineItems

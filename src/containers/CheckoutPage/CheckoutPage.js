@@ -235,7 +235,9 @@ export class CheckoutPageComponent extends Component {
       quantity: bookingData.hours,
     };
 
-    sendOrderRequest(requestParams, initialMessage)
+    const processAlias = config.cashBookingProcessAlias;
+
+    sendOrderRequest(requestParams, initialMessage, processAlias)
       .then(res => {
         const { id, messageSuccess } = res; //Update: check data
         this.setState({ submitting: false });
@@ -294,6 +296,7 @@ export class CheckoutPageComponent extends Component {
     const selectedPaymentFlow = paymentFlow(selectedPaymentMethod, saveAfterOnetimePayment);
 
     const { bookingData, bookingDates, listing } = pageData;
+    const processAlias = config.scaBookingProcessAlias;
 
     // Step 1: initiate order by requesting payment from Marketplace API
     const fnRequestPayment = fnParams => {
@@ -302,7 +305,7 @@ export class CheckoutPageComponent extends Component {
         storedTx.attributes.protectedData && storedTx.attributes.protectedData.stripePaymentIntents;
 
       // If paymentIntent exists, order has been initiated previously.
-      return hasPaymentIntents ? Promise.resolve(storedTx) : onInitiateOrder(fnParams, storedTx.id);
+      return hasPaymentIntents ? Promise.resolve(storedTx) : onInitiateOrder(fnParams, storedTx.id, processAlias);
     };
 
     // Step 2: pay using Stripe SDK
@@ -1076,7 +1079,7 @@ const mapDispatchToProps = dispatch => ({
   fetchSpeculatedTransaction: params => dispatch(speculateTransaction(params)),
   fetchSpeculatedCashTransaction: params => dispatch(speculateCashTransaction(params)),
   fetchStripeCustomer: () => dispatch(stripeCustomer()),
-  onInitiateOrder: (params, transactionId) => dispatch(initiateOrder(params, transactionId)),
+  onInitiateOrder: (params, transactionId, processAlias) => dispatch(initiateOrder(params, transactionId, processAlias)),
   onRetrievePaymentIntent: params => dispatch(retrievePaymentIntent(params)),
   onHandleCardPayment: params => dispatch(handleCardPayment(params)),
   onConfirmPayment: params => dispatch(confirmPayment(params)),

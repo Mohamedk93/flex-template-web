@@ -160,7 +160,7 @@ export const stripeCustomerError = e => ({
 
 /* ================ Thunks ================ */
 
-export const initiateOrder = (orderParams, transactionId) => (dispatch, getState, sdk) => {
+export const initiateOrder = (orderParams, transactionId, processAlias) => (dispatch, getState, sdk) => {
   dispatch(initiateOrderRequest());
   const bodyParams = transactionId
     ? {
@@ -169,7 +169,7 @@ export const initiateOrder = (orderParams, transactionId) => (dispatch, getState
         params: orderParams,
       }
     : {
-        processAlias: config.cashBookingProcessAlias,
+        processAlias,
         transition: TRANSITION_REQUEST_PAYMENT,
         params: orderParams,
       };
@@ -264,7 +264,7 @@ export const speculateTransaction = params => (dispatch, getState, sdk) => {
   dispatch(speculateTransactionRequest());
   const bodyParams = {
     transition: TRANSITION_REQUEST_PAYMENT,
-    processAlias: config.bookingProcessAlias,
+    processAlias: config.scaBookingProcessAlias,
     params: {
       ...params,
       cardToken: 'CheckoutPage_speculative_card_token',
