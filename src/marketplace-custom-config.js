@@ -29,6 +29,21 @@ export const amenities = [
   },
 ];
 
+export const workspaces = [
+  {
+    key: 'seats',
+    label: 'Seats',
+  },
+  {
+    key: 'office_rooms',
+    label: 'Office rooms',
+  },
+  {
+    key: 'meeting_rooms',
+    label: 'Meeting rooms',
+  },
+];
+
 export const categories = [
   { key: 'meeting_room', label: 'Meeting room' },
   { key: 'seat', label: 'Seat' },

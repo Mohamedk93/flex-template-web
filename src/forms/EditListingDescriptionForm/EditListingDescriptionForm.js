@@ -6,8 +6,10 @@ import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { propTypes } from '../../util/types';
 import { maxLength, required, composeValidators } from '../../util/validators';
-import { Form, Button, FieldTextInput } from '../../components';
-import CustomCategorySelectFieldMaybe from './CustomCategorySelectFieldMaybe';
+import { requiredFieldArrayCheckbox } from '../../util/validators';
+import { Form, Button, FieldTextInput, FieldCheckboxGroup } from '../../components';
+import config from '../../config';
+import arrayMutators from 'final-form-arrays';
 
 import css from './EditListingDescriptionForm.css';
 
@@ -16,6 +18,7 @@ const TITLE_MAX_LENGTH = 60;
 const EditListingDescriptionFormComponent = props => (
   <FinalForm
     {...props}
+    mutators={{ ...arrayMutators }}
     render={fieldRenderProps => {
       const {
         categories,
@@ -76,6 +79,14 @@ const EditListingDescriptionFormComponent = props => (
         </p>
       ) : null;
 
+      const workspacesLabel = intl.formatMessage({
+        id: 'EditListingDescriptionForm.workspacesLabel',
+      });
+
+      const workspacesRequiredMessage = intl.formatMessage({
+        id: 'EditListingDescriptionForm.workspacesRequiredMessage',
+      });
+
       const classes = classNames(css.root, className);
       const submitReady = updated && pristine;
       const submitInProgress = updateInProgress;
@@ -108,11 +119,13 @@ const EditListingDescriptionFormComponent = props => (
             validate={composeValidators(required(descriptionRequiredMessage))}
           />
 
-          <CustomCategorySelectFieldMaybe
-            id="category"
-            name="category"
-            categories={categories}
-            intl={intl}
+          <FieldCheckboxGroup
+            className={css.workspaces}
+            id="workspaces"
+            name="workspaces"
+            label={workspacesLabel}
+            options={config.custom.workspaces}
+            validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
           />
 
           <Button
@@ -145,6 +158,12 @@ EditListingDescriptionFormComponent.propTypes = {
     updateListingError: propTypes.error,
   }),
   categories: arrayOf(
+    shape({
+      key: string.isRequired,
+      label: string.isRequired,
+    })
+  ),
+  workspaces: arrayOf(
     shape({
       key: string.isRequired,
       label: string.isRequired,

@@ -21,6 +21,7 @@
 .priceInput {
   flex-shrink: 0;
   width: 100%;
+  margin: 12px 0;
 }
 
 .submitButton {

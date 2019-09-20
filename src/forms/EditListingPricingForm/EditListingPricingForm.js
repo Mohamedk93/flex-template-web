@@ -49,6 +49,16 @@ export const EditListingPricingFormComponent = props => (
         id: 'EditListingPricingForm.priceInputPlaceholder',
       });
 
+      const priceForSeatsPerUnitMessage = intl.formatMessage({
+        id: 'EditListingPricingForm.priceForSeatsPerUnitMessage',
+      });
+      const priceForOfficePerUnitMessage = intl.formatMessage({
+        id: 'EditListingPricingForm.priceForOfficePerUnitMessage',
+      });
+      const priceForMeetingPerUnitMessage = intl.formatMessage({
+        id: 'EditListingPricingForm.priceForMeetingPerUnitMessage',
+      });
+
       const priceRequired = validators.required(
         intl.formatMessage({
           id: 'EditListingPricingForm.priceRequired',
@@ -88,12 +98,32 @@ export const EditListingPricingFormComponent = props => (
               <FormattedMessage id="EditListingPricingForm.showListingFailed" />
             </p>
           ) : null}
+
           <FieldCurrencyInput
-            id="price"
-            name="price"
+            id="price_seats"
+            name="price_seats"
             className={css.priceInput}
-            autoFocus
-            label={pricePerUnitMessage}
+            label={priceForSeatsPerUnitMessage}
+            placeholder={pricePlaceholderMessage}
+            currencyConfig={config.currencyConfig}
+            validate={priceValidators}
+          />
+
+          <FieldCurrencyInput
+            id="price_office_rooms"
+            name="price_office_rooms"
+            className={css.priceInput}
+            label={priceForOfficePerUnitMessage}
+            placeholder={pricePlaceholderMessage}
+            currencyConfig={config.currencyConfig}
+            validate={priceValidators}
+          />
+
+          <FieldCurrencyInput
+            id="price_meeting_rooms"
+            name="price_meeting_rooms"
+            className={css.priceInput}
+            label={priceForMeetingPerUnitMessage}
             placeholder={pricePlaceholderMessage}
             currencyConfig={config.currencyConfig}
             validate={priceValidators}

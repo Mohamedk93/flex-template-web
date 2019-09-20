@@ -13,6 +13,10 @@ import css from './EditListingPricingPanel.css';
 
 const { Money } = sdkTypes;
 
+Array.min = function( array ){
+  return Math.min.apply( Math, array );
+};
+
 const EditListingPricingPanel = props => {
   const {
     className,
@@ -28,7 +32,7 @@ const EditListingPricingPanel = props => {
 
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureOwnListing(listing);
-  const { price } = currentListing.attributes;
+  const { price, publicData } = currentListing.attributes;
 
   const isPublished = currentListing.id && currentListing.attributes.state !== LISTING_STATE_DRAFT;
   const panelTitle = isPublished ? (
@@ -44,8 +48,49 @@ const EditListingPricingPanel = props => {
   const form = priceCurrencyValid ? (
     <EditListingPricingForm
       className={css.form}
-      initialValues={{ price }}
-      onSubmit={onSubmit}
+      initialValues={{ 
+        price,
+        price_seats: publicData.priceSeats,
+        price_office_rooms: publicData.priceOfficeRooms,
+        price_meeting_rooms: publicData.priceMeetingRooms,
+      }}
+      onSubmit={values => {
+        const { price_seats, price_office_rooms, price_meeting_rooms } = values;
+        const nullPrice = {
+          amount: 0,
+          currency: 'USD',
+        };
+        const priceArray = [price_seats, price_office_rooms, price_meeting_rooms].filter(function(x) {
+          if(x !== undefined && x !== null){
+            return x.amount
+          }
+        });
+        const minimalPrice = {
+          amount: Array.min(priceArray),
+          currency: 'USD',
+        };
+        const priceSeats = price_seats ? {
+          amount: price_seats.amount,
+          currency: price_seats.currency,
+        } : nullPrice;
+        const priceOfficeRooms = price_office_rooms ? {
+          amount: price_office_rooms.amount,
+          currency: price_office_rooms.currency,
+        } : nullPrice;
+        const priceMeetingRooms = price_meeting_rooms ? {
+          amount: price_meeting_rooms.amount,
+          currency: price_meeting_rooms.currency,
+        } : nullPrice;
+        const updateValues = {
+          price: minimalPrice,
+          publicData: { 
+            priceSeats,
+            priceOfficeRooms,
+            priceMeetingRooms,
+          },
+        };
+        onSubmit(updateValues);
+      }}
       onChange={onChange}
       saveActionMsg={submitButtonText}
       updated={panelUpdated}
