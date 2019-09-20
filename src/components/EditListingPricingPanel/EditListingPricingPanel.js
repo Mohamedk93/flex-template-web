@@ -49,7 +49,6 @@ const EditListingPricingPanel = props => {
     <EditListingPricingForm
       className={css.form}
       initialValues={{ 
-        price,
         price_seats: publicData.priceSeats,
         price_office_rooms: publicData.priceOfficeRooms,
         price_meeting_rooms: publicData.priceMeetingRooms,
@@ -60,7 +59,7 @@ const EditListingPricingPanel = props => {
           amount: 0,
           currency: 'USD',
         };
-        const priceArray = [price_seats, price_office_rooms, price_meeting_rooms].filter(function(x) {
+        const priceArray = [price_seats, price_office_rooms, price_meeting_rooms].map(function(x) {
           if(x !== undefined && x !== null){
             return x.amount
           }
