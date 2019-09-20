@@ -167,7 +167,7 @@ const DateHourPicker = props => {
             name={`${id}.bookingDate`}
             type="hidden"
             component="input"
-            format={null}
+            format={identity}
           />
         ) : (
           <FieldDateInput
