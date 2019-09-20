@@ -11,7 +11,8 @@ import Decimal from 'decimal.js';
 import { propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
 import config from '../../config';
-import { Form, IconClose, PrimaryButton, InlineTextButton, FieldSelect } from '../../components';
+import { requiredFieldArrayCheckbox } from '../../util/validators';
+import { Form, IconClose, PrimaryButton, InlineTextButton, FieldSelect, FieldCheckboxGroup } from '../../components';
 
 import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
@@ -91,8 +92,11 @@ const hoursValid = dateHour => {
   } catch (e) {
     // No need to react - totalHours is just 0
   }
-
   return hoursSelected(dateHour) && totalHours > 0 && isFullHours(totalHours);
+};
+
+const isChooseWorkspace = values => {  
+  return values.workspaces
 };
 
 const identity = v => v;
@@ -300,7 +304,7 @@ export class BookingDatesFormComponent extends Component {
               }
               : null;
           const bookingInfo =
-            bookingData && hoursValid(values) ? (
+            bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
                 <div className={css.priceBreakdownContainer}>
                   <h3 className={css.priceBreakdownTitle}>
                     <FormattedMessage id="BookingDatesForm.priceBreakdownTitle" />
@@ -321,7 +325,15 @@ export class BookingDatesFormComponent extends Component {
           );
 
           const stripeConnected = (this.props.listing.author.
-            attributes.profile.publicData.stripeEnabled == true)
+            attributes.profile.publicData.stripeEnabled == true);
+
+          const workspacesLabel = intl.formatMessage({
+            id: 'BookingDatesForm.workspacesLabel',
+          });
+
+          const workspacesRequiredMessage = intl.formatMessage({
+            id: 'BookingDatesForm.workspacesRequiredMessage',
+          });
 
           return (
             
@@ -377,13 +389,24 @@ export class BookingDatesFormComponent extends Component {
                   this.handleFieldBlur(e);
                 }}
               />
-              {hoursValid(values) ? (
+
+              <FieldCheckboxGroup
+                className={css.workspaces}
+                id="workspaces"
+                name="workspaces"
+                label={workspacesLabel}
+                options={config.custom.workspaces}
+                validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
+              />
+
+              {hoursValid(values) && isChooseWorkspace(values) ? (
                   <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={required}>
                     <option value="">Select payment</option>
                     {stripeConnected ? (<option value="credit card">Credit card</option>) : null}
                     <option value="cash">Cash</option>
                   </FieldSelect>
-                ): null}
+                ): null }
+
               <FieldArray
                 name="extraDays"
                 render={fieldArrayProps => {
@@ -423,7 +446,7 @@ export class BookingDatesFormComponent extends Component {
                           </li>
                         );
                       })}
-                      {hoursValid(values) ? (
+                      { hoursValid(values) && isChooseWorkspace(values) ? (
                           <li>
                             <InlineTextButton
                               className={css.addDayButton}
