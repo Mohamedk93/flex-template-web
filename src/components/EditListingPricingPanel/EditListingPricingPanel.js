@@ -33,6 +33,7 @@ const EditListingPricingPanel = props => {
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureOwnListing(listing);
   const { price, publicData } = currentListing.attributes;
+  const workspaces = publicData.workspaces ? publicData.workspaces : null;
 
   const isPublished = currentListing.id && currentListing.attributes.state !== LISTING_STATE_DRAFT;
   const panelTitle = isPublished ? (
@@ -95,6 +96,7 @@ const EditListingPricingPanel = props => {
       updated={panelUpdated}
       updateInProgress={updateInProgress}
       fetchErrors={errors}
+      workspaces={workspaces}
     />
   ) : (
     <div className={css.priceCurrencyInvalid}>
