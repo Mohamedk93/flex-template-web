@@ -331,6 +331,10 @@ export const LINE_ITEM_UNITS = 'line-item/units';
 export const LINE_ITEM_CUSTOMER_COMMISSION = 'line-item/customer-commission';
 export const LINE_ITEM_PROVIDER_COMMISSION = 'line-item/provider-commission';
 
+export const LINE_ITEM_SEATS_FEE = 'line-item/seats-fee';
+export const LINE_ITEM_OFFICE_ROOMS_FEE = 'line-item/office-rooms-fee';
+export const LINE_ITEM_MEETING_ROOMS_FEE = 'line-item/meeting-rooms-fee';
+
 export const LINE_ITEMS = [
   LINE_ITEM_NIGHT,
   LINE_ITEM_DAY,

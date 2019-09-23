@@ -12,8 +12,11 @@ import config from '../../config';
 import { ModalInMobile, Button } from '../../components';
 import { BookingDatesForm } from '../../forms';
 import moment from 'moment';
+import { types as sdkTypes } from '../../util/sdkLoader';
 
 import css from './BookingPanel.css';
+
+const { Money } = sdkTypes;
 
 // This defines when ModalInMobile shows content as Modal
 const MODAL_BREAKPOINT = 1023;
@@ -67,6 +70,57 @@ const BookingPanel = props => {
     location,
     intl,
   } = props;
+
+  const seatsFeeData = listing.attributes.publicData.priceSeats;
+  const { amount: seatsAmount, currency: seatsCurrency } =
+    seatsFeeData || {};
+  const seatsFee =
+    seatsAmount && seatsCurrency
+      ? new Money(seatsAmount, seatsCurrency)
+      : null;
+
+  const officeRoomsFeeData = listing.attributes.publicData.priceOfficeRooms;
+  const { amount: officeRoomsAmount, currency: officeRoomsCurrency } =
+    officeRoomsFeeData || {};
+  const officeRoomsFee =
+    officeRoomsAmount && officeRoomsCurrency
+      ? new Money(officeRoomsAmount, officeRoomsCurrency)
+      : null;
+
+  const meetingRoomsFeeData = listing.attributes.publicData.priceOfficeRooms;
+  const { amount: meetingRoomsAmount, currency: meetingRoomsCurrency } =
+    meetingRoomsFeeData || {};
+  const meetingRoomsFee =
+    meetingRoomsAmount && meetingRoomsCurrency
+      ? new Money(meetingRoomsAmount, meetingRoomsCurrency)
+      : null;
+
+  const handleSubmit = values => {
+    const selectedSeatsFee =
+      values &&
+      values.workspaces &&
+      values.workspaces.indexOf('seats') != -1
+        ? seatsFee
+        : null;
+    const selectedOfficeRoomsFee =
+    values &&
+    values.workspaces &&
+    values.workspaces.indexOf('office_rooms') != -1
+      ? officeRoomsFee
+      : null;
+    const selectedMeetingRoomsFee =
+    values &&
+    values.workspaces &&
+    values.workspaces.indexOf('meeting_rooms') != -1
+      ? meetingRoomsFee
+      : null;
+    onSubmit({
+      ...values,
+      seatsFee: selectedSeatsFee,
+      officeRoomsFee: selectedOfficeRoomsFee,
+      meetingRoomsFee: selectedMeetingRoomsFee,
+    });
+  };
 
   const price = listing.attributes.price;
   const hasListingState = !!listing.attributes.state;
@@ -164,12 +218,15 @@ const BookingPanel = props => {
             formId="BookingPanel"
             submitButtonWrapperClassName={css.bookingDatesSubmitButtonWrapper}
             unitType={unitType}
-            onSubmit={onSubmit}
+            onSubmit={handleSubmit}
             price={price}
             isOwnListing={isOwnListing}
             timeSlots={timeSlots}
             listing={listing}
             fetchTimeSlotsError={fetchTimeSlotsError}
+            seatsFee={seatsFee}
+            officeRoomsFee={officeRoomsFee}
+            meetingRoomsFee={meetingRoomsFee}
           />
         ) : null}
       </ModalInMobile>
