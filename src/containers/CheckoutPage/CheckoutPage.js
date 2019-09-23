@@ -341,6 +341,7 @@ export class CheckoutPageComponent extends Component {
     
     const requestParams = this.customPricingParams({
       listingId: this.state.pageData.listing.id,
+      listing: this.state.pageData.listing, // TO DO: need refactor
       bookingStart: speculatedTransaction.booking.attributes.start,
       bookingEnd: speculatedTransaction.booking.attributes.end,
       quantity: bookingData.hours,
