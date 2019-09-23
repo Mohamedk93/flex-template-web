@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { propTypes } from '../../util/types';
 import { maxLength, required, composeValidators } from '../../util/validators';
 import { requiredFieldArrayCheckbox } from '../../util/validators';
-import { Form, Button, FieldTextInput, FieldCheckboxGroup } from '../../components';
+import { Form, Button, FieldTextInput, FieldCheckboxGroup, FieldCheckboxGroupWithQuantity } from '../../components';
 import config from '../../config';
 import arrayMutators from 'final-form-arrays';
 
@@ -119,7 +119,16 @@ const EditListingDescriptionFormComponent = props => (
             validate={composeValidators(required(descriptionRequiredMessage))}
           />
 
-          <FieldCheckboxGroup
+          {/* <FieldCheckboxGroup
+            className={css.workspaces}
+            id="workspaces"
+            name="workspaces"
+            label={workspacesLabel}
+            options={config.custom.workspaces}
+            validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
+          /> */}
+
+          <FieldCheckboxGroupWithQuantity
             className={css.workspaces}
             id="workspaces"
             name="workspaces"

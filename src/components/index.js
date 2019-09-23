@@ -93,9 +93,12 @@ export { default as FieldRadioButton } from './FieldRadioButton/FieldRadioButton
 export { default as FieldReviewRating } from './FieldReviewRating/FieldReviewRating';
 export { default as FieldSelect } from './FieldSelect/FieldSelect';
 export { default as FieldTextInput } from './FieldTextInput/FieldTextInput';
+export { default as FieldQuantityInput } from './FieldQuantityInput/FieldQuantityInput';
+
 // Fields that use other Fields
 export { default as FieldBoolean } from './FieldBoolean/FieldBoolean';
 export { default as FieldCheckboxGroup } from './FieldCheckboxGroup/FieldCheckboxGroup';
+export { default as FieldCheckboxGroupWithQuantity } from './FieldCheckboxGroupWithQuantity/FieldCheckboxGroupWithQuantity';
 export { default as ManageAvailabilitySelectGroup } from '../forms/EditListingAvailabilityForm/ManageAvailabilitySelectGroup';
 export { default as FieldPhoneNumberInput } from './FieldPhoneNumberInput/FieldPhoneNumberInput';
 // Fields and inputs using old naming pattern
