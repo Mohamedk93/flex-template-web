@@ -265,7 +265,6 @@ export class BookingDatesFormComponent extends Component {
           } = fieldRenderProps;
           const { firstDate, extraDays = [] } = values;
           const required = validators.required('This field is required');
-
           const selectedSeatsFee =
           values &&
           values.workspaces &&
@@ -334,7 +333,6 @@ export class BookingDatesFormComponent extends Component {
                 meetingRoomsFee: selectedMeetingRoomsFee,
               }
               : null;
-          console.log("booking data", bookingData);
           const bookingInfo =
             bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
                 <div className={css.priceBreakdownContainer}>

@@ -87,7 +87,7 @@ const BookingPanel = props => {
       ? new Money(officeRoomsAmount, officeRoomsCurrency)
       : null;
 
-  const meetingRoomsFeeData = listing.attributes.publicData.priceOfficeRooms;
+  const meetingRoomsFeeData = listing.attributes.publicData.priceMeetingRooms;
   const { amount: meetingRoomsAmount, currency: meetingRoomsCurrency } =
     meetingRoomsFeeData || {};
   const meetingRoomsFee =
