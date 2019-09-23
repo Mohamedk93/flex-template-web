@@ -46,6 +46,7 @@ const EditListingPricingPanel = props => {
   );
 
   const priceCurrencyValid = price instanceof Money ? price.currency === config.currency : true;
+
   const form = priceCurrencyValid ? (
     <EditListingPricingForm
       className={css.form}
