@@ -8,7 +8,15 @@ import classNames from 'classnames';
 import config from '../../config';
 import routeConfiguration from '../../routeConfiguration';
 import { pathByRouteName, findRouteByRouteName } from '../../util/routes';
-import { propTypes, LINE_ITEM_NIGHT, LINE_ITEM_DAY, DATE_TYPE_DATE } from '../../util/types';
+import { 
+  propTypes, 
+  LINE_ITEM_NIGHT, 
+  LINE_ITEM_DAY, 
+  DATE_TYPE_DATE,
+  LINE_ITEM_SEATS_FEE,
+  LINE_ITEM_OFFICE_ROOMS_FEE,
+  LINE_ITEM_MEETING_ROOMS_FEE,
+} from '../../util/types';
 import {
   ensureListing,
   ensureCurrentUser,
@@ -18,7 +26,7 @@ import {
   ensureStripeCustomer,
   ensurePaymentMethodCard,
 } from '../../util/data';
-import { dateFromLocalToAPI, minutesBetween } from '../../util/dates';
+import { dateFromLocalToAPI, minutesBetween, nightsBetween, daysBetween } from '../../util/dates';
 import { createSlug } from '../../util/urlHelpers';
 import {
   isTransactionInitiateAmountTooLowError,
@@ -55,7 +63,10 @@ import {
   sendMessage,
 } from './CheckoutPage.duck';
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
+import { types as sdkTypes } from '../../util/sdkLoader';
 import css from './CheckoutPage.css';
+
+const { Money } = sdkTypes;
 
 const STORAGE_KEY = 'CheckoutPage';
 
@@ -192,29 +203,109 @@ export class CheckoutPageComponent extends Component {
       const bookingStartForAPI = dateFromLocalToAPI(bookingStart);
       const bookingEndForAPI = dateFromLocalToAPI(bookingEnd);
 
+      const seatsFee = pageData.bookingData.seatsFee;
+      const officeRoomsFee = pageData.bookingData.officeRoomsFee;
+      const meetingRoomsFee = pageData.bookingData.meetingRoomsFee;
+
       // Fetch speculated transaction for showing price in booking breakdown
       // NOTE: if unit type is line-item/units, quantity needs to be added.
       // The way to pass it to checkout page is through pageData.bookingData
       if(paymentMethod === 'credit card') {
-        fetchSpeculatedTransaction({          
-          listingId,
-          bookingStart,
-          bookingEnd,
-          quantity: pageData.bookingData.hours,
-        });
+        fetchSpeculatedTransaction(
+          this.customPricingParams({
+            listingId,
+            bookingStart,
+            bookingEnd,
+            quantity: pageData.bookingData.hours,
+            seatsFee,
+            officeRoomsFee,
+            meetingRoomsFee,
+            listing: pageData.listing, // TO DO: must refactor
+          })
+        );
       };
 
       if(paymentMethod === 'cash') {
-        fetchSpeculatedCashTransaction({
-          listingId,
-          bookingStart,
-          bookingEnd,
-          quantity: pageData.bookingData.hours,
-        });
+        fetchSpeculatedCashTransaction(
+          this.customPricingParams({
+            listingId,
+            bookingStart,
+            bookingEnd,
+            quantity: pageData.bookingData.hours,
+            seatsFee,
+            officeRoomsFee,
+            meetingRoomsFee,
+            listing: pageData.listing, // TO DO: must refactor
+          })
+        );
       };
     }
 
     this.setState({ pageData: pageData || {}, dataLoaded: true });
+  }
+
+  customPricingParams(params) {
+    const { 
+      bookingStart, 
+      bookingEnd, 
+      listing, 
+      seatsFee,
+      officeRoomsFee,
+      meetingRoomsFee,
+      ...rest 
+    } = params;
+
+    const { amount, currency } = listing.attributes.price; //delete
+  
+    const unitType = config.bookingUnitType; //delete
+    const isNightly = unitType === LINE_ITEM_NIGHT;
+    const quantity = isNightly
+      ? nightsBetween(bookingStart, bookingEnd)
+      : daysBetween(bookingStart, bookingEnd);
+  
+    const seatsFeeLineItem = seatsFee
+      ? {
+          code: LINE_ITEM_SEATS_FEE,
+          unitPrice: seatsFee,
+          quantity: 1,
+        }
+      : null;
+    const seatsFeeLineItemMaybe = seatsFeeLineItem ? [seatsFeeLineItem] : [];
+
+    const officeRoomsFeeLineItem = officeRoomsFee
+      ? {
+          code: LINE_ITEM_OFFICE_ROOMS_FEE,
+          unitPrice: officeRoomsFee,
+          quantity: 1,
+        }
+      : null;
+    const officeRoomsFeeLineItemMaybe = officeRoomsFeeLineItem ? [officeRoomsFeeLineItem] : [];
+
+    const meetingRoomsFeeLineItem = meetingRoomsFee
+      ? {
+          code: LINE_ITEM_MEETING_ROOMS_FEE,
+          unitPrice: meetingRoomsFee,
+          quantity: 1,
+        }
+      : null;
+    const meetingRoomsFeeLineItemMaybe = meetingRoomsFeeLineItem ? [meetingRoomsFeeLineItem] : [];
+  
+    return {
+      listingId: listing.id,
+      bookingStart,
+      bookingEnd,
+      lineItems: [
+        ...seatsFeeLineItemMaybe,
+        ...officeRoomsFeeLineItemMaybe,
+        ...meetingRoomsFeeLineItemMaybe,
+        {
+          code: unitType,
+          unitPrice: new Money(amount, currency),
+          quantity,
+        },
+      ],
+      ...rest,
+    };
   }
 
   handleCashSubmit(values){
@@ -228,12 +319,35 @@ export class CheckoutPageComponent extends Component {
     // Create order aka transaction
     // NOTE: if unit type is line-item/units, quantity needs to be added.
     // The way to pass it to checkout page is through pageData.bookingData
-    const requestParams = {
+
+    const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_SEATS_FEE
+    );
+    const seatsFee = seatsFeeLineItem
+      ? seatsFeeLineItem.unitPrice
+      : null;
+    const officeRoomsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_OFFICE_ROOMS_FEE
+    );
+    const officeRoomsFee = officeRoomsFeeLineItem
+      ? officeRoomsFeeLineItem.unitPrice
+      : null;
+    const meetingRoomsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_MEETING_ROOMS_FEE
+    );
+    const meetingRoomsFee = meetingRoomsFeeLineItem
+      ? meetingRoomsFeeLineItem.unitPrice
+      : null;
+    
+    const requestParams = this.customPricingParams({
       listingId: this.state.pageData.listing.id,
       bookingStart: speculatedTransaction.booking.attributes.start,
       bookingEnd: speculatedTransaction.booking.attributes.end,
       quantity: bookingData.hours,
-    };
+      seatsFee,
+      officeRoomsFee,
+      meetingRoomsFee,
+    });
 
     const processAlias = config.cashBookingProcessAlias;
 
