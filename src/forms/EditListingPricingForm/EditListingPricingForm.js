@@ -77,38 +77,27 @@ export const EditListingPricingFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
       const { updateListingError, showListingsError } = fetchErrors || {};
-
-      const priceForSeatsPerUnitMessage = intl.formatMessage({
-        id: 'EditListingPricingForm.priceForSeatsPerUnitMessage',
-      });
-      const priceForOfficePerUnitMessage = intl.formatMessage({
-        id: 'EditListingPricingForm.priceForOfficePerUnitMessage',
-      });
-      const priceForMeetingPerUnitMessage = intl.formatMessage({
-        id: 'EditListingPricingForm.priceForMeetingPerUnitMessage',
-      });
   
-      // TO DO
-      // Need add if
-      // let priceFields;
-      // if (workspaces && workspaces.length !== 0) {
-      //   priceFields = workspaces.map(function(price){
-      //     const priceLabel = intl.formatMessage({
-      //       id: `EditListingPricingForm.pricePerUnitMessage_${price}`,
-      //     });
-      //     return (
-      //       <FieldCurrencyInput
-      //         id={price}
-      //         name={price}
-      //         className={css.priceInput}
-      //         label={priceLabel}
-      //         placeholder={pricePlaceholderMessage}
-      //         currencyConfig={config.currencyConfig}
-      //         validate={priceValidators}
-      //       />
-      //     )
-      //   });
-      // };
+      let priceFields;
+      if (workspaces && workspaces.length !== 0) {
+        priceFields = workspaces.map(function(price){
+          const priceLabel = intl.formatMessage({
+            id: `EditListingPricingForm.pricePerUnitMessage_${price}`,
+          });
+          return (
+            <FieldCurrencyInput
+              id={price}
+              name={`price_${price}`}
+              key={price}
+              className={css.priceInput}
+              label={priceLabel}
+              placeholder={pricePlaceholderMessage}
+              currencyConfig={config.currencyConfig}
+              validate={priceValidators}
+            />
+          )
+        });
+      };
 
       return (
         <Form onSubmit={handleSubmit} className={classes}>
@@ -122,37 +111,7 @@ export const EditListingPricingFormComponent = props => (
               <FormattedMessage id="EditListingPricingForm.showListingFailed" />
             </p>
           ) : null}
-
-          <FieldCurrencyInput
-            id="price_seats"
-            name="price_seats"
-            className={css.priceInput}
-            label={priceForSeatsPerUnitMessage}
-            placeholder={pricePlaceholderMessage}
-            currencyConfig={config.currencyConfig}
-            validate={priceValidators}
-          />
-
-          <FieldCurrencyInput
-            id="price_office_rooms"
-            name="price_office_rooms"
-            className={css.priceInput}
-            label={priceForOfficePerUnitMessage}
-            placeholder={pricePlaceholderMessage}
-            currencyConfig={config.currencyConfig}
-            validate={priceValidators}
-          />
-
-          <FieldCurrencyInput
-            id="price_meeting_rooms"
-            name="price_meeting_rooms"
-            className={css.priceInput}
-            label={priceForMeetingPerUnitMessage}
-            placeholder={pricePlaceholderMessage}
-            currencyConfig={config.currencyConfig}
-            validate={priceValidators}
-          />
-
+          {priceFields}
           <Button
             className={css.submitButton}
             type="submit"
