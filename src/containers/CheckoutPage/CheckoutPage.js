@@ -203,40 +203,31 @@ export class CheckoutPageComponent extends Component {
       const bookingStartForAPI = dateFromLocalToAPI(bookingStart);
       const bookingEndForAPI = dateFromLocalToAPI(bookingEnd);
 
-      const seatsFee = pageData.bookingData.seatsFee;
-      const officeRoomsFee = pageData.bookingData.officeRoomsFee;
-      const meetingRoomsFee = pageData.bookingData.meetingRoomsFee;
+      const { seatsFee, officeRoomsFee, meetingRoomsFee } = pageData.bookingData;
+
+      const preliminaryParams = {
+        listingId,
+        bookingStart,
+        bookingEnd,
+        quantity: pageData.bookingData.hours,
+        seatsFee,
+        officeRoomsFee,
+        meetingRoomsFee,
+        listing: pageData.listing, // TO DO: must refactor
+      }
 
       // Fetch speculated transaction for showing price in booking breakdown
       // NOTE: if unit type is line-item/units, quantity needs to be added.
       // The way to pass it to checkout page is through pageData.bookingData
       if(paymentMethod === 'credit card') {
         fetchSpeculatedTransaction(
-          this.customPricingParams({
-            listingId,
-            bookingStart,
-            bookingEnd,
-            quantity: pageData.bookingData.hours,
-            seatsFee,
-            officeRoomsFee,
-            meetingRoomsFee,
-            listing: pageData.listing, // TO DO: must refactor
-          })
+          this.customPricingParams(preliminaryParams)
         );
       };
 
       if(paymentMethod === 'cash') {
         fetchSpeculatedCashTransaction(
-          this.customPricingParams({
-            listingId,
-            bookingStart,
-            bookingEnd,
-            quantity: pageData.bookingData.hours,
-            seatsFee,
-            officeRoomsFee,
-            meetingRoomsFee,
-            listing: pageData.listing, // TO DO: must refactor
-          })
+          this.customPricingParams(preliminaryParams)
         );
       };
     }
@@ -255,9 +246,9 @@ export class CheckoutPageComponent extends Component {
       ...rest 
     } = params;
 
-    const { amount, currency } = listing.attributes.price; //delete
+    const { amount, currency } = listing.attributes.price; // TO DO Refactor
   
-    const unitType = config.bookingUnitType; //delete
+    const unitType = config.bookingUnitType;
     const isNightly = unitType === LINE_ITEM_NIGHT;
     const quantity = isNightly
       ? nightsBetween(bookingStart, bookingEnd)

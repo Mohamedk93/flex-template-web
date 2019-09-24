@@ -366,30 +366,6 @@ export class BookingDatesFormComponent extends Component {
           });
 
           return (
-            
-            // Update: 
-            // <Form onSubmit={handleSubmit} className={classes}>
-            //   {timeSlotsError}
-            //   <FieldDateRangeInput
-            //     className={css.bookingDates}
-            //     name="bookingDates"
-            //     unitType={unitType}
-            //     startDateId={`${formId}.bookingStartDate`}
-            //     startDateLabel={bookingStartLabel}
-            //     startDatePlaceholderText={startDatePlaceholderText}
-            //     endDateId={`${formId}.bookingEndDate`}
-            //     endDateLabel={bookingEndLabel}
-            //     endDatePlaceholderText={endDatePlaceholderText}
-            //     focusedInput={this.state.focusedInput}
-            //     onFocusedInputChange={this.onFocusedInputChange}
-            //     format={identity}
-            //     timeSlots={timeSlots}
-            //     useMobileMargins
-            //     validate={composeValidators(
-            //       required(requiredMessage),
-            //       bookingDatesRequired(startDateErrorMessage, endDateErrorMessage)
-            //     )}
-
             <Form
               onSubmit={e => {
                 if (firstDate && firstDate.bookingDate) {
