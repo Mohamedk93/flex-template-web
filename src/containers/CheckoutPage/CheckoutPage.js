@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Decimal from 'decimal.js';
+import { convertMoneyToNumber } from '../../util/currency';
 import { bool, func, instanceOf, object, oneOfType, shape, string } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -224,8 +226,6 @@ export class CheckoutPageComponent extends Component {
         seatsQuantity,
         officeRoomsQuantity, 
         meetingRoomsQuantity,
-
-        listing: pageData.listing, // TO DO: must refactor
       }
 
       // Fetch speculated transaction for showing price in booking breakdown
@@ -251,7 +251,6 @@ export class CheckoutPageComponent extends Component {
     const { 
       bookingStart, 
       bookingEnd, 
-      listing,
       hours,
       seatsFee,
       officeRoomsFee,
@@ -262,20 +261,36 @@ export class CheckoutPageComponent extends Component {
       ...rest 
     } = params;
 
-    const { amount, currency } = listing.attributes.price; // TO DO Refactor
-  
-    const unitType = config.bookingUnitType;
-    // const isNightly = unitType === LINE_ITEM_NIGHT;
+    const seatsFeePrice = seatsFee
+      ? convertMoneyToNumber(seatsFee)
+      : 0;
+    const officeRoomsFeePrice = officeRoomsFee
+      ? convertMoneyToNumber(officeRoomsFee)
+      : 0;
+    const meetingRoomsFeePrice = meetingRoomsFee
+      ? convertMoneyToNumber(meetingRoomsFee)
+      : 0;
+    const hoursDecimal = hours
+      ? new Decimal(hours)
+      : new Decimal(0);
 
-    // const quantity = isNightly
-    //   ? nightsBetween(bookingStart, bookingEnd)
-    //   : daysBetween(bookingStart, bookingEnd);
+    const seatsFeePriceTotal = seatsFeePrice
+      ? new Decimal(seatsFeePrice).mul(hoursDecimal).toNumber()
+      : 0;
+    const officeRoomsFeePriceTotal = officeRoomsFeePrice
+      ? new Decimal(officeRoomsFeePrice).mul(hoursDecimal).toNumber()
+      : 0;
+    const meetingRoomsFeePriceTotal = meetingRoomsFeePrice
+      ? new Decimal(meetingRoomsFeePrice).mul(hoursDecimal).toNumber()
+      : 0;
+
+    const unitType = config.bookingUnitType; // TO DO need delete
   
     const seatsFeeLineItem = seatsFee
       ? {
           code: LINE_ITEM_SEATS_FEE,
-          unitPrice: seatsFee,
-          quantity: seatsQuantity,
+          unitPrice: new Money(seatsFeePriceTotal, "USD"), // TO DO
+          quantity: seatsQuantity, // TO DO cannot be null
         }
       : null;
     const seatsFeeLineItemMaybe = seatsFeeLineItem ? [seatsFeeLineItem] : [];
@@ -283,7 +298,7 @@ export class CheckoutPageComponent extends Component {
     const officeRoomsFeeLineItem = officeRoomsFee
       ? {
           code: LINE_ITEM_OFFICE_ROOMS_FEE,
-          unitPrice: officeRoomsFee,
+          unitPrice: new Money(officeRoomsFeePriceTotal, "USD"),
           quantity: officeRoomsQuantity,
         }
       : null;
@@ -292,7 +307,7 @@ export class CheckoutPageComponent extends Component {
     const meetingRoomsFeeLineItem = meetingRoomsFee
       ? {
           code: LINE_ITEM_MEETING_ROOMS_FEE,
-          unitPrice: meetingRoomsFee,
+          unitPrice: new Money(meetingRoomsFeePriceTotal, "USD"),
           quantity: meetingRoomsQuantity,
         }
       : null;
@@ -306,9 +321,10 @@ export class CheckoutPageComponent extends Component {
         ...seatsFeeLineItemMaybe,
         ...officeRoomsFeeLineItemMaybe,
         ...meetingRoomsFeeLineItemMaybe,
+        // TO DO: Need delete from backend
         {
           code: unitType,
-          unitPrice: new Money(amount, currency),
+          unitPrice: new Money(0, 'USD'),
           quantity: 0,
         },
       ],
@@ -351,7 +367,6 @@ export class CheckoutPageComponent extends Component {
     
     const requestParams = this.customPricingParams({
       listingId: this.state.pageData.listing.id,
-      listing: this.state.pageData.listing, // TO DO: need refactor
       bookingStart: speculatedTransaction.booking.attributes.start,
       bookingEnd: speculatedTransaction.booking.attributes.end,
 
@@ -579,7 +594,6 @@ export class CheckoutPageComponent extends Component {
 
     const orderParams = this.customPricingParams({
       listingId: pageData.listing.id,
-      listing: pageData.listing, // TO DO: need refactor
       bookingStart: tx.booking.attributes.start,
       bookingEnd: tx.booking.attributes.end,
 
