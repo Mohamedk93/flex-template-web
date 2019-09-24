@@ -47,13 +47,20 @@ const EditListingPricingPanel = props => {
 
   const priceCurrencyValid = price instanceof Money ? price.currency === config.currency : true;
 
+  const price_seats = publicData && publicData.priceSeats ? 
+  new Money(publicData.priceSeats.amount, publicData.priceSeats.currency) : null;
+  const price_office_rooms = publicData && publicData.priceOfficeRooms ? 
+  new Money(publicData.priceOfficeRooms.amount, publicData.priceOfficeRooms.currency) : null;
+  const price_meeting_rooms = publicData && publicData.priceMeetingRooms ? 
+  new Money(publicData.priceMeetingRooms.amount, publicData.priceMeetingRooms.currency) : null;
+
   const form = priceCurrencyValid ? (
     <EditListingPricingForm
       className={css.form}
-      initialValues={{ 
-        price_seats: publicData.priceSeats,
-        price_office_rooms: publicData.priceOfficeRooms,
-        price_meeting_rooms: publicData.priceMeetingRooms,
+      initialValues={{
+        price_seats: price_seats,
+        price_office_rooms: price_office_rooms,
+        price_meeting_rooms: price_meeting_rooms,
       }}
       onSubmit={values => {
         const { price_seats, price_office_rooms, price_meeting_rooms } = values;
