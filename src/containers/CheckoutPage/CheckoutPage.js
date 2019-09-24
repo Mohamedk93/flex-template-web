@@ -276,13 +276,25 @@ export class CheckoutPageComponent extends Component {
       : new Decimal(0);
 
     const seatsFeePriceTotal = seatsFeePrice
-      ? new Decimal(seatsFeePrice).mul(hoursDecimal).toNumber()
+      ? new Money(new Decimal(seatsFeePrice)
+        .mul(hoursDecimal)
+        .mul(100)
+        .toNumber(), 
+        seatsFee.currency)
       : 0;
     const officeRoomsFeePriceTotal = officeRoomsFeePrice
-      ? new Decimal(officeRoomsFeePrice).mul(hoursDecimal).toNumber()
+      ? new Money(new Decimal(officeRoomsFeePrice)
+        .mul(hoursDecimal)
+        .mul(100)
+        .toNumber(), 
+        officeRoomsFee.currency)
       : 0;
     const meetingRoomsFeePriceTotal = meetingRoomsFeePrice
-      ? new Decimal(meetingRoomsFeePrice).mul(hoursDecimal).toNumber()
+      ? new Money(new Decimal(meetingRoomsFeePrice)
+        .mul(hoursDecimal)
+        .mul(100)
+        .toNumber(), 
+        meetingRoomsFee.currency)
       : 0;
 
     const unitType = config.bookingUnitType; // TO DO need delete
@@ -290,7 +302,7 @@ export class CheckoutPageComponent extends Component {
     const seatsFeeLineItem = seatsFee
       ? {
           code: LINE_ITEM_SEATS_FEE,
-          unitPrice: new Money(seatsFeePriceTotal, "USD"), // TO DO
+          unitPrice: seatsFeePriceTotal,
           quantity: seatsQuantity, // TO DO cannot be null
         }
       : null;
@@ -299,7 +311,7 @@ export class CheckoutPageComponent extends Component {
     const officeRoomsFeeLineItem = officeRoomsFee
       ? {
           code: LINE_ITEM_OFFICE_ROOMS_FEE,
-          unitPrice: new Money(officeRoomsFeePriceTotal, "USD"),
+          unitPrice: officeRoomsFeePriceTotal,
           quantity: officeRoomsQuantity,
         }
       : null;
@@ -308,7 +320,7 @@ export class CheckoutPageComponent extends Component {
     const meetingRoomsFeeLineItem = meetingRoomsFee
       ? {
           code: LINE_ITEM_MEETING_ROOMS_FEE,
-          unitPrice: new Money(meetingRoomsFeePriceTotal, "USD"),
+          unitPrice: meetingRoomsFeePriceTotal,
           quantity: meetingRoomsQuantity,
         }
       : null;
