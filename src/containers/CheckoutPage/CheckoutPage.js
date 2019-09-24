@@ -249,6 +249,7 @@ export class CheckoutPageComponent extends Component {
 
   customPricingParams(params) {
     const { 
+      listingId,
       bookingStart, 
       bookingEnd, 
       hours,
@@ -314,7 +315,7 @@ export class CheckoutPageComponent extends Component {
     const meetingRoomsFeeLineItemMaybe = meetingRoomsFeeLineItem ? [meetingRoomsFeeLineItem] : [];
   
     return {
-      listingId: listing.id,
+      listingId,
       bookingStart,
       bookingEnd,
       lineItems: [
