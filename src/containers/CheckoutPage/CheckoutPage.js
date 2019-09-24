@@ -339,6 +339,7 @@ export class CheckoutPageComponent extends Component {
       ? meetingRoomsFeeLineItem.unitPrice
       : null;
     
+    // TO DO: Use this for general hundler
     const requestParams = this.customPricingParams({
       listingId: this.state.pageData.listing.id,
       listing: this.state.pageData.listing, // TO DO: need refactor

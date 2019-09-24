@@ -54,7 +54,6 @@ class CurrencyInputComponent extends Component {
     super(props);
     const { currencyConfig, defaultValue, input, intl } = props;
 
-    // TO DO
     const moneyValue = new Money(input.value.amount, input.value.currency);
 
     const initialValueIsMoney = moneyValue instanceof Money;
