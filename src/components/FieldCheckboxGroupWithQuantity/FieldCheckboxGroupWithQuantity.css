@@ -20,7 +20,6 @@
   padding: 2px 0;
 
   display: flex;
-  width: 350px;
   justify-content: space-between;
   align-items: center;
 
@@ -29,6 +28,7 @@
 
   @media (--viewportMedium) {
     padding: 4px 0;
+    width: 350px;
   }
 }
 

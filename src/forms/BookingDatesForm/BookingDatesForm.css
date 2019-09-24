@@ -104,3 +104,10 @@
   right: 24px;
   border: none;
 }
+
+.workspaces {
+  margin: 0 24px;
+  @media (--viewportMedium) {
+    margin: 0;
+  }
+}
