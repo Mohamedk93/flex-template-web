@@ -203,16 +203,28 @@ export class CheckoutPageComponent extends Component {
       const bookingStartForAPI = dateFromLocalToAPI(bookingStart);
       const bookingEndForAPI = dateFromLocalToAPI(bookingEnd);
 
-      const { seatsFee, officeRoomsFee, meetingRoomsFee } = pageData.bookingData;
+      const { 
+        hours,
+        seatsFee, 
+        officeRoomsFee,
+        meetingRoomsFee,
+        seatsQuantity,
+        officeRoomsQuantity, 
+        meetingRoomsQuantity,
+      } = pageData.bookingData;
 
       const preliminaryParams = {
         listingId,
         bookingStart,
         bookingEnd,
-        quantity: pageData.bookingData.hours,
+        hours,
         seatsFee,
         officeRoomsFee,
         meetingRoomsFee,
+        seatsQuantity,
+        officeRoomsQuantity, 
+        meetingRoomsQuantity,
+
         listing: pageData.listing, // TO DO: must refactor
       }
 
@@ -239,26 +251,31 @@ export class CheckoutPageComponent extends Component {
     const { 
       bookingStart, 
       bookingEnd, 
-      listing, 
+      listing,
+      hours,
       seatsFee,
       officeRoomsFee,
       meetingRoomsFee,
+      seatsQuantity,
+      officeRoomsQuantity, 
+      meetingRoomsQuantity,
       ...rest 
     } = params;
 
     const { amount, currency } = listing.attributes.price; // TO DO Refactor
   
     const unitType = config.bookingUnitType;
-    const isNightly = unitType === LINE_ITEM_NIGHT;
-    const quantity = isNightly
-      ? nightsBetween(bookingStart, bookingEnd)
-      : daysBetween(bookingStart, bookingEnd);
+    // const isNightly = unitType === LINE_ITEM_NIGHT;
+
+    // const quantity = isNightly
+    //   ? nightsBetween(bookingStart, bookingEnd)
+    //   : daysBetween(bookingStart, bookingEnd);
   
     const seatsFeeLineItem = seatsFee
       ? {
           code: LINE_ITEM_SEATS_FEE,
           unitPrice: seatsFee,
-          quantity: 1, // TO DO: Update
+          quantity: seatsQuantity,
         }
       : null;
     const seatsFeeLineItemMaybe = seatsFeeLineItem ? [seatsFeeLineItem] : [];
@@ -267,7 +284,7 @@ export class CheckoutPageComponent extends Component {
       ? {
           code: LINE_ITEM_OFFICE_ROOMS_FEE,
           unitPrice: officeRoomsFee,
-          quantity: 1,
+          quantity: officeRoomsQuantity,
         }
       : null;
     const officeRoomsFeeLineItemMaybe = officeRoomsFeeLineItem ? [officeRoomsFeeLineItem] : [];
@@ -276,7 +293,7 @@ export class CheckoutPageComponent extends Component {
       ? {
           code: LINE_ITEM_MEETING_ROOMS_FEE,
           unitPrice: meetingRoomsFee,
-          quantity: 1,
+          quantity: meetingRoomsQuantity,
         }
       : null;
     const meetingRoomsFeeLineItemMaybe = meetingRoomsFeeLineItem ? [meetingRoomsFeeLineItem] : [];
@@ -292,7 +309,7 @@ export class CheckoutPageComponent extends Component {
         {
           code: unitType,
           unitPrice: new Money(amount, currency),
-          quantity,
+          quantity: 0,
         },
       ],
       ...rest,
@@ -310,6 +327,8 @@ export class CheckoutPageComponent extends Component {
     // Create order aka transaction
     // NOTE: if unit type is line-item/units, quantity needs to be added.
     // The way to pass it to checkout page is through pageData.bookingData
+
+    const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity } = bookingData;
 
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
       item => item.code === LINE_ITEM_SEATS_FEE
@@ -330,16 +349,19 @@ export class CheckoutPageComponent extends Component {
       ? meetingRoomsFeeLineItem.unitPrice
       : null;
     
-    // TO DO: Use this for general hundler
     const requestParams = this.customPricingParams({
       listingId: this.state.pageData.listing.id,
       listing: this.state.pageData.listing, // TO DO: need refactor
       bookingStart: speculatedTransaction.booking.attributes.start,
       bookingEnd: speculatedTransaction.booking.attributes.end,
-      quantity: bookingData.hours,
+
+      hours,
       seatsFee,
       officeRoomsFee,
       meetingRoomsFee,
+      seatsQuantity, 
+      officeRoomsQuantity,
+      meetingRoomsQuantity,
     });
 
     const processAlias = config.cashBookingProcessAlias;
@@ -527,6 +549,8 @@ export class CheckoutPageComponent extends Component {
     // Note: optionalPaymentParams contains Stripe paymentMethod,
     // but that can also be passed on Step 2
     // stripe.handleCardPayment(stripe, { payment_method: stripePaymentMethodId })
+    const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity } = bookingData;    
+
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
       item => item.code === LINE_ITEM_SEATS_FEE
     );
@@ -558,10 +582,14 @@ export class CheckoutPageComponent extends Component {
       listing: pageData.listing, // TO DO: need refactor
       bookingStart: tx.booking.attributes.start,
       bookingEnd: tx.booking.attributes.end,
-      quantity: bookingData.hours,
+
+      hours,
       seatsFee,
       officeRoomsFee,
       meetingRoomsFee,
+      seatsQuantity, 
+      officeRoomsQuantity,
+      meetingRoomsQuantity,
       ...optionalPaymentParams,
     });
 

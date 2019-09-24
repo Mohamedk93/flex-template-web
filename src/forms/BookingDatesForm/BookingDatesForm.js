@@ -120,7 +120,21 @@ export class BookingDatesFormComponent extends Component {
   // default handleSubmit function.
   handleFormSubmit(values) {
     const { intl } = this.props;
-    const { firstDate, extraDays = [], paymentMethod, workspaces } = values;
+    const { 
+      firstDate, 
+      extraDays = [], 
+      paymentMethod,
+      workspaces,
+      seats_quantity,
+      office_rooms_quantity,
+      meeting_rooms_quantity,
+    } = values;
+
+    // TO DO
+    // const seats_quantity = values.seats_quantity ? parseInt(values.seats_quantity) : 0;
+    // const office_rooms_quantity = values.office_room_quantity ? parseInt(values.office_room_quantity) : 0;
+    // const meeting_rooms_quantity = values.meeting_rooms_quantity ? parseInt(meeting_rooms_quantity) : 0;
+
     const bookingDate = firstDate ? firstDate.bookingDate : null;
 
     let totalHours = 0;
@@ -206,6 +220,9 @@ export class BookingDatesFormComponent extends Component {
           formatMessageLine(firstDate),
           ...dateHourLines,
         ],
+        seatsQuantity: seats_quantity,
+        officeRoomsQuantity: office_rooms_quantity,
+        meetingRoomsQuantity: meeting_rooms_quantity,
       });
     }
   }
@@ -417,15 +434,6 @@ export class BookingDatesFormComponent extends Component {
                   this.handleFieldBlur(e);
                 }}
               />
-
-              {/* <FieldCheckboxGroup
-                className={css.workspaces}
-                id="workspaces"
-                name="workspaces"
-                label={workspacesLabel}
-                options={config.custom.workspaces}
-                validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
-              /> */}
 
               <FieldCheckboxGroupWithQuantity
                 className={css.workspaces}
