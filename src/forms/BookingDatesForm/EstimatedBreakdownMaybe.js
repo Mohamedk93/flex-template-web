@@ -47,8 +47,17 @@ import css from './BookingDatesForm.css';
 
 const { Money, UUID } = sdkTypes;
 
-const estimatedTotalPrice = (unitPrice, unitCount, seatsFee, officeRoomsFee, meetingRoomsFee) => {
-  const numericPrice = convertMoneyToNumber(unitPrice);
+const estimatedTotalPrice = (
+  unitPrice, 
+  unitCount, 
+  seatsFee, 
+  officeRoomsFee, 
+  meetingRoomsFee,
+  seatsQuantity, 
+  officeRoomsQuantity,
+  meetingRoomsQuantity,
+  ) => {
+
   const seatsFeePrice = seatsFee
     ? convertMoneyToNumber(seatsFee)
     : null;
@@ -58,17 +67,32 @@ const estimatedTotalPrice = (unitPrice, unitCount, seatsFee, officeRoomsFee, mee
   const meetingRoomsFeePrice = meetingRoomsFee
     ? convertMoneyToNumber(meetingRoomsFee)
     : null;
-  // TO DO Maybe optimize
-  let numericTotalPrice = new Decimal(numericPrice).times(unitCount).toNumber();
+
+  const seatsQuantityCalc = seatsQuantity ? new Decimal(seatsQuantity) : 0;
+  const officeRoomsQuantityCalc =officeRoomsQuantity ? new Decimal(officeRoomsQuantity) : 0;
+  const meetingRoomsQuantityCalc = meetingRoomsQuantity ? new Decimal(meetingRoomsQuantity) : 0;
+    
+  let numericTotalPrice = 0;
   if(seatsFeePrice) {
-    numericTotalPrice = new Decimal(numericTotalPrice).plus(seatsFeePrice).toNumber();
+    const seatsFeePriceTotal = new Decimal(seatsFeePrice).mul(seatsQuantityCalc)
+    numericTotalPrice = new Decimal(numericTotalPrice)
+    .plus(seatsFeePriceTotal)
+    .toNumber();
   };
   if(officeRoomsFeePrice) {
-    numericTotalPrice = new Decimal(numericTotalPrice).plus(officeRoomsFeePrice).toNumber();
+    const officeRoomsFeePriceTotal = new Decimal(officeRoomsFeePrice).mul(officeRoomsQuantityCalc)
+    numericTotalPrice = new Decimal(numericTotalPrice)
+    .plus(officeRoomsFeePriceTotal)
+    .toNumber();
   };
   if(meetingRoomsFeePrice) {
-    numericTotalPrice = new Decimal(numericTotalPrice).plus(meetingRoomsFeePrice).toNumber();
+    const meetingRoomsFeePriceTotal = new Decimal(meetingRoomsFeePrice).mul(meetingRoomsQuantityCalc)
+    numericTotalPrice = new Decimal(numericTotalPrice)
+    .plus(meetingRoomsFeePriceTotal)
+    .toNumber();
   };
+  numericTotalPrice = new Decimal(numericTotalPrice).times(unitCount).toNumber();
+
   return new Money(
     convertUnitToSubUnit(numericTotalPrice, unitDivisor(unitPrice.currency)),
     unitPrice.currency
@@ -78,7 +102,20 @@ const estimatedTotalPrice = (unitPrice, unitCount, seatsFee, officeRoomsFee, mee
 // When we cannot speculatively initiate a transaction (i.e. logged
 // out), we must estimate the booking breakdown. This function creates
 // an estimated transaction object for that use case.
-const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, quantity, seatsFee, officeRoomsFee, meetingRoomsFee) => {
+const estimatedTransaction = (
+  unitType, 
+  bookingStart, 
+  bookingEnd, 
+  unitPrice,
+  quantity, 
+  seatsFee, 
+  officeRoomsFee, 
+  meetingRoomsFee,
+  seatsQuantity, 
+  officeRoomsQuantity,
+  meetingRoomsQuantity,
+  ) => {
+
   const now = new Date();
   const isNightly = unitType === LINE_ITEM_NIGHT;
   const isDaily = unitType === LINE_ITEM_DAY;
@@ -89,7 +126,16 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
     ? daysBetween(bookingStart, bookingEnd)
     : quantity;
 
-  const totalPrice = estimatedTotalPrice(unitPrice, unitCount, seatsFee, officeRoomsFee, meetingRoomsFee);
+  const totalPrice = estimatedTotalPrice(
+    unitPrice, 
+    unitCount, 
+    seatsFee, 
+    officeRoomsFee, 
+    meetingRoomsFee,
+    seatsQuantity, 
+    officeRoomsQuantity,
+    meetingRoomsQuantity,
+  );
 
   // bookingStart: "Fri Mar 30 2018 12:00:00 GMT-1100 (SST)" aka "Fri Mar 30 2018 23:00:00 GMT+0000 (UTC)"
   // Server normalizes night/day bookings to start from 00:00 UTC aka "Thu Mar 29 2018 13:00:00 GMT-1100 (SST)"
@@ -188,7 +234,19 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
 };
 
 const EstimatedBreakdownMaybe = props => {
-  const { unitType, unitPrice, startDate, endDate, quantity, seatsFee, officeRoomsFee, meetingRoomsFee } = props.bookingData;
+  const { 
+    unitType, 
+    unitPrice, 
+    startDate, 
+    endDate, 
+    quantity, 
+    seatsFee, 
+    officeRoomsFee,
+    meetingRoomsFee,
+    seatsQuantity, 
+    officeRoomsQuantity,
+    meetingRoomsQuantity,
+  } = props.bookingData;
   const isUnits = unitType === LINE_ITEM_UNITS;
   const quantityIfUsingUnits = !isUnits || Number.isInteger(quantity);
   const canEstimatePrice = startDate && endDate && unitPrice && quantityIfUsingUnits;
@@ -196,7 +254,19 @@ const EstimatedBreakdownMaybe = props => {
     return null;
   }
 
-  const tx = estimatedTransaction(unitType, startDate, endDate, unitPrice, quantity, seatsFee, officeRoomsFee, meetingRoomsFee);
+  const tx = estimatedTransaction(
+    unitType, 
+    startDate, 
+    endDate, 
+    unitPrice, 
+    quantity, 
+    seatsFee, 
+    officeRoomsFee, 
+    meetingRoomsFee,
+    seatsQuantity, 
+    officeRoomsQuantity,
+    meetingRoomsQuantity,
+  );
 
   return (
     <BookingBreakdown

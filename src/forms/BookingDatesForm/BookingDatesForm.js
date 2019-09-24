@@ -12,7 +12,7 @@ import { propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
 import config from '../../config';
 import { requiredFieldArrayCheckbox } from '../../util/validators';
-import { Form, IconClose, PrimaryButton, InlineTextButton, FieldSelect, FieldCheckboxGroup } from '../../components';
+import { Form, IconClose, PrimaryButton, InlineTextButton, FieldSelect, FieldCheckboxGroupWithQuantity } from '../../components';
 
 import { formatMoney } from '../../util/currency';
 
@@ -265,11 +265,18 @@ export class BookingDatesFormComponent extends Component {
           } = fieldRenderProps;
           const { firstDate, extraDays = [] } = values;
           const required = validators.required('This field is required');
+
           const selectedSeatsFee =
           values &&
           values.workspaces &&
           values.workspaces.indexOf('seats') != -1
             ? seatsFee
+            : null;
+
+          const selectedSeatsQuantity =
+          values &&
+          values.seats_quantity
+            ? values.seats_quantity
             : null;
 
           const selectedOfficeRoomsFee =
@@ -279,11 +286,23 @@ export class BookingDatesFormComponent extends Component {
             ? officeRoomsFee
             : null;
 
+          const selectedOfficeRoomsQuantity =
+          values &&
+          values.office_rooms_quantity
+            ? values.office_rooms_quantity
+            : null;
+
           const selectedMeetingRoomsFee =
           values &&
           values.workspaces &&
           values.workspaces.indexOf('meeting_rooms') != -1
             ? meetingRoomsFee
+            : null;
+
+          const selectedMeetingRoomsQuantity =
+          values &&
+          values.meeting_rooms_quantity
+            ? values.meeting_rooms_quantity
             : null;
 
           let totalHours = 0;
@@ -331,6 +350,9 @@ export class BookingDatesFormComponent extends Component {
                 seatsFee: selectedSeatsFee,
                 officeRoomsFee: selectedOfficeRoomsFee,
                 meetingRoomsFee: selectedMeetingRoomsFee,
+                seatsQuantity: selectedSeatsQuantity,
+                officeRoomsQuantity: selectedOfficeRoomsQuantity,
+                meetingRoomsQuantity: selectedMeetingRoomsQuantity,
               }
               : null;
           const bookingInfo =
@@ -396,7 +418,16 @@ export class BookingDatesFormComponent extends Component {
                 }}
               />
 
-              <FieldCheckboxGroup
+              {/* <FieldCheckboxGroup
+                className={css.workspaces}
+                id="workspaces"
+                name="workspaces"
+                label={workspacesLabel}
+                options={config.custom.workspaces}
+                validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
+              /> */}
+
+              <FieldCheckboxGroupWithQuantity
                 className={css.workspaces}
                 id="workspaces"
                 name="workspaces"

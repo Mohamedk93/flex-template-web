@@ -119,15 +119,6 @@ const EditListingDescriptionFormComponent = props => (
             validate={composeValidators(required(descriptionRequiredMessage))}
           />
 
-          {/* <FieldCheckboxGroup
-            className={css.workspaces}
-            id="workspaces"
-            name="workspaces"
-            label={workspacesLabel}
-            options={config.custom.workspaces}
-            validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
-          /> */}
-
           <FieldCheckboxGroupWithQuantity
             className={css.workspaces}
             id="workspaces"
