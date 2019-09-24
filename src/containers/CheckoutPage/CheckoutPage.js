@@ -258,7 +258,7 @@ export class CheckoutPageComponent extends Component {
       ? {
           code: LINE_ITEM_SEATS_FEE,
           unitPrice: seatsFee,
-          quantity: 1,
+          quantity: 1, // TO DO: Update
         }
       : null;
     const seatsFeeLineItemMaybe = seatsFeeLineItem ? [seatsFeeLineItem] : [];
@@ -527,6 +527,25 @@ export class CheckoutPageComponent extends Component {
     // Note: optionalPaymentParams contains Stripe paymentMethod,
     // but that can also be passed on Step 2
     // stripe.handleCardPayment(stripe, { payment_method: stripePaymentMethodId })
+    const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_SEATS_FEE
+    );
+    const seatsFee = seatsFeeLineItem
+      ? seatsFeeLineItem.unitPrice
+      : null;
+    const officeRoomsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_OFFICE_ROOMS_FEE
+    );
+    const officeRoomsFee = officeRoomsFeeLineItem
+      ? officeRoomsFeeLineItem.unitPrice
+      : null;
+    const meetingRoomsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_MEETING_ROOMS_FEE
+    );
+    const meetingRoomsFee = meetingRoomsFeeLineItem
+      ? meetingRoomsFeeLineItem.unitPrice
+      : null;
+   
     const optionalPaymentParams =
       selectedPaymentFlow === USE_SAVED_CARD && hasDefaultPaymentMethod
         ? { paymentMethod: stripePaymentMethodId }
@@ -534,13 +553,17 @@ export class CheckoutPageComponent extends Component {
         ? { setupPaymentMethodForSaving: true }
         : {};
 
-    const orderParams = {
+    const orderParams = this.customPricingParams({
       listingId: pageData.listing.id,
+      listing: pageData.listing, // TO DO: need refactor
       bookingStart: tx.booking.attributes.start,
       bookingEnd: tx.booking.attributes.end,
       quantity: bookingData.hours,
+      seatsFee,
+      officeRoomsFee,
+      meetingRoomsFee,
       ...optionalPaymentParams,
-    };
+    });
 
     return handlePaymentIntentCreation(orderParams);
   }
