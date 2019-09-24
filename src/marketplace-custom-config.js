@@ -33,14 +33,17 @@ export const workspaces = [
   {
     key: 'seats',
     label: 'Seats',
+    count: 500,
   },
   {
     key: 'office_rooms',
     label: 'Office rooms',
+    count: 100,
   },
   {
     key: 'meeting_rooms',
     label: 'Meeting rooms',
+    count: 100,
   },
 ];
 

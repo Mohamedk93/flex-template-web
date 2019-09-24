@@ -46,7 +46,7 @@ const FieldCheckboxRenderer = props => {
                 id={`${fieldId}_quantity`}
                 type="number"
                 min="1"
-                max="100" // TO DO
+                max={option.count} // TO DO: Default validation
                 name={`${option.key}_quantity`}
                 value="1"
               />
