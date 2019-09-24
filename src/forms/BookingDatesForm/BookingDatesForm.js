@@ -125,15 +125,11 @@ export class BookingDatesFormComponent extends Component {
       extraDays = [], 
       paymentMethod,
       workspaces,
-      seats_quantity,
-      office_rooms_quantity,
-      meeting_rooms_quantity,
     } = values;
 
-    // TO DO
-    // const seats_quantity = values.seats_quantity ? parseInt(values.seats_quantity) : 0;
-    // const office_rooms_quantity = values.office_room_quantity ? parseInt(values.office_room_quantity) : 0;
-    // const meeting_rooms_quantity = values.meeting_rooms_quantity ? parseInt(meeting_rooms_quantity) : 0;
+    const seats_quantity = values && values.seats_quantity ? parseInt(values.seats_quantity) : 0;
+    const office_rooms_quantity = values && values.office_room_quantity ? parseInt(values.office_room_quantity) : 0;
+    const meeting_rooms_quantity = values && values.meeting_rooms_quantity ? parseInt(values.meeting_rooms_quantity) : 0;
 
     const bookingDate = firstDate ? firstDate.bookingDate : null;
 
