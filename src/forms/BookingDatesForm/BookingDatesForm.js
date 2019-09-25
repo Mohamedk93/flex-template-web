@@ -393,7 +393,7 @@ export class BookingDatesFormComponent extends Component {
 
           const workspacesNames = listing.attributes.publicData.workspaces ? 
             listing.attributes.publicData.workspaces
-          : null;
+          : [];
           const workspacesFields = config.custom.workspaces.filter(function(item){
             return workspacesNames.indexOf(item.key) != -1
           });
