@@ -83,10 +83,6 @@ const EditListingDescriptionFormComponent = props => (
         id: 'EditListingDescriptionForm.workspacesLabel',
       });
 
-      const workspacesRequiredMessage = intl.formatMessage({
-        id: 'EditListingDescriptionForm.workspacesRequiredMessage',
-      });
-
       const classes = classNames(css.root, className);
       const submitReady = updated && pristine;
       const submitInProgress = updateInProgress;
@@ -125,7 +121,6 @@ const EditListingDescriptionFormComponent = props => (
             name="workspaces"
             label={workspacesLabel}
             options={config.custom.workspaces}
-            validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
           />
 
           <Button

@@ -12,6 +12,7 @@ import { arrayOf, bool, node, shape, string } from 'prop-types';
 import classNames from 'classnames';
 import { FieldArray } from 'react-final-form-arrays';
 import { FieldCheckbox, ValidationError, FieldQuantityInput } from '../../components';
+import * as validators from '../../util/validators';
 
 import css from './FieldCheckboxGroupWithQuantity.css';
 
@@ -22,11 +23,25 @@ const FieldCheckboxRenderer = props => {
     twoColumns, 
     id, 
     fields, 
-    options, 
+    options,
+    intl,
     meta } = props;
+
+  console.log("props", props);
 
   const classes = classNames(rootClassName || css.root, className);
   const listClasses = twoColumns ? classNames(css.list, css.twoColumns) : css.list;
+
+  const quantityRequiredFunc = validators.required(
+    // intl.formatMessage({
+    //   id: 'EditListingPricingForm.priceRequired',
+    // })
+    "  " // TO DO:
+  );
+
+  // const workspacesRequiredMessage = intl.formatMessage({
+  //   id: 'EditListingDescriptionForm.workspacesRequiredMessage',
+  // });
 
   return (
     <fieldset className={classes}>
@@ -34,6 +49,7 @@ const FieldCheckboxRenderer = props => {
       <ul className={listClasses}>
         {options.map((option, index) => {
           const fieldId = `${id}.${option.key}`;
+          const quantityRequired = fields.value.indexOf(option.key) != -1 ? quantityRequiredFunc : false;
           return (
             <li key={fieldId} className={css.item}>
               <FieldCheckbox
@@ -41,14 +57,15 @@ const FieldCheckboxRenderer = props => {
                 name={fields.name}
                 label={option.label}
                 value={option.key}
+                validate={validators.requiredFieldArrayCheckbox("orkspacesRequiredMessage")}
               />
               <FieldQuantityInput
                 id={`${fieldId}_quantity`}
                 type="number"
-                min="1"
                 max={option.count} // TO DO: Default validation
                 name={`${option.key}_quantity`}
                 value="1"
+                validate={quantityRequired}
               />
             </li>
           );

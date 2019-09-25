@@ -6,13 +6,14 @@ import classNames from 'classnames';
 import { ValidationError } from '../../components';
 import css from './FieldQuantityInput.css';
 
+
 class FieldQuantityInputComponent extends Component {
 
   handleMinus(e) {
     e.preventDefault();
     e.stopPropagation();
     let currentValue = +this.props.input.value;
-    if(currentValue > 0) {
+    if(currentValue > 1) {
       currentValue = currentValue - 1;
       this.props.input.onChange(currentValue);
     }
@@ -62,7 +63,14 @@ class FieldQuantityInputComponent extends Component {
         [css.inputSuccess]: valid,
         [css.inputError]: hasError,
       });
-    const inputProps = { className: inputClasses, placeholder: "0", id, type: input.type, ...input, ...rest };
+    const inputProps = { 
+      className: inputClasses, 
+      placeholder: "0",
+      type: input.type, 
+      id,
+      ...input, 
+      ...rest
+    };
 
     const classes = classNames(rootClassName || css.root, className);
     return (

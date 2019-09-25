@@ -37,6 +37,10 @@ const EditListingDescriptionPanel = props => {
     <FormattedMessage id="EditListingDescriptionPanel.createListingTitle" />
   );
 
+  const seats_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
+  const office_rooms_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
+  const meeting_rooms_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
+
   return (
     <div className={classes}>
       <h1 className={css.title}>{panelTitle}</h1>
@@ -47,9 +51,9 @@ const EditListingDescriptionPanel = props => {
           description, 
           category: publicData.category, 
           workspaces: publicData.workspaces,
-          seats_quantity: publicData.seatsQuantity,
-          office_rooms_quantity: publicData.officeRoomsQuantity,
-          meeting_rooms_quantity: publicData.meetingRoomsQuantity,
+          seats_quantity,
+          office_rooms_quantity,
+          meeting_rooms_quantity,
         }}
         saveActionMsg={submitButtonText}
         onSubmit={values => {
