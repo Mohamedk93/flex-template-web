@@ -258,20 +258,15 @@ export class BookingDatesFormComponent extends Component {
           const {
             datePlaceholder,
             form,
-
-            // new update:
-            endDatePlaceholder,
-            startDatePlaceholder,
             formId,
-
             handleSubmit,
             intl,
             isOwnListing,
+            listing,
             submitButtonWrapperClassName,
             unitPrice,
             unitType,
             values,
-
             seatsFee,
             officeRoomsFee,
             meetingRoomsFee,
@@ -396,6 +391,13 @@ export class BookingDatesFormComponent extends Component {
             id: 'BookingDatesForm.workspacesLabel',
           });
 
+          const workspacesNames = listing.attributes.publicData.workspaces ? 
+            listing.attributes.publicData.workspaces
+          : null;
+          const workspacesFields = config.custom.workspaces.filter(function(item){
+            return workspacesNames.indexOf(item.key) != -1
+          });
+
           return (
             <Form
               onSubmit={e => {
@@ -433,8 +435,7 @@ export class BookingDatesFormComponent extends Component {
                 name="workspaces"
                 label={workspacesLabel}
                 intl={intl}
-                options={config.custom.workspaces} // TO DO:
-                // validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
+                options={workspacesFields}
               />
 
               {hoursValid(values) && isChooseWorkspace(values) ? (
