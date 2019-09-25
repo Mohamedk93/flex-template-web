@@ -47,11 +47,11 @@ const EditListingPricingPanel = props => {
 
   const priceCurrencyValid = price instanceof Money ? price.currency === config.currency : true;
 
-  const price_seats = publicData && publicData.priceSeats ? 
+  const price_seats = publicData && publicData.priceSeats && publicData.workspaces.indexOf('seats') != -1 ? 
   new Money(publicData.priceSeats.amount, publicData.priceSeats.currency) : null;
-  const price_office_rooms = publicData && publicData.priceOfficeRooms ? 
+  const price_office_rooms = publicData && publicData.priceOfficeRooms && publicData.workspaces.indexOf('office_rooms') != -1 ? 
   new Money(publicData.priceOfficeRooms.amount, publicData.priceOfficeRooms.currency) : null;
-  const price_meeting_rooms = publicData && publicData.priceMeetingRooms ? 
+  const price_meeting_rooms = publicData && publicData.priceMeetingRooms && publicData.workspaces.indexOf('meeting_rooms') != -1 ? 
   new Money(publicData.priceMeetingRooms.amount, publicData.priceMeetingRooms.currency) : null;
 
   const form = priceCurrencyValid ? (
@@ -68,11 +68,13 @@ const EditListingPricingPanel = props => {
           amount: 0,
           currency: 'USD',
         };
-        const priceArray = [price_seats, price_office_rooms, price_meeting_rooms].map(function(x) {
-          if(x !== undefined && x !== null){
-            return x.amount
-          }
+        const priceArrayFiltered = [price_seats, price_office_rooms, price_meeting_rooms].filter(function(x) {
+          return x !== undefined && x !== null
         });
+        const priceArray = priceArrayFiltered.map(function(x) {
+          return x.amount
+        });
+        console.log("array", priceArray);
         const minimalPrice = {
           amount: Array.min(priceArray),
           currency: 'USD',
