@@ -27,21 +27,20 @@ const FieldCheckboxRenderer = props => {
     intl,
     meta } = props;
 
-  console.log("props", props);
+  const selectedValues = fields.value ? fields.value : [];
 
   const classes = classNames(rootClassName || css.root, className);
   const listClasses = twoColumns ? classNames(css.list, css.twoColumns) : css.list;
 
   const quantityRequiredFunc = validators.required(
-    // intl.formatMessage({
-    //   id: 'EditListingPricingForm.priceRequired',
-    // })
-    "  " // TO DO:
+    intl.formatMessage({
+      id: 'EditListingPricingForm.priceRequired',
+    })
   );
 
-  // const workspacesRequiredMessage = intl.formatMessage({
-  //   id: 'EditListingDescriptionForm.workspacesRequiredMessage',
-  // });
+  const workspacesRequiredMessage = intl.formatMessage({
+    id: 'EditListingDescriptionForm.workspacesRequiredMessage',
+  });
 
   return (
     <fieldset className={classes}>
@@ -49,7 +48,7 @@ const FieldCheckboxRenderer = props => {
       <ul className={listClasses}>
         {options.map((option, index) => {
           const fieldId = `${id}.${option.key}`;
-          const quantityRequired = fields.value.indexOf(option.key) != -1 ? quantityRequiredFunc : false;
+          const quantityRequired = selectedValues.indexOf(option.key) != -1 ? quantityRequiredFunc : false;
           return (
             <li key={fieldId} className={css.item}>
               <FieldCheckbox
@@ -57,7 +56,7 @@ const FieldCheckboxRenderer = props => {
                 name={fields.name}
                 label={option.label}
                 value={option.key}
-                validate={validators.requiredFieldArrayCheckbox("orkspacesRequiredMessage")}
+                validate={validators.requiredFieldArrayCheckbox(workspacesRequiredMessage)}
               />
               <FieldQuantityInput
                 id={`${fieldId}_quantity`}

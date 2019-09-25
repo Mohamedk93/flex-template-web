@@ -396,10 +396,6 @@ export class BookingDatesFormComponent extends Component {
             id: 'BookingDatesForm.workspacesLabel',
           });
 
-          const workspacesRequiredMessage = intl.formatMessage({
-            id: 'BookingDatesForm.workspacesRequiredMessage',
-          });
-
           return (
             <Form
               onSubmit={e => {
@@ -436,8 +432,9 @@ export class BookingDatesFormComponent extends Component {
                 id="workspaces"
                 name="workspaces"
                 label={workspacesLabel}
-                options={config.custom.workspaces}
-                validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
+                intl={intl}
+                options={config.custom.workspaces} // TO DO:
+                // validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
               />
 
               {hoursValid(values) && isChooseWorkspace(values) ? (

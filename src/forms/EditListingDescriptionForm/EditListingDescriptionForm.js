@@ -121,6 +121,7 @@ const EditListingDescriptionFormComponent = props => (
             name="workspaces"
             label={workspacesLabel}
             options={config.custom.workspaces}
+            intl={intl}
           />
 
           <Button

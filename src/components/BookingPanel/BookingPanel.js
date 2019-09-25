@@ -227,6 +227,11 @@ const BookingPanel = props => {
             seatsFee={seatsFee}
             officeRoomsFee={officeRoomsFee}
             meetingRoomsFee={meetingRoomsFee}
+            initialValues={{ 
+              seats_quantity: 1,
+              office_rooms_quantity: 1,
+              meeting_rooms_quantity: 1,
+            }}
           />
         ) : null}
       </ModalInMobile>
