@@ -13,6 +13,7 @@ import classNames from 'classnames';
 import { FieldArray } from 'react-final-form-arrays';
 import { FieldCheckbox, ValidationError, FieldQuantityInput } from '../../components';
 import * as validators from '../../util/validators';
+import { FormattedMessage } from '../../util/reactIntl';
 
 import css from './FieldCheckboxGroupWithQuantity.css';
 
@@ -32,11 +33,10 @@ const FieldCheckboxRenderer = props => {
   const classes = classNames(rootClassName || css.root, className);
   const listClasses = twoColumns ? classNames(css.list, css.twoColumns) : css.list;
 
-  const quantityRequiredFunc = validators.required(
-    intl.formatMessage({
-      id: 'EditListingPricingForm.priceRequired',
-    })
-  );
+  // const quantityRequiredFunc = validators.requiredQuantity(   
+  //   // <FormattedMessage id="EditListingDescriptionForm.validateQuantity" values={{ min: 5, max: 100 }}  />
+  //   `Value must be from ${5} to ${45}` // Field Validator need string type for meta.error
+  // );
 
   const workspacesRequiredMessage = intl.formatMessage({
     id: 'EditListingDescriptionForm.workspacesRequiredMessage',
@@ -48,6 +48,7 @@ const FieldCheckboxRenderer = props => {
       <ul className={listClasses}>
         {options.map((option, index) => {
           const fieldId = `${id}.${option.key}`;
+          const quantityRequiredFunc = validators.requiredQuantity(`Value must be from ${1} to ${option.count}`, 1, option.count)
           const quantityRequired = selectedValues.indexOf(option.key) != -1 ? quantityRequiredFunc : false;
           return (
             <li key={fieldId} className={css.item}>
@@ -61,7 +62,7 @@ const FieldCheckboxRenderer = props => {
               <FieldQuantityInput
                 id={`${fieldId}_quantity`}
                 type="number"
-                max={option.count} // TO DO: Default validation
+                max={option.count}
                 name={`${option.key}_quantity`}
                 validate={quantityRequired}
               />

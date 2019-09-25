@@ -30,6 +30,17 @@ export const required = message => value => {
   return VALID;
 };
 
+export const requiredQuantity = (message, min, max) => value => {
+  console.log("wtf bleat", value);
+  if (
+    typeof value === 'undefined' || 
+    value === null ||
+    parseInt(value) < min ||
+    parseInt(value) > max
+  ) { return message; }
+  return VALID;
+};
+
 export const requiredStringNoTrim = message => value => {
   return typeof value === 'string' && value.length > 0 ? VALID : message;
 };
