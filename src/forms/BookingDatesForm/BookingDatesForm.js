@@ -398,6 +398,15 @@ export class BookingDatesFormComponent extends Component {
             return workspacesNames.indexOf(item.key) != -1
           });
 
+          const publicDataObj = listing.attributes.publicData ? 
+            listing.attributes.publicData
+          : [];
+          const defaultMaxQuantity = {
+            seats: publicDataObj.seatsQuantity ? publicDataObj.seatsQuantity : 100,
+            office_rooms: publicDataObj.officeRoomsQuantity ? publicDataObj.officeRoomsQuantity : 100,
+            meeting_rooms: publicDataObj.meetingRoomsQuantity ? publicDataObj.meetingRoomsQuantity : 100,
+          };
+          
           const quantityErrors = [];
           if(fieldRenderProps.errors.seats_quantity) {
             quantityErrors.push(fieldRenderProps.errors.seats_quantity)
@@ -448,6 +457,7 @@ export class BookingDatesFormComponent extends Component {
                 intl={intl}
                 options={workspacesFields}
                 quantityErrors={quantityErrors} // TO DO
+                defaultMaxQuantity={defaultMaxQuantity}
               />
 
               {hoursValid(values) && isChooseWorkspace(values) ? (

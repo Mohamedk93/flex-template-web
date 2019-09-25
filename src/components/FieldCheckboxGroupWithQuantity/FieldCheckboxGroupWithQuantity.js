@@ -27,6 +27,7 @@ const FieldCheckboxRenderer = props => {
     options,
     intl,
     quantityErrors,
+    defaultMaxQuantity,
     meta } = props;
 
   const selectedValues = fields.value ? fields.value : [];
@@ -57,8 +58,9 @@ const FieldCheckboxRenderer = props => {
       {label ? <legend>{label}</legend> : null}
       <ul className={listClasses}>
         {options.map((option, index) => {
+          const maxQuantity = defaultMaxQuantity ? defaultMaxQuantity[option.key] : option.count;
           const fieldId = `${id}.${option.key}`;
-          const quantityRequiredFunc = validators.requiredQuantity(`Value must be from ${1} to ${option.count}`, 1, option.count)
+          const quantityRequiredFunc = validators.requiredQuantity(`Value must be from ${1} to ${maxQuantity}`, 1, maxQuantity)
           const quantityRequired = selectedValues.indexOf(option.key) != -1 ? quantityRequiredFunc : false;
           return (
             <li key={fieldId} className={css.item}>
@@ -72,10 +74,9 @@ const FieldCheckboxRenderer = props => {
               <FieldQuantityInput
                 id={`${fieldId}_quantity`}
                 type="number"
-                max={option.count}
+                // max={maxQuantity}
                 name={`${option.key}_quantity`}
                 validate={quantityRequired}
-                quantityErrors={quantityErrors}
               />
             </li>
           );

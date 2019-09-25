@@ -88,7 +88,6 @@ const EditListingDescriptionFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
 
-      
       const quantityErrors = [];
       if(fieldRenderProps.errors.seats_quantity) {
         quantityErrors.push(fieldRenderProps.errors.seats_quantity)
