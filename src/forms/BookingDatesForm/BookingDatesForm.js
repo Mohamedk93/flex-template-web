@@ -387,10 +387,6 @@ export class BookingDatesFormComponent extends Component {
           const stripeConnected = (this.props.listing.author.
             attributes.profile.publicData.stripeEnabled == true);
 
-          const workspacesLabel = intl.formatMessage({
-            id: 'BookingDatesForm.workspacesLabel',
-          });
-
           const workspacesNames = listing.attributes.publicData.workspaces ? 
             listing.attributes.publicData.workspaces
           : [];
@@ -453,7 +449,6 @@ export class BookingDatesFormComponent extends Component {
                 className={css.workspaces}
                 id="workspaces"
                 name="workspaces"
-                label={workspacesLabel}
                 intl={intl}
                 options={workspacesFields}
                 quantityErrors={quantityErrors} // TO DO

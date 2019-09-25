@@ -79,10 +79,6 @@ const EditListingDescriptionFormComponent = props => (
         </p>
       ) : null;
 
-      const workspacesLabel = intl.formatMessage({
-        id: 'EditListingDescriptionForm.workspacesLabel',
-      });
-
       const classes = classNames(css.root, className);
       const submitReady = updated && pristine;
       const submitInProgress = updateInProgress;
@@ -130,7 +126,6 @@ const EditListingDescriptionFormComponent = props => (
             className={css.workspaces}
             id="workspaces"
             name="workspaces"
-            label={workspacesLabel}
             options={config.custom.workspaces}
             intl={intl}
             quantityErrors={quantityErrors} // TO DO

@@ -54,3 +54,11 @@
   color: red;
   margin: 5px 0 10px;
 }
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  max-width: 328px;
+  font-size: 16px;
+  font-weight: 600;
+}

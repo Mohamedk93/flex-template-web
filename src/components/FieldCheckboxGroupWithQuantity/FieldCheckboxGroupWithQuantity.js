@@ -48,6 +48,12 @@ const FieldCheckboxRenderer = props => {
     )
   }) : null;
 
+  const labelW = intl.formatMessage({
+    id: 'EditListingDescriptionForm.workspacesLabel',
+  });
+  const labelQ = intl.formatMessage({
+    id: 'EditListingDescriptionForm.quantityLabel',
+  });
 
   const workspacesRequiredMessage = intl.formatMessage({
     id: 'EditListingDescriptionForm.workspacesRequiredMessage',
@@ -55,7 +61,10 @@ const FieldCheckboxRenderer = props => {
 
   return (
     <fieldset className={classes}>
-      {label ? <legend>{label}</legend> : null}
+      <div className={css.label}>
+        <span>{labelW}</span>
+        <span>{labelQ}</span>
+      </div>
       <ul className={listClasses}>
         {options.map((option, index) => {
           const maxQuantity = defaultMaxQuantity ? defaultMaxQuantity[option.key] : option.count;
