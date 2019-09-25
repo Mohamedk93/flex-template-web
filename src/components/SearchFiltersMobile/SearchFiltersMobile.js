@@ -330,7 +330,7 @@ class SearchFiltersMobileComponent extends Component {
           {this.state.isFiltersOpenOnMobile ? (
             <div className={css.filtersWrapper}>
               {keywordFilterElement}
-              {categoryFilterElement}
+              {/* {categoryFilterElement} */}
               {amenitiesFilterElement}
               {priceFilterElement}
               {dateRangeFilterElement}
