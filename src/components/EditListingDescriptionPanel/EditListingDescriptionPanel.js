@@ -38,8 +38,8 @@ const EditListingDescriptionPanel = props => {
   );
 
   const seats_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
-  const office_rooms_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
-  const meeting_rooms_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
+  const office_rooms_quantity = publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 1;
+  const meeting_rooms_quantity = publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 1;
 
   return (
     <div className={classes}>
@@ -72,9 +72,9 @@ const EditListingDescriptionPanel = props => {
             publicData: { 
               category, 
               workspaces,
-              seatsQuantity: seats_quantity,
-              officeRoomsQuantity: office_rooms_quantity,
-              meetingRoomsQuantity: meeting_rooms_quantity,
+              seatsQuantity: seats_quantity ? parseInt(seats_quantity) : 0,
+              officeRoomsQuantity: office_rooms_quantity ? parseInt(office_rooms_quantity) : 0,
+              meetingRoomsQuantity: meeting_rooms_quantity ? parseInt(meeting_rooms_quantity) : 0,
             },
           };
           onSubmit(updateValues);
