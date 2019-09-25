@@ -31,7 +31,6 @@ export const required = message => value => {
 };
 
 export const requiredQuantity = (message, min, max) => value => {
-  console.log("wtf bleat", value);
   if (
     typeof value === 'undefined' || 
     value === null ||

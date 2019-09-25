@@ -88,6 +88,18 @@ const EditListingDescriptionFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
 
+      
+      const quantityErrors = [];
+      if(fieldRenderProps.errors.seats_quantity) {
+        quantityErrors.push(fieldRenderProps.errors.seats_quantity)
+      };
+      if(fieldRenderProps.errors.office_rooms_quantity) {
+        quantityErrors.push(fieldRenderProps.errors.office_rooms_quantity)
+      };
+      if(fieldRenderProps.errors.meeting_rooms_quantity) {
+        quantityErrors.push(fieldRenderProps.errors.meeting_rooms_quantity)
+      };
+
       return (
         <Form className={classes} onSubmit={handleSubmit}>
           {errorMessageCreateListingDraft}
@@ -122,6 +134,7 @@ const EditListingDescriptionFormComponent = props => (
             label={workspacesLabel}
             options={config.custom.workspaces}
             intl={intl}
+            quantityErrors={quantityErrors} // TO DO
           />
 
           <Button

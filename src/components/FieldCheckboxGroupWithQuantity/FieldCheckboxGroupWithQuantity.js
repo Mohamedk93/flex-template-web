@@ -26,6 +26,7 @@ const FieldCheckboxRenderer = props => {
     fields, 
     options,
     intl,
+    quantityErrors,
     meta } = props;
 
   const selectedValues = fields.value ? fields.value : [];
@@ -37,6 +38,15 @@ const FieldCheckboxRenderer = props => {
   //   // <FormattedMessage id="EditListingDescriptionForm.validateQuantity" values={{ min: 5, max: 100 }}  />
   //   `Value must be from ${5} to ${45}` // Field Validator need string type for meta.error
   // );
+
+  const quantityErrorsText = quantityErrors ? quantityErrors.map(function(item){
+    return (
+      <div className={css.quantityErrorText}>
+        {item}
+      </div>
+    )
+  }) : null;
+
 
   const workspacesRequiredMessage = intl.formatMessage({
     id: 'EditListingDescriptionForm.workspacesRequiredMessage',
@@ -65,12 +75,14 @@ const FieldCheckboxRenderer = props => {
                 max={option.count}
                 name={`${option.key}_quantity`}
                 validate={quantityRequired}
+                quantityErrors={quantityErrors}
               />
             </li>
           );
         })}
       </ul>
       <ValidationError fieldMeta={{ ...meta }} />
+      {quantityErrorsText}
     </fieldset>
   );
 };

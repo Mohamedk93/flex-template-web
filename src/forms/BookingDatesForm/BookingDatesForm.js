@@ -398,6 +398,17 @@ export class BookingDatesFormComponent extends Component {
             return workspacesNames.indexOf(item.key) != -1
           });
 
+          const quantityErrors = [];
+          if(fieldRenderProps.errors.seats_quantity) {
+            quantityErrors.push(fieldRenderProps.errors.seats_quantity)
+          };
+          if(fieldRenderProps.errors.office_rooms_quantity) {
+            quantityErrors.push(fieldRenderProps.errors.office_rooms_quantity)
+          };
+          if(fieldRenderProps.errors.meeting_rooms_quantity) {
+            quantityErrors.push(fieldRenderProps.errors.meeting_rooms_quantity)
+          };
+
           return (
             <Form
               onSubmit={e => {
@@ -436,6 +447,7 @@ export class BookingDatesFormComponent extends Component {
                 label={workspacesLabel}
                 intl={intl}
                 options={workspacesFields}
+                quantityErrors={quantityErrors} // TO DO
               />
 
               {hoursValid(values) && isChooseWorkspace(values) ? (

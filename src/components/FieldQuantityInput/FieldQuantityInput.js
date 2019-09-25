@@ -85,7 +85,7 @@ class FieldQuantityInputComponent extends Component {
           {<input {...inputProps} />}
           <button className={css.buttonPlus} onClick={(e) => {this.handlePlus(e)}}>+</button>         
         </div>
-        <ValidationError fieldMeta={fieldMeta} />
+        {/* <ValidationError className={css.quantityError} fieldMeta={fieldMeta} /> */}
       </div>
     );
   }

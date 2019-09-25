@@ -3,6 +3,7 @@
 .root {
   display: flex;
   justify-content: flex-start;
+  position: relative;
 }
 
 .label {
