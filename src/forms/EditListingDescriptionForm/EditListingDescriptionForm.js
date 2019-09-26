@@ -6,7 +6,6 @@ import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { propTypes } from '../../util/types';
 import { maxLength, required, composeValidators } from '../../util/validators';
-import { requiredFieldArrayCheckbox } from '../../util/validators';
 import { Form, Button, FieldTextInput, FieldCheckboxGroup, FieldCheckboxGroupWithQuantity } from '../../components';
 import config from '../../config';
 import arrayMutators from 'final-form-arrays';
@@ -32,7 +31,10 @@ const EditListingDescriptionFormComponent = props => (
         updated,
         updateInProgress,
         fetchErrors,
+        values,
       } = fieldRenderProps;
+
+      const selectedWorkspaces = values && values.workspaces ? values.workspaces : null;
 
       const titleMessage = intl.formatMessage({ id: 'EditListingDescriptionForm.title' });
       const titlePlaceholderMessage = intl.formatMessage({
@@ -124,11 +126,10 @@ const EditListingDescriptionFormComponent = props => (
 
           <FieldCheckboxGroupWithQuantity
             className={css.workspaces}
-            id="workspaces"
-            name="workspaces"
             options={config.custom.workspaces}
             intl={intl}
-            quantityErrors={quantityErrors} // TO DO
+            quantityErrors={quantityErrors}
+            selectedWorkspaces={selectedWorkspaces}
           />
 
           <Button

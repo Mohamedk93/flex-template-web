@@ -414,6 +414,8 @@ export class BookingDatesFormComponent extends Component {
             quantityErrors.push(fieldRenderProps.errors.meeting_rooms_quantity)
           };
 
+          const selectedWorkspaces = values && values.workspaces ? values.workspaces : null;
+
           return (
             <Form
               onSubmit={e => {
@@ -447,11 +449,10 @@ export class BookingDatesFormComponent extends Component {
 
               <FieldCheckboxGroupWithQuantity
                 className={css.workspaces}
-                id="workspaces"
-                name="workspaces"
-                intl={intl}
                 options={workspacesFields}
-                quantityErrors={quantityErrors} // TO DO
+                intl={intl}
+                quantityErrors={quantityErrors}
+                selectedWorkspaces={selectedWorkspaces}
                 defaultMaxQuantity={defaultMaxQuantity}
               />
 
