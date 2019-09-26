@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { intlShape, injectIntl } from 'react-intl';
+import { intlShape, injectIntl } from '../../util/reactIntl';
 import { Field } from 'react-final-form';
 import classNames from 'classnames';
 import Decimal from 'decimal.js';
@@ -53,13 +53,13 @@ class CurrencyInputComponent extends Component {
   constructor(props) {
     super(props);
     const { currencyConfig, defaultValue, input, intl } = props;
-    const initialValueIsMoney = input.value instanceof Money;
 
+    const initialValueIsMoney = input.value instanceof Money;
     if (initialValueIsMoney && input.value.currency !== currencyConfig.currency) {
       const e = new Error('Value currency different from marketplace currency');
       log.error(e, 'currency-input-invalid-currency', { currencyConfig, inputValue: input.value });
       throw e;
-    }
+    };
 
     const initialValue = initialValueIsMoney ? convertMoneyToNumber(input.value) : defaultValue;
     const hasInitialValue = typeof initialValue === 'number' && !isNaN(initialValue);

@@ -103,9 +103,9 @@
   /* Ensure that calendar dropdown gets some stacking context relative to other form items below */
   z-index: 1;
 
-  @media (--viewportMedium) {
+  /* @media (--viewportMedium) {
     margin-bottom: 46px;
-  }
+  } */
 }
 .bookingExtraDate {
   margin: 0 24px;

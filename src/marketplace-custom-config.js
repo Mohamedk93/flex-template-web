@@ -29,6 +29,24 @@ export const amenities = [
   },
 ];
 
+export const workspaces = [
+  {
+    key: 'seats',
+    label: 'Seats',
+    count: 500,
+  },
+  {
+    key: 'office_rooms',
+    label: 'Office rooms',
+    count: 100,
+  },
+  {
+    key: 'meeting_rooms',
+    label: 'Meeting rooms',
+    count: 100,
+  },
+];
+
 export const categories = [
   { key: 'meeting_room', label: 'Meeting room' },
   { key: 'seat', label: 'Seat' },
@@ -54,5 +72,13 @@ export const priceFilterConfig = {
 
 // Activate booking dates filter on search page
 export const dateRangeFilterConfig = {
+  active: true,
+};
+
+// Activate keyword filter on search page
+
+// NOTE: If you are ordering search results by distance the keyword search can't be used at the same time.
+// You can turn off ordering by distance in config.js file
+export const keywordFilterConfig = {
   active: true,
 };

@@ -2,12 +2,14 @@ import React from 'react';
 import { arrayOf, bool, func, shape, string } from 'prop-types';
 import { compose } from 'redux';
 import { Form as FinalForm } from 'react-final-form';
-import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
+import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { propTypes } from '../../util/types';
 import { maxLength, required, composeValidators } from '../../util/validators';
-import { Form, Button, FieldTextInput } from '../../components';
-import CustomCategorySelectFieldMaybe from './CustomCategorySelectFieldMaybe';
+import { requiredFieldArrayCheckbox } from '../../util/validators';
+import { Form, Button, FieldTextInput, FieldCheckboxGroup, FieldCheckboxGroupWithQuantity } from '../../components';
+import config from '../../config';
+import arrayMutators from 'final-form-arrays';
 
 import css from './EditListingDescriptionForm.css';
 
@@ -16,6 +18,7 @@ const TITLE_MAX_LENGTH = 60;
 const EditListingDescriptionFormComponent = props => (
   <FinalForm
     {...props}
+    mutators={{ ...arrayMutators }}
     render={fieldRenderProps => {
       const {
         categories,
@@ -81,6 +84,17 @@ const EditListingDescriptionFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
 
+      const quantityErrors = [];
+      if(fieldRenderProps.errors.seats_quantity) {
+        quantityErrors.push(fieldRenderProps.errors.seats_quantity)
+      };
+      if(fieldRenderProps.errors.office_rooms_quantity) {
+        quantityErrors.push(fieldRenderProps.errors.office_rooms_quantity)
+      };
+      if(fieldRenderProps.errors.meeting_rooms_quantity) {
+        quantityErrors.push(fieldRenderProps.errors.meeting_rooms_quantity)
+      };
+
       return (
         <Form className={classes} onSubmit={handleSubmit}>
           {errorMessageCreateListingDraft}
@@ -108,11 +122,13 @@ const EditListingDescriptionFormComponent = props => (
             validate={composeValidators(required(descriptionRequiredMessage))}
           />
 
-          <CustomCategorySelectFieldMaybe
-            id="category"
-            name="category"
-            categories={categories}
+          <FieldCheckboxGroupWithQuantity
+            className={css.workspaces}
+            id="workspaces"
+            name="workspaces"
+            options={config.custom.workspaces}
             intl={intl}
+            quantityErrors={quantityErrors} // TO DO
           />
 
           <Button
@@ -145,6 +161,12 @@ EditListingDescriptionFormComponent.propTypes = {
     updateListingError: propTypes.error,
   }),
   categories: arrayOf(
+    shape({
+      key: string.isRequired,
+      label: string.isRequired,
+    })
+  ),
+  workspaces: arrayOf(
     shape({
       key: string.isRequired,
       label: string.isRequired,

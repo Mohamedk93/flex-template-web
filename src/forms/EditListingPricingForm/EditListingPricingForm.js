@@ -2,7 +2,7 @@ import React from 'react';
 import { bool, func, shape, string } from 'prop-types';
 import { compose } from 'redux';
 import { Form as FinalForm } from 'react-final-form';
-import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
+import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import config from '../../config';
 import { LINE_ITEM_NIGHT, LINE_ITEM_DAY, propTypes } from '../../util/types';
@@ -29,6 +29,7 @@ export const EditListingPricingFormComponent = props => (
         updated,
         updateInProgress,
         fetchErrors,
+        workspaces,
       } = fieldRenderProps;
 
       const unitType = config.bookingUnitType;
@@ -54,6 +55,7 @@ export const EditListingPricingFormComponent = props => (
           id: 'EditListingPricingForm.priceRequired',
         })
       );
+
       const minPrice = new Money(config.listingMinimumPriceSubUnits, config.currency);
       const minPriceRequired = validators.moneySubUnitAmountAtLeast(
         intl.formatMessage(
@@ -75,6 +77,27 @@ export const EditListingPricingFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
       const { updateListingError, showListingsError } = fetchErrors || {};
+  
+      let priceFields;
+      if (workspaces && workspaces.length !== 0) {
+        priceFields = workspaces.map(function(price){
+          const priceLabel = intl.formatMessage({
+            id: `EditListingPricingForm.pricePerUnitMessage_${price}`,
+          });
+          return (
+            <FieldCurrencyInput
+              id={price}
+              name={`price_${price}`}
+              key={price}
+              className={css.priceInput}
+              label={priceLabel}
+              placeholder={pricePlaceholderMessage}
+              currencyConfig={config.currencyConfig}
+              validate={priceValidators}
+            />
+          )
+        });
+      };
 
       return (
         <Form onSubmit={handleSubmit} className={classes}>
@@ -88,17 +111,7 @@ export const EditListingPricingFormComponent = props => (
               <FormattedMessage id="EditListingPricingForm.showListingFailed" />
             </p>
           ) : null}
-          <FieldCurrencyInput
-            id="price"
-            name="price"
-            className={css.priceInput}
-            autoFocus
-            label={pricePerUnitMessage}
-            placeholder={pricePlaceholderMessage}
-            currencyConfig={config.currencyConfig}
-            validate={priceValidators}
-          />
-
+          {priceFields}
           <Button
             className={css.submitButton}
             type="submit"

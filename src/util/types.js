@@ -104,6 +104,7 @@ propTypes.currentUser = shape({
       abbreviatedName: string.isRequired,
       bio: string,
     }).isRequired,
+    stripeConnected: bool,
   }),
   profileImage: propTypes.image,
 });
@@ -188,6 +189,8 @@ const availabilityPlan = shape({
     })
   ),
 });
+
+propTypes.availabilityPlan = availabilityPlan;
 
 const ownListingAttributes = shape({
   title: string.isRequired,
@@ -307,11 +310,30 @@ propTypes.stripeAccount = shape({
   }),
 });
 
+propTypes.defaultPaymentMethod = shape({
+  id: propTypes.uuid.isRequired,
+  type: propTypes.value('stripePaymentMethod').isRequired,
+  attributes: shape({
+    type: propTypes.value('stripe-payment-method/card').isRequired,
+    stripePaymentMethodId: string.isRequired,
+    card: shape({
+      brand: string.isRequired,
+      expirationMonth: number.isRequired,
+      expirationYear: number.isRequired,
+      last4Digits: string.isRequired,
+    }).isRequired,
+  }),
+});
+
 export const LINE_ITEM_NIGHT = 'line-item/night';
 export const LINE_ITEM_DAY = 'line-item/day';
 export const LINE_ITEM_UNITS = 'line-item/units';
 export const LINE_ITEM_CUSTOMER_COMMISSION = 'line-item/customer-commission';
 export const LINE_ITEM_PROVIDER_COMMISSION = 'line-item/provider-commission';
+
+export const LINE_ITEM_SEATS_FEE = 'line-item/seats-fee';
+export const LINE_ITEM_OFFICE_ROOMS_FEE = 'line-item/office-rooms-fee';
+export const LINE_ITEM_MEETING_ROOMS_FEE = 'line-item/meeting-rooms-fee';
 
 export const LINE_ITEMS = [
   LINE_ITEM_NIGHT,
@@ -477,5 +499,11 @@ propTypes.error = shape({
   statusText: string,
   apiErrors: arrayOf(propTypes.apiError),
 });
+
+// Options for showing just date or date and time on BookingTimeInfo and BookingBreakdown
+export const DATE_TYPE_DATE = 'date';
+export const DATE_TYPE_DATETIME = 'datetime';
+
+propTypes.dateType = oneOf([DATE_TYPE_DATE, DATE_TYPE_DATETIME]);
 
 export { propTypes };

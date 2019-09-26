@@ -22,6 +22,8 @@ const i18n = {
 // Should search results be ordered by distance to origin.
 // NOTE: If this is set to true add parameter 'origin' to every location in default-location-searches.js
 // Without the 'origin' parameter, search will not work correctly
+// NOTE: Keyword search and ordering search results by distance can't be used at the same time. You can turn keyword
+// search off by changing the keywordFilterConfig parameter active to false in marketplace-custom-config.js
 const sortSearchByDistance = false;
 
 // API supports custom processes to be used in booking process.
@@ -30,10 +32,9 @@ const sortSearchByDistance = false;
 //
 // In a way, 'processAlias' defines which transaction process (or processes)
 // this particular web application is able to handle.
-const bookingProcessAlias = 'preauth-unit-time-booking/release-1';
 
-
-const cashBookingProcessAlias = 'cash-unit-time-booking/release-1';
+const cashBookingProcessAlias = 'cash-unit-time-booking/custom-pricing';
+const scaBookingProcessAlias = 'sca-preauth-unit-time-booking/custom-pricing';
 
 // The transaction line item code for the main unit type in bookings.
 //
@@ -186,7 +187,7 @@ const config = {
   env,
   dev,
   locale,
-  bookingProcessAlias,
+  scaBookingProcessAlias,
   cashBookingProcessAlias,
   bookingUnitType,
   enableAvailability,

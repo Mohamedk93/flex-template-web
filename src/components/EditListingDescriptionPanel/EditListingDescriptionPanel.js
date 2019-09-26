@@ -1,7 +1,7 @@
 import React from 'react';
 import { bool, func, object, string } from 'prop-types';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '../../util/reactIntl';
 import { ensureOwnListing } from '../../util/data';
 import { ListingLink } from '../../components';
 import { LISTING_STATE_DRAFT } from '../../util/types';
@@ -37,21 +37,46 @@ const EditListingDescriptionPanel = props => {
     <FormattedMessage id="EditListingDescriptionPanel.createListingTitle" />
   );
 
+  const seats_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
+  const office_rooms_quantity = publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 1;
+  const meeting_rooms_quantity = publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 1;
+
   return (
     <div className={classes}>
       <h1 className={css.title}>{panelTitle}</h1>
       <EditListingDescriptionForm
         className={css.form}
-        initialValues={{ title, description, category: publicData.category }}
+        initialValues={{ 
+          title, 
+          description, 
+          category: publicData.category, 
+          workspaces: publicData.workspaces,
+          seats_quantity,
+          office_rooms_quantity,
+          meeting_rooms_quantity,
+        }}
         saveActionMsg={submitButtonText}
         onSubmit={values => {
-          const { title, description, category } = values;
+          const { 
+            title, 
+            description, 
+            category, 
+            workspaces, 
+            seats_quantity,
+            office_rooms_quantity,
+            meeting_rooms_quantity,
+          } = values;
           const updateValues = {
             title: title.trim(),
             description,
-            publicData: { category },
+            publicData: { 
+              category, 
+              workspaces,
+              seatsQuantity: seats_quantity ? parseInt(seats_quantity) : 0,
+              officeRoomsQuantity: office_rooms_quantity ? parseInt(office_rooms_quantity) : 0,
+              meetingRoomsQuantity: meeting_rooms_quantity ? parseInt(meeting_rooms_quantity) : 0,
+            },
           };
-
           onSubmit(updateValues);
         }}
         onChange={onChange}

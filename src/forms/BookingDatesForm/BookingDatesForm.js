@@ -4,14 +4,17 @@ import { compose } from 'redux';
 import { Form as FinalForm } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import { FieldArray } from 'react-final-form-arrays';
-import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
 import moment from 'moment';
 import Decimal from 'decimal.js';
 import { propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
 import config from '../../config';
-import { Form, IconClose, PrimaryButton, InlineTextButton, FieldSelect } from '../../components';
+import { requiredFieldArrayCheckbox } from '../../util/validators';
+import { Form, IconClose, PrimaryButton, InlineTextButton, FieldSelect, FieldCheckboxGroupWithQuantity } from '../../components';
+
+import { formatMoney } from '../../util/currency';
 
 import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
@@ -91,9 +94,14 @@ const hoursValid = dateHour => {
   } catch (e) {
     // No need to react - totalHours is just 0
   }
-
   return hoursSelected(dateHour) && totalHours > 0 && isFullHours(totalHours);
 };
+
+const isChooseWorkspace = values => {  
+  return values.workspaces
+};
+
+const identity = v => v;
 
 export class BookingDatesFormComponent extends Component {
   constructor(props) {
@@ -112,7 +120,17 @@ export class BookingDatesFormComponent extends Component {
   // default handleSubmit function.
   handleFormSubmit(values) {
     const { intl } = this.props;
-    const { firstDate, extraDays = [], paymentMethod } = values;
+    const { 
+      firstDate, 
+      extraDays = [], 
+      paymentMethod,
+      workspaces,
+    } = values;
+
+    const seats_quantity = values && values.seats_quantity ? parseInt(values.seats_quantity) : 0;
+    const office_rooms_quantity = values && values.office_room_quantity ? parseInt(values.office_room_quantity) : 0;
+    const meeting_rooms_quantity = values && values.meeting_rooms_quantity ? parseInt(values.meeting_rooms_quantity) : 0;
+
     const bookingDate = firstDate ? firstDate.bookingDate : null;
 
     let totalHours = 0;
@@ -183,6 +201,7 @@ export class BookingDatesFormComponent extends Component {
 
       this.props.onSubmit({
         paymentMethod,
+        workspaces,
         bookingDates: {
           startDate: sdtFinal,
           endDate: edtFinal,
@@ -197,6 +216,9 @@ export class BookingDatesFormComponent extends Component {
           formatMessageLine(firstDate),
           ...dateHourLines,
         ],
+        seatsQuantity: seats_quantity,
+        officeRoomsQuantity: office_rooms_quantity,
+        meetingRoomsQuantity: meeting_rooms_quantity,
       });
     }
   }
@@ -236,16 +258,60 @@ export class BookingDatesFormComponent extends Component {
           const {
             datePlaceholder,
             form,
+            formId,
             handleSubmit,
             intl,
             isOwnListing,
+            listing,
             submitButtonWrapperClassName,
             unitPrice,
             unitType,
             values,
+            seatsFee,
+            officeRoomsFee,
+            meetingRoomsFee,
           } = fieldRenderProps;
           const { firstDate, extraDays = [] } = values;
           const required = validators.required('This field is required');
+
+          const selectedSeatsFee =
+          values &&
+          values.workspaces &&
+          values.workspaces.indexOf('seats') != -1
+            ? seatsFee
+            : null;
+
+          const selectedSeatsQuantity =
+          values &&
+          values.seats_quantity
+            ? values.seats_quantity
+            : null;
+
+          const selectedOfficeRoomsFee =
+          values &&
+          values.workspaces &&
+          values.workspaces.indexOf('office_rooms') != -1
+            ? officeRoomsFee
+            : null;
+
+          const selectedOfficeRoomsQuantity =
+          values &&
+          values.office_rooms_quantity
+            ? values.office_rooms_quantity
+            : null;
+
+          const selectedMeetingRoomsFee =
+          values &&
+          values.workspaces &&
+          values.workspaces.indexOf('meeting_rooms') != -1
+            ? meetingRoomsFee
+            : null;
+
+          const selectedMeetingRoomsQuantity =
+          values &&
+          values.meeting_rooms_quantity
+            ? values.meeting_rooms_quantity
+            : null;
 
           let totalHours = 0;
           try {
@@ -256,7 +322,6 @@ export class BookingDatesFormComponent extends Component {
 
           let startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
           let endDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
-
 
           if(firstDate){
             var hourStart = values.firstDate.hourStart;
@@ -289,10 +354,17 @@ export class BookingDatesFormComponent extends Component {
                 // NOTE: If unitType is `line-item/units`, a new picker
                 // for the quantity should be added to the form.
                 quantity: totalHours,
+
+                seatsFee: selectedSeatsFee,
+                officeRoomsFee: selectedOfficeRoomsFee,
+                meetingRoomsFee: selectedMeetingRoomsFee,
+                seatsQuantity: selectedSeatsQuantity,
+                officeRoomsQuantity: selectedOfficeRoomsQuantity,
+                meetingRoomsQuantity: selectedMeetingRoomsQuantity,
               }
               : null;
           const bookingInfo =
-            bookingData && hoursValid(values) ? (
+            bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
                 <div className={css.priceBreakdownContainer}>
                   <h3 className={css.priceBreakdownTitle}>
                     <FormattedMessage id="BookingDatesForm.priceBreakdownTitle" />
@@ -313,7 +385,34 @@ export class BookingDatesFormComponent extends Component {
           );
 
           const stripeConnected = (this.props.listing.author.
-            attributes.profile.publicData.stripeEnabled == true)
+            attributes.profile.publicData.stripeEnabled == true);
+
+          const workspacesNames = listing.attributes.publicData.workspaces ? 
+            listing.attributes.publicData.workspaces
+          : [];
+          const workspacesFields = config.custom.workspaces.filter(function(item){
+            return workspacesNames.indexOf(item.key) != -1
+          });
+
+          const publicDataObj = listing.attributes.publicData ? 
+            listing.attributes.publicData
+          : [];
+          const defaultMaxQuantity = {
+            seats: publicDataObj.seatsQuantity ? publicDataObj.seatsQuantity : 100,
+            office_rooms: publicDataObj.officeRoomsQuantity ? publicDataObj.officeRoomsQuantity : 100,
+            meeting_rooms: publicDataObj.meetingRoomsQuantity ? publicDataObj.meetingRoomsQuantity : 100,
+          };
+          
+          const quantityErrors = [];
+          if(fieldRenderProps.errors.seats_quantity) {
+            quantityErrors.push(fieldRenderProps.errors.seats_quantity)
+          };
+          if(fieldRenderProps.errors.office_rooms_quantity) {
+            quantityErrors.push(fieldRenderProps.errors.office_rooms_quantity)
+          };
+          if(fieldRenderProps.errors.meeting_rooms_quantity) {
+            quantityErrors.push(fieldRenderProps.errors.meeting_rooms_quantity)
+          };
 
           return (
             <Form
@@ -345,13 +444,25 @@ export class BookingDatesFormComponent extends Component {
                   this.handleFieldBlur(e);
                 }}
               />
-              {hoursValid(values) ? (
+
+              <FieldCheckboxGroupWithQuantity
+                className={css.workspaces}
+                id="workspaces"
+                name="workspaces"
+                intl={intl}
+                options={workspacesFields}
+                quantityErrors={quantityErrors} // TO DO
+                defaultMaxQuantity={defaultMaxQuantity}
+              />
+
+              {hoursValid(values) && isChooseWorkspace(values) ? (
                   <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={required}>
                     <option value="">Select payment</option>
                     {stripeConnected ? (<option value="credit card">Credit card</option>) : null}
                     <option value="cash">Cash</option>
                   </FieldSelect>
-                ): null}
+                ): null }
+
               <FieldArray
                 name="extraDays"
                 render={fieldArrayProps => {
@@ -391,7 +502,7 @@ export class BookingDatesFormComponent extends Component {
                           </li>
                         );
                       })}
-                      {hoursValid(values) ? (
+                      { hoursValid(values) && isChooseWorkspace(values) ? (
                           <li>
                             <InlineTextButton
                               className={css.addDayButton}

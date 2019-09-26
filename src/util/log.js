@@ -43,12 +43,12 @@ export const setUserId = userId => {
 
 export const clearUserId = () => {
   Sentry.configureScope(scope => {
-    scope.remove_user();
+    scope.setUser(null);
   });
 };
 
 const printAPIErrorsAsConsoleTable = apiErrors => {
-  if (typeof console.table === 'function') {
+  if (apiErrors != null && apiErrors.length > 0 && typeof console.table === 'function') {
     console.log('Errors returned by Marketplace API call:');
     console.table(apiErrors.map(err => ({ status: err.status, code: err.code, ...err.meta })));
   }

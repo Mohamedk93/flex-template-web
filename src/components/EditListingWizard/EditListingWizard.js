@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { array, bool, func, number, object, oneOf, shape, string } from 'prop-types';
 import { compose } from 'redux';
-import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import classNames from 'classnames';
 import config from '../../config';
 import { withViewport } from '../../util/contextHelpers';
@@ -309,6 +309,7 @@ EditListingWizard.defaultProps = {
   className: null,
   rootClassName: null,
   listing: null,
+  updateInProgress: false,
 };
 
 EditListingWizard.propTypes = {
@@ -346,6 +347,7 @@ EditListingWizard.propTypes = {
   onPayoutDetailsFormChange: func.isRequired,
   onPayoutDetailsSubmit: func.isRequired,
   onManageDisableScrolling: func.isRequired,
+  updateInProgress: bool,
 
   // from withViewport
   viewport: shape({

@@ -2,9 +2,14 @@ import pick from 'lodash/pick';
 import config from '../../config';
 import { denormalisedResponseEntities } from '../../util/data';
 import { storableError } from '../../util/errors';
-import { TRANSITION_REQUEST, TRANSITION_REQUEST_AFTER_ENQUIRY } from '../../util/transaction';
+import {
+  TRANSITION_REQUEST,
+  TRANSITION_REQUEST_PAYMENT,
+  TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
+  TRANSITION_CONFIRM_PAYMENT,
+} from '../../util/transaction';
 import * as log from '../../util/log';
-import { fetchCurrentUserHasOrdersSuccess } from '../../ducks/user.duck';
+import { fetchCurrentUserHasOrdersSuccess, fetchCurrentUser } from '../../ducks/user.duck';
 
 // ================ Action types ================ //
 
@@ -22,6 +27,10 @@ export const SPECULATE_TRANSACTION_REQUEST = 'app/ListingPage/SPECULATE_TRANSACT
 export const SPECULATE_TRANSACTION_SUCCESS = 'app/ListingPage/SPECULATE_TRANSACTION_SUCCESS';
 export const SPECULATE_TRANSACTION_ERROR = 'app/ListingPage/SPECULATE_TRANSACTION_ERROR';
 
+export const STRIPE_CUSTOMER_REQUEST = 'app/CheckoutPage/STRIPE_CUSTOMER_REQUEST';
+export const STRIPE_CUSTOMER_SUCCESS = 'app/CheckoutPage/STRIPE_CUSTOMER_SUCCESS';
+export const STRIPE_CUSTOMER_ERROR = 'app/CheckoutPage/STRIPE_CUSTOMER_ERROR';
+
 // ================ Reducer ================ //
 
 const initialState = {
@@ -35,6 +44,7 @@ const initialState = {
   transaction: null,
   initiateOrderError: null,
   confirmPaymentError: null,
+  stripeCustomerFetched: false,
 };
 
 export default function checkoutPageReducer(state = initialState, action = {}) {
@@ -80,6 +90,14 @@ export default function checkoutPageReducer(state = initialState, action = {}) {
     //   console.error(payload); // eslint-disable-line no-console
     //   return { ...state, confirmPaymentError: payload };
 
+    case STRIPE_CUSTOMER_REQUEST:
+      return { ...state, stripeCustomerFetched: false };
+    case STRIPE_CUSTOMER_SUCCESS:
+      return { ...state, stripeCustomerFetched: true };
+    case STRIPE_CUSTOMER_ERROR:
+      console.error(payload); // eslint-disable-line no-console
+      return { ...state, stripeCustomerFetchError: payload };
+
     default:
       return state;
   }
@@ -108,12 +126,12 @@ const initiateOrderError = e => ({
 });
 
 // const confirmPaymentRequest = () => ({ type: CONFIRM_PAYMENT_REQUEST });
-//
+
 // const confirmPaymentSuccess = orderId => ({
 //   type: CONFIRM_PAYMENT_SUCCESS,
 //   payload: orderId,
 // });
-//
+
 // const confirmPaymentError = e => ({
 //   type: CONFIRM_PAYMENT_ERROR,
 //   error: true,
@@ -133,19 +151,28 @@ export const speculateTransactionError = e => ({
   payload: e,
 });
 
+export const stripeCustomerRequest = () => ({ type: STRIPE_CUSTOMER_REQUEST });
+export const stripeCustomerSuccess = () => ({ type: STRIPE_CUSTOMER_SUCCESS });
+export const stripeCustomerError = e => ({
+  type: STRIPE_CUSTOMER_ERROR,
+  error: true,
+  payload: e,
+});
+
 /* ================ Thunks ================ */
 
 export const initiateOrder = (orderParams, transactionId, processAlias) => (dispatch, getState, sdk) => {
   dispatch(initiateOrderRequest());
+  const transition = (processAlias === config.cashBookingProcessAlias) ? TRANSITION_REQUEST : TRANSITION_REQUEST_PAYMENT;
   const bodyParams = transactionId
     ? {
         id: transactionId,
-        transition: TRANSITION_REQUEST_AFTER_ENQUIRY,
+        transition: TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
         params: orderParams,
       }
     : {
         processAlias,
-        transition: TRANSITION_REQUEST,
+        transition,
         params: orderParams,
       };
   const queryParams = {
@@ -181,7 +208,7 @@ export const confirmPayment = orderParams => (dispatch, getState, sdk) => {
 
   const bodyParams = {
     id: orderParams.transactionId,
-    // transition: TRANSITION_CONFIRM_PAYMENT,
+    transition: TRANSITION_CONFIRM_PAYMENT,
     params: {},
   };
 
@@ -238,8 +265,8 @@ export const sendMessage = params => (dispatch, getState, sdk) => {
 export const speculateTransaction = params => (dispatch, getState, sdk) => {
   dispatch(speculateTransactionRequest());
   const bodyParams = {
-    transition: TRANSITION_REQUEST,
-    processAlias: config.bookingProcessAlias,
+    transition: TRANSITION_REQUEST_PAYMENT,
+    processAlias: config.scaBookingProcessAlias,
     params: {
       ...params,
       cardToken: 'CheckoutPage_speculative_card_token',
@@ -301,5 +328,19 @@ export const speculateCashTransaction = params => (dispatch, getState, sdk) => {
         bookingEnd,
       });
       return dispatch(speculateTransactionError(storableError(e)));
+    });
+};
+
+// StripeCustomer is a relantionship to currentUser
+// We need to fetch currentUser with correct params to include relationship
+export const stripeCustomer = () => (dispatch, getState, sdk) => {
+  dispatch(stripeCustomerRequest());
+
+  return dispatch(fetchCurrentUser({ include: ['stripeCustomer.defaultPaymentMethod'] }))
+    .then(response => {
+      dispatch(stripeCustomerSuccess());
+    })
+    .catch(e => {
+      dispatch(stripeCustomerError(storableError(e)));
     });
 };
