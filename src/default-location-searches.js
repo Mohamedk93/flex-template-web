@@ -9,31 +9,24 @@ const { LatLng, LatLngBounds } = sdkTypes;
 // `predictionPlace` (util.types.place) properties.
 export default [
   {
-    id: 'default-bayarea',
+    id: 'default-helsinki',
     predictionPlace: {
-      address: 'Bay Area',
-      bounds: new LatLngBounds(new LatLng(38.8642448, -121.20817799999998), new LatLng(36.8941549, -123.632497)),
+      address: 'United States & Canada',
+      bounds: new LatLngBounds(new LatLng(71.5388001, -66.885417), new LatLng(18.7763, 170.5957)),
     },
   },
   {
-    id: 'default-financialdistrict',
+    id: 'default-oulu',
     predictionPlace: {
-      address: 'Financial District',
-      bounds: new LatLngBounds(new LatLng(37.798916, -122.39513650000004), new LatLng(37.7866303, -122.40704790000001)),
+      address: 'Europe',
+      bounds: new LatLngBounds(new LatLng(82.1673907, 74.3555001), new LatLng(34.5428, -31.4647999)),
     },
   },
   {
-    id: 'default-southsf',
+    id: 'default-ruka',
     predictionPlace: {
-      address: 'South SF',
-      bounds: new LatLngBounds(new LatLng(37.6728499, -122.22053110000002), new LatLng(37.6324597, -122.47168399999998)),
-    },
-  },
-  {
-    id: 'default-allsf',
-    predictionPlace: {
-      address: 'All San Francisco',
-      bounds: new LatLngBounds(new LatLng(37.812, -122.34820000000002), new LatLng(37.70339999999999, -122.52699999999999)),
+      address: 'Middle East & Africa',
+      bounds: new LatLngBounds(new LatLng(42.3666999, 63.3333366), new LatLng(11.7975, 24.696775)),
     },
   },
 ];
