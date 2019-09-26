@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-import { arrayOf, bool, node, shape, string } from 'prop-types';
 import classNames from 'classnames';
-import { FieldArray } from 'react-final-form-arrays';
-import { FieldCheckbox, ValidationError, FieldQuantityInput, FieldCheckboxGroup } from '../../components';
-import * as validators from '../../util/validators';
-import { FormattedMessage } from '../../util/reactIntl';
-
+import { FieldQuantityInput, FieldCheckboxGroup } from '../../components';
+import { requiredQuantity, requiredFieldArrayCheckbox } from '../../util/validators';
 import css from './FieldCheckboxGroupWithQuantity.css';
 
 class FieldCheckboxGroupWithQuantity extends Component {
@@ -38,7 +34,7 @@ class FieldCheckboxGroupWithQuantity extends Component {
       defaultMaxQuantity,
     } = this.props;
 
-    console.log("props", this.props);
+    // console.log("props", this.props);
 
     const selectedValues = this.state.selectedOptions;
 
@@ -72,7 +68,7 @@ class FieldCheckboxGroupWithQuantity extends Component {
               name="workspaces"
               label={labelW}
               options={options}
-              validate={validators.requiredFieldArrayCheckbox(workspacesRequiredMessage)}
+              validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
             />
           </div>
           <div>
@@ -81,7 +77,7 @@ class FieldCheckboxGroupWithQuantity extends Component {
               {options.map((option, index) => {
                 const maxQuantity = defaultMaxQuantity ? defaultMaxQuantity[option.key] : option.count;
                 const fieldId = `${id}.${option.key}`;
-                const quantityRequiredFunc = validators.requiredQuantity(`Value must be from ${1} to ${maxQuantity}`, 1, maxQuantity)
+                const quantityRequiredFunc = requiredQuantity(`Value must be from ${1} to ${maxQuantity}`, 1, maxQuantity)
                 const quantityRequired = selectedValues.indexOf(option.key) != -1 ? quantityRequiredFunc : false;
                 return (
                   <li key={fieldId} className={css.item}>
@@ -100,40 +96,6 @@ class FieldCheckboxGroupWithQuantity extends Component {
         {/* <ValidationError fieldMeta={{ ...meta }} /> */}
         {quantityErrorsText}
       </div>
-
-      // <FieldCheckboxGroup
-      //   id={fieldId}
-      //   name={fields.name}
-      //   label={option.label}
-      //   value={option.key}
-      //   validate={validators.requiredFieldArrayCheckbox(workspacesRequiredMessage)}
-      // />
-
-      // <fieldset className={classes}>
-      //   <div className={css.label}>
-      //     <span>{labelW}</span>
-      //     <span>{labelQ}</span>
-      //   </div>
-      //   <ul className={listClasses}>
-      //     {options.map((option, index) => {
-      //       const maxQuantity = defaultMaxQuantity ? defaultMaxQuantity[option.key] : option.count;
-      //       const fieldId = `${id}.${option.key}`;
-      //       const quantityRequiredFunc = validators.requiredQuantity(`Value must be from ${1} to ${maxQuantity}`, 1, maxQuantity)
-      //       const quantityRequired = selectedValues.indexOf(option.key) != -1 ? quantityRequiredFunc : false;
-      //       return (
-      //         <li key={fieldId} className={css.item}>
-      //           <FieldQuantityInput
-      //             id={`${fieldId}_quantity`}
-      //             type="number"
-      //             // max={maxQuantity}
-      //             name={`${option.key}_quantity`}
-      //             validate={quantityRequired}
-      //           />
-      //         </li>
-      //       );
-      //     })}
-      //   </ul>
-      // </fieldset>
     );
   }
 };
