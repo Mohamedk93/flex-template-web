@@ -30,7 +30,7 @@ export const required = message => value => {
   return VALID;
 };
 
-export const requiredQuantity = (message, min, max) => value => {
+export const requiredQuantity = (message, min, max) => async value => {
   if (
     typeof value === 'undefined' || 
     value === null ||
