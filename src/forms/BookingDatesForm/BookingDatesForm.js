@@ -414,7 +414,7 @@ export class BookingDatesFormComponent extends Component {
             quantityErrors.push(fieldRenderProps.errors.meeting_rooms_quantity)
           };
 
-          const selectedWorkspaces = values && values.workspaces ? values.workspaces : null;
+          const selectedWorkspaces = values && values.workspaces ? values.workspaces : [];
 
           return (
             <Form

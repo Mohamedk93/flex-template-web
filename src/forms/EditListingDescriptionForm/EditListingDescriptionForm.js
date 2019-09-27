@@ -34,7 +34,7 @@ const EditListingDescriptionFormComponent = props => (
         values,
       } = fieldRenderProps;
 
-      const selectedWorkspaces = values && values.workspaces ? values.workspaces : null;
+      const selectedWorkspaces = values && values.workspaces ? values.workspaces : [];
 
       const titleMessage = intl.formatMessage({ id: 'EditListingDescriptionForm.title' });
       const titlePlaceholderMessage = intl.formatMessage({
