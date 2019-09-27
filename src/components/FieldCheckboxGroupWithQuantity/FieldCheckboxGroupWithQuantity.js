@@ -18,11 +18,18 @@ class FieldCheckboxGroupWithQuantity extends Component {
     this.state = {
       selectedOptions: this.props.selectedWorkspaces,
       selectedCurrentOption: null,
-    };
+    };    
+    this.resetSelectedState = this.resetSelectedState.bind(this);
   }
 
   shouldComponentUpdate(nextProps, nextState){
     return true
+  }
+
+  resetSelectedState(){
+    this.setState({
+      selectedCurrentOption: null,
+    })
   }
 
   componentDidUpdate(prevProps){
@@ -89,10 +96,10 @@ class FieldCheckboxGroupWithQuantity extends Component {
           <div>
             <label className={css.labelQuantity}>{labelQ}</label>
             <ul className={css.list}>
-              {options.map((option, index) => {
+              {options.map((option) => {
                 const maxQuantity = defaultMaxQuantity ? defaultMaxQuantity[option.key] : option.count;
                 const fieldId = `${id}.${option.key}`;
-                const quantityRequiredFunc = requiredQuantity(`Value must be from ${1} to ${maxQuantity}`, 1, maxQuantity)
+                const quantityRequiredFunc = requiredQuantity(`${option.label} value must be from ${1} to ${maxQuantity}`, 1, maxQuantity)
                 const quantityRequired = selectedValues.indexOf(option.key) != -1 ? quantityRequiredFunc : false;
                 return (
                   <li key={fieldId} className={css.item}>
@@ -103,6 +110,7 @@ class FieldCheckboxGroupWithQuantity extends Component {
                       validate={quantityRequired}
                       isUpdateValidator={option.key === this.state.selectedCurrentOption ? true : false}
                       maxQuantity={maxQuantity}
+                      resetSelectedState={this.resetSelectedState}
                     />
                   </li>
                 );

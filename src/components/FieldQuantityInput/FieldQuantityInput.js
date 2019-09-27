@@ -54,7 +54,8 @@ class FieldQuantityInputComponent extends Component {
       this.props.input.onChange(value)
     } else if(value > max) {
       this.props.input.onChange(max)
-    }
+    };
+    this.props.resetSelectedState();
   }
 
   render() {
@@ -69,6 +70,8 @@ class FieldQuantityInputComponent extends Component {
       meta,
       onUnmount,
       isUpdateValidator,
+      resetSelectedState,
+      maxQuantity,
       ...rest
     } = this.props;
 
