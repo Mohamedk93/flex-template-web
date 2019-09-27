@@ -45,17 +45,34 @@ class FieldQuantityInputComponent extends Component {
     };
   }
 
-  updateValidator() {
-    let value = this.props.input.value;
-    let max = this.props.maxQuantity;
-    if(!value) {
-      this.props.input.onChange(1)
-    } else if(value >= 1 && value <= max) {
-      this.props.input.onChange(value)
-    } else if(value > max) {
-      this.props.input.onChange(max)
-    };
-    this.props.resetSelectedState();
+  componentDidUpdate(prevProps){
+    let prevArray = prevProps.selectedValues;
+    let newArray = this.props.selectedValues;
+    if(prevArray !== newArray){
+      if(newArray.diff(prevArray).join('') === this.props.optionKey) {
+        if(prevArray.length < newArray.length) {
+          let value = this.props.input.value;
+          let max = this.props.maxQuantity;
+          if(!value) {
+            this.props.input.onChange(1)
+          } else if(value >= 1 && value <= max) {
+            this.props.input.onChange(value)
+          } else if(value > max) {
+            this.props.input.onChange(max)
+          };
+        } else {
+          let value = this.props.input.value;
+          let max = this.props.maxQuantity;
+          if(!value) {
+            this.props.input.onChange(0)
+          } else if(value >= 1 && value <= max) {
+            this.props.input.onChange(value)
+          } else if(value > max) {
+            this.props.input.onChange(max)
+          };
+        }
+      }
+    }
   }
 
   render() {
@@ -69,15 +86,11 @@ class FieldQuantityInputComponent extends Component {
       input,
       meta,
       onUnmount,
-      isUpdateValidator,
-      resetSelectedState,
       maxQuantity,
+      selectedValues,
+      optionKey,
       ...rest
     } = this.props;
-
-    if(isUpdateValidator) {
-      this.updateValidator()
-    };
 
     if (label && !id) {
       throw new Error('id required when a label is given');

@@ -17,19 +17,11 @@ class FieldCheckboxGroupWithQuantity extends Component {
     super(props);
     this.state = {
       selectedOptions: this.props.selectedWorkspaces,
-      selectedCurrentOption: null,
     };    
-    this.resetSelectedState = this.resetSelectedState.bind(this);
   }
 
   shouldComponentUpdate(nextProps, nextState){
     return true
-  }
-
-  resetSelectedState(){
-    this.setState({
-      selectedCurrentOption: null,
-    })
   }
 
   componentDidUpdate(prevProps){
@@ -39,15 +31,6 @@ class FieldCheckboxGroupWithQuantity extends Component {
       this.setState({
         selectedOptions: this.props.selectedWorkspaces,
       })   
-      if(prevArray.length < newArray.length) {
-        this.setState({
-          selectedCurrentOption: newArray.diff(prevArray).join(''),
-        })        
-      } else {
-        this.setState({
-          selectedCurrentOption: null,
-        })
-      }
     }
   }
 
@@ -108,9 +91,9 @@ class FieldCheckboxGroupWithQuantity extends Component {
                       type="number"
                       name={`${option.key}_quantity`}
                       validate={quantityRequired}
-                      isUpdateValidator={option.key === this.state.selectedCurrentOption ? true : false}
+                      selectedValues={selectedValues}
+                      optionKey={option.key}
                       maxQuantity={maxQuantity}
-                      resetSelectedState={this.resetSelectedState}
                     />
                   </li>
                 );
