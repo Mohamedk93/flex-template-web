@@ -226,6 +226,7 @@ export class CheckoutPageComponent extends Component {
         seatsQuantity,
         officeRoomsQuantity, 
         meetingRoomsQuantity,
+        preliminaryParams: true,
       }
 
       // Fetch speculated transaction for showing price in booking breakdown
@@ -259,43 +260,53 @@ export class CheckoutPageComponent extends Component {
       seatsQuantity,
       officeRoomsQuantity, 
       meetingRoomsQuantity,
+      preliminaryParams,
       ...rest 
     } = params;
 
-    const seatsFeePrice = seatsFee
-      ? convertMoneyToNumber(seatsFee)
-      : 0;
-    const officeRoomsFeePrice = officeRoomsFee
-      ? convertMoneyToNumber(officeRoomsFee)
-      : 0;
-    const meetingRoomsFeePrice = meetingRoomsFee
-      ? convertMoneyToNumber(meetingRoomsFee)
-      : 0;
-    const hoursDecimal = hours
-      ? new Decimal(hours)
-      : new Decimal(0);
+    let seatsFeePriceTotal, 
+        officeRoomsFeePriceTotal,
+        meetingRoomsFeePriceTotal;
+    if(preliminaryParams) {
+      const seatsFeePrice = seatsFee
+        ? convertMoneyToNumber(seatsFee)
+        : 0;
+      const officeRoomsFeePrice = officeRoomsFee
+        ? convertMoneyToNumber(officeRoomsFee)
+        : 0;
+      const meetingRoomsFeePrice = meetingRoomsFee
+        ? convertMoneyToNumber(meetingRoomsFee)
+        : 0;
+      const hoursDecimal = hours
+        ? new Decimal(hours)
+        : new Decimal(0);
 
-    const seatsFeePriceTotal = seatsFeePrice
-      ? new Money(new Decimal(seatsFeePrice)
-        .mul(hoursDecimal)
-        .mul(100)
-        .toNumber(), 
-        seatsFee.currency)
-      : 0;
-    const officeRoomsFeePriceTotal = officeRoomsFeePrice
-      ? new Money(new Decimal(officeRoomsFeePrice)
-        .mul(hoursDecimal)
-        .mul(100)
-        .toNumber(), 
-        officeRoomsFee.currency)
-      : 0;
-    const meetingRoomsFeePriceTotal = meetingRoomsFeePrice
-      ? new Money(new Decimal(meetingRoomsFeePrice)
-        .mul(hoursDecimal)
-        .mul(100)
-        .toNumber(), 
-        meetingRoomsFee.currency)
-      : 0;
+      seatsFeePriceTotal = seatsFeePrice
+        ? new Money(new Decimal(seatsFeePrice)
+          .mul(hoursDecimal)
+          .mul(100)
+          .toNumber(), 
+          seatsFee.currency)
+        : 0;
+      officeRoomsFeePriceTotal = officeRoomsFeePrice
+        ? new Money(new Decimal(officeRoomsFeePrice)
+          .mul(hoursDecimal)
+          .mul(100)
+          .toNumber(), 
+          officeRoomsFee.currency)
+        : 0;
+      meetingRoomsFeePriceTotal = meetingRoomsFeePrice
+        ? new Money(new Decimal(meetingRoomsFeePrice)
+          .mul(hoursDecimal)
+          .mul(100)
+          .toNumber(), 
+          meetingRoomsFee.currency)
+        : 0;
+    } else {
+      seatsFeePriceTotal = seatsFee ? seatsFee : 0;
+      officeRoomsFeePriceTotal = officeRoomsFee ? officeRoomsFee : 0;
+      meetingRoomsFeePriceTotal = meetingRoomsFee ? meetingRoomsFee : 0;
+    }
 
     const unitType = config.bookingUnitType; // TO DO need delete
   
@@ -303,7 +314,7 @@ export class CheckoutPageComponent extends Component {
       ? {
           code: LINE_ITEM_SEATS_FEE,
           unitPrice: seatsFeePriceTotal,
-          quantity: seatsQuantity, // TO DO cannot be null
+          quantity: seatsQuantity,
         }
       : null;
     const seatsFeeLineItemMaybe = seatsFeeLineItem ? [seatsFeeLineItem] : [];

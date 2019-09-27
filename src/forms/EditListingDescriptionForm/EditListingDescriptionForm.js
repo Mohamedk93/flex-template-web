@@ -128,7 +128,7 @@ const EditListingDescriptionFormComponent = props => (
             name="workspaces"
             options={config.custom.workspaces}
             intl={intl}
-            quantityErrors={quantityErrors} // TO DO
+            quantityErrors={quantityErrors} 
           />
 
           <Button

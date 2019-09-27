@@ -451,7 +451,7 @@ export class BookingDatesFormComponent extends Component {
                 name="workspaces"
                 intl={intl}
                 options={workspacesFields}
-                quantityErrors={quantityErrors} // TO DO
+                quantityErrors={quantityErrors}
                 defaultMaxQuantity={defaultMaxQuantity}
               />
 
