@@ -4,11 +4,15 @@ import { FieldQuantityInput, FieldCheckboxGroup } from '../../components';
 import { requiredQuantity, requiredFieldArrayCheckbox } from '../../util/validators';
 import css from './FieldCheckboxGroupWithQuantity.css';
 
+Array.prototype.diff = function(a) {
+  return this.filter(function(i) {return a.indexOf(i) < 0;});
+};
 class FieldCheckboxGroupWithQuantity extends Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedOptions: this.props.selectedWorkspaces,
+      selectedCurrentOption: null,
     };
   }
 
@@ -17,16 +21,24 @@ class FieldCheckboxGroupWithQuantity extends Component {
   }
 
   componentDidUpdate(prevProps){
-    if(prevProps.selectedWorkspaces !== this.props.selectedWorkspaces){
-      this.setState({
-        selectedOptions: this.props.selectedWorkspaces
-      })
-    };
+    let prevArray = prevProps.selectedWorkspaces;
+    let newArray = this.props.selectedWorkspaces;
+    if(prevArray !== newArray){
+      if(prevArray.length < newArray.length) {
+        this.setState({
+          selectedOptions: this.props.selectedWorkspaces,
+          selectedCurrentOption: newArray.diff(prevArray).join(''),
+        })        
+      } else {
+        this.setState({
+          selectedCurrentOption: null,
+        })
+      }
+    }
   }
 
   render() {
     const {
-      twoColumns, 
       id, 
       options,
       intl,
@@ -34,11 +46,7 @@ class FieldCheckboxGroupWithQuantity extends Component {
       defaultMaxQuantity,
     } = this.props;
 
-    // console.log("props", this.props);
-
     const selectedValues = this.state.selectedOptions;
-
-    const listClasses = twoColumns ? classNames(css.list, css.twoColumns) : css.list;
 
     const quantityErrorsText = quantityErrors ? quantityErrors.map(function(item){
       return (
@@ -59,6 +67,8 @@ class FieldCheckboxGroupWithQuantity extends Component {
       id: 'EditListingDescriptionForm.workspacesRequiredMessage',
     });
 
+    console.log(this.state.selectedCurrentOption);
+
     return (
       <div>
         <div className={css.twoColumnWQ}>
@@ -73,7 +83,7 @@ class FieldCheckboxGroupWithQuantity extends Component {
           </div>
           <div>
             <label className={css.labelQuantity}>{labelQ}</label>
-            <ul className={listClasses}>
+            <ul className={css.list}>
               {options.map((option, index) => {
                 const maxQuantity = defaultMaxQuantity ? defaultMaxQuantity[option.key] : option.count;
                 const fieldId = `${id}.${option.key}`;
@@ -86,6 +96,8 @@ class FieldCheckboxGroupWithQuantity extends Component {
                       type="number"
                       name={`${option.key}_quantity`}
                       validate={quantityRequired}
+                      isUpdateValidator={option.key === this.state.selectedCurrentOption ? true : false}
+                      maxQuantity={maxQuantity}
                     />
                   </li>
                 );
@@ -93,7 +105,6 @@ class FieldCheckboxGroupWithQuantity extends Component {
             </ul>
           </div>
         </div>
-        {/* <ValidationError fieldMeta={{ ...meta }} /> */}
         {quantityErrorsText}
       </div>
     );

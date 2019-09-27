@@ -13,7 +13,7 @@ class FieldQuantityInputComponent extends Component {
     e.preventDefault();
     e.stopPropagation();
     let currentValue = +this.props.input.value;
-    if(currentValue > 1) {
+    if(currentValue > -10) {
       currentValue = currentValue - 1;
       this.props.input.onChange(currentValue);
     }
@@ -29,6 +29,18 @@ class FieldQuantityInputComponent extends Component {
     }
   }
 
+  updateValidator() {
+    let value = this.props.input.value;
+    let max = this.props.maxQuantity;
+    if(!value) {
+      this.props.input.onChange(1)
+    } else if(value >= 1 && value <= max) {
+      this.props.input.onChange(value)
+    } else if(value > max) {
+      this.props.input.onChange(max)
+    }
+  }
+
   render() {
     const {
       rootClassName,
@@ -40,8 +52,13 @@ class FieldQuantityInputComponent extends Component {
       input,
       meta,
       onUnmount,
+      isUpdateValidator,
       ...rest
     } = this.props;
+
+    if(isUpdateValidator) {
+      this.updateValidator()
+    };
 
     if (label && !id) {
       throw new Error('id required when a label is given');
