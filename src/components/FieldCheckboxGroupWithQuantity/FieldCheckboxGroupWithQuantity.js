@@ -24,9 +24,11 @@ class FieldCheckboxGroupWithQuantity extends Component {
     let prevArray = prevProps.selectedWorkspaces;
     let newArray = this.props.selectedWorkspaces;
     if(prevArray !== newArray){
+      this.setState({
+        selectedOptions: this.props.selectedWorkspaces,
+      })   
       if(prevArray.length < newArray.length) {
         this.setState({
-          selectedOptions: this.props.selectedWorkspaces,
           selectedCurrentOption: newArray.diff(prevArray).join(''),
         })        
       } else {
@@ -66,8 +68,6 @@ class FieldCheckboxGroupWithQuantity extends Component {
     const workspacesRequiredMessage = intl.formatMessage({
       id: 'EditListingDescriptionForm.workspacesRequiredMessage',
     });
-
-    console.log(this.state.selectedCurrentOption);
 
     return (
       <div>
