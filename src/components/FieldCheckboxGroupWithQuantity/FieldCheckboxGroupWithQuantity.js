@@ -17,6 +17,12 @@ import { FormattedMessage } from '../../util/reactIntl';
 
 import css from './FieldCheckboxGroupWithQuantity.css';
 
+const guid = () =>
+  `_${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
+
 const FieldCheckboxRenderer = props => {
   const { className, 
     rootClassName, 
@@ -35,14 +41,9 @@ const FieldCheckboxRenderer = props => {
   const classes = classNames(rootClassName || css.root, className);
   const listClasses = twoColumns ? classNames(css.list, css.twoColumns) : css.list;
 
-  // const quantityRequiredFunc = validators.requiredQuantity(   
-  //   // <FormattedMessage id="EditListingDescriptionForm.validateQuantity" values={{ min: 5, max: 100 }}  />
-  //   `Value must be from ${5} to ${45}` // Field Validator need string type for meta.error
-  // );
-
   const quantityErrorsText = quantityErrors ? quantityErrors.map(function(item){
     return (
-      <div className={css.quantityErrorText}>
+      <div className={css.quantityErrorText} key={guid()}>
         {item}
       </div>
     )
@@ -69,7 +70,7 @@ const FieldCheckboxRenderer = props => {
         {options.map((option, index) => {
           const maxQuantity = defaultMaxQuantity ? defaultMaxQuantity[option.key] : option.count;
           const fieldId = `${id}.${option.key}`;
-          const quantityRequiredFunc = validators.requiredQuantity(`Value must be from ${1} to ${maxQuantity}`, 1, maxQuantity)
+          const quantityRequiredFunc = validators.requiredQuantity(`${option.label} value must be from ${1} to ${maxQuantity}`, 1, maxQuantity)
           const quantityRequired = selectedValues.indexOf(option.key) != -1 ? quantityRequiredFunc : false;
           return (
             <li key={fieldId} className={css.item}>
@@ -83,7 +84,6 @@ const FieldCheckboxRenderer = props => {
               <FieldQuantityInput
                 id={`${fieldId}_quantity`}
                 type="number"
-                // max={maxQuantity}
                 name={`${option.key}_quantity`}
                 validate={quantityRequired}
               />

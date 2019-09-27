@@ -58,7 +58,8 @@
 .label {
   display: flex;
   justify-content: space-between;
-  max-width: 328px;
+  max-width: 350px;
+  padding-right: 20px;
   font-size: 16px;
   font-weight: 600;
 }
