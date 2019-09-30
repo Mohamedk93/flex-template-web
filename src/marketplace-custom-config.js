@@ -47,6 +47,18 @@ export const workspaces = [
   },
 ];
 
+export const workspacesDefaultQuantity = {
+  seats: 500,
+  office_rooms: 100,
+  meeting_rooms: 100,
+}
+
+export const workspacesDefaultName = {
+  seats: "Seats",
+  office_rooms: "Office rooms",
+  meeting_rooms: "Meeting rooms",
+}
+
 export const categories = [
   { key: 'meeting_room', label: 'Meeting room' },
   { key: 'seat', label: 'Seat' },

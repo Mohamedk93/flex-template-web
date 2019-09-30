@@ -45,61 +45,22 @@ class FieldQuantityInputComponent extends Component {
     };
   }
 
-  componentDidUpdate(prevProps){
-    let prevArray = prevProps.selectedValues;
-    let newArray = this.props.selectedValues;
-    if(prevArray !== newArray){
-      if(newArray.diff(prevArray).join('') === this.props.optionKey) {
-        if(prevArray.length < newArray.length) {
-          let value = this.props.input.value;
-          let max = this.props.maxQuantity;
-          if(!value) {
-            this.props.input.onChange(1)
-          } else if(value >= 1 && value <= max) {
-            this.props.input.onChange(value)
-          } else if(value > max) {
-            this.props.input.onChange(max)
-          };
-        } else {
-          let value = this.props.input.value;
-          let max = this.props.maxQuantity;
-          if(!value) {
-            this.props.input.onChange(0)
-          } else if(value >= 1 && value <= max) {
-            this.props.input.onChange(value)
-          } else if(value > max) {
-            this.props.input.onChange(max)
-          };
-        }
-      }
-    }
-  }
-
   render() {
     const {
       rootClassName,
       className,
       inputRootClass,
-      customErrorText,
       id,
       label,
       input,
       meta,
       onUnmount,
-      maxQuantity,
-      selectedValues,
-      optionKey,
+      customErrorText,
       ...rest
     } = this.props;
 
-    if (label && !id) {
-      throw new Error('id required when a label is given');
-    }
-
     const buttonMinusClasses = this.state.buttonMinusActive ? css.buttonMinus : css.buttonMinusDisabled;
-
     const { valid, invalid, touched, error } = meta;
-    const errorText = customErrorText || error;
     const hasError = !!customErrorText || !!(touched && invalid && error);
 
     const inputClasses =

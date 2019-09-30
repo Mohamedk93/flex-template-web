@@ -254,6 +254,21 @@ export class BookingDatesFormComponent extends Component {
         mutators={{
           ...arrayMutators,
         }}
+        validate={values => {
+          const errors = {}
+          const names = config.custom.workspacesDefaultName;
+          const quantityDefault = this.props.maxQuantity;
+          const workspacesArray = values.workspaces ? values.workspaces : [];
+          workspacesArray.map(function(item){
+            let minQ = 1;
+            let maxQ = quantityDefault[item];
+            let currentQ = values[`${item}_quantity`];
+            if(currentQ > maxQ || currentQ < 1 || !currentQ) {
+              errors[`${item}_quantity`] = `${names[item]} value must be from ${minQ} to ${maxQ}`
+            }
+          });
+          return Object.keys(errors).length ? errors : undefined
+        }}
         render={fieldRenderProps => {
           const {
             datePlaceholder,
