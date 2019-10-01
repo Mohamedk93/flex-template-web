@@ -40,9 +40,11 @@
   font-size: 16px;
   font-weight: 600;
   padding: 0 20px;
-  @media (--viewportMedium) {
-    max-width: 385px;
+  @media (min-width: 760px) {
     padding: 0;
+  }
+  @media (min-width: 769px) {
+    max-width: 385px;
   }
 }
 
