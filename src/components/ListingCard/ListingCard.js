@@ -42,7 +42,7 @@ class ListingImage extends Component {
 const LazyImage = lazyLoadWithDimensions(ListingImage, { loadAfterInitialRendering: 3000 });
 
 export const ListingCardComponent = props => {
-  const { className, rootClassName, intl, listing, renderSizes, setActiveListing } = props;
+  const { className, rootClassName, intl, listing, renderSizes, setActiveListing, searchPoint } = props;
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureListing(listing);
   const id = currentListing.id.uuid;
@@ -66,13 +66,12 @@ export const ListingCardComponent = props => {
   const listingGeolocation = currentListing.attributes &&
   currentListing.attributes.geolocation ?
   currentListing.attributes.geolocation :null;
-  console.log("listingGeolocation", listingGeolocation);
 
   let distance = null;
-  if(isMapsLibLoaded() && listingGeolocation) {
-    let listingPoint = new window.google.maps.LatLng(listingGeolocation.lat, listingGeolocation.lng);
-    let searchPoint = new window.google.maps.LatLng(46.0438317, 9.75936230000002);
-    distance = (window.google.maps.geometry.spherical.computeDistanceBetween(listingPoint, searchPoint) / 1000).toFixed(2);
+  if(isMapsLibLoaded() && listingGeolocation && searchPoint) {
+    let listingPointCoord = new window.google.maps.LatLng(listingGeolocation.lat, listingGeolocation.lng);
+    let searchPointCoord = new window.google.maps.LatLng(searchPoint.lat, searchPoint.lng);
+    distance = (window.google.maps.geometry.spherical.computeDistanceBetween(listingPointCoord, searchPointCoord) / 1000).toFixed(2);
   }
 
   const unitTranslationKey = isNightly
@@ -96,7 +95,7 @@ export const ListingCardComponent = props => {
           ) : null}
           {distance ? (
             <p className={css.locationInfoPar}>
-              {`${distance} km from`}
+              {`${distance} km`}
             </p>
           ) : null}
         </div>

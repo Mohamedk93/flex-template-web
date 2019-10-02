@@ -163,6 +163,28 @@ export class SearchPageComponent extends Component {
       latlng: ['origin'],
       latlngBounds: ['bounds'],
     });
+    
+    const locationUrl = this.props.location.search.substring(1);
+    const locationParams = locationUrl ?
+      JSON.parse('{"' + locationUrl.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
+      : null;
+    let searchPoint = {};
+    if(locationParams) {
+      let boundsArray = locationParams.bounds.split(",");
+      let bounds = {
+        southwest: {lat: parseFloat(boundsArray[2]), lng: parseFloat(boundsArray[3])},
+        northeast: {lat: parseFloat(boundsArray[0]), lng: parseFloat(boundsArray[1])}
+      };
+      if ((bounds.southwest.lng - bounds.northeast.lng > 180) || 
+          (bounds.northeast.lng - bounds.southwest.lng > 180)) {
+        bounds.southwest.lng += 360;
+        bounds.southwest.lng %= 360;
+        bounds.northeast.lng += 360;
+        bounds.northeast.lng %= 360;
+      };
+      searchPoint.lat = (bounds.southwest.lat + bounds.northeast.lat)/2;
+      searchPoint.lng = (bounds.southwest.lng + bounds.northeast.lng)/2;
+    }
 
     const filters = this.filters();
 
@@ -226,6 +248,7 @@ export class SearchPageComponent extends Component {
             pagination={pagination}
             searchParamsForPagination={parse(location.search)}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
+            searchPoint={searchPoint}
             primaryFilters={{
               categoryFilter: filters.categoryFilter,
               amenitiesFilter: filters.amenitiesFilter,
