@@ -10,7 +10,7 @@ import { richText } from '../../util/richText';
 import { createSlug } from '../../util/urlHelpers';
 import config from '../../config';
 import { NamedLink, ResponsiveImage } from '../../components';
-
+import { isMapsLibLoaded } from '../../components/Map/GoogleMap';
 import css from './ListingCard.css';
 
 const MIN_LENGTH_FOR_LONG_WORDS = 10;
@@ -59,6 +59,22 @@ export const ListingCardComponent = props => {
   const isNightly = unitType === LINE_ITEM_NIGHT;
   const isDaily = unitType === LINE_ITEM_DAY;
 
+  const { publicData } = currentListing.attributes;
+  const city = publicData ? publicData.city : null;
+  const country = publicData ? publicData.country : null;
+
+  const listingGeolocation = currentListing.attributes &&
+  currentListing.attributes.geolocation ?
+  currentListing.attributes.geolocation :null;
+  console.log("listingGeolocation", listingGeolocation);
+
+  let distance = null;
+  if(isMapsLibLoaded() && listingGeolocation) {
+    let listingPoint = new window.google.maps.LatLng(listingGeolocation.lat, listingGeolocation.lng);
+    let searchPoint = new window.google.maps.LatLng(46.0438317, 9.75936230000002);
+    distance = (window.google.maps.geometry.spherical.computeDistanceBetween(listingPoint, searchPoint) / 1000).toFixed(2);
+  }
+
   const unitTranslationKey = isNightly
     ? 'ListingCard.perNight'
     : isDaily
@@ -72,6 +88,18 @@ export const ListingCardComponent = props => {
         onMouseEnter={() => setActiveListing(currentListing.id)}
         onMouseLeave={() => setActiveListing(null)}
       >
+        <div className={css.locationInfo}>
+          {city && country ? (
+            <p className={css.locationInfoPar}>
+              {`${city}, ${country}`}
+            </p>
+          ) : null}
+          {distance ? (
+            <p className={css.locationInfoPar}>
+              {`${distance} km from`}
+            </p>
+          ) : null}
+        </div>
         <div className={css.aspectWrapper}>
           <LazyImage
             rootClassName={css.rootForImage}

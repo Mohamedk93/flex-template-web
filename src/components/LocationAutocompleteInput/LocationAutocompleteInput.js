@@ -12,9 +12,7 @@ class LocationAutocompleteInputComponent extends Component {
   };
 
   componentDidUpdate(prevProps, prevState){
-
     if(prevProps.valueFromForm !== this.props.valueFromForm){
-      console.log(this.props);
       const { setAdditionalGeodata, input, valueFromForm } = this.props;
       const value = typeof valueFromForm !== 'undefined' ? valueFromForm : input.value;
       
@@ -24,7 +22,7 @@ class LocationAutocompleteInputComponent extends Component {
       value.selectedPlace.origin : null;
       
       if(locationCoord) {
-        const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${locationCoord.lat},${locationCoord.lng}&key=${config.maps.googleMapsAPIKey}`
+        const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${locationCoord.lat},${locationCoord.lng}&key=${config.maps.googleMapsAPIKey}&language=en`
         fetch(requestUrl)
           .then(response => response.json())
           .then(data => {
@@ -44,7 +42,6 @@ class LocationAutocompleteInputComponent extends Component {
             }) : null;
             const cityName = city ? city[0].long_name : null;
 
-            console.log("data", countryName, cityName);
             setAdditionalGeodata({
               city: cityName,
               country: countryName,

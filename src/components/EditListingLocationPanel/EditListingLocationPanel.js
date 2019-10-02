@@ -16,16 +16,16 @@ class EditListingLocationPanel extends Component {
     this.getInitialValues = this.getInitialValues.bind(this);
     this.setAdditionalGeodata = this.setAdditionalGeodata.bind(this);
 
-    const location = this.props.listing &&
+    const publicData = this.props.listing &&
     this.props.listing.attributes &&
-    this.props.listing.attributes.publicData &&
-    this.props.listing.attributes.publicData.location ?
-    this.props.listing.attributes.publicData.location : null;
-
+    this.props.listing.attributes.publicData ?
+    this.props.listing.attributes.publicData : null;
+    console.log("publicData", publicData)
+    
     this.state = {
       initialValues: this.getInitialValues(),
-      city: location ? location.city : null,
-      country: location ? location.country : null,
+      city: publicData ? publicData.city : null,
+      country: publicData ? publicData.country : null,
     };
   }
 
@@ -104,9 +104,9 @@ class EditListingLocationPanel extends Component {
                 location: { 
                   address, 
                   building,
-                  city: this.state.city,
-                  country: this.state.country,
                 },
+                city: this.state.city,
+                country: this.state.country,
               },
             };
             this.setState({
