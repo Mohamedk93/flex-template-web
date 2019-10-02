@@ -72,7 +72,7 @@ export const ListingCardComponent = props => {
     let listingPointCoord = new window.google.maps.LatLng(listingGeolocation.lat, listingGeolocation.lng);
     let searchPointCoord = new window.google.maps.LatLng(searchPoint.lat, searchPoint.lng);
     distance = (window.google.maps.geometry.spherical.computeDistanceBetween(listingPointCoord, searchPointCoord) / 1000).toFixed(2);
-  }
+  };
 
   const unitTranslationKey = isNightly
     ? 'ListingCard.perNight'
@@ -87,18 +87,20 @@ export const ListingCardComponent = props => {
         onMouseEnter={() => setActiveListing(currentListing.id)}
         onMouseLeave={() => setActiveListing(null)}
       >
-        <div className={css.locationInfo}>
-          {city && country ? (
-            <p className={css.locationInfoPar}>
-              {`${city}, ${country}`}
-            </p>
-          ) : null}
-          {distance ? (
-            <p className={css.locationInfoPar}>
-              {`${distance} km`}
-            </p>
-          ) : null}
-        </div>
+        {(city && country) || distance ? (
+          <div className={css.locationInfo}>
+            {city && country ? (
+              <p className={css.locationInfoPar}>
+                {`${city}, ${country}`}
+              </p>
+            ) : null}
+            {distance && typeof distance !== NaN ? (
+              <p className={css.locationInfoPar}>
+                {`${distance} km`}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
         <div className={css.aspectWrapper}>
           <LazyImage
             rootClassName={css.rootForImage}

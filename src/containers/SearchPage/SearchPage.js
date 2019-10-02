@@ -163,12 +163,15 @@ export class SearchPageComponent extends Component {
       latlng: ['origin'],
       latlngBounds: ['bounds'],
     });
+
+    let searchPoint = null;
     
+    // Distance from Map Bounds 
     const locationUrl = this.props.location.search.substring(1);
     const locationParams = locationUrl ?
-      JSON.parse('{"' + locationUrl.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
-      : null;
-    let searchPoint = {};
+    JSON.parse('{"' + locationUrl.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
+    : null;
+
     if(locationParams) {
       let boundsArray = locationParams.bounds.split(",");
       let bounds = {
@@ -182,9 +185,14 @@ export class SearchPageComponent extends Component {
         bounds.northeast.lng += 360;
         bounds.northeast.lng %= 360;
       };
+      searchPoint = {};
       searchPoint.lat = (bounds.southwest.lat + bounds.northeast.lat)/2;
       searchPoint.lng = (bounds.southwest.lng + bounds.northeast.lng)/2;
     }
+
+    // Distance from search data
+    console.log("prpsss", this.props);
+
 
     const filters = this.filters();
 
