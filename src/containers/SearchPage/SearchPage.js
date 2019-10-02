@@ -17,6 +17,8 @@ import { manageDisableScrolling, isScrollingDisabled } from '../../ducks/UI.duck
 import { SearchMap, ModalInMobile, Page } from '../../components';
 import { TopbarContainer } from '../../containers';
 
+import { isMapsLibLoaded } from '../../components/Map/GoogleMap';
+
 import { searchListings, searchMapListings, setActiveListing } from './SearchPage.duck';
 import {
   pickSearchParamsOnly,
@@ -143,6 +145,17 @@ export class SearchPageComponent extends Component {
   }
 
   render() {
+
+    if(isMapsLibLoaded()) {
+      console.log("Dwqede", window.google);
+      var p1 = new window.google.maps.LatLng(45.463688, 9.18814);
+      var p2 = new window.google.maps.LatLng(46.0438317, 9.75936230000002);
+      function calcDistance(p1, p2) {
+        return (window.google.maps.geometry.spherical.computeDistanceBetween(p1, p2) / 1000).toFixed(2);
+      }
+      console.log("test", calcDistance(p1, p2));
+    }
+
     const {
       intl,
       listings,
