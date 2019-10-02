@@ -157,7 +157,7 @@ const estimatedTransaction = (
     code: LINE_ITEM_SEATS_FEE,
     includeFor: ['customer', 'provider'],
     unitPrice: seatsFee,
-    quantity: new Decimal(1),
+    quantity: new Decimal(seatsQuantity),
     lineTotal: seatsFee,
     reversal: false,
   };
@@ -170,7 +170,7 @@ const estimatedTransaction = (
     code: LINE_ITEM_OFFICE_ROOMS_FEE,
     includeFor: ['customer', 'provider'],
     unitPrice: officeRoomsFee,
-    quantity: new Decimal(1),
+    quantity: new Decimal(officeRoomsQuantity),
     lineTotal: officeRoomsFee,
     reversal: false,
   };
@@ -183,7 +183,7 @@ const estimatedTransaction = (
     code: LINE_ITEM_MEETING_ROOMS_FEE,
     includeFor: ['customer', 'provider'],
     unitPrice: meetingRoomsFee,
-    quantity: new Decimal(1),
+    quantity: new Decimal(meetingRoomsQuantity),
     lineTotal: meetingRoomsFee,
     reversal: false,
   };

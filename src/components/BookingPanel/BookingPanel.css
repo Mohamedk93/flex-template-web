@@ -130,6 +130,7 @@
     bottom: unset;
     background-color: transparent;
     box-shadow: none;
+    z-index: auto;
   }
 }
 
