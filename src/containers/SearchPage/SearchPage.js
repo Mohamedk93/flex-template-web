@@ -38,9 +38,37 @@ export class SearchPageComponent extends Component {
   constructor(props) {
     super(props);
 
+    let searchPoint = null;
+
+    // Distance from Map Bounds 
+    const locationUrl = this.props.location.search.substring(1);
+    const locationParams = locationUrl ?
+    JSON.parse('{"' + locationUrl.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
+    : null;
+
+    if(locationParams) {
+      let boundsArray = locationParams.bounds.split(",");
+      let bounds = {
+        southwest: {lat: parseFloat(boundsArray[2]), lng: parseFloat(boundsArray[3])},
+        northeast: {lat: parseFloat(boundsArray[0]), lng: parseFloat(boundsArray[1])}
+      };
+      if ((bounds.southwest.lng - bounds.northeast.lng > 180) || 
+          (bounds.northeast.lng - bounds.southwest.lng > 180)) {
+        bounds.southwest.lng += 360;
+        bounds.southwest.lng %= 360;
+        bounds.northeast.lng += 360;
+        bounds.northeast.lng %= 360;
+      };
+      searchPoint = {
+        lat: (bounds.southwest.lat + bounds.northeast.lat)/2,
+        lng: (bounds.southwest.lng + bounds.northeast.lng)/2,
+      };
+    }
+
     this.state = {
       isSearchMapOpenOnMobile: props.tab === 'map',
       isMobileModalOpen: false,
+      searchPoint: searchPoint,
     };
 
     this.searchMapListingsInProgress = false;
@@ -143,6 +171,7 @@ export class SearchPageComponent extends Component {
   }
 
   render() {
+
     const {
       intl,
       listings,
@@ -164,6 +193,9 @@ export class SearchPageComponent extends Component {
     });
 
     const filters = this.filters();
+
+    // For example
+    // https://maps.google.com/maps/api/geocode/json?address=Cairo&key=AIzaSyDWMvjAw-8dvttP8vo-QwMSdVHPnPCmUyk
 
     // urlQueryParams doesn't contain page specific url params
     // like mapSearch, page or origin (origin depends on config.sortSearchByDistance)
@@ -225,6 +257,7 @@ export class SearchPageComponent extends Component {
             pagination={pagination}
             searchParamsForPagination={parse(location.search)}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
+            searchPoint={this.state.searchPoint}
             primaryFilters={{
               categoryFilter: filters.categoryFilter,
               amenitiesFilter: filters.amenitiesFilter,

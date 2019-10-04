@@ -8,6 +8,12 @@ import css from './FieldQuantityInput.css';
 
 
 class FieldQuantityInputComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      buttonMinusActive: this.props.input > 1,
+    };
+  }
 
   handleMinus(e) {
     e.preventDefault();
@@ -16,7 +22,12 @@ class FieldQuantityInputComponent extends Component {
     if(currentValue > 1) {
       currentValue = currentValue - 1;
       this.props.input.onChange(currentValue);
-    }
+    };
+    if(currentValue <= 1) {
+      this.setState({
+        buttonMinusActive: false
+      })
+    };
   }
 
   handlePlus(e) {
@@ -26,7 +37,12 @@ class FieldQuantityInputComponent extends Component {
     if(currentValue < 999) {
       currentValue = currentValue + 1;
       this.props.input.onChange(currentValue);
-    }
+    };
+    if(currentValue >= 1) {
+      this.setState({
+        buttonMinusActive: true
+      })
+    };
   }
 
   render() {
@@ -34,28 +50,18 @@ class FieldQuantityInputComponent extends Component {
       rootClassName,
       className,
       inputRootClass,
-      customErrorText,
       id,
       label,
       input,
       meta,
       onUnmount,
+      customErrorText,
       ...rest
     } = this.props;
 
-    if (label && !id) {
-      throw new Error('id required when a label is given');
-    }
-
+    const buttonMinusClasses = this.state.buttonMinusActive ? css.buttonMinus : css.buttonMinusDisabled;
     const { valid, invalid, touched, error } = meta;
-
-    const errorText = customErrorText || error;
-
-    // Error message and input error styles are only shown if the
-    // field has been touched and the validation has failed.
     const hasError = !!customErrorText || !!(touched && invalid && error);
-
-    const fieldMeta = { touched: hasError, error: errorText };
 
     const inputClasses =
       inputRootClass ||
@@ -81,11 +87,10 @@ class FieldQuantityInputComponent extends Component {
             </label> 
         : null}
         <div className={css.quantityInputWrapper}>
-          <button className={css.buttonMinus} onClick={(e) => {this.handleMinus(e)}}>-</button>
+          <button className={buttonMinusClasses} onClick={(e) => {this.handleMinus(e)}}>-</button>
           {<input {...inputProps} />}
           <button className={css.buttonPlus} onClick={(e) => {this.handlePlus(e)}}>+</button>         
         </div>
-        {/* <ValidationError className={css.quantityError} fieldMeta={fieldMeta} /> */}
       </div>
     );
   }

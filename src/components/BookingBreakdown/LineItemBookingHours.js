@@ -60,16 +60,24 @@ const LineItemBookingHours = props => {
   const dayCount = daysBetween(startDate, endDateRaw);
   const isSingleDay = dayCount === 1;
 
-  const unitPurchase = transaction.attributes.lineItems.find(
-    item => item.code === unitType && !item.reversal
-  );
+  // const unitPurchase = transaction.attributes.lineItems.find(
+  //   item => item.code === unitType && !item.reversal
+  // );
+  // const count = unitPurchase.quantity.toFixed();
 
-  const count = unitPurchase.quantity.toFixed();
+  const hourStart = moment(booking.attributes.start).format('HH:mm');
+  const hourEnd = moment(booking.attributes.end).format('HH:mm');
+  const date = moment(booking.attributes.start).startOf('day');
+  const startMoment = moment(`${date.format('YYYY MM DD')} ${hourStart}`, 'YYYY MM DD HH:mm');
+  const endMoment = moment(`${date.format('YYYY MM DD')} ${hourEnd}`, 'YYYY MM DD HH:mm');
+  const duration = moment.duration(endMoment.diff(startMoment));
+  const durationHours = duration.asHours();
+
   const hoursLabelMessage = (
     <FormattedHTMLMessage id="BookingBreakdown.hourLabel"/>
   );
   const unitCountMessage = (
-    <FormattedHTMLMessage id="BookingBreakdown.hourCount" values={{count}}/>
+    <FormattedHTMLMessage id="BookingBreakdown.hourCount" values={{count: durationHours}}/>
   );
 
   return (

@@ -128,7 +128,7 @@ export class BookingDatesFormComponent extends Component {
     } = values;
 
     const seats_quantity = values && values.seats_quantity ? parseInt(values.seats_quantity) : 0;
-    const office_rooms_quantity = values && values.office_room_quantity ? parseInt(values.office_room_quantity) : 0;
+    const office_rooms_quantity = values && values.office_rooms_quantity ? parseInt(values.office_rooms_quantity) : 0;
     const meeting_rooms_quantity = values && values.meeting_rooms_quantity ? parseInt(values.meeting_rooms_quantity) : 0;
 
     const bookingDate = firstDate ? firstDate.bookingDate : null;
@@ -253,6 +253,21 @@ export class BookingDatesFormComponent extends Component {
         onSubmit={this.handleFormSubmit}
         mutators={{
           ...arrayMutators,
+        }}
+        validate={values => {
+          const errors = {}
+          const names = config.custom.workspacesDefaultName;
+          const quantityDefault = this.props.maxQuantity;
+          const workspacesArray = values.workspaces ? values.workspaces : [];
+          workspacesArray.map(function(item){
+            let minQ = 1;
+            let maxQ = quantityDefault[item];
+            let currentQ = values[`${item}_quantity`];
+            if(currentQ > maxQ || currentQ < 1 || !currentQ) {
+              errors[`${item}_quantity`] = `${names[item]} value must be from ${minQ} to ${maxQ}`
+            }
+          });
+          return Object.keys(errors).length ? errors : undefined
         }}
         render={fieldRenderProps => {
           const {
@@ -414,6 +429,8 @@ export class BookingDatesFormComponent extends Component {
             quantityErrors.push(fieldRenderProps.errors.meeting_rooms_quantity)
           };
 
+          const selectedWorkspaces = values && values.workspaces ? values.workspaces : [];
+
           return (
             <Form
               onSubmit={e => {
@@ -447,11 +464,10 @@ export class BookingDatesFormComponent extends Component {
 
               <FieldCheckboxGroupWithQuantity
                 className={css.workspaces}
-                id="workspaces"
-                name="workspaces"
-                intl={intl}
                 options={workspacesFields}
-                quantityErrors={quantityErrors} // TO DO
+                intl={intl}
+                quantityErrors={quantityErrors}
+                selectedWorkspaces={selectedWorkspaces}
                 defaultMaxQuantity={defaultMaxQuantity}
               />
 

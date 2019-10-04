@@ -10,7 +10,7 @@ import { richText } from '../../util/richText';
 import { createSlug } from '../../util/urlHelpers';
 import config from '../../config';
 import { NamedLink, ResponsiveImage } from '../../components';
-
+import { isMapsLibLoaded } from '../../components/Map/GoogleMap';
 import css from './ListingCard.css';
 
 const MIN_LENGTH_FOR_LONG_WORDS = 10;
@@ -42,7 +42,7 @@ class ListingImage extends Component {
 const LazyImage = lazyLoadWithDimensions(ListingImage, { loadAfterInitialRendering: 3000 });
 
 export const ListingCardComponent = props => {
-  const { className, rootClassName, intl, listing, renderSizes, setActiveListing } = props;
+  const { className, rootClassName, intl, listing, renderSizes, setActiveListing, searchPoint } = props;
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureListing(listing);
   const id = currentListing.id.uuid;
@@ -59,6 +59,21 @@ export const ListingCardComponent = props => {
   const isNightly = unitType === LINE_ITEM_NIGHT;
   const isDaily = unitType === LINE_ITEM_DAY;
 
+  const { publicData } = currentListing.attributes;
+  const city = publicData ? publicData.city : null;
+  const country = publicData ? publicData.country : null;
+
+  const listingGeolocation = currentListing.attributes &&
+  currentListing.attributes.geolocation ?
+  currentListing.attributes.geolocation :null;
+
+  let distance = null;
+  if(isMapsLibLoaded() && listingGeolocation && searchPoint) {
+    let listingPointCoord = new window.google.maps.LatLng(listingGeolocation.lat, listingGeolocation.lng);
+    let searchPointCoord = new window.google.maps.LatLng(searchPoint.lat, searchPoint.lng);
+    distance = (window.google.maps.geometry.spherical.computeDistanceBetween(listingPointCoord, searchPointCoord) / 1000).toFixed(2);
+  };
+
   const unitTranslationKey = isNightly
     ? 'ListingCard.perNight'
     : isDaily
@@ -72,6 +87,20 @@ export const ListingCardComponent = props => {
         onMouseEnter={() => setActiveListing(currentListing.id)}
         onMouseLeave={() => setActiveListing(null)}
       >
+        {(city && country) || distance ? (
+          <div className={css.locationInfo}>
+            {city && country ? (
+              <p className={css.locationInfoPar}>
+                {`${city}, ${country}`}
+              </p>
+            ) : null}
+            {distance && typeof distance !== NaN ? (
+              <p className={css.locationInfoPar}>
+                {`${distance} km`}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
         <div className={css.aspectWrapper}>
           <LazyImage
             rootClassName={css.rootForImage}

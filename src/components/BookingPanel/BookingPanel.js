@@ -71,7 +71,9 @@ const BookingPanel = props => {
     intl,
   } = props;
 
-  const seatsFeeData = listing.attributes.publicData.priceSeats;
+  const publicData = listing.attributes.publicData;
+
+  const seatsFeeData = publicData.priceSeats;
   const { amount: seatsAmount, currency: seatsCurrency } =
     seatsFeeData || {};
   const seatsFee =
@@ -79,7 +81,7 @@ const BookingPanel = props => {
       ? new Money(seatsAmount, seatsCurrency)
       : null;
 
-  const officeRoomsFeeData = listing.attributes.publicData.priceOfficeRooms;
+  const officeRoomsFeeData = publicData.priceOfficeRooms;
   const { amount: officeRoomsAmount, currency: officeRoomsCurrency } =
     officeRoomsFeeData || {};
   const officeRoomsFee =
@@ -87,7 +89,7 @@ const BookingPanel = props => {
       ? new Money(officeRoomsAmount, officeRoomsCurrency)
       : null;
 
-  const meetingRoomsFeeData = listing.attributes.publicData.priceMeetingRooms;
+  const meetingRoomsFeeData = publicData.priceMeetingRooms;
   const { amount: meetingRoomsAmount, currency: meetingRoomsCurrency } =
     meetingRoomsFeeData || {};
   const meetingRoomsFee =
@@ -190,6 +192,12 @@ const BookingPanel = props => {
       </div>
     ) : null;
 
+  const maxQuantity = {
+    seats: publicData.seatsRoomsQuantity ? publicData.seatsQuantity : 500,
+    office_rooms: publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 100,
+    meeting_rooms: publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 100,
+  };
+
   return (
     <div className={classes}>
       <ModalInMobile
@@ -227,6 +235,7 @@ const BookingPanel = props => {
             seatsFee={seatsFee}
             officeRoomsFee={officeRoomsFee}
             meetingRoomsFee={meetingRoomsFee}
+            maxQuantity={maxQuantity}
             initialValues={{ 
               seats_quantity: 1,
               office_rooms_quantity: 1,

@@ -14,10 +14,27 @@ class EditListingLocationPanel extends Component {
     super(props);
 
     this.getInitialValues = this.getInitialValues.bind(this);
+    this.setAdditionalGeodata = this.setAdditionalGeodata.bind(this);
 
+    const publicData = this.props.listing &&
+    this.props.listing.attributes &&
+    this.props.listing.attributes.publicData ?
+    this.props.listing.attributes.publicData : null;
+    console.log("publicData", publicData)
+    
     this.state = {
       initialValues: this.getInitialValues(),
+      city: publicData ? publicData.city : null,
+      country: publicData ? publicData.country : null,
     };
+  }
+
+  setAdditionalGeodata(params) {
+    const { city, country} = params;
+    this.setState({
+      city,
+      country,
+    })
   }
 
   getInitialValues() {
@@ -84,7 +101,12 @@ class EditListingLocationPanel extends Component {
             const updateValues = {
               geolocation: origin,
               publicData: {
-                location: { address, building },
+                location: { 
+                  address, 
+                  building,
+                },
+                city: this.state.city,
+                country: this.state.country,
               },
             };
             this.setState({
@@ -100,6 +122,7 @@ class EditListingLocationPanel extends Component {
           updated={panelUpdated}
           updateInProgress={updateInProgress}
           fetchErrors={errors}
+          setAdditionalGeodata={this.setAdditionalGeodata}
         />
       </div>
     );

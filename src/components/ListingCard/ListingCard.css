@@ -24,6 +24,24 @@
   }
 }
 
+.locationInfo {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  right: 0;
+  left: auto;
+  color: #fff;
+  background: #00000078;
+  max-width: 50%;
+  padding: 10px;
+  text-align: right;
+}
+
+.locationInfoPar {
+  margin: 0;
+  line-height: 1.2;
+}
+
 /* Firefox doesn't support image aspect ratio inside flexbox */
 .aspectWrapper {
   padding-bottom: 66.6667%; /* 3:2 Aspect Ratio */

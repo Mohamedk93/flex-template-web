@@ -39,6 +39,7 @@ class MainPanel extends Component {
       showAsModalMaxWidth,
       primaryFilters,
       secondaryFilters,
+      searchPoint,
     } = this.props;
 
     const isSearchFiltersPanelOpen = !!secondaryFilters && this.state.isSearchFiltersPanelOpen;
@@ -130,6 +131,7 @@ class MainPanel extends Component {
               pagination={listingsAreLoaded ? pagination : null}
               search={searchParamsForPagination}
               setActiveListing={onActivateListing}
+              searchPoint={searchPoint}
             />
           </div>
         )}

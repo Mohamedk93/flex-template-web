@@ -16,27 +16,6 @@
   }
 }
 
-.item {
-  padding: 2px 0;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  /* Fix broken multi-column layout in Chrome */
-  page-break-inside: avoid;
-
-  @media (--viewportMedium) {
-    padding: 4px 0;
-    width: 350px;
-  }
-}
-
-.label {
-  font-size: 20px;
-}
-
-
 .selectHolder {
   display: flex;
   justify-content: space-between;
@@ -55,10 +34,21 @@
   margin: 5px 0 10px;
 }
 
-.label {
+.twoColumnWQ {
   display: flex;
   justify-content: space-between;
-  max-width: 328px;
   font-size: 16px;
   font-weight: 600;
+  padding: 0 20px;
+  @media (min-width: 760px) {
+    padding: 0;
+  }
+  @media (min-width: 769px) {
+    max-width: 385px;
+  }
+}
+
+.labelQuantity {
+  text-align: right;
+  padding-right: 20px;
 }

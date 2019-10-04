@@ -4,6 +4,7 @@
   display: flex;
   justify-content: flex-start;
   position: relative;
+  padding: 4px 0;
 }
 
 .label {
@@ -54,7 +55,8 @@
 }
 
 .buttonMinus,
-.buttonPlus {
+.buttonPlus,
+.buttonMinusDisabled {
   position: absolute;
   background: none;
   box-shadow: none;
@@ -67,6 +69,11 @@
   width: 15px;
   height: 15px;
   line-height: 15px;
+}
+.buttonMinusDisabled {
+  pointer-events: none;
+  color: #d2d2d2;
+  cursor: default;
 }
 
 .buttonMinus {

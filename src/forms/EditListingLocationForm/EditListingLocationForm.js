@@ -32,6 +32,7 @@ export const EditListingLocationFormComponent = props => (
         updateInProgress,
         fetchErrors,
         values,
+        setAdditionalGeodata
       } = fieldRenderProps;
 
       const titleRequiredMessage = intl.formatMessage({ id: 'EditListingLocationForm.address' });
@@ -92,6 +93,7 @@ export const EditListingLocationFormComponent = props => (
             useDefaultPredictions={false}
             format={identity}
             valueFromForm={values.location}
+            setAdditionalGeodata={setAdditionalGeodata}
             validate={composeValidators(
               autocompleteSearchRequired(addressRequiredMessage),
               autocompletePlaceSelected(addressNotRecognizedMessage)
