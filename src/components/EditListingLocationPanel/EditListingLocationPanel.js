@@ -20,7 +20,6 @@ class EditListingLocationPanel extends Component {
     this.props.listing.attributes &&
     this.props.listing.attributes.publicData ?
     this.props.listing.attributes.publicData : null;
-    console.log("publicData", publicData)
     
     this.state = {
       initialValues: this.getInitialValues(),
