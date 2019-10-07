@@ -80,6 +80,18 @@ export const ListingCardComponent = props => {
     ? 'ListingCard.perDay'
     : 'ListingCard.perUnit';
 
+  const locationInfo = city && country ? (
+    <p className={css.locationInfoPar}>
+      {`${city}, ${country}`}
+    </p>
+  ) : null;
+
+  const distanceInfo = distance ? (
+    <p className={css.locationInfoPar}>
+      {`${distance} km`}
+    </p>
+  ) : null;
+
   return (
     <NamedLink className={classes} name="ListingPage" params={{ id, slug }}>
       <div
@@ -87,20 +99,9 @@ export const ListingCardComponent = props => {
         onMouseEnter={() => setActiveListing(currentListing.id)}
         onMouseLeave={() => setActiveListing(null)}
       >
-        {(city && country) || distance ? (
-          <div className={css.locationInfo}>
-            {city && country ? (
-              <p className={css.locationInfoPar}>
-                {`${city}, ${country}`}
-              </p>
-            ) : null}
-            {distance && typeof distance !== NaN ? (
-              <p className={css.locationInfoPar}>
-                {`${distance} km`}
-              </p>
-            ) : null}
-          </div>
-        ) : null}
+        <div className={css.locationInfo}>
+          {locationInfo}
+        </div>
         <div className={css.aspectWrapper}>
           <LazyImage
             rootClassName={css.rootForImage}
