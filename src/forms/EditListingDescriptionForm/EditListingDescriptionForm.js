@@ -9,7 +9,7 @@ import { maxLength, required, composeValidators } from '../../util/validators';
 import { Form, Button, FieldTextInput, FieldCheckboxGroup, FieldCheckboxGroupWithQuantity } from '../../components';
 import config from '../../config';
 import arrayMutators from 'final-form-arrays';
-
+import CustomCategorySelectFieldMaybe from './CustomCategorySelectFieldMaybe';
 import css from './EditListingDescriptionForm.css';
 
 const TITLE_MAX_LENGTH = 60;
@@ -140,6 +140,13 @@ const EditListingDescriptionFormComponent = props => (
             label={descriptionMessage}
             placeholder={descriptionPlaceholderMessage}
             validate={composeValidators(required(descriptionRequiredMessage))}
+          />
+
+          <CustomCategorySelectFieldMaybe
+            id="category"
+            name="category"
+            categories={categories}
+            intl={intl}
           />
 
           <FieldCheckboxGroupWithQuantity

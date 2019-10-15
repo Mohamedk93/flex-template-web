@@ -33,17 +33,14 @@ export const workspaces = [
   {
     key: 'seats',
     label: 'Seats',
-    count: 500,
   },
   {
     key: 'office_rooms',
     label: 'Office rooms',
-    count: 100,
   },
   {
     key: 'meeting_rooms',
     label: 'Meeting rooms',
-    count: 100,
   },
 ];
 
@@ -60,9 +57,14 @@ export const workspacesDefaultName = {
 }
 
 export const categories = [
-  { key: 'meeting_room', label: 'Meeting room' },
-  { key: 'seat', label: 'Seat' },
+  { key: 'coworking', label: 'Coworking Space' },
+  { key: 'office', label: 'Office Space' },
 ];
+
+export const categoriesDefaultName = {
+  coworking: "Coworking Space",
+  office: "Office Space",
+}
 
 export const weekDays = [
   { key: 'mon', label: 'Monday' },
