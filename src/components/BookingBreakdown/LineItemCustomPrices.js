@@ -21,7 +21,6 @@ const LineItemCustomPrices = props => {
   });
 
   return mainLineItems ? mainLineItems.map((item) => {
-    console.log("item", item);
     const key = item.code.split('/')[1];
     const quantity = item.quantity;
     const currency = item.unitPrice.currency;
