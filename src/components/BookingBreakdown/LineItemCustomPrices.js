@@ -16,6 +16,8 @@ const { Money } = sdkTypes;
 const LineItemCustomPrices = props => {
   const { transaction, unitType, intl } = props;
 
+  console.log("props", props);
+
   const mainLineItems = transaction.attributes.lineItems.filter((item) => {
     return item.code === LINE_ITEM_SEATS_FEE || item.code === LINE_ITEM_OFFICE_ROOMS_FEE || item.code === LINE_ITEM_MEETING_ROOMS_FEE
   });
@@ -35,10 +37,12 @@ const LineItemCustomPrices = props => {
 
     const formattedTotalPrice = formatMoney(intl, totalPrice);
 
+    const formattedUnitPrice = formatMoney(intl, item.unitPrice);
+
     return (
       <div className={css.lineItem} key={key}>
         <span className={css.itemLabel}>
-          <FormattedMessage id={`BookingBreakdown.quantity_${key}`} values={{quantity: quantity.toFixed()}} />
+          <FormattedMessage id={`BookingBreakdown.quantity_${key}`} values={{quantity: quantity.toFixed(), price: formattedUnitPrice}} />
         </span>
         <span className={css.itemValue}>
           {formattedTotalPrice}
