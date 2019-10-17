@@ -21,7 +21,6 @@ const LineItemCustomPrices = props => {
   });
 
   return mainLineItems ? mainLineItems.map((item) => {
-    console.log("item", item);
     const key = item.code.split('/')[1];
     const quantity = item.quantity;
     const currency = item.unitPrice.currency;
@@ -36,10 +35,12 @@ const LineItemCustomPrices = props => {
 
     const formattedTotalPrice = formatMoney(intl, totalPrice);
 
+    const formattedUnitPrice = formatMoney(intl, item.unitPrice);
+
     return (
       <div className={css.lineItem} key={key}>
         <span className={css.itemLabel}>
-          <FormattedMessage id={`BookingBreakdown.quantity_${key}`} values={{quantity: quantity.toFixed()}} />
+          <FormattedMessage id={`BookingBreakdown.quantity_${key}`} values={{quantity: quantity.toFixed(), price: formattedUnitPrice}} />
         </span>
         <span className={css.itemValue}>
           {formattedTotalPrice}

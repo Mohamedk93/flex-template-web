@@ -13,9 +13,7 @@ import * as validators from '../../util/validators';
 import config from '../../config';
 import { requiredFieldArrayCheckbox } from '../../util/validators';
 import { Form, IconClose, PrimaryButton, InlineTextButton, FieldSelect, FieldCheckboxGroupWithQuantity } from '../../components';
-
 import { formatMoney } from '../../util/currency';
-
 import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
 
@@ -431,6 +429,12 @@ export class BookingDatesFormComponent extends Component {
 
           const selectedWorkspaces = values && values.workspaces ? values.workspaces : [];
 
+          const fees = {
+            seats: seatsFee ? `(${formatMoney(intl, seatsFee)})` : null,
+            office_rooms: officeRoomsFee ? `(${formatMoney(intl, officeRoomsFee)})` : null,
+            meeting_rooms: meetingRoomsFee ? `(${formatMoney(intl, meetingRoomsFee)})` : null,
+          };
+
           return (
             <Form
               onSubmit={e => {
@@ -469,6 +473,7 @@ export class BookingDatesFormComponent extends Component {
                 quantityErrors={quantityErrors}
                 selectedWorkspaces={selectedWorkspaces}
                 defaultMaxQuantity={defaultMaxQuantity}
+                fees={fees}
               />
 
               {hoursValid(values) && isChooseWorkspace(values) ? (

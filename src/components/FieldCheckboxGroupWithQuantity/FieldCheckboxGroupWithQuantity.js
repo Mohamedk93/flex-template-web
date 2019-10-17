@@ -17,6 +17,7 @@ class FieldCheckboxGroupWithQuantity extends Component {
       options,
       intl,
       quantityErrors,
+      fees,
     } = this.props;
 
     const quantityErrorsText = quantityErrors ? quantityErrors.map(function(item){
@@ -48,6 +49,7 @@ class FieldCheckboxGroupWithQuantity extends Component {
               label={labelW}
               options={options}
               validate={requiredFieldArrayCheckbox(workspacesRequiredMessage)}
+              customLabelObj={fees}
             />
           </div>
           <div>

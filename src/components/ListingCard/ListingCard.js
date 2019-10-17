@@ -92,6 +92,13 @@ export const ListingCardComponent = props => {
     </p>
   ) : null;
 
+  const categories = config.custom.categoriesDefaultName;
+  const category = publicData && publicData.category ? (
+    <p className={css.categoryPar}>
+      {categories[publicData.category]}
+    </p>
+  ) : null;
+
   return (
     <NamedLink className={classes} name="ListingPage" params={{ id, slug }}>
       <div
@@ -99,6 +106,9 @@ export const ListingCardComponent = props => {
         onMouseEnter={() => setActiveListing(currentListing.id)}
         onMouseLeave={() => setActiveListing(null)}
       >
+        <div className={css.category}>
+          {category}
+        </div>
         <div className={css.locationInfo}>
           {locationInfo}
         </div>

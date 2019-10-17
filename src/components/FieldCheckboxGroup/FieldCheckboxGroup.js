@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { arrayOf, bool, node, shape, string } from 'prop-types';
+import { arrayOf, bool, node, shape, string, object } from 'prop-types';
 import classNames from 'classnames';
 import { FieldArray } from 'react-final-form-arrays';
 import { FieldCheckbox, ValidationError } from '../../components';
@@ -16,7 +16,7 @@ import { FieldCheckbox, ValidationError } from '../../components';
 import css from './FieldCheckboxGroup.css';
 
 const FieldCheckboxRenderer = props => {
-  const { className, rootClassName, label, twoColumns, id, fields, options, meta } = props;
+  const { className, rootClassName, label, twoColumns, id, fields, options, meta, customLabelObj } = props;
 
   const classes = classNames(rootClassName || css.root, className);
   const listClasses = twoColumns ? classNames(css.list, css.twoColumns) : css.list;
@@ -27,12 +27,13 @@ const FieldCheckboxRenderer = props => {
       <ul className={listClasses}>
         {options.map((option, index) => {
           const fieldId = `${id}.${option.key}`;
+          const label = customLabelObj ? `${option.label} ${customLabelObj[option.key]}` : option.label;
           return (
             <li key={fieldId} className={css.item}>
               <FieldCheckbox
                 id={fieldId}
                 name={fields.name}
-                label={option.label}
+                label={label}
                 value={option.key}
               />
             </li>
@@ -56,6 +57,7 @@ FieldCheckboxRenderer.propTypes = {
   className: string,
   id: string.isRequired,
   label: node,
+  customLabelObj: object,
   options: arrayOf(
     shape({
       key: string.isRequired,
