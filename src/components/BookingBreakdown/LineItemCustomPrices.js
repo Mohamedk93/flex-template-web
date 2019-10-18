@@ -1,10 +1,10 @@
 import React from 'react';
 import { FormattedMessage } from '../../util/reactIntl';
-import { 
+import {
   LINE_ITEM_SEATS_FEE,
   LINE_ITEM_OFFICE_ROOMS_FEE,
   LINE_ITEM_MEETING_ROOMS_FEE,
-  propTypes 
+  propTypes
 } from '../../util/types';
 import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit, formatMoney } from '../../util/currency';
 import Decimal from 'decimal.js';
@@ -19,6 +19,11 @@ const LineItemCustomPrices = props => {
   const mainLineItems = transaction.attributes.lineItems.filter((item) => {
     return item.code === LINE_ITEM_SEATS_FEE || item.code === LINE_ITEM_OFFICE_ROOMS_FEE || item.code === LINE_ITEM_MEETING_ROOMS_FEE
   });
+
+  const guid = () =>
+    `_${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
 
   return mainLineItems ? mainLineItems.map((item) => {
     const key = item.code.split('/')[1];
@@ -38,7 +43,7 @@ const LineItemCustomPrices = props => {
     const formattedUnitPrice = formatMoney(intl, item.unitPrice);
 
     return (
-      <div className={css.lineItem} key={key}>
+      <div className={css.lineItem} key={guid()}>
         <span className={css.itemLabel}>
           <FormattedMessage id={`BookingBreakdown.quantity_${key}`} values={{quantity: quantity.toFixed(), price: formattedUnitPrice}} />
         </span>

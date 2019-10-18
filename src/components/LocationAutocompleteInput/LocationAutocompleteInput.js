@@ -22,7 +22,7 @@ class LocationAutocompleteInputComponent extends Component {
       value.selectedPlace.origin : null;
       
       if(locationCoord) {
-        const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${locationCoord.lat},${locationCoord.lng}&key=${config.maps.googleMapsAPIKey}&language=en`
+        const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${locationCoord.lat},${locationCoord.lng}&language=en&result_type=locality&result_type=country&key=${config.maps.googleMapsAPIKey}`
         fetch(requestUrl)
           .then(response => response.json())
           .then(data => {
