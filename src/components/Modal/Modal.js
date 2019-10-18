@@ -28,7 +28,7 @@ export class ModalComponent extends Component {
   componentDidMount() {
     const { id, isOpen, onManageDisableScrolling } = this.props;
     onManageDisableScrolling(id, isOpen);
-    document.body.addEventListener('keyup', this.handleBodyKeyUp);
+    // document.body.addEventListener('keyup', this.handleBodyKeyUp);
   }
 
   componentDidUpdate(prevProps) {
@@ -40,7 +40,7 @@ export class ModalComponent extends Component {
 
   componentWillUnmount() {
     const { id, onManageDisableScrolling } = this.props;
-    document.body.removeEventListener('keyup', this.handleBodyKeyUp);
+    // document.body.removeEventListener('keyup', this.handleBodyKeyUp);
     onManageDisableScrolling(id, false);
   }
 
