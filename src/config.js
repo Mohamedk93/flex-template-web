@@ -33,7 +33,7 @@ const sortSearchByDistance = false;
 // In a way, 'processAlias' defines which transaction process (or processes)
 // this particular web application is able to handle.
 
-const cashBookingProcessAlias = 'cash-unit-time-booking/custom-pricing';
+const cashBookingProcessAlias = 'cash-unit-time-booking/release-1';
 const scaBookingProcessAlias = 'sca-preauth-unit-time-booking/custom-pricing';
 
 // The transaction line item code for the main unit type in bookings.
