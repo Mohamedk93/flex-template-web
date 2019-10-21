@@ -27,21 +27,21 @@ export class ModalComponent extends Component {
 
   componentDidMount() {
     const { id, isOpen, onManageDisableScrolling } = this.props;
-    // onManageDisableScrolling(id, isOpen); // Iphone bug
-    // document.body.addEventListener('keyup', this.handleBodyKeyUp); // Iphone bug
+    onManageDisableScrolling(id, isOpen); 
+    document.body.addEventListener('keyup', this.handleBodyKeyUp); 
   }
 
-  componentDidUpdate(prevProps) {
-    const { id, isOpen, onManageDisableScrolling } = prevProps;
-    if (this.props.isOpen !== isOpen) {
-      // onManageDisableScrolling(id, this.props.isOpen); // Iphone bug
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   const { id, isOpen, onManageDisableScrolling } = prevProps;
+  //   if (this.props.isOpen !== isOpen) {
+  //     onManageDisableScrolling(id, this.props.isOpen); 
+  //   }
+  // }
 
   componentWillUnmount() {
     const { id, onManageDisableScrolling } = this.props;
-    // document.body.removeEventListener('keyup', this.handleBodyKeyUp); // Iphone bug
-    // onManageDisableScrolling(id, false); // Iphone bug
+    document.body.removeEventListener('keyup', this.handleBodyKeyUp); 
+    onManageDisableScrolling(id, false); 
   }
 
   handleBodyKeyUp(event) {
@@ -53,7 +53,7 @@ export class ModalComponent extends Component {
 
   handleClose(event) {
     const { id, onClose, onManageDisableScrolling } = this.props;
-    // onManageDisableScrolling(id, false); // Iphone bug
+    onManageDisableScrolling(id, false); 
     onClose(event);
   }
 
