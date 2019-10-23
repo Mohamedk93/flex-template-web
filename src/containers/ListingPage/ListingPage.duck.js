@@ -248,7 +248,7 @@ export const sendEnquiry = (listingId, message) => (dispatch, getState, sdk) => 
   dispatch(sendEnquiryRequest());
   const bodyParams = {
     transition: TRANSITION_ENQUIRE,
-    processAlias: config.bookingProcessAlias,
+    processAlias: config.scaBookingProcessAlias,
     params: { listingId },
   };
   return sdk.transactions

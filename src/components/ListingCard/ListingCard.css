@@ -78,6 +78,24 @@
   margin-right: 18px;
 }
 
+.category {
+  position: absolute;
+  z-index: 5;
+  top: 5px;
+  right: auto;
+  left: 5px;
+  max-width: 50%;
+  text-align: left;
+}
+
+.categoryPar {
+  margin: 0;
+  background: #fff;
+  padding: 0 5px 3px;
+  font-size: 16px;
+  line-height: 18px;
+}
+
 .priceValue {
   /* Font */
   @apply --marketplaceH3FontStyles;

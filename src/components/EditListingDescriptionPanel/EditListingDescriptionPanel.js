@@ -60,7 +60,7 @@ const EditListingDescriptionPanel = props => {
           const { 
             title, 
             description, 
-            category, 
+            category,
             workspaces, 
             seats_quantity,
             office_rooms_quantity,

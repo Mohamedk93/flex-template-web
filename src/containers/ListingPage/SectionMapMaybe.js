@@ -15,6 +15,12 @@ class SectionMapMaybe extends Component {
     this.state = { isStatic: true };
   }
 
+  handleMapClick() {
+    const { geolocation } = this.props;
+    const url = `https://www.google.com/maps/search/?api=1&query=${geolocation.lat},${geolocation.lng}`
+    window.open(url, "_blank");
+  }
+
   render() {
     const { className, rootClassName, geolocation, publicData, listingId } = this.props;
 
@@ -39,9 +45,10 @@ class SectionMapMaybe extends Component {
         {this.state.isStatic ? (
           <button
             className={css.map}
-            onClick={() => {
-              this.setState({ isStatic: false });
-            }}
+            // onClick={() => {
+            //   this.setState({ isStatic: false });
+            // }}
+            onClick={() => {this.handleMapClick()}}
           >
             {map}
           </button>
