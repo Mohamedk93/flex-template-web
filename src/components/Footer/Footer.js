@@ -132,11 +132,9 @@ const Footer = props => {
               <FormattedMessage id="Footer.copyright" />
             </NamedLink>
             <div className={css.tosAndPrivacyMobile}>
-              </NamedLink>
               <a href="/static/Hotdesk_Privacy_Policy.pdf" className={css.privacy} target="_blank">
                 <FormattedMessage id="Footer.privacy" />
-              </a>
-              </NamedLink>
+                </a>
               <a href="/static/Hotdesk_Terms_of_Service.pdf" className={css.terms} target="_blank">
                 <FormattedMessage id="Footer.terms" />
               </a>
