@@ -4,7 +4,9 @@ import { compose } from 'redux';
 import { Form as FinalForm } from 'react-final-form';
 import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
+import config from '../../config';
 import { propTypes } from '../../util/types';
+import { LocationMap } from "./LocationMap";
 import {
   autocompleteSearchRequired,
   autocompletePlaceSelected,
@@ -76,6 +78,8 @@ export const EditListingLocationFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
 
+      const googleMapURL = `https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${config.maps.googleMapsAPIKey}`
+
       return (
         <Form className={classes} onSubmit={handleSubmit}>
           {errorMessage}
@@ -107,6 +111,14 @@ export const EditListingLocationFormComponent = props => (
             id="building"
             label={buildingMessage}
             placeholder={buildingPlaceholderMessage}
+          />
+
+          <LocationMap
+            isMarkerShown
+            googleMapURL
+            loadingElement={<div style={{ height: `100%` }} />}
+            containerElement={<div style={{ height: `400px` }} />}
+            mapElement={<div style={{ height: `100%` }} />}
           />
 
           <Button
