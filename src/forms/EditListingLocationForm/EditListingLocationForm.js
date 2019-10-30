@@ -6,7 +6,7 @@ import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import config from '../../config';
 import { propTypes } from '../../util/types';
-import { LocationMap } from "./LocationMap";
+import LocationMap from "./LocationMap";
 import {
   autocompleteSearchRequired,
   autocompletePlaceSelected,
@@ -114,7 +114,6 @@ export const EditListingLocationFormComponent = props => (
           />
 
           <LocationMap
-            isMarkerShown
             googleMapURL
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `400px` }} />}
