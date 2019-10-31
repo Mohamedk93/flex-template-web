@@ -38,10 +38,11 @@ class EditListingLocationPanel extends Component {
   }
 
   setAdditionalGeodata(params) {
-    const { city, country } = params;
+    const { city, country, coords } = params;
     this.setState({
       city,
       country,
+      coords,
     })
   }
 
@@ -146,6 +147,7 @@ class EditListingLocationPanel extends Component {
     lat && lng && this.setState({ 
       coords: { lat, lng }
     });
+    this.getLocationPoint(coords)
   }
 
   shouldComponentUpdate(nextProps, nextState){
@@ -153,9 +155,9 @@ class EditListingLocationPanel extends Component {
   }
 
   componentDidUpdate(prevProps, prevState){
-    if(prevState.coords !== this.state.coords) {
-      this.getLocationPoint(this.state.coords)
-    }
+    // if(prevState.coords !== this.state.coords) {
+    //   this.getLocationPoint(this.state.coords)
+    // }
   }
 
   render() {

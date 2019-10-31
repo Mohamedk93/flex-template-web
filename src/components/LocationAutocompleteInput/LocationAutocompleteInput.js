@@ -13,6 +13,7 @@ class LocationAutocompleteInputComponent extends Component {
 
   componentDidUpdate(prevProps, prevState){
     if(prevProps.valueFromForm !== this.props.valueFromForm){
+      console.log("I SNOVA VIPOLNILSA", prevProps.valueFromForm);
       const { setAdditionalGeodata, input, valueFromForm } = this.props;
       const value = typeof valueFromForm !== 'undefined' ? valueFromForm : input.value;
       
@@ -45,6 +46,10 @@ class LocationAutocompleteInputComponent extends Component {
             setAdditionalGeodata({
               city: cityName,
               country: countryName,
+              coords: {
+                lat: locationCoord.lat,
+                lng: locationCoord.lng,
+              }
             })
           })
           .catch(error => {console.log(error)});

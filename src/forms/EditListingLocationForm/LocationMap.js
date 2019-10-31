@@ -24,6 +24,8 @@ class LocationMap extends Component {
 
     const { coords, onMarkerDragEnd } = this.props;
 
+    // console.log("props>>>>", this.props);
+
     const lat = coords.lat;
     const lng = coords.lng;
 
@@ -45,7 +47,7 @@ class LocationMap extends Component {
     return (
       <div className={css.mapWrapper}>
         <MapField 
-          containerElement={ <div style={{ height: `500px`, width: '500px' }} /> }
+          containerElement={ <div style={{ height: `500px`, width: '100%' }} /> }
           mapElement={ <div style={{ height: `100%` }} /> }
         />
       </div>
