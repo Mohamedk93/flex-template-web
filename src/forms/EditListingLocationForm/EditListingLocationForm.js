@@ -80,6 +80,8 @@ export const EditListingLocationFormComponent = props => (
 
       const googleMapURL = `https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${config.maps.googleMapsAPIKey}`
 
+      const { coords, city, getLocationPoint, onMarkerDragEnd } = fieldRenderProps;
+
       return (
         <Form className={classes} onSubmit={handleSubmit}>
           {errorMessage}
@@ -118,6 +120,11 @@ export const EditListingLocationFormComponent = props => (
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `400px` }} />}
             mapElement={<div style={{ height: `100%` }} />}
+
+            coords={coords}
+            city={city}
+            getLocationPoint={getLocationPoint}
+            onMarkerDragEnd={onMarkerDragEnd}
           />
 
           <Button
