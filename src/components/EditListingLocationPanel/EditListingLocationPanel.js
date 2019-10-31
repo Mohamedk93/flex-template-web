@@ -140,14 +140,13 @@ class EditListingLocationPanel extends Component {
     };
   }
 
-  onMarkerDragEnd(coords) {
-    const { latLng } = coords;
+  onMarkerDragEnd(coordsObj) {
+    const { latLng } = coordsObj;
     const lat = latLng ? latLng.lat() : null;
     const lng = latLng ? latLng.lng() : null;
-    lat && lng && this.setState({ 
-      coords: { lat, lng }
-    });
-    this.getLocationPoint(coords)
+    const coords = { lat, lng }
+    this.getLocationPoint(coords);
+    lat && lng && this.setState({ coords });
   }
 
   shouldComponentUpdate(nextProps, nextState){

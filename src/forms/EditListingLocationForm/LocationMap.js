@@ -24,8 +24,6 @@ class LocationMap extends Component {
 
     const { coords, onMarkerDragEnd } = this.props;
 
-    // console.log("props>>>>", this.props);
-
     const lat = coords.lat;
     const lng = coords.lng;
 
