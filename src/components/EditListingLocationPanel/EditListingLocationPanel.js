@@ -115,10 +115,13 @@ class EditListingLocationPanel extends Component {
     const { listing } = this.props;
     const currentListing = ensureOwnListing(listing);
     const { geolocation } = currentListing.attributes;
-    return {
-      lat: geolocation.lat,
-      lng: geolocation.lng,
+
+    const coords = {
+      lat: geolocation ? geolocation.lat : 30.03,
+      lng: geolocation ? geolocation.lng : 31.24,
     }
+
+    return coords
   }
 
   getLocationPoint(coords, updateForm = false, updateMap = false) { 
