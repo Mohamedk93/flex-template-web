@@ -328,6 +328,9 @@ class LocationAutocompleteInputImpl extends Component {
           predictions: [],
           selectedPlace: place,
         });
+
+        const coords = place.origin;
+        this.props.handleAutocompleteChange(coords);
       })
       .catch(e => {
         this.setState({ fetchingPlaceDetails: false });

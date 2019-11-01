@@ -8,15 +8,17 @@ class LocationMap extends Component {
     super(props);
   }
 
-  // shouldComponentUpdate(nextProps, nextState){
-  //   return false
-  // }
+  shouldComponentUpdate(nextProps, nextState){
+    if(nextProps.updateMap !== this.props.updateMap) {
+      return true
+    } else {
+      return false
+    }
+  }
 
   render() {
 
     const { coords, onMarkerDragEnd, updateMap } = this.props;
-
-    console.log("updateMap", updateMap);
 
     const lat = coords.lat;
     const lng = coords.lng;

@@ -6,31 +6,16 @@ import LocationAutocompleteInputImpl from './LocationAutocompleteInputImpl.js';
 import config from '../../config';
 
 class LocationAutocompleteInputComponent extends Component {
+  constructor(props){
+    super(props);
+    this.handleAutocompleteChange = this.handleAutocompleteChange.bind(this);
+  }
 
-  shouldComponentUpdate(nextProps, nextState){
-    return true
-  };
-
-  componentDidUpdate(prevProps, prevState){
-    if(prevProps.valueFromForm !== this.props.valueFromForm){
-
-      const { getLocationPoint, input, valueFromForm } = this.props;
-      const value = typeof valueFromForm !== 'undefined' ? valueFromForm : input.value;
-      
-      const coords = value &&
-      value.selectedPlace &&
-      value.selectedPlace.origin ?
-      value.selectedPlace.origin : null;
-
-      const updateForm = false;
-      const updateMap = true;
-
-      if(coords) {
-        getLocationPoint(coords, updateForm, updateMap);
-      }
-
-    };
-  };
+  handleAutocompleteChange(coords) {
+    const updateForm = false;
+    const updateMap = true;
+    this.props.getLocationPoint(coords, updateForm, updateMap);
+  }
 
   render() {
     /* eslint-disable no-unused-vars */
@@ -38,9 +23,11 @@ class LocationAutocompleteInputComponent extends Component {
     const { input, label, meta, valueFromForm, ...otherProps } = restProps;
     /* eslint-enable no-unused-vars */
 
+    const handleAutocompleteChange = this.handleAutocompleteChange;
+
     const value = typeof valueFromForm !== 'undefined' ? valueFromForm : input.value;
     
-    const locationAutocompleteProps = { label, meta, ...otherProps, input: { ...input, value } };
+    const locationAutocompleteProps = { label, meta, ...otherProps, input: { ...input, value }, handleAutocompleteChange };
     const labelInfo = label ? (
       <label className={labelClassName} htmlFor={input.name}>
         {label}
