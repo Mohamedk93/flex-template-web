@@ -8,10 +8,33 @@ import { ListingLink } from '../../components';
 import { EditListingLocationForm } from '../../forms';
 import config from '../../config';
 import { types as sdkTypes } from '../../util/sdkLoader';
+import filter from 'lodash/filter';
 
 import css from './EditListingLocationPanel.css';
 
 const { LatLng } = sdkTypes;
+
+function getMapDataByTypes(geodata, types) {
+
+  const gmItem = filter(geodata, (item) => {
+    const components = filter(item.address_components, (subitem) => {
+      return (subitem.types.indexOf(types) !== -1)
+    });
+    return (components.length !== 0);
+  });
+
+  let gmItemFormat = [];
+  if(gmItem.length !== 0) {
+    gmItemFormat = filter(gmItem[0].address_components, (item) => {
+      return (item.types.indexOf(types) !== -1)
+    }); 
+  };
+
+  let result = (gmItemFormat.length !== 0) ? gmItemFormat[0].long_name : null
+
+  return result
+
+};
 
 class EditListingLocationPanel extends Component {
   constructor(props) {
@@ -23,8 +46,6 @@ class EditListingLocationPanel extends Component {
       city: this.getInitialCustomValues('city'),
       country: this.getInitialCustomValues('country'),
       coords: this.getInitialCoords(),
-      
-      point: null,
       updateMap: false,
     };
 
@@ -71,13 +92,14 @@ class EditListingLocationPanel extends Component {
 
     const building = this.state.initialValues.building;
     const coordsObj = new LatLng(coords.lat, coords.lng);
+    const address = formattedAddress ? formattedAddress : "";
 
     const initialValues = {
       building,
       location: {
-        search: formattedAddress,
+        search: address,
         selectedPlace: { 
-          address: formattedAddress, 
+          address: address, 
           origin: coordsObj,
         },
       },
@@ -100,10 +122,16 @@ class EditListingLocationPanel extends Component {
   }
 
   getLocationPoint(coords, updateForm = false, updateMap = false) { 
-    const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&language=en&result_type=locality&result_type=country&key=${config.maps.googleMapsAPIKey}`
+    // const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&language=en&result_type=locality&result_type=country&result_type=street_address&key=${config.maps.googleMapsAPIKey}`
+    const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&language=en&key=${config.maps.googleMapsAPIKey}`
     fetch(requestUrl)
       .then(response => response.json())
       .then(data => {
+
+        const geodata = data ? data.results : null;
+
+        const city = getMapDataByTypes(geodata, 'locality');
+        const country = getMapDataByTypes(geodata, 'country');
 
         const formattedAddress = data &&
           data.results &&
@@ -111,26 +139,25 @@ class EditListingLocationPanel extends Component {
           data.results[0].formatted_address ?
           data.results[0].formatted_address : null;
 
-        const address = data &&
-          data.results &&
-          data.results[0] &&
-          data.results[0].address_components ?
-          data.results[0].address_components : null;
+        // const address = data &&
+        //   data.results &&
+        //   data.results[0] &&
+        //   data.results[0].address_components ?
+        //   data.results[0].address_components : null;
 
-        const city = address ? address.filter(function(item){
-          return item.types.indexOf("locality") !== -1
-        }) : null;
-        const cityString = city ? city[0].long_name : null;
+        // const city = address ? address.filter(function(item){
+        //   return item.types.indexOf("locality") !== -1
+        // }) : null;
+        // const cityString = city.length !== 0 ? city[0].long_name : null;
 
-        const country = address ? address.filter(function(item){
-          return item.types.indexOf("country") !== -1
-        }) : null;
-        const countryString = country ? country[0].long_name : null;
+        // const country = address ? address.filter(function(item){
+        //   return item.types.indexOf("country") !== -1
+        // }) : null;
+        // const countryString = country.length !== 0 ? country[0].long_name : null;
 
         this.setState({ 
-          city: cityString,
-          country: countryString,
-          point: formattedAddress,
+          city,
+          country,
           coords,
         });
 
@@ -170,8 +197,6 @@ class EditListingLocationPanel extends Component {
       updateInProgress,
       errors,
     } = this.props;
-
-    // console.log("state!", this.state);
 
     const classes = classNames(rootClassName || css.root, className);
     const currentListing = ensureOwnListing(listing);
