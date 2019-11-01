@@ -6,32 +6,24 @@ import config from '../../config';
 class LocationMap extends Component {
   constructor(props){
     super(props);
-    // this.state = {
-    //   zoomLevel: 10,
-    // };
-    // this.handleZoomChanged = this.handleZoomChanged.bind(this);
   }
 
-  // handleZoomChanged(e) {
-  //   // const zoomLevel = e.getZoom();
-  //   console.log("zoomLevel", e);
-  //   // if (zoomLevel !== this.state.zoomLevel) {
-  //   //   this.setState({zoomLevel});
-  //   // }
+  // shouldComponentUpdate(nextProps, nextState){
+  //   return false
   // }
 
   render() {
 
-    const { coords, onMarkerDragEnd } = this.props;
+    const { coords, onMarkerDragEnd, updateMap } = this.props;
+
+    console.log("updateMap", updateMap);
 
     const lat = coords.lat;
     const lng = coords.lng;
 
     const MapField = withGoogleMap(props => (
       <GoogleMap
-        // defaultZoom={this.state.zoomLevel}
         defaultZoom={10}
-        // onZoomChanged={e => this.handleZoomChanged(e)}
         defaultCenter={{ lat, lng }}
       >
         <Marker

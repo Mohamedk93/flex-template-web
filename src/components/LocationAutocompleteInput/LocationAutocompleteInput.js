@@ -22,8 +22,11 @@ class LocationAutocompleteInputComponent extends Component {
       value.selectedPlace.origin ?
       value.selectedPlace.origin : null;
 
+      const updateForm = false;
+      const updateMap = true;
+
       if(coords) {
-        getLocationPoint(coords);
+        getLocationPoint(coords, updateForm, updateMap);
       }
 
     };

@@ -35,6 +35,7 @@ export const EditListingLocationFormComponent = props => (
         fetchErrors,
         values,
         getLocationPoint,
+        updateMap,
       } = fieldRenderProps;
 
       const titleRequiredMessage = intl.formatMessage({ id: 'EditListingLocationForm.address' });
@@ -122,9 +123,8 @@ export const EditListingLocationFormComponent = props => (
             mapElement={<div style={{ height: `100%` }} />}
 
             coords={coords}
-            city={city}
-            getLocationPoint={getLocationPoint}
             onMarkerDragEnd={onMarkerDragEnd}
+            updateMap={updateMap}
           />
 
           <Button

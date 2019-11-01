@@ -24,7 +24,8 @@ class EditListingLocationPanel extends Component {
       country: this.getInitialCustomValues('country'),
       coords: this.getInitialCoords(),
       
-      point: null, 
+      point: null,
+      updateMap: false,
     };
 
     this.getInitialCoords = this.getInitialCoords.bind(this);
@@ -98,7 +99,7 @@ class EditListingLocationPanel extends Component {
     }
   }
 
-  getLocationPoint(coords, update = false) { 
+  getLocationPoint(coords, updateForm = false, updateMap = false) { 
     const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&language=en&result_type=locality&result_type=country&key=${config.maps.googleMapsAPIKey}`
     fetch(requestUrl)
       .then(response => response.json())
@@ -133,9 +134,15 @@ class EditListingLocationPanel extends Component {
           coords,
         });
 
-        if(update) {
+        if(updateForm) {
           this.setNewInitialValues(coords, formattedAddress);
-        }
+        };
+
+        if(updateMap) {
+          this.setState({
+            updateMap: !this.state.updateMap
+          });
+        };
 
       })
       .catch(error => {console.log(error)});
@@ -147,8 +154,8 @@ class EditListingLocationPanel extends Component {
       lat: latLng.lat(), 
       lng: latLng.lng(),
     };
-    const update = true;
-    this.getLocationPoint(coords, update);
+    const updateForm = true;
+    this.getLocationPoint(coords, updateForm);
   }
 
   render() {
@@ -164,7 +171,7 @@ class EditListingLocationPanel extends Component {
       errors,
     } = this.props;
 
-    console.log("state!", this.state);
+    // console.log("state!", this.state);
 
     const classes = classNames(rootClassName || css.root, className);
     const currentListing = ensureOwnListing(listing);
@@ -218,8 +225,8 @@ class EditListingLocationPanel extends Component {
           getLocationPoint={this.getLocationPoint}
           coords={this.state.coords}
           city={this.state.city}
-          getLocationPoint={this.getLocationPoint}
           onMarkerDragEnd={this.onMarkerDragEnd}
+          updateMap={this.state.updateMap}
         />
       </div>
     );
