@@ -42,7 +42,7 @@ class EditListingLocationPanel extends Component {
     this.setState({
       city,
       country,
-      coords,
+      // coords,
     })
   }
 
@@ -145,7 +145,7 @@ class EditListingLocationPanel extends Component {
     const lat = latLng ? latLng.lat() : null;
     const lng = latLng ? latLng.lng() : null;
     const coords = { lat, lng }
-    this.getLocationPoint(coords);
+    // this.getLocationPoint(coords);
     lat && lng && this.setState({ coords });
   }
 
@@ -154,9 +154,9 @@ class EditListingLocationPanel extends Component {
   }
 
   componentDidUpdate(prevProps, prevState){
-    // if(prevState.coords !== this.state.coords) {
-    //   this.getLocationPoint(this.state.coords)
-    // }
+    if(prevState.coords !== this.state.coords) {
+      this.getLocationPoint(this.state.coords)
+    }
   }
 
   render() {
