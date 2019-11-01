@@ -37,7 +37,7 @@ class LocationMap extends Component {
         <Marker
           position={{ lat, lng }}
           draggable={true}
-          onDragEnd={coords => onMarkerDragEnd(coords)}
+          onDragEnd={coordsObj => onMarkerDragEnd(coordsObj)}
         />
       </GoogleMap>
     ));

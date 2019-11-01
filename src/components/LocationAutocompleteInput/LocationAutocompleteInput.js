@@ -14,52 +14,24 @@ class LocationAutocompleteInputComponent extends Component {
   componentDidUpdate(prevProps, prevState){
     if(prevProps.valueFromForm !== this.props.valueFromForm){
 
-      const { setAdditionalGeodata, input, valueFromForm } = this.props;
+      const { getLocationPoint, input, valueFromForm } = this.props;
       const value = typeof valueFromForm !== 'undefined' ? valueFromForm : input.value;
       
-      const locationCoord = value &&
+      const coords = value &&
       value.selectedPlace &&
       value.selectedPlace.origin ?
       value.selectedPlace.origin : null;
-      
-      if(locationCoord) {
-        const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${locationCoord.lat},${locationCoord.lng}&language=en&result_type=locality&result_type=country&key=${config.maps.googleMapsAPIKey}`
-        fetch(requestUrl)
-          .then(response => response.json())
-          .then(data => {
-            const address = data &&
-              data.results &&
-              data.results[0] &&
-              data.results[0].address_components ?
-              data.results[0].address_components : null;
 
-            const country = address ? address.filter(function(item){
-              return item.types.indexOf("country") !== -1
-            }) : null;
-            const countryName = country ? country[0].long_name : null;
+      if(coords) {
+        getLocationPoint(coords, true, true, true);
+      }
 
-            const city = address ? address.filter(function(item){
-              return item.types.indexOf("locality") !== -1
-            }) : null;
-            const cityName = city ? city[0].long_name : null;
-
-            setAdditionalGeodata({
-              city: cityName,
-              country: countryName,
-              coords: {
-                lat: locationCoord.lat,
-                lng: locationCoord.lng,
-              }
-            })
-          })
-          .catch(error => {console.log(error)});
-      };
     };
   };
 
   render() {
     /* eslint-disable no-unused-vars */
-    const { rootClassName, setAdditionalGeodata, labelClassName, ...restProps } = this.props;
+    const { rootClassName, getLocationPoint, labelClassName, ...restProps } = this.props;
     const { input, label, meta, valueFromForm, ...otherProps } = restProps;
     /* eslint-enable no-unused-vars */
 

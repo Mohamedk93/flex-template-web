@@ -34,7 +34,7 @@ export const EditListingLocationFormComponent = props => (
         updateInProgress,
         fetchErrors,
         values,
-        setAdditionalGeodata
+        getLocationPoint,
       } = fieldRenderProps;
 
       const titleRequiredMessage = intl.formatMessage({ id: 'EditListingLocationForm.address' });
@@ -80,7 +80,7 @@ export const EditListingLocationFormComponent = props => (
 
       const googleMapURL = `https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${config.maps.googleMapsAPIKey}`
 
-      const { coords, city, getLocationPoint, onMarkerDragEnd } = fieldRenderProps;
+      const { coords, city, onMarkerDragEnd } = fieldRenderProps;
 
       return (
         <Form className={classes} onSubmit={handleSubmit}>
@@ -99,7 +99,7 @@ export const EditListingLocationFormComponent = props => (
             useDefaultPredictions={false}
             format={identity}
             valueFromForm={values.location}
-            setAdditionalGeodata={setAdditionalGeodata}
+            getLocationPoint={getLocationPoint}
             validate={composeValidators(
               autocompleteSearchRequired(addressRequiredMessage),
               autocompletePlaceSelected(addressNotRecognizedMessage)

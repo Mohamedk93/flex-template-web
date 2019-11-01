@@ -12,38 +12,24 @@ import css from './EditListingLocationPanel.css';
 
 class EditListingLocationPanel extends Component {
   constructor(props) {
-    super(props);
-    
-    const publicData = this.props.listing &&
-    this.props.listing.attributes &&
-    this.props.listing.attributes.publicData ?
-    this.props.listing.attributes.publicData : null;
+    super(props);  
     
     this.state = {
       initialValues: this.getInitialValues(),
-      city: publicData ? publicData.city : null,
-      country: publicData ? publicData.country : null,
-      
-      point: null,
+
+      city: this.getInitialCustomValues('city'),
+      country: this.getInitialCustomValues('country'),
       coords: this.getInitialCoords(),
+      
+      point: null, 
     };
 
     this.getInitialCoords = this.getInitialCoords.bind(this);
     this.getInitialValues = this.getInitialValues.bind(this);
-    this.setAdditionalGeodata = this.setAdditionalGeodata.bind(this);
     this.onMarkerDragEnd = this.onMarkerDragEnd.bind(this);
-    this.getLocationCoords = this.getLocationCoords.bind(this);
     this.getLocationPoint = this.getLocationPoint.bind(this);
     this.getUpdatedValues = this.getUpdatedValues.bind(this);
-  }
-
-  setAdditionalGeodata(params) {
-    const { city, country, coords } = params;
-    this.setState({
-      city,
-      country,
-      // coords,
-    })
+    this.getInitialCustomValues = this.getInitialCustomValues.bind(this);
   }
 
   getInitialValues() {
@@ -69,6 +55,15 @@ class EditListingLocationPanel extends Component {
     };
   }
 
+  getInitialCustomValues(param) {
+    const { listing } = this.props;
+    const currentListing = ensureOwnListing(listing);
+    const { publicData } = currentListing.attributes;
+    const value = publicData ? publicData[param] : null;
+    return value
+  }
+
+  // TO DO
   getUpdatedValues(address) {
     const { listing } = this.props;
     const currentListing = ensureOwnListing(listing);
@@ -102,62 +97,63 @@ class EditListingLocationPanel extends Component {
     }
   }
 
-  getLocationCoords(point) {
-
-  }
-
   getLocationPoint(coords) { 
-    if(coords) {
-      const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&language=en&result_type=locality&result_type=country&key=${config.maps.googleMapsAPIKey}`
-      const isUpdate = true;
-      fetch(requestUrl)
-        .then(response => response.json())
-        .then(data => {
-          const formattedAddress = data &&
-            data.results &&
-            data.results[0] &&
-            data.results[0].formatted_address ?
-            data.results[0].formatted_address : null;
+    const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&language=en&result_type=locality&result_type=country&key=${config.maps.googleMapsAPIKey}`
+    fetch(requestUrl)
+      .then(response => response.json())
+      .then(data => {
 
-          // Or use city name
-          const address = data &&
-            data.results &&
-            data.results[0] &&
-            data.results[0].address_components ?
-            data.results[0].address_components : null;
+        const formattedAddress = data &&
+          data.results &&
+          data.results[0] &&
+          data.results[0].formatted_address ?
+          data.results[0].formatted_address : null;
 
-          const city = address ? address.filter(function(item){
-            return item.types.indexOf("locality") !== -1
-          }) : null;
-          const cityName = city ? city[0].long_name : null;
+        const address = data &&
+          data.results &&
+          data.results[0] &&
+          data.results[0].address_components ?
+          data.results[0].address_components : null;
 
-          this.setState({
-            // initialValues: this.getUpdatedValues(cityName),
-            initialValues: this.getUpdatedValues(formattedAddress),
-          })
-        })
-        .catch(error => {console.log(error)});
-    };
+        const city = address ? address.filter(function(item){
+          return item.types.indexOf("locality") !== -1
+        }) : null;
+        const cityString = city ? city[0].long_name : null;
+
+        const country = address ? address.filter(function(item){
+          return item.types.indexOf("country") !== -1
+        }) : null;
+        const countryString = country ? country[0].long_name : null;
+
+        this.setState({ 
+          city: cityString,
+          country: countryString,
+          point: formattedAddress,
+          coords,
+        });
+
+      })
+      .catch(error => {console.log(error)});
   }
 
   onMarkerDragEnd(coordsObj) {
     const { latLng } = coordsObj;
-    const lat = latLng ? latLng.lat() : null;
-    const lng = latLng ? latLng.lng() : null;
-    const coords = { lat, lng }
-    // this.getLocationPoint(coords);
-    lat && lng && this.setState({ coords });
+    const coords = { 
+      lat: latLng.lat(), 
+      lng: latLng.lng(),
+    };
+    this.getLocationPoint(coords);
   }
 
-  shouldComponentUpdate(nextProps, nextState){
-    return true
-  }
+  // shouldComponentUpdate(nextProps, nextState){
+  //   return true
+  // }
 
-  componentDidUpdate(prevProps, prevState){
-    if(prevState.coords !== this.state.coords) {
-      this.getLocationPoint(this.state.coords)
-    }
-  }
+  // componentDidUpdate(prevProps, prevState){
+  //   if(prevState.coords !== this.state.coords) {
+  //     this.getLocationPoint(this.state.coords)
+  //   }
+  // }
 
   render() {
     const {
@@ -171,6 +167,8 @@ class EditListingLocationPanel extends Component {
       updateInProgress,
       errors,
     } = this.props;
+
+    console.log("state", this.state);
 
     const classes = classNames(rootClassName || css.root, className);
     const currentListing = ensureOwnListing(listing);
@@ -221,7 +219,7 @@ class EditListingLocationPanel extends Component {
           updated={panelUpdated}
           updateInProgress={updateInProgress}
           fetchErrors={errors}
-          setAdditionalGeodata={this.setAdditionalGeodata}
+          getLocationPoint={this.getLocationPoint}
           coords={this.state.coords}
           city={this.state.city}
           getLocationPoint={this.getLocationPoint}
