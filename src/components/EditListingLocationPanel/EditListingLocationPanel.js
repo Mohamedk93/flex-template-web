@@ -7,8 +7,11 @@ import { ensureOwnListing } from '../../util/data';
 import { ListingLink } from '../../components';
 import { EditListingLocationForm } from '../../forms';
 import config from '../../config';
+import { types as sdkTypes } from '../../util/sdkLoader';
 
 import css from './EditListingLocationPanel.css';
+
+const { LatLng } = sdkTypes;
 
 class EditListingLocationPanel extends Component {
   constructor(props) {
@@ -28,7 +31,7 @@ class EditListingLocationPanel extends Component {
     this.getInitialValues = this.getInitialValues.bind(this);
     this.onMarkerDragEnd = this.onMarkerDragEnd.bind(this);
     this.getLocationPoint = this.getLocationPoint.bind(this);
-    this.getUpdatedValues = this.getUpdatedValues.bind(this);
+    this.setNewInitialValues = this.setNewInitialValues.bind(this);
     this.getInitialCustomValues = this.getInitialCustomValues.bind(this);
   }
 
@@ -63,28 +66,26 @@ class EditListingLocationPanel extends Component {
     return value
   }
 
-  // TO DO
-  getUpdatedValues(address) {
-    const { listing } = this.props;
-    const currentListing = ensureOwnListing(listing);
-    const { geolocation, publicData } = currentListing.attributes;
+  setNewInitialValues(coords, formattedAddress) {
 
-    // Only render current search if full place object is available in the URL params
-    // TODO bounds are missing - those need to be queried directly from Google Places
-    const locationFieldsPresent =
-      publicData && publicData.location && publicData.location.address && geolocation;
-    const location = publicData && publicData.location ? publicData.location : {};
-    const { building } = location;
+    const building = this.state.initialValues.building;
+    const coordsObj = new LatLng(coords.lat, coords.lng);
 
-    return {
+    const initialValues = {
       building,
-      location: locationFieldsPresent
-        ? {
-            search: address,
-            selectedPlace: { address, origin: geolocation },
-          }
-        : null,
-    };
+      location: {
+        search: formattedAddress,
+        selectedPlace: { 
+          address: formattedAddress, 
+          origin: coordsObj,
+        },
+      },
+    }
+
+    this.setState({
+      initialValues
+    })
+
   }
 
   getInitialCoords() {
@@ -97,7 +98,7 @@ class EditListingLocationPanel extends Component {
     }
   }
 
-  getLocationPoint(coords) { 
+  getLocationPoint(coords, update = false) { 
     const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&language=en&result_type=locality&result_type=country&key=${config.maps.googleMapsAPIKey}`
     fetch(requestUrl)
       .then(response => response.json())
@@ -132,6 +133,10 @@ class EditListingLocationPanel extends Component {
           coords,
         });
 
+        if(update) {
+          this.setNewInitialValues(coords, formattedAddress);
+        }
+
       })
       .catch(error => {console.log(error)});
   }
@@ -142,18 +147,9 @@ class EditListingLocationPanel extends Component {
       lat: latLng.lat(), 
       lng: latLng.lng(),
     };
-    this.getLocationPoint(coords);
+    const update = true;
+    this.getLocationPoint(coords, update);
   }
-
-  // shouldComponentUpdate(nextProps, nextState){
-  //   return true
-  // }
-
-  // componentDidUpdate(prevProps, prevState){
-  //   if(prevState.coords !== this.state.coords) {
-  //     this.getLocationPoint(this.state.coords)
-  //   }
-  // }
 
   render() {
     const {
@@ -168,7 +164,7 @@ class EditListingLocationPanel extends Component {
       errors,
     } = this.props;
 
-    console.log("state", this.state);
+    console.log("state!", this.state);
 
     const classes = classNames(rootClassName || css.root, className);
     const currentListing = ensureOwnListing(listing);

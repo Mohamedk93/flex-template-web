@@ -322,6 +322,7 @@ class LocationAutocompleteInputImpl extends Component {
           return;
         }
         this.setState({ fetchingPlaceDetails: false });
+
         this.props.input.onChange({
           search: place.address,
           predictions: [],

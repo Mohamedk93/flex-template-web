@@ -23,7 +23,7 @@ class LocationAutocompleteInputComponent extends Component {
       value.selectedPlace.origin : null;
 
       if(coords) {
-        getLocationPoint(coords, true, true, true);
+        getLocationPoint(coords);
       }
 
     };
