@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps";
 import css from './LocationMap.css';
 import config from '../../config';
+import {
+  getMapCenter,
+} from '../../components/SearchMap/SearchMapWithGoogleMap';
 
 class LocationMap extends Component {
   constructor(props){
@@ -28,7 +31,8 @@ class LocationMap extends Component {
         defaultZoom={10}
         defaultCenter={{ lat, lng }}
         options={{gestureHandling: "greedy"}}
-        onDragEnd={(e) => console.log("dwed", e)}
+        ref={(map) => this._map = map}
+        onDragEnd={() => console.log("dwed", getMapCenter(this._map))}
         onZoomChanged={() => console.log("ded dwed")}
       >
         <Marker
