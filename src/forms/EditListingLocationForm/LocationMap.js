@@ -28,6 +28,8 @@ class LocationMap extends Component {
         defaultZoom={10}
         defaultCenter={{ lat, lng }}
         options={{gestureHandling: "greedy"}}
+        onDragEnd={(e) => console.log("dwed", e)}
+        onZoomChanged={() => console.log("ded dwed")}
       >
         <Marker
           position={{ lat, lng }}
