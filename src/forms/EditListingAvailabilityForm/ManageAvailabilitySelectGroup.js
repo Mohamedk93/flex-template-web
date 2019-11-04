@@ -14,6 +14,7 @@ import { FieldArray } from 'react-final-form-arrays';
 import moment from 'moment';
 import * as validators from '../../util/validators';
 import { FieldCheckbox, FieldSelect, ValidationError } from '../../components';
+import { requiredFieldArrayCheckbox } from '../../util/validators';
 
 import css from './EditListingAvailabilityForm.css';
 
@@ -83,66 +84,81 @@ const ManageAvailabilitySelectRenderer = props => {
     availability,
     availabilityPlan,
     listingId,
+    errorWeekdays,
   } = props;
 
   const classes = classNames(rootClassName || css.root, className);
   const listClasses = twoColumns ? classNames(css.list, css.twoColumns) : css.list;
-  const hourStartLabel = intl.formatMessage({ id: 'BookingDatesForm.hourStartLabel' });
-  const hourStartPlaceholder = intl.formatMessage({ id: 'BookingDatesForm.hourStartPlaceholder' });
-  const hourEndLabel = intl.formatMessage({ id: 'BookingDatesForm.hourEndLabel' });
-  const hourEndPlaceholder = intl.formatMessage({ id: 'BookingDatesForm.hourEndPlaceholder' });
 
-  const hourStartRequired = validators.required(
-    intl.formatMessage({
-      id: 'BookingDatesForm.hourStartRequired',
-    })
-  );
+  // const hourStartLabel = intl.formatMessage({ id: 'BookingDatesForm.hourStartLabel' });
+  // const hourStartPlaceholder = intl.formatMessage({ id: 'BookingDatesForm.hourStartPlaceholder' });
+  // const hourEndLabel = intl.formatMessage({ id: 'BookingDatesForm.hourEndLabel' });
+  // const hourEndPlaceholder = intl.formatMessage({ id: 'BookingDatesForm.hourEndPlaceholder' });
 
-  const hourEndRequired = validators.required(
-    intl.formatMessage({
-      id: 'BookingDatesForm.hourEndRequired',
-    })
-  );
+  // const hourStartRequired = validators.required(
+  //   intl.formatMessage({
+  //     id: 'BookingDatesForm.hourStartRequired',
+  //   })
+  // );
+
+  // const hourEndRequired = validators.required(
+  //   intl.formatMessage({
+  //     id: 'BookingDatesForm.hourEndRequired',
+  //   })
+  // );
+
+  const weekdaysRequiredMessage = intl.formatMessage({ id: 'EditListingAvailabilityForm.weekdaysRequired' });
 
   const date = moment('2019-01-01 24:00:00.000');
 
   return (
     <fieldset className={classes}>
-      {label ? <legend>{label}</legend> : null}
+      {label ? <legend className={css.availLabel}>{label}</legend> : null}
       <ul className={listClasses}>
         {options.map((option, index) => {
           const fieldId = `${id}.${option.key}`;
           return (
             <li key={fieldId} className={css.item}>
-              <label htmlFor="" className={css.label}>{option.label}</label>
+              <div className={css.labelHolder}>
+                <FieldCheckbox 
+                  id={`check_${option.key}`} 
+                  name={"weekdays"} 
+                  label={option.label}
+                  value={option.key}
+                  validate={requiredFieldArrayCheckbox(weekdaysRequiredMessage)}
+                />
+              </div>
               <div className={css.selectHolder}>
                 <FieldSelect
                   className={css.hourStart}
-                  id={`${id}.startTime`}
-                  name={`${option.key}.startTime`}
-                  value={`${option.key}.endTime`}
+                  id={`${id}_startTime`}
+                  name={`${option.key}_startTime`}
+                  value={`${option.key}_endTime`}
                 >
-                  <option value="" disabled>
+                  {/* <option value="" disabled>
                     {hourStartPlaceholder}
-                  </option>
-                  {generateHourOptions(date, { hour: 0, minute: 0 }, { hour: 23, minute: 30 })}
+                  </option> */}
+                  {generateHourOptions(date, { hour: 0, minute: 0 }, { hour: 23, minute: 0 })}
                 </FieldSelect>
                 <FieldSelect
                   className={css.hourEnd}
-                  id={`${id}.endTime`}
-                  name={`${option.key}.endTime`}
-                  value={`${option.key}.endTime`}
+                  id={`${id}_endTime`}
+                  name={`${option.key}_endTime`}
+                  value={`${option.key}_endTime`}
                 >
-                  <option value="" disabled>
+                  {/* <option value="" disabled>
                     {hourEndPlaceholder}
-                  </option>
-                  {generateHourOptions(date, { hour: 0, minute: 30 }, { hour: 24, minute: 0 })}
+                  </option> */}
+                  {generateHourOptions(date, { hour: 1, minute: 0 }, { hour: 24, minute: 0 })}
                 </FieldSelect>
               </div>
             </li>
           );
         })}
       </ul>
+      <div className={css.weekdaysErrorText}>
+        {errorWeekdays}
+      </div>
       <ValidationError fieldMeta={{ ...meta }} />
     </fieldset>
   );

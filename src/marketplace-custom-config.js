@@ -44,6 +44,21 @@ export const workspaces = [
   },
 ];
 
+export const rentals = [
+  {
+    key: 'hourly',
+    label: 'Hourly',
+  },
+  {
+    key: 'daily',
+    label: 'Daily',
+  },
+  {
+    key: 'monthly',
+    label: 'Monthly',
+  },
+];
+
 export const workspacesDefaultQuantity = {
   seats: 500,
   office_rooms: 100,

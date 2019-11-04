@@ -7,8 +7,8 @@ import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { propTypes } from '../../util/types';
 import config from '../../config';
-import { Form, Button } from '../../components';
-
+import { Form, Button, FieldCheckboxGroup } from '../../components';
+import { requiredFieldArrayCheckbox } from '../../util/validators';
 import ManageAvailabilitySelectGroup from './ManageAvailabilitySelectGroup';
 import css from './EditListingAvailabilityForm.css';
 
@@ -36,6 +36,7 @@ export class EditListingAvailabilityFormComponent extends Component {
             availabilityPlan,
             values,
             listingId,
+            errors,
           } = fieldRenderProps;
 
           const errorMessage = updateError ? (
@@ -44,10 +45,16 @@ export class EditListingAvailabilityFormComponent extends Component {
             </p>
           ) : null;
 
+          const availabilityPlanLabel = intl.formatMessage({ id: 'EditListingAvailabilityForm.daysAvailable' });
+          const rentalLabel = intl.formatMessage({ id: 'EditListingAvailabilityForm.howRental' });
+          const rentalTypesRequiredMessage = intl.formatMessage({ id: 'EditListingAvailabilityForm.rentalRequired' });
+
           const classes = classNames(rootClassName || css.root, className);
           const submitReady = updated && pristine;
           const submitInProgress = updateInProgress;
           const submitDisabled = invalid || disabled || submitInProgress;
+
+          const errorWeekdays = errors.weekdays ? errors.weekdays : null;
 
           return (
             <Form className={classes} onSubmit={handleSubmit}>
@@ -63,6 +70,16 @@ export class EditListingAvailabilityFormComponent extends Component {
                   availability={availability}
                   availabilityPlan={availabilityPlan}
                   listingId={listingId}
+                  label={availabilityPlanLabel}
+                  errorWeekdays={errorWeekdays}
+                />
+                <label className={css.availLabel}>{rentalLabel}</label>
+                <FieldCheckboxGroup
+                  className={css.rentalTypesList}
+                  id={"rental_types"}
+                  name={"rental_types"}
+                  options={config.custom.rentals}
+                  validate={requiredFieldArrayCheckbox(rentalTypesRequiredMessage)}
                 />
               </div>
 

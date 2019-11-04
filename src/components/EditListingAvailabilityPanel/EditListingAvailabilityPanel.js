@@ -43,6 +43,24 @@ const EditListingAvailabilityPanel = props => {
     ],
   };
   const availabilityPlan = currentListing.attributes.availabilityPlan || defaultAvailabilityPlan;
+  const { publicData } = currentListing.attributes;
+
+  let initialStartTimes = {};
+  availabilityPlan.entries.forEach(function(day) {
+    initialStartTimes[day.dayOfWeek] = day.startTime 
+  });
+
+  let initialEndTimes = {};
+  availabilityPlan.entries.forEach(function(day) {
+    initialEndTimes[day.dayOfWeek] = day.endTime 
+  });
+
+  let initialWeekdays = [];
+  availabilityPlan.entries.forEach(function(day) {
+    if(day.seats === 1) {
+      initialWeekdays.push(day.dayOfWeek);
+    }
+  });
 
   return (
     <div className={classes}>
@@ -60,25 +78,42 @@ const EditListingAvailabilityPanel = props => {
         className={css.form}
         name={AVAILABILITY_NAME}
         listingId={currentListing.id}
-        initialValues={{availabilityPlan}}
+        initialValues={{
+          weekdays: initialWeekdays,
+          availabilityPlan,
+          rental_types: publicData.rentalTypes,
+
+          mon_startTime: initialStartTimes.mon,
+          tue_startTime: initialStartTimes.tue,
+          wed_startTime: initialStartTimes.wed,
+          thu_startTime: initialStartTimes.thu,
+          fri_startTime: initialStartTimes.fri,
+          sat_startTime: initialStartTimes.sat,
+          sun_startTime: initialStartTimes.sun,
+          mon_endTime: initialEndTimes.mon,
+          tue_endTime: initialEndTimes.tue,
+          wed_endTime: initialEndTimes.wed,
+          thu_endTime: initialEndTimes.thu,
+          fri_endTime: initialEndTimes.fri,
+          sat_endTime: initialEndTimes.sat,
+          sun_endTime: initialEndTimes.sun,
+        }}
         availability={availability}
         availabilityPlan={availabilityPlan}
         onSubmit={(values) => {
           const usersTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          
           const updatedValues = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map(function (day) {
             return {
               dayOfWeek: day,
-              seats: 1,
-              startTime: values[day] ? values[day].startTime : "00:00",
-              endTime: values[day] ? values[day].endTime : "23:00",
+              seats: (values.weekdays.indexOf(day) !== -1) ? 1 : 0,
+              // startTime: values[day] ? values[day].startTime : "00:00",
+              // endTime: values[day] ? values[day].endTime : "23:00",
+              startTime: values[day + "_startTime"] ? values[day + "_startTime"] : "00:00",
+              endTime: values[day + "_endTime"] ? values[day + "_endTime"] : "23:00",
             }
           });
 
-
-          // We save the default availability plan
-          // I.e. this listing is available every night.
-          // Exceptions are handled with live edit through a calendar,
-          // which is visible on this panel.
           onSubmit({
             availabilityPlan: {
               type: 'availability-plan/time',
@@ -86,7 +121,8 @@ const EditListingAvailabilityPanel = props => {
               entries: updatedValues
             },
             publicData: {
-              timezone: usersTimeZone
+              timezone: usersTimeZone,
+              rentalTypes: values.rental_types,
             }
           });
         }}
