@@ -27,6 +27,7 @@ class LocationMap extends Component {
       <GoogleMap
         defaultZoom={10}
         defaultCenter={{ lat, lng }}
+        options={{gestureHandling: "greedy"}}
       >
         <Marker
           position={{ lat, lng }}
