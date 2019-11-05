@@ -34,6 +34,7 @@ const EditListingPricingPanel = props => {
   const currentListing = ensureOwnListing(listing);
   const { price, publicData } = currentListing.attributes;
   const workspaces = publicData.workspaces ? publicData.workspaces : null;
+  const rentalTypes = publicData.rentalTypes ? publicData.rentalTypes : null;
 
   const isPublished = currentListing.id && currentListing.attributes.state !== LISTING_STATE_DRAFT;
   const panelTitle = isPublished ? (
@@ -47,12 +48,16 @@ const EditListingPricingPanel = props => {
 
   const priceCurrencyValid = price instanceof Money ? price.currency === config.currency : true;
 
+
+
   const price_seats = publicData && publicData.priceSeats && publicData.workspaces.indexOf('seats') != -1 ? 
   new Money(publicData.priceSeats.amount, publicData.priceSeats.currency) : null;
   const price_office_rooms = publicData && publicData.priceOfficeRooms && publicData.workspaces.indexOf('office_rooms') != -1 ? 
   new Money(publicData.priceOfficeRooms.amount, publicData.priceOfficeRooms.currency) : null;
   const price_meeting_rooms = publicData && publicData.priceMeetingRooms && publicData.workspaces.indexOf('meeting_rooms') != -1 ? 
   new Money(publicData.priceMeetingRooms.amount, publicData.priceMeetingRooms.currency) : null;
+
+
 
   const form = priceCurrencyValid ? (
     <EditListingPricingForm
@@ -63,22 +68,43 @@ const EditListingPricingPanel = props => {
         price_meeting_rooms: price_meeting_rooms,
       }}
       onSubmit={values => {
-        const { price_seats, price_office_rooms, price_meeting_rooms } = values;
+        const { 
+          seats_hourly,
+          seats_daily,
+          seats_monthly,
+          office_rooms_hourly, 
+          office_rooms_daily, 
+          office_rooms_monthly, 
+          meeting_rooms_hourly,
+          meeting_rooms_daily,
+          meeting_rooms_monthly,
+        } = values;
         const nullPrice = {
           amount: 0,
           currency: 'USD',
         };
-        const priceArrayFiltered = [price_seats, price_office_rooms, price_meeting_rooms].filter(function(x) {
+
+        const priceArrayFiltered = [
+          seats_hourly,
+          seats_daily,
+          seats_monthly,
+          office_rooms_hourly, 
+          office_rooms_daily, 
+          office_rooms_monthly, 
+          meeting_rooms_hourly,
+          meeting_rooms_daily,
+          meeting_rooms_monthly,
+        ].filter(function(x) {
           return x !== undefined && x !== null
         });
         const priceArray = priceArrayFiltered.map(function(x) {
           return x.amount
         });
-        console.log("array", priceArray);
         const minimalPrice = {
           amount: Array.min(priceArray),
           currency: 'USD',
         };
+
         const priceSeats = price_seats ? {
           amount: price_seats.amount,
           currency: price_seats.currency,
@@ -91,6 +117,7 @@ const EditListingPricingPanel = props => {
           amount: price_meeting_rooms.amount,
           currency: price_meeting_rooms.currency,
         } : nullPrice;
+
         const updateValues = {
           price: minimalPrice,
           publicData: { 
@@ -107,6 +134,7 @@ const EditListingPricingPanel = props => {
       updateInProgress={updateInProgress}
       fetchErrors={errors}
       workspaces={workspaces}
+      rentalTypes={rentalTypes}
     />
   ) : (
     <div className={css.priceCurrencyInvalid}>

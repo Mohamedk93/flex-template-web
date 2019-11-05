@@ -1,5 +1,5 @@
 import React from 'react';
-import { bool, func, shape, string } from 'prop-types';
+import { bool, func, shape, string, array } from 'prop-types';
 import { compose } from 'redux';
 import { Form as FinalForm } from 'react-final-form';
 import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
@@ -30,6 +30,7 @@ export const EditListingPricingFormComponent = props => (
         updateInProgress,
         fetchErrors,
         workspaces,
+        rentalTypes,
       } = fieldRenderProps;
 
       const unitType = config.bookingUnitType;
@@ -77,30 +78,58 @@ export const EditListingPricingFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
       const { updateListingError, showListingsError } = fetchErrors || {};
-  
-      let priceFields;
-      if (workspaces && workspaces.length !== 0) {
-        priceFields = workspaces.map(function(price){
-          const priceLabel = intl.formatMessage({
-            id: `EditListingPricingForm.pricePerUnitMessage_${price}`,
-          });
+
+      const priceHead = rentalTypes.map(item => {
+        const rentalLabel = intl.formatMessage({
+          id: `EditListingPricingForm.rentalType_${item}`,
+        });
+        return (
+          <div className={css.rentalLables} key={item}>
+            {rentalLabel}
+          </div>
+        )
+      });
+
+      const priceTable = workspaces.map(price => {
+
+        const priceLabel = intl.formatMessage({
+          id: `EditListingPricingForm.priceLabel_${price}`,
+        });
+
+        const priceFields = rentalTypes.map(item => {
+          const fieldId = `${price}_${item}`;
           return (
-            <FieldCurrencyInput
-              id={price}
-              name={`price_${price}`}
-              key={price}
-              className={css.priceInput}
-              label={priceLabel}
-              placeholder={pricePlaceholderMessage}
-              currencyConfig={config.currencyConfig}
-              validate={priceValidators}
-            />
+            <div className={css.priceField} key={fieldId}>
+              <FieldCurrencyInput
+                id={fieldId}
+                name={fieldId}
+                key={fieldId}
+                className={css.priceInput}
+                placeholder={pricePlaceholderMessage}
+                currencyConfig={config.currencyConfig}
+                validate={priceValidators}
+              />
+            </div>
           )
         });
-      };
+
+        return (
+          <div className={css.priceRow} key={price}>
+            <div className={css.priceLabel}>
+              {priceLabel}
+            </div>
+            <div className={css.priceFields}>
+              {priceFields}
+            </div>
+          </div>
+        )
+      });
 
       return (
         <Form onSubmit={handleSubmit} className={classes}>
+          <p className={css.priceGeneral}>
+            <FormattedMessage id="EditListingPricingForm.priceGeneral" />
+          </p>
           {updateListingError ? (
             <p className={css.error}>
               <FormattedMessage id="EditListingPricingForm.updateFailed" />
@@ -111,7 +140,14 @@ export const EditListingPricingFormComponent = props => (
               <FormattedMessage id="EditListingPricingForm.showListingFailed" />
             </p>
           ) : null}
-          {priceFields}
+          <div className={css.priceTableWrapper}>
+            <div className={css.priceHead}>
+              {priceHead}
+            </div>
+            <div className={css.priceTable}>
+              {priceTable}
+            </div>
+          </div>
           <Button
             className={css.submitButton}
             type="submit"
@@ -127,7 +163,11 @@ export const EditListingPricingFormComponent = props => (
   />
 );
 
-EditListingPricingFormComponent.defaultProps = { fetchErrors: null };
+EditListingPricingFormComponent.defaultProps = { 
+  fetchErrors: null,
+  workspaces: [],
+  rentalTypes: [],
+};
 
 EditListingPricingFormComponent.propTypes = {
   intl: intlShape.isRequired,
@@ -135,6 +175,8 @@ EditListingPricingFormComponent.propTypes = {
   saveActionMsg: string.isRequired,
   updated: bool.isRequired,
   updateInProgress: bool.isRequired,
+  workspaces: array.isRequired,
+  rentalTypes: array.isRequired,
   fetchErrors: shape({
     showListingsError: propTypes.error,
     updateListingError: propTypes.error,
