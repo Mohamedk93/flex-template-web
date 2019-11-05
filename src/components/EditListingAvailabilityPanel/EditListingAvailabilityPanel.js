@@ -114,6 +114,8 @@ const EditListingAvailabilityPanel = props => {
             }
           });
 
+          const rentalTypes = values.rental_types ? values.rental_types : [];
+
           onSubmit({
             availabilityPlan: {
               type: 'availability-plan/time',
@@ -122,7 +124,7 @@ const EditListingAvailabilityPanel = props => {
             },
             publicData: {
               timezone: usersTimeZone,
-              rentalTypes: values.rental_types,
+              rentalTypes,
             }
           });
         }}

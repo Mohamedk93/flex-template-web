@@ -12,7 +12,14 @@ import { propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
 import config from '../../config';
 import { requiredFieldArrayCheckbox } from '../../util/validators';
-import { Form, IconClose, PrimaryButton, InlineTextButton, FieldSelect, FieldCheckboxGroupWithQuantity } from '../../components';
+import { 
+  Form, 
+  IconClose, 
+  PrimaryButton, 
+  InlineTextButton,
+  FieldSelect,
+  FieldRadioButton,
+  FieldCheckboxGroupWithQuantity } from '../../components';
 import { formatMoney } from '../../util/currency';
 import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
@@ -283,6 +290,7 @@ export class BookingDatesFormComponent extends Component {
             seatsFee,
             officeRoomsFee,
             meetingRoomsFee,
+            rentalTypes,
           } = fieldRenderProps;
           const { firstDate, extraDays = [] } = values;
           const required = validators.required('This field is required');
@@ -435,6 +443,22 @@ export class BookingDatesFormComponent extends Component {
             meeting_rooms: meetingRoomsFee ? `(${formatMoney(intl, meetingRoomsFee)})` : null,
           };
 
+          console.log("values",values.rental_type);
+
+          const rentalTypesFieldset = rentalTypes ? rentalTypes.map(item => {
+            const label = intl.formatMessage({
+              id: `EditListingPricingForm.rentalType_${item}`,
+            });
+            return (
+              <FieldRadioButton
+                id={`rental_type_${item}`}
+                name={'rental_type'}
+                label={label}
+                value={item}
+              />
+            )
+          }) : null;
+
           return (
             <Form
               onSubmit={e => {
@@ -447,6 +471,7 @@ export class BookingDatesFormComponent extends Component {
               }}
               className={classes}
             >
+              {rentalTypesFieldset}
               <DateHourPicker
                 id="firstDate"
                 name="firstDate"

@@ -58,6 +58,10 @@ export class BookingPanel extends Component {
 
   }
 
+  handleChangeRentalType() {
+    
+  }
+
   render() {
     const {
       rootClassName,
@@ -80,6 +84,8 @@ export class BookingPanel extends Component {
 
     const publicData = listing.attributes.publicData;
 
+
+    // Prices calculation
     const seatsFeeData = publicData.priceSeats;
     const { amount: seatsAmount, currency: seatsCurrency } =
       seatsFeeData || {};
@@ -103,6 +109,10 @@ export class BookingPanel extends Component {
       meetingRoomsAmount && meetingRoomsCurrency
         ? new Money(meetingRoomsAmount, meetingRoomsCurrency)
         : null;
+
+
+    const rentalTypes = publicData.rentalTypes;
+
 
     const handleSubmit = values => {
       const selectedSeatsFee =
@@ -243,10 +253,12 @@ export class BookingPanel extends Component {
               officeRoomsFee={officeRoomsFee}
               meetingRoomsFee={meetingRoomsFee}
               maxQuantity={maxQuantity}
+              rentalTypes={rentalTypes}
               initialValues={{ 
                 seats_quantity: 1,
                 office_rooms_quantity: 1,
                 meeting_rooms_quantity: 1,
+                rental_type: rentalTypes[0]
               }}
             />
           ) : null}
