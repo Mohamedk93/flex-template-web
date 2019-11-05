@@ -97,7 +97,7 @@ export const EditListingPricingFormComponent = props => (
         });
 
         const priceFields = rentalTypes.map(item => {
-          const fieldId = `${price}_${item}`;
+          const fieldId = `price_${price}_${item}`;
           return (
             <div className={css.priceField} key={fieldId}>
               <FieldCurrencyInput

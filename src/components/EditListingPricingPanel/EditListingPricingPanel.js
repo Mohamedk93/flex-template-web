@@ -50,34 +50,53 @@ const EditListingPricingPanel = props => {
 
 
 
-  const price_seats = publicData && publicData.priceSeats && publicData.workspaces.indexOf('seats') != -1 ? 
-  new Money(publicData.priceSeats.amount, publicData.priceSeats.currency) : null;
-  const price_office_rooms = publicData && publicData.priceOfficeRooms && publicData.workspaces.indexOf('office_rooms') != -1 ? 
-  new Money(publicData.priceOfficeRooms.amount, publicData.priceOfficeRooms.currency) : null;
-  const price_meeting_rooms = publicData && publicData.priceMeetingRooms && publicData.workspaces.indexOf('meeting_rooms') != -1 ? 
-  new Money(publicData.priceMeetingRooms.amount, publicData.priceMeetingRooms.currency) : null;
+  const price_seats_hourly = publicData && publicData.priceSeatsHourly && publicData.workspaces.indexOf('seats') != -1 ? 
+  new Money(publicData.priceSeatsHourly.amount, publicData.priceSeatsHourly.currency) : null;
+  const price_seats_daily = publicData && publicData.priceSeatsDaily && publicData.workspaces.indexOf('seats') != -1 ? 
+  new Money(publicData.priceSeatsDaily.amount, publicData.priceSeatsDaily.currency) : null;
+  const price_seats_monthly = publicData && publicData.priceSeatsMonthly && publicData.workspaces.indexOf('seats') != -1 ? 
+  new Money(publicData.priceSeatsMonthly.amount, publicData.priceSeatsMonthly.currency) : null;
+  
+  const price_office_rooms_hourly = publicData && publicData.priceOfficeRoomsHourly && publicData.workspaces.indexOf('office_rooms') != -1 ? 
+  new Money(publicData.priceOfficeRoomsHourly.amount, publicData.priceOfficeRoomsHourly.currency) : null;
+  const price_office_rooms_daily = publicData && publicData.priceOfficeRoomsDaily && publicData.workspaces.indexOf('office_rooms') != -1 ? 
+  new Money(publicData.priceOfficeRoomsDaily.amount, publicData.priceOfficeRoomsDaily.currency) : null;
+  const price_office_rooms_monthly = publicData && publicData.priceOfficeRoomsMonthly && publicData.workspaces.indexOf('office_rooms') != -1 ? 
+  new Money(publicData.priceOfficeRoomsMonthly.amount, publicData.priceOfficeRoomsMonthly.currency) : null;
 
+  const price_meeting_rooms_hourly = publicData && publicData.priceMeetingRoomsHourly && publicData.workspaces.indexOf('meeting_rooms') != -1 ? 
+  new Money(publicData.priceMeetingRoomsHourly.amount, publicData.priceMeetingRoomsHourly.currency) : null;
+  const price_meeting_rooms_daily = publicData && publicData.priceMeetingRoomsDaily && publicData.workspaces.indexOf('meeting_rooms') != -1 ? 
+  new Money(publicData.priceMeetingRoomsDaily.amount, publicData.priceMeetingRoomsDaily.currency) : null;
+  const price_meeting_rooms_monthly = publicData && publicData.priceMeetingRoomsMonthly && publicData.workspaces.indexOf('meeting_rooms') != -1 ? 
+  new Money(publicData.priceMeetingRoomsMonthly.amount, publicData.priceMeetingRoomsMonthly.currency) : null;
 
 
   const form = priceCurrencyValid ? (
     <EditListingPricingForm
       className={css.form}
       initialValues={{
-        price_seats: price_seats,
-        price_office_rooms: price_office_rooms,
-        price_meeting_rooms: price_meeting_rooms,
+        price_seats_hourly,
+        price_seats_daily,
+        price_seats_monthly,
+        price_office_rooms_hourly, 
+        price_office_rooms_daily, 
+        price_office_rooms_monthly, 
+        price_meeting_rooms_hourly,
+        price_meeting_rooms_daily,
+        price_meeting_rooms_monthly,
       }}
       onSubmit={values => {
         const { 
-          seats_hourly,
-          seats_daily,
-          seats_monthly,
-          office_rooms_hourly, 
-          office_rooms_daily, 
-          office_rooms_monthly, 
-          meeting_rooms_hourly,
-          meeting_rooms_daily,
-          meeting_rooms_monthly,
+          price_seats_hourly,
+          price_seats_daily,
+          price_seats_monthly,
+          price_office_rooms_hourly, 
+          price_office_rooms_daily, 
+          price_office_rooms_monthly, 
+          price_meeting_rooms_hourly,
+          price_meeting_rooms_daily,
+          price_meeting_rooms_monthly,
         } = values;
         const nullPrice = {
           amount: 0,
@@ -85,15 +104,15 @@ const EditListingPricingPanel = props => {
         };
 
         const priceArrayFiltered = [
-          seats_hourly,
-          seats_daily,
-          seats_monthly,
-          office_rooms_hourly, 
-          office_rooms_daily, 
-          office_rooms_monthly, 
-          meeting_rooms_hourly,
-          meeting_rooms_daily,
-          meeting_rooms_monthly,
+          price_seats_hourly,
+          price_seats_daily,
+          price_seats_monthly,
+          price_office_rooms_hourly, 
+          price_office_rooms_daily, 
+          price_office_rooms_monthly, 
+          price_meeting_rooms_hourly,
+          price_meeting_rooms_daily,
+          price_meeting_rooms_monthly,
         ].filter(function(x) {
           return x !== undefined && x !== null
         });
@@ -105,25 +124,57 @@ const EditListingPricingPanel = props => {
           currency: 'USD',
         };
 
-        const priceSeats = price_seats ? {
-          amount: price_seats.amount,
-          currency: price_seats.currency,
+        const priceSeatsHourly = price_seats_hourly ? {
+          amount: price_seats_hourly.amount,
+          currency: price_seats_hourly.currency,
         } : nullPrice;
-        const priceOfficeRooms = price_office_rooms ? {
-          amount: price_office_rooms.amount,
-          currency: price_office_rooms.currency,
+        const priceSeatsDaily = price_seats_daily ? {
+          amount: price_seats_daily.amount,
+          currency: price_seats_daily.currency,
         } : nullPrice;
-        const priceMeetingRooms = price_meeting_rooms ? {
-          amount: price_meeting_rooms.amount,
-          currency: price_meeting_rooms.currency,
+        const priceSeatsMonthly = price_seats_monthly ? {
+          amount: price_seats_monthly.amount,
+          currency: price_seats_monthly.currency,
+        } : nullPrice;
+
+        const priceOfficeRoomsHourly = price_office_rooms_hourly ? {
+          amount: price_office_rooms_hourly.amount,
+          currency: price_office_rooms_hourly.currency,
+        } : nullPrice;
+        const priceOfficeRoomsDaily = price_office_rooms_daily ? {
+          amount: price_office_rooms_daily.amount,
+          currency: price_office_rooms_daily.currency,
+        } : nullPrice;
+        const priceOfficeRoomsMonthly = price_office_rooms_monthly ? {
+          amount: price_office_rooms_monthly.amount,
+          currency: price_office_rooms_monthly.currency,
+        } : nullPrice;
+  
+        const priceMeetingRoomsHourly = price_meeting_rooms_hourly ? {
+          amount: price_meeting_rooms_hourly.amount,
+          currency: price_meeting_rooms_hourly.currency,
+        } : nullPrice;
+        const priceMeetingRoomsDaily = price_meeting_rooms_daily ? {
+          amount: price_meeting_rooms_daily.amount,
+          currency: price_meeting_rooms_daily.currency,
+        } : nullPrice;
+        const priceMeetingRoomsMonthly = price_meeting_rooms_monthly ? {
+          amount: price_meeting_rooms_monthly.amount,
+          currency: price_meeting_rooms_monthly.currency,
         } : nullPrice;
 
         const updateValues = {
           price: minimalPrice,
           publicData: { 
-            priceSeats,
-            priceOfficeRooms,
-            priceMeetingRooms,
+            priceSeatsHourly,
+            priceSeatsDaily,
+            priceSeatsMonthly,
+            priceOfficeRoomsHourly,
+            priceOfficeRoomsDaily,
+            priceOfficeRoomsMonthly,
+            priceMeetingRoomsHourly,
+            priceMeetingRoomsDaily,
+            priceMeetingRoomsMonthly,
           },
         };
         onSubmit(updateValues);
