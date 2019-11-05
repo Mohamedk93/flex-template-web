@@ -67,6 +67,7 @@
   "BookingBreakdown.hourCount":"{count, number} {count, plural, one {hour} other {hours}}",
   "BookingBreakdown.bookingTimes": "{bookingStartTime} - {bookingEndTime}",
   "BookingBreakdown.hourLabel":"Number of hours",
+  "BookingDatesForm.choosePlan": "Choose a booking plan",
   "BookingDatesForm.bookingEndTitle": "End date",
   "BookingDatesForm.bookingStartTitle": "Start date",
   "BookingDatesForm.hourStartLabel": "Start Time",

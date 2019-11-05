@@ -472,6 +472,9 @@ export class BookingDatesFormComponent extends Component {
               }}
               className={classes}
             >
+              <label>
+                <FormattedMessage id="BookingDatesForm.choosePlan" />
+              </label>
               {rentalTypesFieldset}
               <DateHourPicker
                 id="firstDate"
