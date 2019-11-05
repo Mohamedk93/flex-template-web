@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
@@ -51,224 +51,232 @@ const closeBookModal = (history, location) => {
   history.push(`${pathname}${searchString}`, state);
 };
 
-const BookingPanel = props => {
-  const {
-    rootClassName,
-    className,
-    titleClassName,
-    listing,
-    isOwnListing,
-    unitType,
-    onSubmit,
-    title,
-    subTitle,
-    authorDisplayName,
-    onManageDisableScrolling,
-    timeSlots,
-    fetchTimeSlotsError,
-    history,
-    location,
-    intl,
-  } = props;
+export class BookingPanel extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { focusedInput: null, bookingHoursError: false };
 
-  const publicData = listing.attributes.publicData;
+  }
 
-  const seatsFeeData = publicData.priceSeats;
-  const { amount: seatsAmount, currency: seatsCurrency } =
-    seatsFeeData || {};
-  const seatsFee =
-    seatsAmount && seatsCurrency
-      ? new Money(seatsAmount, seatsCurrency)
-      : null;
+  render() {
+    const {
+      rootClassName,
+      className,
+      titleClassName,
+      listing,
+      isOwnListing,
+      unitType,
+      onSubmit,
+      title,
+      subTitle,
+      authorDisplayName,
+      onManageDisableScrolling,
+      timeSlots,
+      fetchTimeSlotsError,
+      history,
+      location,
+      intl,
+    } = this.props;
 
-  const officeRoomsFeeData = publicData.priceOfficeRooms;
-  const { amount: officeRoomsAmount, currency: officeRoomsCurrency } =
-    officeRoomsFeeData || {};
-  const officeRoomsFee =
-    officeRoomsAmount && officeRoomsCurrency
-      ? new Money(officeRoomsAmount, officeRoomsCurrency)
-      : null;
+    const publicData = listing.attributes.publicData;
 
-  const meetingRoomsFeeData = publicData.priceMeetingRooms;
-  const { amount: meetingRoomsAmount, currency: meetingRoomsCurrency } =
-    meetingRoomsFeeData || {};
-  const meetingRoomsFee =
-    meetingRoomsAmount && meetingRoomsCurrency
-      ? new Money(meetingRoomsAmount, meetingRoomsCurrency)
-      : null;
+    const seatsFeeData = publicData.priceSeats;
+    const { amount: seatsAmount, currency: seatsCurrency } =
+      seatsFeeData || {};
+    const seatsFee =
+      seatsAmount && seatsCurrency
+        ? new Money(seatsAmount, seatsCurrency)
+        : null;
 
-  const handleSubmit = values => {
-    const selectedSeatsFee =
+    const officeRoomsFeeData = publicData.priceOfficeRooms;
+    const { amount: officeRoomsAmount, currency: officeRoomsCurrency } =
+      officeRoomsFeeData || {};
+    const officeRoomsFee =
+      officeRoomsAmount && officeRoomsCurrency
+        ? new Money(officeRoomsAmount, officeRoomsCurrency)
+        : null;
+
+    const meetingRoomsFeeData = publicData.priceMeetingRooms;
+    const { amount: meetingRoomsAmount, currency: meetingRoomsCurrency } =
+      meetingRoomsFeeData || {};
+    const meetingRoomsFee =
+      meetingRoomsAmount && meetingRoomsCurrency
+        ? new Money(meetingRoomsAmount, meetingRoomsCurrency)
+        : null;
+
+    const handleSubmit = values => {
+      const selectedSeatsFee =
+        values &&
+        values.workspaces &&
+        values.workspaces.indexOf('seats') != -1
+          ? seatsFee
+          : null;
+      const selectedOfficeRoomsFee =
       values &&
       values.workspaces &&
-      values.workspaces.indexOf('seats') != -1
-        ? seatsFee
+      values.workspaces.indexOf('office_rooms') != -1
+        ? officeRoomsFee
         : null;
-    const selectedOfficeRoomsFee =
-    values &&
-    values.workspaces &&
-    values.workspaces.indexOf('office_rooms') != -1
-      ? officeRoomsFee
+      const selectedMeetingRoomsFee =
+      values &&
+      values.workspaces &&
+      values.workspaces.indexOf('meeting_rooms') != -1
+        ? meetingRoomsFee
+        : null;
+      onSubmit({
+        ...values,
+        seatsFee: selectedSeatsFee,
+        officeRoomsFee: selectedOfficeRoomsFee,
+        meetingRoomsFee: selectedMeetingRoomsFee,
+      });
+    };
+
+    const price = listing.attributes.price;
+    const hasListingState = !!listing.attributes.state;
+    const isClosed = hasListingState && listing.attributes.state === LISTING_STATE_CLOSED;
+    const showBookingDatesForm = hasListingState && !isClosed;
+    const showClosedListingHelpText = listing.id && isClosed;
+    const { formattedPrice, priceTitle } = priceData(price, intl);
+    const isBook = !!parse(location.search).book;
+
+    const subTitleText = !!subTitle
+      ? subTitle
+      : showClosedListingHelpText
+      ? intl.formatMessage({ id: 'BookingPanel.subTitleClosedListing' })
       : null;
-    const selectedMeetingRoomsFee =
-    values &&
-    values.workspaces &&
-    values.workspaces.indexOf('meeting_rooms') != -1
-      ? meetingRoomsFee
-      : null;
-    onSubmit({
-      ...values,
-      seatsFee: selectedSeatsFee,
-      officeRoomsFee: selectedOfficeRoomsFee,
-      meetingRoomsFee: selectedMeetingRoomsFee,
+
+    const isNightly = unitType === LINE_ITEM_NIGHT;
+    const isDaily = unitType === LINE_ITEM_DAY;
+
+    const unitTranslationKey = 'BookingPanel.perHour';
+
+    const classes = classNames(rootClassName || css.root, className);
+    const titleClasses = classNames(titleClassName || css.bookingTitle);
+
+    let avails = [];
+    if(timeSlots) {
+      let days = [];
+      timeSlots.forEach(function(item) {
+        let day = moment(item.attributes.start).format("dddd");
+        if(days.indexOf(day) === -1) {
+          days.push(day);
+          let startTime = moment(item.attributes.start).format("LT");
+          let endTime = moment(item.attributes.end).format("LT");
+          avails.push({day: day, hours: startTime + " - " + endTime});
+        }
+      });
+    };
+
+    const sorter = {
+      "monday": 1,
+      "tuesday": 2,
+      "wednesday": 3,
+      "thursday": 4,
+      "friday": 5,
+      "saturday": 6,
+      "sunday": 7
+    };
+
+    avails.sort(function sortByDay(a, b) {
+      let day1 = a.day.toLowerCase();
+      let day2 = b.day.toLowerCase();
+      return sorter[day1] - sorter[day2];
     });
-  };
 
-  const price = listing.attributes.price;
-  const hasListingState = !!listing.attributes.state;
-  const isClosed = hasListingState && listing.attributes.state === LISTING_STATE_CLOSED;
-  const showBookingDatesForm = hasListingState && !isClosed;
-  const showClosedListingHelpText = listing.id && isClosed;
-  const { formattedPrice, priceTitle } = priceData(price, intl);
-  const isBook = !!parse(location.search).book;
+    const availsView = avails ? (
+        <div className={css.availsBox}>
+          <h3 className={css.availsTitle}>
+            <FormattedMessage id="BookingPanel.availsTitle" />
+          </h3>
+          {avails.map((item, i) => {
+            return (
+              <p key={i} className={css.availsItem}>
+                <span>{item.day}: </span>
+                <span>{item.hours}</span>
+              </p>
+            );
+          })}
+        </div>
+      ) : null;
 
-  const subTitleText = !!subTitle
-    ? subTitle
-    : showClosedListingHelpText
-    ? intl.formatMessage({ id: 'BookingPanel.subTitleClosedListing' })
-    : null;
+    const maxQuantity = {
+      seats: publicData.seatsRoomsQuantity ? publicData.seatsQuantity : 500,
+      office_rooms: publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 100,
+      meeting_rooms: publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 100,
+    };
 
-  const isNightly = unitType === LINE_ITEM_NIGHT;
-  const isDaily = unitType === LINE_ITEM_DAY;
+    return (
+      <div className={classes}>
+        <ModalInMobile
+          containerClassName={css.modalContainer}
+          id="BookingDatesFormInModal"
+          isModalOpenOnMobile={isBook}
+          onClose={() => closeBookModal(history, location)}
+          showAsModalMaxWidth={MODAL_BREAKPOINT}
+          onManageDisableScrolling={onManageDisableScrolling}
+        >
+          <div className={css.modalHeading}>
+            <h1 className={css.title}>{title}</h1>
+            <div className={css.author}>
+              <FormattedMessage id="BookingPanel.hostedBy" values={{ name: authorDisplayName }} />
+            </div>
+          </div>
 
-  const unitTranslationKey = 'BookingPanel.perHour';
+          <div className={css.bookingHeading}>
+            <h2 className={titleClasses}>{title}</h2>
+            {subTitleText ? <div className={css.bookingHelp}>{subTitleText}</div> : null}
+          </div>
+          {availsView}
+          {showBookingDatesForm ? (
+            <BookingDatesForm
+              className={css.bookingForm}
+              formId="BookingPanel"
+              submitButtonWrapperClassName={css.bookingDatesSubmitButtonWrapper}
+              unitType={unitType}
+              onSubmit={handleSubmit}
+              price={price}
+              isOwnListing={isOwnListing}
+              timeSlots={timeSlots}
+              listing={listing}
+              fetchTimeSlotsError={fetchTimeSlotsError}
+              seatsFee={seatsFee}
+              officeRoomsFee={officeRoomsFee}
+              meetingRoomsFee={meetingRoomsFee}
+              maxQuantity={maxQuantity}
+              initialValues={{ 
+                seats_quantity: 1,
+                office_rooms_quantity: 1,
+                meeting_rooms_quantity: 1,
+              }}
+            />
+          ) : null}
+        </ModalInMobile>
+        <div className={css.openBookingForm}>
+          <div className={css.priceContainer}>
+            <div className={css.priceValue} title={priceTitle}>
+              {formattedPrice}
+            </div>
+            <div className={css.perUnit}>
+              <FormattedMessage id={unitTranslationKey} />
+            </div>
+          </div>
 
-  const classes = classNames(rootClassName || css.root, className);
-  const titleClasses = classNames(titleClassName || css.bookingTitle);
-
-  let avails = [];
-  if(timeSlots) {
-    let days = [];
-    timeSlots.forEach(function(item) {
-      let day = moment(item.attributes.start).format("dddd");
-      if(days.indexOf(day) === -1) {
-        days.push(day);
-        let startTime = moment(item.attributes.start).format("LT");
-        let endTime = moment(item.attributes.end).format("LT");
-        avails.push({day: day, hours: startTime + " - " + endTime});
-      }
-    });
-  };
-
-  const sorter = {
-    "monday": 1,
-    "tuesday": 2,
-    "wednesday": 3,
-    "thursday": 4,
-    "friday": 5,
-    "saturday": 6,
-    "sunday": 7
-  };
-
-  avails.sort(function sortByDay(a, b) {
-    let day1 = a.day.toLowerCase();
-    let day2 = b.day.toLowerCase();
-    return sorter[day1] - sorter[day2];
-  });
-
-  const availsView = avails ? (
-      <div className={css.availsBox}>
-        <h3 className={css.availsTitle}>
-          <FormattedMessage id="BookingPanel.availsTitle" />
-        </h3>
-        {avails.map((item, i) => {
-          return (
-            <p key={i} className={css.availsItem}>
-              <span>{item.day}: </span>
-              <span>{item.hours}</span>
-            </p>
-          );
-        })}
+          {showBookingDatesForm ? (
+            <Button
+              rootClassName={css.bookButton}
+              onClick={() => openBookModal(isOwnListing, isClosed, history, location)}
+            >
+              <FormattedMessage id="BookingPanel.ctaButtonMessage" />
+            </Button>
+          ) : (
+            <div className={css.closedListingButton}>
+              <FormattedMessage id="BookingPanel.closedListingButtonText" />
+            </div>
+          )}
+        </div>
       </div>
-    ) : null;
-
-  const maxQuantity = {
-    seats: publicData.seatsRoomsQuantity ? publicData.seatsQuantity : 500,
-    office_rooms: publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 100,
-    meeting_rooms: publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 100,
-  };
-
-  return (
-    <div className={classes}>
-      <ModalInMobile
-        containerClassName={css.modalContainer}
-        id="BookingDatesFormInModal"
-        isModalOpenOnMobile={isBook}
-        onClose={() => closeBookModal(history, location)}
-        showAsModalMaxWidth={MODAL_BREAKPOINT}
-        onManageDisableScrolling={onManageDisableScrolling}
-      >
-        <div className={css.modalHeading}>
-          <h1 className={css.title}>{title}</h1>
-          <div className={css.author}>
-            <FormattedMessage id="BookingPanel.hostedBy" values={{ name: authorDisplayName }} />
-          </div>
-        </div>
-
-        <div className={css.bookingHeading}>
-          <h2 className={titleClasses}>{title}</h2>
-          {subTitleText ? <div className={css.bookingHelp}>{subTitleText}</div> : null}
-        </div>
-        {availsView}
-        {showBookingDatesForm ? (
-          <BookingDatesForm
-            className={css.bookingForm}
-            formId="BookingPanel"
-            submitButtonWrapperClassName={css.bookingDatesSubmitButtonWrapper}
-            unitType={unitType}
-            onSubmit={handleSubmit}
-            price={price}
-            isOwnListing={isOwnListing}
-            timeSlots={timeSlots}
-            listing={listing}
-            fetchTimeSlotsError={fetchTimeSlotsError}
-            seatsFee={seatsFee}
-            officeRoomsFee={officeRoomsFee}
-            meetingRoomsFee={meetingRoomsFee}
-            maxQuantity={maxQuantity}
-            initialValues={{ 
-              seats_quantity: 1,
-              office_rooms_quantity: 1,
-              meeting_rooms_quantity: 1,
-            }}
-          />
-        ) : null}
-      </ModalInMobile>
-      <div className={css.openBookingForm}>
-        <div className={css.priceContainer}>
-          <div className={css.priceValue} title={priceTitle}>
-            {formattedPrice}
-          </div>
-          <div className={css.perUnit}>
-            <FormattedMessage id={unitTranslationKey} />
-          </div>
-        </div>
-
-        {showBookingDatesForm ? (
-          <Button
-            rootClassName={css.bookButton}
-            onClick={() => openBookModal(isOwnListing, isClosed, history, location)}
-          >
-            <FormattedMessage id="BookingPanel.ctaButtonMessage" />
-          </Button>
-        ) : (
-          <div className={css.closedListingButton}>
-            <FormattedMessage id="BookingPanel.closedListingButtonText" />
-          </div>
-        )}
-      </div>
-    </div>
-  );
+    );
+  }
 };
 
 BookingPanel.defaultProps = {
