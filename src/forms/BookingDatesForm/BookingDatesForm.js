@@ -291,6 +291,7 @@ export class BookingDatesFormComponent extends Component {
             officeRoomsFee,
             meetingRoomsFee,
             rentalTypes,
+            handleChangeRentalType,
           } = fieldRenderProps;
           const { firstDate, extraDays = [] } = values;
           const required = validators.required('This field is required');
@@ -443,8 +444,6 @@ export class BookingDatesFormComponent extends Component {
             meeting_rooms: meetingRoomsFee ? `(${formatMoney(intl, meetingRoomsFee)})` : null,
           };
 
-          console.log("values",values.rental_type);
-
           const rentalTypesFieldset = rentalTypes ? rentalTypes.map(item => {
             const label = intl.formatMessage({
               id: `EditListingPricingForm.rentalType_${item}`,
@@ -452,9 +451,11 @@ export class BookingDatesFormComponent extends Component {
             return (
               <FieldRadioButton
                 id={`rental_type_${item}`}
+                key={item}
                 name={'rental_type'}
                 label={label}
                 value={item}
+                onClick={e => handleChangeRentalType(e)}
               />
             )
           }) : null;

@@ -54,12 +54,20 @@ const closeBookModal = (history, location) => {
 export class BookingPanel extends Component {
   constructor(props) {
     super(props);
-    this.state = { focusedInput: null, bookingHoursError: false };
 
+    const rentalTypes = this.props.listing.attributes.publicData.rentalTypes ?
+      this.props.listing.attributes.publicData.rentalTypes : [];
+
+    this.state = { 
+      rentalType: rentalTypes[0],
+    };
+
+    this.handleChangeRentalType = this.handleChangeRentalType.bind(this);
   }
 
-  handleChangeRentalType() {
-    
+  handleChangeRentalType(e) {
+    const rentalType = e.target.value;
+    this.setState({ rentalType })
   }
 
   render() {
@@ -84,9 +92,38 @@ export class BookingPanel extends Component {
 
     const publicData = listing.attributes.publicData;
 
-
+    const currentRentalType = this.state.rentalType;
+    
+    
     // Prices calculation
-    const seatsFeeData = publicData.priceSeats;
+
+    let seatsFeeData;
+    if(currentRentalType === 'hourly') {
+      seatsFeeData = publicData.priceSeatsHourly;
+    } else if(currentRentalType === 'daily') {
+      seatsFeeData = publicData.priceSeatsDaily;
+    } else if(currentRentalType === 'monthly') {
+      seatsFeeData = publicData.priceSeatsMonthly;
+    };
+
+    let officeRoomsFeeData;
+    if(currentRentalType === 'hourly') {
+      officeRoomsFeeData = publicData.priceOfficeRoomsHourly;
+    } else if(currentRentalType === 'daily') {
+      officeRoomsFeeData = publicData.priceOfficeRoomsDaily;
+    } else if(currentRentalType === 'monthly') {
+      officeRoomsFeeData = publicData.priceOfficeRoomsMonthly;
+    };
+
+    let meetingRoomsFeeData;
+    if(currentRentalType === 'hourly') {
+      meetingRoomsFeeData = publicData.priceMeetingRoomsHourly;
+    } else if(currentRentalType === 'daily') {
+      meetingRoomsFeeData = publicData.priceMeetingRoomsDaily;
+    } else if(currentRentalType === 'monthly') {
+      meetingRoomsFeeData = publicData.priceMeetingRoomsMonthly;
+    };
+
     const { amount: seatsAmount, currency: seatsCurrency } =
       seatsFeeData || {};
     const seatsFee =
@@ -94,7 +131,6 @@ export class BookingPanel extends Component {
         ? new Money(seatsAmount, seatsCurrency)
         : null;
 
-    const officeRoomsFeeData = publicData.priceOfficeRooms;
     const { amount: officeRoomsAmount, currency: officeRoomsCurrency } =
       officeRoomsFeeData || {};
     const officeRoomsFee =
@@ -102,7 +138,6 @@ export class BookingPanel extends Component {
         ? new Money(officeRoomsAmount, officeRoomsCurrency)
         : null;
 
-    const meetingRoomsFeeData = publicData.priceMeetingRooms;
     const { amount: meetingRoomsAmount, currency: meetingRoomsCurrency } =
       meetingRoomsFeeData || {};
     const meetingRoomsFee =
@@ -254,6 +289,7 @@ export class BookingPanel extends Component {
               meetingRoomsFee={meetingRoomsFee}
               maxQuantity={maxQuantity}
               rentalTypes={rentalTypes}
+              handleChangeRentalType={this.handleChangeRentalType}
               initialValues={{ 
                 seats_quantity: 1,
                 office_rooms_quantity: 1,
