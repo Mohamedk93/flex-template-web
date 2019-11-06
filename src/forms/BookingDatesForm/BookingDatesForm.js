@@ -407,26 +407,35 @@ export class BookingDatesFormComponent extends Component {
             } catch (e) {
               // No need to react - totalHours is just 0
             }
- 
-            startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
-            endDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
+
+
+            startDate = values &&
+            values.bookingDates &&
+            values.bookingDates.startDate ?
+            values.bookingDates.startDate : null;
+        
+            endDate = values &&
+              values.bookingDates &&
+              values.bookingDates.endDate ?
+              values.bookingDates.endDate : null;
+            
+
+            // if(firstDate){
+            //   var hourStart = values.firstDate.hourStart;
+            //   var hourEnd = values.firstDate.hourEnd;
   
-            if(firstDate){
-              var hourStart = values.firstDate.hourStart;
-              var hourEnd = values.firstDate.hourEnd;
+            //   if(hourStart){
+            //     var hourStartHH = parseInt(hourStart.substr(0, 2));
+            //     var hourStartMM = parseInt(hourStart.substr(3, 4));
+            //     startDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourStartMM).hours(hourStartHH).toDate()
+            //   }
   
-              if(hourStart){
-                var hourStartHH = parseInt(hourStart.substr(0, 2));
-                var hourStartMM = parseInt(hourStart.substr(3, 4));
-                startDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourStartMM).hours(hourStartHH).toDate()
-              }
-  
-              if(hourEnd){
-                var hourEndtHH = parseInt(hourEnd.substr(0, 2));
-                var hourEndMM = parseInt(hourEnd.substr(3, 4));
-                endDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourEndMM).hours(hourEndtHH).toDate()
-              }
-            };
+            //   if(hourEnd){
+            //     var hourEndtHH = parseInt(hourEnd.substr(0, 2));
+            //     var hourEndMM = parseInt(hourEnd.substr(3, 4));
+            //     endDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourEndMM).hours(hourEndtHH).toDate()
+            //   }
+            // };
 
           } else if (currentRentalType === 'monthly') {
 
@@ -460,18 +469,16 @@ export class BookingDatesFormComponent extends Component {
               }
               : null;
 
-          const bookingInfo =
-            // TODOS need correct validation
-            // bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
-            bookingData & isChooseWorkspace(values) ? (
-                <div className={css.priceBreakdownContainer}>
-                  <h3 className={css.priceBreakdownTitle}>
-                    <FormattedMessage id="BookingDatesForm.priceBreakdownTitle" />
-                  </h3>
-                  <EstimatedBreakdownMaybe bookingData={bookingData} />
-                </div>
-              ) : null;
-
+          // TODOS need correct validation
+          // bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
+          const bookingInfo = bookingData && isChooseWorkspace(values) ? (
+            <div className={css.priceBreakdownContainer}>
+              <h3 className={css.priceBreakdownTitle}>
+                <FormattedMessage id="BookingDatesForm.priceBreakdownTitle" />
+              </h3>
+              <EstimatedBreakdownMaybe bookingData={bookingData} />
+            </div>
+          ) : null;
 
           // Definion of messages and texts
           const hoursError = this.state.bookingHoursError ? (
@@ -688,66 +695,68 @@ export class BookingDatesFormComponent extends Component {
                   </FieldSelect>
                 ): null }
 
-              <FieldArray
-                name="extraDays"
-                render={fieldArrayProps => {
-                  const { fields } = fieldArrayProps;
+              {currentRentalType === 'hourly' ? (
+                <FieldArray
+                  name="extraDays"
+                  render={fieldArrayProps => {
+                    const { fields } = fieldArrayProps;
 
-                  const futureDate = (firstDay, dayCount) =>
-                    moment(firstDay)
-                      .add(dayCount, 'days')
-                      .toDate();
+                    const futureDate = (firstDay, dayCount) =>
+                      moment(firstDay)
+                        .add(dayCount, 'days')
+                        .toDate();
 
-                  return (
-                    <ul className={css.extraDays}>
-                      {extraDays.map((extraDaysId, i) => {
-                        return (
-                          <li key={i} className={css.extraDay}>
-                            <DateHourPicker
-                              id={`extraDays[${i}]`}
-                              {...extraDays[i]}
-                              day={futureDate(startDate, i + 1)}
-                              intl={intl}
-                            />
-                            {i === fields.length - 1 ? (
-                                <button
-                                  className={css.removeLastDay}
-                                  type="button"
-                                  title="Remove Member"
-                                  onClick={e => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    //onRemoveLastDay();
-                                    fields.pop();
-                                  }}
-                                >
-                                  <IconClose />
-                                </button>
-                              ) : null}
-                          </li>
-                        );
-                      })}
-                      { hoursValid(values) && isChooseWorkspace(values) ? (
-                          <li>
-                            <InlineTextButton
-                              className={css.addDayButton}
-                              type="button"
-                              onClick={() => {
-                                const daysToFuture =
-                                  (fields.length && fields.length > 0 ? fields.length : 0) + 1;
-                                fields.push({
-                                  bookingDate: { date: futureDate(startDate, daysToFuture) },
-                                });
-                              }}
-                            >
-                              <FormattedMessage id="BookingDatesForm.addAdditionalDay" />
-                            </InlineTextButton>
-                          </li>
-                        ) : null}
-                    </ul>
-                  );
-                }}
-              />
+                    return (
+                      <ul className={css.extraDays}>
+                        {extraDays.map((extraDaysId, i) => {
+                          return (
+                            <li key={i} className={css.extraDay}>
+                              <DateHourPicker
+                                id={`extraDays[${i}]`}
+                                {...extraDays[i]}
+                                day={futureDate(startDate, i + 1)}
+                                intl={intl}
+                              />
+                              {i === fields.length - 1 ? (
+                                  <button
+                                    className={css.removeLastDay}
+                                    type="button"
+                                    title="Remove Member"
+                                    onClick={e => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      //onRemoveLastDay();
+                                      fields.pop();
+                                    }}
+                                  >
+                                    <IconClose />
+                                  </button>
+                                ) : null}
+                            </li>
+                          );
+                        })}
+                        { hoursValid(values) && isChooseWorkspace(values) ? (
+                            <li>
+                              <InlineTextButton
+                                className={css.addDayButton}
+                                type="button"
+                                onClick={() => {
+                                  const daysToFuture =
+                                    (fields.length && fields.length > 0 ? fields.length : 0) + 1;
+                                  fields.push({
+                                    bookingDate: { date: futureDate(startDate, daysToFuture) },
+                                  });
+                                }}
+                              >
+                                <FormattedMessage id="BookingDatesForm.addAdditionalDay" />
+                              </InlineTextButton>
+                            </li>
+                          ) : null}
+                      </ul>
+                    );
+                  }}
+                />
+              ) : null}
 
               {hoursError}
               {bookingInfo}
