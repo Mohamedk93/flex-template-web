@@ -101,7 +101,7 @@ const DateMonthPicker = props => {
 
   const { monthCount } = values;
   const startDate = values.firstDate ? moment(values.firstDate.bookingDate.date) : null;
-  const endDate = startDate ? moment(startDate).add(monthCount, 'M').format('ddd, MMM D') : 'End Date';
+  const endDate = startDate ? moment(startDate).add(monthCount, 'M').subtract(1,'d').format('ddd, MMM D') : 'End Date';
 
   return (
     <div className={classes}>

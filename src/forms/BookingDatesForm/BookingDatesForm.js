@@ -502,8 +502,6 @@ export class BookingDatesFormComponent extends Component {
               }
               : null;
 
-          console.log("bookingData", bookingData);
-
           // TODOS need correct validation
           // bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
           const bookingInfo = bookingData && isChooseWorkspace(values) ? (
@@ -603,12 +601,18 @@ export class BookingDatesFormComponent extends Component {
                 <FormattedMessage id="BookingPanel.availsTitle" />
               </h3>
               {avails.map((item, i) => {
-                return (
-                  <p key={i} className={css.availsItem}>
-                    <span>{item.day}: </span>
-                    <span>{item.hours}</span>
-                  </p>
-                );
+                if(currentRentalType === "hourly") {
+                  return (
+                    <p key={i} className={css.availsItem}>
+                      <span>{item.day}: </span>
+                      <span>{item.hours}</span>
+                    </p>
+                  )
+                } else {
+                  return (
+                    <span className={css.availsString}>{item.day} </span>
+                  )
+                }
               })}
             </div>
           ) : null;
