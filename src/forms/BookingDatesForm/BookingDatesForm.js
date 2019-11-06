@@ -90,27 +90,6 @@ const countHours = (dateHour) => {
   return firstDateHours.add(extraDateHours).toNumber();
 };
 
-// const countHoursBetweenDays = (startDate, endDate) => {
-//   if (!startDate || !endDate) {
-//     return 0;
-//   }
-
-//   const startDateObj = values &&
-//     values.bookingDates &&
-//     values.bookingDates.startDate ?
-//     moment(values.bookingDates.startDate) : null;
-
-//   const endDateObj = values &&
-//     values.bookingDates &&
-//     values.bookingDates.endDate ?
-//     moment(values.bookingDates.endDate) : null;
-
-//   let duration = moment.duration(endDateObj.diff(startDateObj));
-
-//   return duration.asHours()
-
-// };
-
 // check that all the dates have hourStart and hourEnd
 const hoursSelected = dateHour => {
   const { hourStart, hourEnd } = dateHour && dateHour.firstDate ? dateHour.firstDate : {};
@@ -166,102 +145,155 @@ export class BookingDatesFormComponent extends Component {
       extraDays = [], 
       paymentMethod,
       workspaces,
+      rental_type,
     } = values;
 
     const seats_quantity = values && values.seats_quantity ? parseInt(values.seats_quantity) : 0;
     const office_rooms_quantity = values && values.office_rooms_quantity ? parseInt(values.office_rooms_quantity) : 0;
     const meeting_rooms_quantity = values && values.meeting_rooms_quantity ? parseInt(values.meeting_rooms_quantity) : 0;
 
-    const bookingDate = firstDate ? firstDate.bookingDate : null;
 
+    
+    // Declarations TODOS
     let totalHours = 0;
-    try {
-      totalHours = countHours(values);
-    } catch (e) {
-      // No need to react - totalHours is just 0
-    }
+    let formatMessageLine = null;
 
-    if (!(bookingDate && bookingDate.date)) {
-      this.setState({ focusedInput: 'bookingDate' });
-    } else if (!hoursSelected(values)) {
-      this.setState({ bookingHoursError: true });
-    } else if (totalHours > 0 && isFullHours(totalHours)) {
-      const startDate = moment(bookingDate.date)
-        .startOf('day')
-        .toDate();
+    let dateHourLines = intl.formatMessage(
+      { id: 'BookingDatesForm.bookingDateMessageDateHourLine' },
+      { dateHourStart: "start", dateHourEnd: "end" }
+    ) // TODOS. Default value
 
-      let endDate =
-        extraDays && extraDays.length > 0
-          ? nextDate(extraDays[extraDays.length - 1].bookingDate.date)
-          : nextDate(startDate);
+    let sdtFinal = null;
+    let edtFinal = null;
 
-      endDate = moment(endDate)
-        .startOf('day')
-        .toDate();
+    // Old way. For hourly
+    if(rental_type === 'hourly') {
+      const bookingDate = firstDate ? firstDate.bookingDate : null;
 
-      var sdt = new Date(bookingDate.date).setHours(Number(firstDate.hourStart.split(':')[0]));
-      var sdtWithMin = new Date(sdt).setMinutes(Number(firstDate.hourStart.split(':')[1]));
-      var sdtFinal = new Date(sdtWithMin);
+      try {
+        totalHours = countHours(values);
+      } catch (e) {
+        // No need to react - totalHours is just 0
+      }
 
-      var edt = new Date(bookingDate.date).setHours(Number(firstDate.hourEnd.split(':')[0]));
-      var edtWithMin = new Date(edt).setMinutes(Number(firstDate.hourEnd.split(':')[1]));
-      var edtFinal = new Date(edtWithMin);
+      if (!(bookingDate && bookingDate.date)) {
+        this.setState({ focusedInput: 'bookingDate' });
+      } else if (!hoursSelected(values)) {
+        this.setState({ bookingHoursError: true });
+      } else if (totalHours > 0 && isFullHours(totalHours)) {
 
-      const formatMessageLine = dateData => {
-        //be sure to convert to UTC time from local timezone!
-        const date = moment(dateData.bookingDate.date)
-          .utc()
-          .startOf('day');
+        const startDate = moment(bookingDate.date)
+          .startOf('day')
+          .toDate();
 
-        // i.e. 'Fri, Jan 6, 01:00 pm'
-        const startMoment = moment(
-          `${date.format('YYYY MM DD')} ${dateData.hourStart}`,
-          'YYYY MM DD HH:mm'
-        );
-        const dateHourStart = startMoment.format('ddd, MMM D, hh:mm a');
+        let endDate =
+          extraDays && extraDays.length > 0
+            ? nextDate(extraDays[extraDays.length - 1].bookingDate.date)
+            : nextDate(startDate);
 
-        // i.e. Friday 18:00 -> '06:00 pm', and Friday 24:00 -> 'Sat, Jan 7, 12:00 am'
-        const endMoment = moment(
-          `${date.format('YYYY MM DD')} ${dateData.hourEnd}`,
-          'YYYY MM DD HH:mm'
-        );
-        const isEnding24Hours = dateData.hourEnd === '24:00';
-        const dateHourEnd = isEnding24Hours
-          ? endMoment.format('ddd, MMM D, hh:mm a')
-          : endMoment.format('hh:mm a');
+        endDate = moment(endDate)
+          .startOf('day')
+          .toDate();
 
-        return intl.formatMessage(
-          { id: 'BookingDatesForm.bookingDateMessageDateHourLine' },
-          { dateHourStart, dateHourEnd }
-        );
+        var sdt = new Date(bookingDate.date).setHours(Number(firstDate.hourStart.split(':')[0]));
+        var sdtWithMin = new Date(sdt).setMinutes(Number(firstDate.hourStart.split(':')[1]));
+        sdtFinal = new Date(sdtWithMin);
+
+        var edt = new Date(bookingDate.date).setHours(Number(firstDate.hourEnd.split(':')[0]));
+        var edtWithMin = new Date(edt).setMinutes(Number(firstDate.hourEnd.split(':')[1]));
+        edtFinal = new Date(edtWithMin);
+
+        formatMessageLine = dateData => {
+          //be sure to convert to UTC time from local timezone!
+          const date = moment(dateData.bookingDate.date)
+            .utc()
+            .startOf('day');
+
+          // i.e. 'Fri, Jan 6, 01:00 pm'
+          const startMoment = moment(
+            `${date.format('YYYY MM DD')} ${dateData.hourStart}`,
+            'YYYY MM DD HH:mm'
+          );
+          const dateHourStart = startMoment.format('ddd, MMM D, hh:mm a');
+
+          // i.e. Friday 18:00 -> '06:00 pm', and Friday 24:00 -> 'Sat, Jan 7, 12:00 am'
+          const endMoment = moment(
+            `${date.format('YYYY MM DD')} ${dateData.hourEnd}`,
+            'YYYY MM DD HH:mm'
+          );
+          const isEnding24Hours = dateData.hourEnd === '24:00';
+          const dateHourEnd = isEnding24Hours
+            ? endMoment.format('ddd, MMM D, hh:mm a')
+            : endMoment.format('hh:mm a');
+
+          return intl.formatMessage(
+            { id: 'BookingDatesForm.bookingDateMessageDateHourLine' },
+            { dateHourStart, dateHourEnd }
+          );
+        };
+
+        dateHourLines = extraDays.map(d => {
+          return formatMessageLine(d);
+        });
+      }
+    } else if (rental_type === 'daily') {
+
+      sdtFinal = values &&
+      values.bookingDates &&
+      values.bookingDates.startDate ?
+      values.bookingDates.startDate : null;
+  
+      edtFinal = values &&
+        values.bookingDates &&
+        values.bookingDates.endDate ?
+        values.bookingDates.endDate : null;
+
+      if (sdtFinal && edtFinal) {
+        const startDateObj = moment(sdtFinal);
+        const endDateObj = moment(edtFinal);           
+        let duration = moment.duration(endDateObj.diff(startDateObj));
+        totalHours = duration.asHours();
       };
 
-      const dateHourLines = extraDays.map(d => {
-        return formatMessageLine(d);
-      });
+    } else if (rental_type === 'monthly') {
 
-      this.props.onSubmit({
-        paymentMethod,
-        workspaces,
-        bookingDates: {
-          startDate: sdtFinal,
-          endDate: edtFinal,
-        },
-        bookingDatesWithTimes: {
-          dateHourStart: sdtFinal,
-          dateHourEnd: edtFinal,
-        },
-        hours: totalHours,
-        message: [
-          intl.formatMessage({ id: 'BookingDatesForm.bookingDateMessageFirstLine' }),
-          formatMessageLine(firstDate),
-          ...dateHourLines,
-        ],
-        seatsQuantity: seats_quantity,
-        officeRoomsQuantity: office_rooms_quantity,
-        meetingRoomsQuantity: meeting_rooms_quantity,
-      });
+      sdtFinal = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
+        
+      const { monthCount } = values;
+      edtFinal = sdtFinal ? moment(sdtFinal).add(monthCount, 'M').toDate() : null;
+
+      if (sdtFinal && edtFinal) {
+        totalHours = monthCount * 720;
+      };
+
     }
+
+      
+
+    this.props.onSubmit({
+      paymentMethod,
+      workspaces,
+      bookingDates: {
+        startDate: sdtFinal,
+        endDate: edtFinal,
+      },
+      bookingDatesWithTimes: {
+        dateHourStart: sdtFinal,
+        dateHourEnd: edtFinal,
+      },
+      hours: totalHours,
+      message: [
+        intl.formatMessage({ id: 'BookingDatesForm.bookingDateMessageFirstLine' }),
+        // formatMessageLine(firstDate),
+        "", // TODOS
+        ...dateHourLines,
+      ],
+      seatsQuantity: seats_quantity,
+      officeRoomsQuantity: office_rooms_quantity,
+      meetingRoomsQuantity: meeting_rooms_quantity,
+      rental_type,
+    });
+
   }
 
   render() {
@@ -610,7 +642,7 @@ export class BookingDatesFormComponent extends Component {
                   )
                 } else {
                   return (
-                    <span className={css.availsString}>{item.day} </span>
+                    <span key={i} className={css.availsString}>{item.day} </span>
                   )
                 }
               })}
@@ -727,7 +759,8 @@ export class BookingDatesFormComponent extends Component {
                 fees={fees}
               />
 
-              {hoursValid(values) && isChooseWorkspace(values) ? (
+              {/* {hoursValid(values) && isChooseWorkspace(values) ? ( TODOS */}
+              {isChooseWorkspace(values) ? (
                   <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={requiredSelect}>
                     <option value="">Select payment</option>
                     {stripeConnected ? (<option value="credit card">Credit card</option>) : null}
