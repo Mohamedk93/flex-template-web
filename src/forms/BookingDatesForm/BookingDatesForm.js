@@ -25,13 +25,26 @@ import { formatMoney } from '../../util/currency';
 import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
 import DateMonthPicker from './DateMonthPicker';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
+import { types as sdkTypes } from '../../util/sdkLoader';
 
 import css from './BookingDatesForm.css';
+
+const { Money } = sdkTypes;
 
 const nextDate = date =>
   moment(date)
     .add(1, 'days')
     .toDate();
+
+const moneyDivider = (money, divider) => {
+  if(money instanceof Money) {
+    let { amount, currency } = money;
+    let total = parseInt((amount / divider)); // toFixed()
+    return new Money(total, currency)
+  } else {
+    return null
+  }
+};
 
 const rangeEndDate = dateHour => {
   if (!dateHour) {
@@ -50,7 +63,7 @@ const rangeEndDate = dateHour => {
       : nextDate(firstDate.bookingDate.date);
 };
 
-const countHours = dateHour => {
+const countHours = (dateHour) => {
   if (!dateHour) {
     return 0;
   }
@@ -61,6 +74,7 @@ const countHours = dateHour => {
     throw new Error('Hour calculation failed');
   }
 
+  // Calculation or extra days
   const extraDays = dateHour.extraDays ? dateHour.extraDays : [];
   const extraDayHours = extraDays.reduce((acc, d) => {
     const cumulated = new Decimal(acc).add(new Decimal(getHours(d)));
@@ -71,32 +85,31 @@ const countHours = dateHour => {
 
     return cumulated.toNumber();
   }, 0);
-
   const extraDateHours = new Decimal(extraDayHours);
 
   return firstDateHours.add(extraDateHours).toNumber();
 };
 
-const countHoursBetweenDays = values => {
-  if (!values) {
-    return 0;
-  }
+// const countHoursBetweenDays = (startDate, endDate) => {
+//   if (!startDate || !endDate) {
+//     return 0;
+//   }
 
-  const startDateObj = values &&
-    values.bookingDates &&
-    values.bookingDates.startDate ?
-    moment(values.bookingDates.startDate) : null;
+//   const startDateObj = values &&
+//     values.bookingDates &&
+//     values.bookingDates.startDate ?
+//     moment(values.bookingDates.startDate) : null;
 
-  const endDateObj = values &&
-    values.bookingDates &&
-    values.bookingDates.endDate ?
-    moment(values.bookingDates.endDate) : null;
+//   const endDateObj = values &&
+//     values.bookingDates &&
+//     values.bookingDates.endDate ?
+//     moment(values.bookingDates.endDate) : null;
 
-  let duration = moment.duration(endDateObj.diff(startDateObj));
+//   let duration = moment.duration(endDateObj.diff(startDateObj));
 
-  return duration.asHours()
+//   return duration.asHours()
 
-};
+// };
 
 // check that all the dates have hourStart and hourEnd
 const hoursSelected = dateHour => {
@@ -336,25 +349,40 @@ export class BookingDatesFormComponent extends Component {
           const requiredSelect = required('This field is required');
 
 
-          // Fee calculations
-          const selectedSeatsFee =
+          // TODOS Not default for hourly!
+          let seatsFeeCalc = seatsFee;
+          let officeRoomsFeeCalc = officeRoomsFee;
+          let meetingRoomsFeeCalc = meetingRoomsFee;
+          if(currentRentalType === "daily") {
+            seatsFeeCalc = moneyDivider(seatsFee, 24);
+            officeRoomsFeeCalc = moneyDivider(officeRoomsFee, 24);
+            meetingRoomsFeeCalc =moneyDivider(meetingRoomsFee, 24);
+          } else if(currentRentalType === "monthly") {
+            seatsFeeCalc = moneyDivider(seatsFee, 720);
+            officeRoomsFeeCalc = moneyDivider(officeRoomsFee, 720);
+            meetingRoomsFeeCalc =moneyDivider(meetingRoomsFee, 720);
+          }
+
+
+          // Selected fee
+          let selectedSeatsFee =
           values &&
           values.workspaces &&
           values.workspaces.indexOf('seats') != -1
-            ? seatsFee
+            ? seatsFeeCalc
             : null;
 
-          const selectedSeatsQuantity =
+          let selectedSeatsQuantity =
           values &&
           values.seats_quantity
             ? values.seats_quantity
             : null;
 
-          const selectedOfficeRoomsFee =
+          let selectedOfficeRoomsFee =
           values &&
           values.workspaces &&
           values.workspaces.indexOf('office_rooms') != -1
-            ? officeRoomsFee
+            ? officeRoomsFeeCalc
             : null;
 
           const selectedOfficeRoomsQuantity =
@@ -367,7 +395,7 @@ export class BookingDatesFormComponent extends Component {
           values &&
           values.workspaces &&
           values.workspaces.indexOf('meeting_rooms') != -1
-            ? meetingRoomsFee
+            ? meetingRoomsFeeCalc
             : null;
 
           const selectedMeetingRoomsQuantity =
@@ -379,12 +407,12 @@ export class BookingDatesFormComponent extends Component {
 
 
           // Time calculations
-
           let totalHours = 0;
           let startDate = null;
           let endDate = null;
 
           if(currentRentalType === 'hourly') {
+
             try {
               totalHours = countHours(values);
             } catch (e) {
@@ -410,14 +438,8 @@ export class BookingDatesFormComponent extends Component {
                 endDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourEndMM).hours(hourEndtHH).toDate()
               }
             };
+
           } else if (currentRentalType === 'daily') {
-
-            try {
-              totalHours = countHoursBetweenDays(values);
-            } catch (e) {
-              // No need to react - totalHours is just 0
-            }
-
 
             startDate = values &&
             values.bookingDates &&
@@ -428,31 +450,30 @@ export class BookingDatesFormComponent extends Component {
               values.bookingDates &&
               values.bookingDates.endDate ?
               values.bookingDates.endDate : null;
+
+            if (startDate && endDate) {
+              const startDateObj = moment(startDate);
+              const endDateObj = moment(endDate);           
+              let duration = moment.duration(endDateObj.diff(startDateObj));
+              totalHours = duration.asHours();
+            };
             
-
-            // if(firstDate){
-            //   var hourStart = values.firstDate.hourStart;
-            //   var hourEnd = values.firstDate.hourEnd;
-  
-            //   if(hourStart){
-            //     var hourStartHH = parseInt(hourStart.substr(0, 2));
-            //     var hourStartMM = parseInt(hourStart.substr(3, 4));
-            //     startDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourStartMM).hours(hourStartHH).toDate()
-            //   }
-  
-            //   if(hourEnd){
-            //     var hourEndtHH = parseInt(hourEnd.substr(0, 2));
-            //     var hourEndMM = parseInt(hourEnd.substr(3, 4));
-            //     endDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourEndMM).hours(hourEndtHH).toDate()
-            //   }
-            // };
-
           } else if (currentRentalType === 'monthly') {
 
+            startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
+        
+            const { monthCount } = values;
+            endDate = startDate ? moment(startDate).add(monthCount, 'M').toDate() : null;
+
+            if (startDate && endDate) {
+              // const startDateObj = moment(startDate);
+              // const endDateObj = moment(endDate);           
+              // let duration = moment.duration(endDateObj.diff(startDateObj));
+              // totalHours = duration.asHours();
+              totalHours = monthCount * 720;
+            };
+
           };
-
-
-
 
 
           // This is the place to collect breakdown estimation data. See the
@@ -476,8 +497,12 @@ export class BookingDatesFormComponent extends Component {
                 seatsQuantity: selectedSeatsQuantity,
                 officeRoomsQuantity: selectedOfficeRoomsQuantity,
                 meetingRoomsQuantity: selectedMeetingRoomsQuantity,
+
+                rentalType: currentRentalType,
               }
               : null;
+
+          console.log("bookingData", bookingData);
 
           // TODOS need correct validation
           // bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
