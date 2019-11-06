@@ -11,7 +11,7 @@ import Decimal from 'decimal.js';
 import { propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
 import config from '../../config';
-import { requiredFieldArrayCheckbox } from '../../util/validators';
+import { required, bookingDatesRequired, composeValidators } from '../../util/validators';
 import { 
   Form, 
   IconClose, 
@@ -19,6 +19,7 @@ import {
   InlineTextButton,
   FieldSelect,
   FieldRadioButton,
+  FieldDateRangeInput,
   FieldCheckboxGroupWithQuantity } from '../../components';
 import { formatMoney } from '../../util/currency';
 import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
@@ -279,6 +280,9 @@ export class BookingDatesFormComponent extends Component {
             datePlaceholder,
             form,
             formId,
+            endDatePlaceholder,
+            startDatePlaceholder,
+            timeSlots,
             handleSubmit,
             intl,
             isOwnListing,
@@ -296,7 +300,8 @@ export class BookingDatesFormComponent extends Component {
             avails,
           } = fieldRenderProps;
           const { firstDate, extraDays = [] } = values;
-          const required = validators.required('This field is required');
+
+          const requiredSelect = required('This field is required');
 
           const selectedSeatsFee =
           values &&
@@ -403,6 +408,33 @@ export class BookingDatesFormComponent extends Component {
             </span>
             ) : null;
 
+          const bookingStartLabel = intl.formatMessage({
+            id: 'BookingDatesForm.bookingStartTitle',
+          });
+          const bookingEndLabel = intl.formatMessage({ id: 'BookingDatesForm.bookingEndTitle' });
+          const requiredMessage = intl.formatMessage({ id: 'BookingDatesForm.requiredDate' });
+          const startDateErrorMessage = intl.formatMessage({
+            id: 'FieldDateRangeInput.invalidStartDate',
+          });
+          const endDateErrorMessage = intl.formatMessage({
+            id: 'FieldDateRangeInput.invalidEndDate',
+          });
+
+          const dateFormatOptions = {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+          };
+          const now = moment();
+          const today = now.startOf('day').toDate();
+          const tomorrow = now
+            .startOf('day')
+            .add(1, 'days')
+            .toDate();
+          const startDatePlaceholderText =
+            startDatePlaceholder || intl.formatDate(today, dateFormatOptions);
+          const endDatePlaceholderText =
+            endDatePlaceholder || intl.formatDate(tomorrow, dateFormatOptions);
           const submitButtonClasses = classNames(
             css.submitButtonWrapper,
             submitButtonWrapperClassName
@@ -511,7 +543,7 @@ export class BookingDatesFormComponent extends Component {
               endDatePlaceholderText={endDatePlaceholderText}
               focusedInput={this.state.focusedInput}
               onFocusedInputChange={this.onFocusedInputChange}
-              format={null}
+              format={identity}
               timeSlots={timeSlots}
               useMobileMargins
               validate={composeValidators(
@@ -519,7 +551,7 @@ export class BookingDatesFormComponent extends Component {
                 bookingDatesRequired(startDateErrorMessage, endDateErrorMessage)
               )}
             />
-          }
+          };
 
           return (
             <Form
@@ -553,7 +585,7 @@ export class BookingDatesFormComponent extends Component {
               />
 
               {hoursValid(values) && isChooseWorkspace(values) ? (
-                  <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={required}>
+                  <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={requiredSelect}>
                     <option value="">Select payment</option>
                     {stripeConnected ? (<option value="credit card">Credit card</option>) : null}
                     <option value="cash">Cash</option>
