@@ -23,6 +23,7 @@ import {
   FieldCheckboxGroupWithQuantity } from '../../components';
 import { formatMoney } from '../../util/currency';
 import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
+import DateMonthPicker from './DateMonthPicker';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
 
 import css from './BookingDatesForm.css';
@@ -283,6 +284,7 @@ export class BookingDatesFormComponent extends Component {
         }}
         validate={values => {
           const errors = {}
+
           const names = config.custom.workspacesDefaultName;
           const quantityDefault = this.props.maxQuantity;
           const workspacesArray = values.workspaces ? values.workspaces : [];
@@ -294,6 +296,14 @@ export class BookingDatesFormComponent extends Component {
               errors[`${item}_quantity`] = `${names[item]} value must be from ${minQ} to ${maxQ}`
             }
           });
+
+          if(values && values.rental_type === "monthly") {
+            const { monthCount } = values;
+            if( !monthCount || monthCount === 0) {
+              errors['monthCount'] = 'Number of months must be from 1'
+            }
+          };
+          
           return Object.keys(errors).length ? errors : undefined
         }}
         render={fieldRenderProps => {
@@ -553,6 +563,8 @@ export class BookingDatesFormComponent extends Component {
           const selectedWorkspaces = values && values.workspaces ? values.workspaces : [];
 
 
+          const { monthCount } = values;
+
 
           const fees = {
             seats: seatsFee ? `(${formatMoney(intl, seatsFee)})` : null,
@@ -634,25 +646,24 @@ export class BookingDatesFormComponent extends Component {
               )}
             />
           } else if (currentRentalType === 'monthly') {
-            dateChoosBox = <FieldDateRangeInput
-              className={css.bookingDates}
-              name="bookingDates"
-              unitType={unitType}
-              startDateId={`${form}.bookingStartDate`}
-              startDateLabel={bookingStartLabel}
-              startDatePlaceholderText={startDatePlaceholderText}
-              endDateId={`${form}.bookingEndDate`}
-              endDateLabel={bookingEndLabel}
-              endDatePlaceholderText={endDatePlaceholderText}
+            dateChoosBox = <DateMonthPicker
+              id="firstDate"
+              name="firstDate"
+              {...firstDate}
+              intl={intl}
+              values={values}
+              onDateChange={v => {
+                const hasFirstDate = firstDate && firstDate.bookingDate;
+                if (hasFirstDate && firstDate.bookingDate.date.getTime() !== v.date.getTime()) {
+                  form.change('extraDays', []);
+                }
+                form.change('firstDate.bookingDate', v);
+              }}
+              datePlaceholder={datePlaceholder}
               focusedInput={this.state.focusedInput}
-              onFocusedInputChange={this.onFocusedInputChange}
-              format={identity}
-              timeSlots={timeSlots}
-              useMobileMargins
-              validate={composeValidators(
-                required(requiredMessage),
-                bookingDatesRequired(startDateErrorMessage, endDateErrorMessage)
-              )}
+              onFieldBlur={e => {
+                this.handleFieldBlur(e);
+              }}
             />
           };
 

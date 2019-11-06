@@ -70,6 +70,7 @@
   "BookingDatesForm.choosePlan": "Choose a booking plan",
   "BookingDatesForm.bookingEndTitle": "End date",
   "BookingDatesForm.bookingStartTitle": "Start date",
+  "BookingDatesForm.mounthCount": "+ months",
   "BookingDatesForm.hourStartLabel": "Start Time",
   "BookingDatesForm.hourStartPlaceholder": "Start Time",
   "BookingDatesForm.hourEndLabel": "Start Time",
