@@ -299,10 +299,13 @@ export class BookingDatesFormComponent extends Component {
             handleChangeRentalType,
             avails,
           } = fieldRenderProps;
+
           const { firstDate, extraDays = [] } = values;
 
           const requiredSelect = required('This field is required');
 
+
+          // Fee calculations
           const selectedSeatsFee =
           values &&
           values.workspaces &&
@@ -342,12 +345,17 @@ export class BookingDatesFormComponent extends Component {
             ? values.meeting_rooms_quantity
             : null;
 
+
+
+          // Time calculations
           let totalHours = 0;
           try {
             totalHours = countHours(values);
           } catch (e) {
             // No need to react - totalHours is just 0
           }
+
+          console.log("totalHours", totalHours, values);
 
           let startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
           let endDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
@@ -392,6 +400,9 @@ export class BookingDatesFormComponent extends Component {
                 meetingRoomsQuantity: selectedMeetingRoomsQuantity,
               }
               : null;
+
+          console.log("bookingData",bookingData);
+
           const bookingInfo =
             bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
                 <div className={css.priceBreakdownContainer}>
@@ -402,6 +413,8 @@ export class BookingDatesFormComponent extends Component {
                 </div>
               ) : null;
 
+
+          // Definion of messages and texts
           const hoursError = this.state.bookingHoursError ? (
               <span className={css.hoursError}>
               <FormattedMessage id="BookingDatesForm.hoursError" />
@@ -411,6 +424,7 @@ export class BookingDatesFormComponent extends Component {
           const bookingStartLabel = intl.formatMessage({
             id: 'BookingDatesForm.bookingStartTitle',
           });
+
           const bookingEndLabel = intl.formatMessage({ id: 'BookingDatesForm.bookingEndTitle' });
           const requiredMessage = intl.formatMessage({ id: 'BookingDatesForm.requiredDate' });
           const startDateErrorMessage = intl.formatMessage({
@@ -472,6 +486,8 @@ export class BookingDatesFormComponent extends Component {
 
           const selectedWorkspaces = values && values.workspaces ? values.workspaces : [];
 
+
+
           const fees = {
             seats: seatsFee ? `(${formatMoney(intl, seatsFee)})` : null,
             office_rooms: officeRoomsFee ? `(${formatMoney(intl, officeRoomsFee)})` : null,
@@ -531,6 +547,27 @@ export class BookingDatesFormComponent extends Component {
               }}
             />
           } else if (currentRentalType === 'daily') {
+            dateChoosBox = <FieldDateRangeInput
+              className={css.bookingDates}
+              name="bookingDates"
+              unitType={unitType}
+              startDateId={`${form}.bookingStartDate`}
+              startDateLabel={bookingStartLabel}
+              startDatePlaceholderText={startDatePlaceholderText}
+              endDateId={`${form}.bookingEndDate`}
+              endDateLabel={bookingEndLabel}
+              endDatePlaceholderText={endDatePlaceholderText}
+              focusedInput={this.state.focusedInput}
+              onFocusedInputChange={this.onFocusedInputChange}
+              format={identity}
+              timeSlots={timeSlots}
+              useMobileMargins
+              validate={composeValidators(
+                required(requiredMessage),
+                bookingDatesRequired(startDateErrorMessage, endDateErrorMessage)
+              )}
+            />
+          } else if (currentRentalType === 'monthly') {
             dateChoosBox = <FieldDateRangeInput
               className={css.bookingDates}
               name="bookingDates"
