@@ -76,6 +76,27 @@ const countHours = dateHour => {
   return firstDateHours.add(extraDateHours).toNumber();
 };
 
+const countHoursBetweenDays = values => {
+  if (!values) {
+    return 0;
+  }
+
+  const startDateObj = values &&
+    values.bookingDates &&
+    values.bookingDates.startDate ?
+    moment(values.bookingDates.startDate) : null;
+
+  const endDateObj = values &&
+    values.bookingDates &&
+    values.bookingDates.endDate ?
+    moment(values.bookingDates.endDate) : null;
+
+  let duration = moment.duration(endDateObj.diff(startDateObj));
+
+  return duration.asHours()
+
+};
+
 // check that all the dates have hourStart and hourEnd
 const hoursSelected = dateHour => {
   const { hourStart, hourEnd } = dateHour && dateHour.firstDate ? dateHour.firstDate : {};
@@ -348,34 +369,72 @@ export class BookingDatesFormComponent extends Component {
 
 
           // Time calculations
+
           let totalHours = 0;
-          try {
-            totalHours = countHours(values);
-          } catch (e) {
-            // No need to react - totalHours is just 0
-          }
+          let startDate = null;
+          let endDate = null;
 
-          console.log("totalHours", totalHours, values);
-
-          let startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
-          let endDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
-
-          if(firstDate){
-            var hourStart = values.firstDate.hourStart;
-            var hourEnd = values.firstDate.hourEnd;
-
-            if(hourStart){
-              var hourStartHH = parseInt(hourStart.substr(0, 2));
-              var hourStartMM = parseInt(hourStart.substr(3, 4));
-              startDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourStartMM).hours(hourStartHH).toDate()
+          if(currentRentalType === 'hourly') {
+            try {
+              totalHours = countHours(values);
+            } catch (e) {
+              // No need to react - totalHours is just 0
             }
+  
+            startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
+            endDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
+  
+            if(firstDate){
+              var hourStart = values.firstDate.hourStart;
+              var hourEnd = values.firstDate.hourEnd;
+  
+              if(hourStart){
+                var hourStartHH = parseInt(hourStart.substr(0, 2));
+                var hourStartMM = parseInt(hourStart.substr(3, 4));
+                startDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourStartMM).hours(hourStartHH).toDate()
+              }
+  
+              if(hourEnd){
+                var hourEndtHH = parseInt(hourEnd.substr(0, 2));
+                var hourEndMM = parseInt(hourEnd.substr(3, 4));
+                endDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourEndMM).hours(hourEndtHH).toDate()
+              }
+            };
+          } else if (currentRentalType === 'daily') {
 
-            if(hourEnd){
-              var hourEndtHH = parseInt(hourEnd.substr(0, 2));
-              var hourEndMM = parseInt(hourEnd.substr(3, 4));
-              endDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourEndMM).hours(hourEndtHH).toDate()
+            try {
+              totalHours = countHoursBetweenDays(values);
+            } catch (e) {
+              // No need to react - totalHours is just 0
             }
-          }
+ 
+            startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
+            endDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
+  
+            if(firstDate){
+              var hourStart = values.firstDate.hourStart;
+              var hourEnd = values.firstDate.hourEnd;
+  
+              if(hourStart){
+                var hourStartHH = parseInt(hourStart.substr(0, 2));
+                var hourStartMM = parseInt(hourStart.substr(3, 4));
+                startDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourStartMM).hours(hourStartHH).toDate()
+              }
+  
+              if(hourEnd){
+                var hourEndtHH = parseInt(hourEnd.substr(0, 2));
+                var hourEndMM = parseInt(hourEnd.substr(3, 4));
+                endDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourEndMM).hours(hourEndtHH).toDate()
+              }
+            };
+
+          } else if (currentRentalType === 'monthly') {
+
+          };
+
+
+
+
 
           // This is the place to collect breakdown estimation data. See the
           // EstimatedBreakdownMaybe component to change the calculations
@@ -400,8 +459,6 @@ export class BookingDatesFormComponent extends Component {
                 meetingRoomsQuantity: selectedMeetingRoomsQuantity,
               }
               : null;
-
-          console.log("bookingData",bookingData);
 
           const bookingInfo =
             bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
