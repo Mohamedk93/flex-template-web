@@ -461,7 +461,9 @@ export class BookingDatesFormComponent extends Component {
               : null;
 
           const bookingInfo =
-            bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
+            // TODOS need correct validation
+            // bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
+            bookingData & isChooseWorkspace(values) ? (
                 <div className={css.priceBreakdownContainer}>
                   <h3 className={css.priceBreakdownTitle}>
                     <FormattedMessage id="BookingDatesForm.priceBreakdownTitle" />
