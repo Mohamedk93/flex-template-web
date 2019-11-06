@@ -498,6 +498,27 @@ export class BookingDatesFormComponent extends Component {
                 this.handleFieldBlur(e);
               }}
             />
+          } else if (currentRentalType === 'daily') {
+            dateChoosBox = <FieldDateRangeInput
+              className={css.bookingDates}
+              name="bookingDates"
+              unitType={unitType}
+              startDateId={`${form}.bookingStartDate`}
+              startDateLabel={bookingStartLabel}
+              startDatePlaceholderText={startDatePlaceholderText}
+              endDateId={`${form}.bookingEndDate`}
+              endDateLabel={bookingEndLabel}
+              endDatePlaceholderText={endDatePlaceholderText}
+              focusedInput={this.state.focusedInput}
+              onFocusedInputChange={this.onFocusedInputChange}
+              format={null}
+              timeSlots={timeSlots}
+              useMobileMargins
+              validate={composeValidators(
+                required(requiredMessage),
+                bookingDatesRequired(startDateErrorMessage, endDateErrorMessage)
+              )}
+            />
           }
 
           return (
