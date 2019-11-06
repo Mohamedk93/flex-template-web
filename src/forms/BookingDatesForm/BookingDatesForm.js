@@ -291,7 +291,9 @@ export class BookingDatesFormComponent extends Component {
             officeRoomsFee,
             meetingRoomsFee,
             rentalTypes,
+            currentRentalType,
             handleChangeRentalType,
+            avails,
           } = fieldRenderProps;
           const { firstDate, extraDays = [] } = values;
           const required = validators.required('This field is required');
@@ -444,6 +446,22 @@ export class BookingDatesFormComponent extends Component {
             meeting_rooms: meetingRoomsFee ? `(${formatMoney(intl, meetingRoomsFee)})` : null,
           };
 
+          const availsView = avails ? (
+            <div className={css.availsBox}>
+              <h3 className={css.availsTitle}>
+                <FormattedMessage id="BookingPanel.availsTitle" />
+              </h3>
+              {avails.map((item, i) => {
+                return (
+                  <p key={i} className={css.availsItem}>
+                    <span>{item.day}: </span>
+                    <span>{item.hours}</span>
+                  </p>
+                );
+              })}
+            </div>
+          ) : null;
+
           const rentalTypesFieldset = rentalTypes ? rentalTypes.map(item => {
             const label = intl.formatMessage({
               id: `EditListingPricingForm.rentalType_${item}`,
@@ -459,6 +477,28 @@ export class BookingDatesFormComponent extends Component {
               />
             )
           }) : null;
+
+          let dateChoosBox = null;
+          if(currentRentalType === 'hourly') {
+            dateChoosBox = <DateHourPicker
+              id="firstDate"
+              name="firstDate"
+              {...firstDate}
+              intl={intl}
+              onDateChange={v => {
+                const hasFirstDate = firstDate && firstDate.bookingDate;
+                if (hasFirstDate && firstDate.bookingDate.date.getTime() !== v.date.getTime()) {
+                  form.change('extraDays', []);
+                }
+                form.change('firstDate.bookingDate', v);
+              }}
+              datePlaceholder={datePlaceholder}
+              focusedInput={this.state.focusedInput}
+              onFieldBlur={e => {
+                this.handleFieldBlur(e);
+              }}
+            />
+          }
 
           return (
             <Form
@@ -476,24 +516,10 @@ export class BookingDatesFormComponent extends Component {
                 <FormattedMessage id="BookingDatesForm.choosePlan" />
               </label>
               {rentalTypesFieldset}
-              <DateHourPicker
-                id="firstDate"
-                name="firstDate"
-                {...firstDate}
-                intl={intl}
-                onDateChange={v => {
-                  const hasFirstDate = firstDate && firstDate.bookingDate;
-                  if (hasFirstDate && firstDate.bookingDate.date.getTime() !== v.date.getTime()) {
-                    form.change('extraDays', []);
-                  }
-                  form.change('firstDate.bookingDate', v);
-                }}
-                datePlaceholder={datePlaceholder}
-                focusedInput={this.state.focusedInput}
-                onFieldBlur={e => {
-                  this.handleFieldBlur(e);
-                }}
-              />
+
+              {availsView}
+
+              {dateChoosBox}
 
               <FieldCheckboxGroupWithQuantity
                 className={css.workspaces}

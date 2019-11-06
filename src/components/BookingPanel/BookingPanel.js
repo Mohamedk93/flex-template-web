@@ -228,22 +228,6 @@ export class BookingPanel extends Component {
       return sorter[day1] - sorter[day2];
     });
 
-    const availsView = avails ? (
-        <div className={css.availsBox}>
-          <h3 className={css.availsTitle}>
-            <FormattedMessage id="BookingPanel.availsTitle" />
-          </h3>
-          {avails.map((item, i) => {
-            return (
-              <p key={i} className={css.availsItem}>
-                <span>{item.day}: </span>
-                <span>{item.hours}</span>
-              </p>
-            );
-          })}
-        </div>
-      ) : null;
-
     const maxQuantity = {
       seats: publicData.seatsRoomsQuantity ? publicData.seatsQuantity : 500,
       office_rooms: publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 100,
@@ -269,11 +253,11 @@ export class BookingPanel extends Component {
 
           <div className={css.bookingHeading}>
             <h2 className={titleClasses}>{title}</h2>
-            {subTitleText ? <div className={css.bookingHelp}>{subTitleText}</div> : null}
+            {/* {subTitleText ? <div className={css.bookingHelp}>{subTitleText}</div> : null} */}
           </div>
-          {availsView}
           {showBookingDatesForm ? (
             <BookingDatesForm
+              avails={avails}
               className={css.bookingForm}
               formId="BookingPanel"
               submitButtonWrapperClassName={css.bookingDatesSubmitButtonWrapper}
@@ -290,6 +274,7 @@ export class BookingPanel extends Component {
               maxQuantity={maxQuantity}
               rentalTypes={rentalTypes}
               handleChangeRentalType={this.handleChangeRentalType}
+              currentRentalType={currentRentalType}
               initialValues={{ 
                 seats_quantity: 1,
                 office_rooms_quantity: 1,
