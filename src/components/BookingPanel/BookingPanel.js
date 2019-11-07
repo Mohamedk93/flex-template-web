@@ -144,15 +144,17 @@ export class BookingPanel extends Component {
         ? new Money(meetingRoomsAmount, meetingRoomsCurrency)
         : null;
         
-    const sortRentalType = {
-      "hourly": 1,
-      "daily": 2,
-      "monthly": 3,
-    };
+    const rentalTypes = publicData.rentalTypes;
+    // Sorter
+    // const sortRentalType = {
+    //   "hourly": 1,
+    //   "daily": 2,
+    //   "monthly": 3,
+    // };
 
-    const rentalTypes = publicData.rentalTypes.sort(function sortRental(a, b) {
-      return sortRentalType[a] - sortRentalType[b];
-    });
+    // const rentalTypes = publicData.rentalTypes.sort(function sortRental(a, b) {
+    //   return sortRentalType[a] - sortRentalType[b];
+    // });
 
     const handleSubmit = values => {
       const selectedSeatsFee =

@@ -679,7 +679,7 @@ export class BookingDatesFormComponent extends Component {
               focusedInput={this.state.focusedInput}
               onFocusedInputChange={this.onFocusedInputChange}
               format={identity}
-              timeSlots={timeSlots}
+              timeSlots={null} // All days must be available
               useMobileMargins
               validate={composeValidators(
                 required(requiredMessage),
