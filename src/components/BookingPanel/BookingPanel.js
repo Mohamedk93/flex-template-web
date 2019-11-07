@@ -205,16 +205,41 @@ export class BookingPanel extends Component {
     const classes = classNames(rootClassName || css.root, className);
     const titleClasses = classNames(titleClassName || css.bookingTitle);
 
-    let avails = [];
-    if(timeSlots) {
-      let days = [];
+    const shortDayCodes = {
+      "mon": 1,
+      "tue": 2,
+      "wed": 3,
+      "thu": 4,
+      "fri": 5,
+      "sat": 6,
+      "sun": 7
+    };
+
+    let $avails = [];
+    let schedule = listing.attributes.publicData &&
+      listing.attributes.publicData.workingSchedule &&
+        listing.attributes.publicData.workingSchedule.entries;
+    if (schedule) {
+      schedule.forEach(sch_item => {
+        if (sch_item.seats > 0) {
+          $avails.push({
+            day: moment().day(shortDayCodes[sch_item.dayOfWeek]).format("dddd"),
+            hours: moment(sch_item.startTime, 'HH:mm').format('h:mm A') + " - " +
+              moment(sch_item.endTime, 'HH:mm').format('h:mm A')
+          });
+        }
+      });
+    } else if (timeSlots) {
+      let $days = [];  
       timeSlots.forEach(function(item) {
-        let day = moment(item.attributes.start).format("dddd");
-        if(days.indexOf(day) === -1) {
-          days.push(day);
-          let startTime = moment(item.attributes.start).format("LT");
-          let endTime = moment(item.attributes.end).format("LT");
-          avails.push({day: day, hours: startTime + " - " + endTime});
+        let $day = moment(item.attributes.start).format("dddd");
+        if($days.indexOf($day) === -1) {
+          $days.push($day);
+          let $start_time = moment(item.attributes.start).format("LT");
+          let $end_time = moment(item.attributes.end).format("LT");
+          // let $start_time = moment(item.attributes.start).format("LT");
+          // let $end_time = moment(item.attributes.end).format("LT");
+          $avails.push({day: $day, hours: $start_time + " - " + $end_time});
         }
       });
     };
@@ -229,7 +254,7 @@ export class BookingPanel extends Component {
       "sunday": 7
     };
 
-    avails.sort(function sortByDay(a, b) {
+    $avails.sort(function sortByDay(a, b) {
       let day1 = a.day.toLowerCase();
       let day2 = b.day.toLowerCase();
       return sorter[day1] - sorter[day2];
@@ -264,7 +289,7 @@ export class BookingPanel extends Component {
           </div>
           {showBookingDatesForm ? (
             <BookingDatesForm
-              avails={avails}
+              avails={$avails}
               className={css.bookingForm}
               formId="BookingPanel"
               submitButtonWrapperClassName={css.bookingDatesSubmitButtonWrapper}

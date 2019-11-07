@@ -125,6 +125,7 @@ const EditListingAvailabilityPanel = props => {
             publicData: {
               timezone: usersTimeZone,
               rentalTypes,
+              workingSchedule: availabilityPlan,
             }
           });
         }}
