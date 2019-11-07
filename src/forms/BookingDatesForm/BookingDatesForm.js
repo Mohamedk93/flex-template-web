@@ -152,7 +152,6 @@ export class BookingDatesFormComponent extends Component {
     const office_rooms_quantity = values && values.office_rooms_quantity ? parseInt(values.office_rooms_quantity) : 0;
     const meeting_rooms_quantity = values && values.meeting_rooms_quantity ? parseInt(values.meeting_rooms_quantity) : 0;
 
-
     
     // Declarations TODOS
     let totalHours = 0;
@@ -165,6 +164,7 @@ export class BookingDatesFormComponent extends Component {
 
     let sdtFinal = null;
     let edtFinal = null;
+    let quantity = null;
 
     // Old way. For hourly
     if(rental_type === 'hourly') {
@@ -175,6 +175,8 @@ export class BookingDatesFormComponent extends Component {
       } catch (e) {
         // No need to react - totalHours is just 0
       }
+
+      quantity = totalHours;
 
       if (!(bookingDate && bookingDate.date)) {
         this.setState({ focusedInput: 'bookingDate' });
@@ -236,6 +238,7 @@ export class BookingDatesFormComponent extends Component {
           return formatMessageLine(d);
         });
       }
+
     } else if (rental_type === 'daily') {
 
       sdtFinal = values &&
@@ -252,19 +255,15 @@ export class BookingDatesFormComponent extends Component {
         const startDateObj = moment(sdtFinal);
         const endDateObj = moment(edtFinal);           
         let duration = moment.duration(endDateObj.diff(startDateObj));
-        totalHours = duration.asHours();
+        quantity = duration.asHours();
       };
 
     } else if (rental_type === 'monthly') {
 
       sdtFinal = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
-        
       const { monthCount } = values;
+      quantity = monthCount;
       edtFinal = sdtFinal ? moment(sdtFinal).add(monthCount, 'M').subtract(1,'d').toDate() : null;
-
-      if (sdtFinal && edtFinal) {
-        totalHours = monthCount * 720;
-      };
 
     }    
 
@@ -279,7 +278,7 @@ export class BookingDatesFormComponent extends Component {
         dateHourStart: sdtFinal,
         dateHourEnd: edtFinal,
       },
-      hours: totalHours,
+      hours: quantity, // it's no only hours, it's may be days or months. It is quantity
       message: [
         intl.formatMessage({ id: 'BookingDatesForm.bookingDateMessageFirstLine' }),
         // formatMessageLine(firstDate),

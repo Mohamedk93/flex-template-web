@@ -98,6 +98,7 @@ export class ListingPageComponent extends Component {
       callSetInitialValues,
       onInitializeCardPaymentData,
     } = this.props;
+
     const listingId = new UUID(params.id);
     const listing = getListing(listingId);
 
