@@ -151,16 +151,13 @@ export class BookingDatesFormComponent extends Component {
     const seats_quantity = values && values.seats_quantity ? parseInt(values.seats_quantity) : 0;
     const office_rooms_quantity = values && values.office_rooms_quantity ? parseInt(values.office_rooms_quantity) : 0;
     const meeting_rooms_quantity = values && values.meeting_rooms_quantity ? parseInt(values.meeting_rooms_quantity) : 0;
-
     
-    // Declarations TODOS
-    let totalHours = 0;
     let formatMessageLine = null;
 
     let dateHourLines = intl.formatMessage(
       { id: 'BookingDatesForm.bookingDateMessageDateHourLine' },
-      { dateHourStart: "start", dateHourEnd: "end" }
-    ) // TODOS. Default value
+      { dateHourStart: "Start Date", dateHourEnd: "End Date" }
+    );
 
     let sdtFinal = null;
     let edtFinal = null;
@@ -171,18 +168,16 @@ export class BookingDatesFormComponent extends Component {
       const bookingDate = firstDate ? firstDate.bookingDate : null;
 
       try {
-        totalHours = countHours(values);
+        quantity = countHours(values);
       } catch (e) {
-        // No need to react - totalHours is just 0
+        // No need to react - totalHours - quantity is just 0
       }
-
-      quantity = totalHours;
 
       if (!(bookingDate && bookingDate.date)) {
         this.setState({ focusedInput: 'bookingDate' });
       } else if (!hoursSelected(values)) {
         this.setState({ bookingHoursError: true });
-      } else if (totalHours > 0 && isFullHours(totalHours)) {
+      } else if (quantity > 0 && isFullHours(quantity)) {
 
         const startDate = moment(bookingDate.date)
           .startOf('day')
@@ -282,7 +277,7 @@ export class BookingDatesFormComponent extends Component {
       message: [
         intl.formatMessage({ id: 'BookingDatesForm.bookingDateMessageFirstLine' }),
         // formatMessageLine(firstDate),
-        "", // TODOS
+        "", 
         ...dateHourLines,
       ],
       seatsQuantity: seats_quantity,
@@ -434,8 +429,7 @@ export class BookingDatesFormComponent extends Component {
   
             startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
             endDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
-  
-            // TODOS WTF
+
             if(firstDate){
               var hourStart = values.firstDate.hourStart;
               var hourEnd = values.firstDate.hourEnd;
