@@ -382,18 +382,18 @@ export class BookingDatesFormComponent extends Component {
 
 
           // TODOS Not default for hourly!
-          let seatsFeeCalc = seatsFee;
-          let officeRoomsFeeCalc = officeRoomsFee;
-          let meetingRoomsFeeCalc = meetingRoomsFee;
-          if(currentRentalType === "daily") {
-            seatsFeeCalc = moneyDivider(seatsFee, 24);
-            officeRoomsFeeCalc = moneyDivider(officeRoomsFee, 24);
-            meetingRoomsFeeCalc =moneyDivider(meetingRoomsFee, 24);
-          } else if(currentRentalType === "monthly") {
-            seatsFeeCalc = moneyDivider(seatsFee, 720);
-            officeRoomsFeeCalc = moneyDivider(officeRoomsFee, 720);
-            meetingRoomsFeeCalc =moneyDivider(meetingRoomsFee, 720);
-          }
+          // let seatsFeeCalc = seatsFee;
+          // let officeRoomsFeeCalc = officeRoomsFee;
+          // let meetingRoomsFeeCalc = meetingRoomsFee;
+          // if(currentRentalType === "daily") {
+          //   seatsFeeCalc = moneyDivider(seatsFee, 24);
+          //   officeRoomsFeeCalc = moneyDivider(officeRoomsFee, 24);
+          //   meetingRoomsFeeCalc =moneyDivider(meetingRoomsFee, 24);
+          // } else if(currentRentalType === "monthly") {
+          //   seatsFeeCalc = moneyDivider(seatsFee, 720);
+          //   officeRoomsFeeCalc = moneyDivider(officeRoomsFee, 720);
+          //   meetingRoomsFeeCalc =moneyDivider(meetingRoomsFee, 720);
+          // }
 
 
           // Selected fee
@@ -401,7 +401,7 @@ export class BookingDatesFormComponent extends Component {
           values &&
           values.workspaces &&
           values.workspaces.indexOf('seats') != -1
-            ? seatsFeeCalc
+            ? seatsFee
             : null;
 
           let selectedSeatsQuantity =
@@ -414,7 +414,7 @@ export class BookingDatesFormComponent extends Component {
           values &&
           values.workspaces &&
           values.workspaces.indexOf('office_rooms') != -1
-            ? officeRoomsFeeCalc
+            ? officeRoomsFee
             : null;
 
           const selectedOfficeRoomsQuantity =
@@ -427,7 +427,7 @@ export class BookingDatesFormComponent extends Component {
           values &&
           values.workspaces &&
           values.workspaces.indexOf('meeting_rooms') != -1
-            ? meetingRoomsFeeCalc
+            ? meetingRoomsFee
             : null;
 
           const selectedMeetingRoomsQuantity =
@@ -438,15 +438,17 @@ export class BookingDatesFormComponent extends Component {
 
 
 
-          // Time calculations
-          let totalHours = 0;
+          // Quantity calculations
+          // Each quantity depends on rental_type. 
+          // Quantity can be in hours, days, months.
+          let quantity = 0;
           let startDate = null;
           let endDate = null;
 
           if(currentRentalType === 'hourly') {
 
             try {
-              totalHours = countHours(values);
+              quantity = countHours(values);
             } catch (e) {
               // No need to react - totalHours is just 0
             }
@@ -454,6 +456,7 @@ export class BookingDatesFormComponent extends Component {
             startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
             endDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
   
+            // TODOS WTF
             if(firstDate){
               var hourStart = values.firstDate.hourStart;
               var hourEnd = values.firstDate.hourEnd;
@@ -487,23 +490,23 @@ export class BookingDatesFormComponent extends Component {
               const startDateObj = moment(startDate);
               const endDateObj = moment(endDate);           
               let duration = moment.duration(endDateObj.diff(startDateObj));
-              totalHours = duration.asHours();
+              quantity = duration.asDays();
             };
             
           } else if (currentRentalType === 'monthly') {
 
             startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
-        
             const { monthCount } = values;
+            quantity = monthCount;
             endDate = startDate ? moment(startDate).add(monthCount, 'M').toDate() : null;
 
-            if (startDate && endDate) {
-              // const startDateObj = moment(startDate);
-              // const endDateObj = moment(endDate);           
-              // let duration = moment.duration(endDateObj.diff(startDateObj));
-              // totalHours = duration.asHours();
-              totalHours = monthCount * 720;
-            };
+            // if (startDate && endDate) {
+            //   // const startDateObj = moment(startDate);
+            //   // const endDateObj = moment(endDate);           
+            //   // let duration = moment.duration(endDateObj.diff(startDateObj));
+            //   // totalHours = duration.asHours();
+            //   totalHours = monthCount * 720;
+            // };
 
           };
 
@@ -514,18 +517,17 @@ export class BookingDatesFormComponent extends Component {
           const bookingData =
             startDate && endDate
               ? {
-                unitType,
-                unitPrice,
+                unitType, 
+                unitPrice, // no used
+
                 startDate,
                 endDate,
-
-                // NOTE: If unitType is `line-item/units`, a new picker
-                // for the quantity should be added to the form.
-                quantity: totalHours,
+                quantity,
 
                 seatsFee: selectedSeatsFee,
                 officeRoomsFee: selectedOfficeRoomsFee,
                 meetingRoomsFee: selectedMeetingRoomsFee,
+
                 seatsQuantity: selectedSeatsQuantity,
                 officeRoomsQuantity: selectedOfficeRoomsQuantity,
                 meetingRoomsQuantity: selectedMeetingRoomsQuantity,
@@ -616,10 +618,6 @@ export class BookingDatesFormComponent extends Component {
           };
 
           const selectedWorkspaces = values && values.workspaces ? values.workspaces : [];
-
-
-          const { monthCount } = values;
-
 
           const fees = {
             seats: seatsFee ? `(${formatMoney(intl, seatsFee)})` : null,
@@ -740,6 +738,7 @@ export class BookingDatesFormComponent extends Component {
               }}
               className={classes}
             >
+
               <label>
                 <FormattedMessage id="BookingDatesForm.choosePlan" />
               </label>
@@ -759,15 +758,14 @@ export class BookingDatesFormComponent extends Component {
                 fees={fees}
               />
 
-              {/* {hoursValid(values) && isChooseWorkspace(values) ? ( TODOS */}
-              {isChooseWorkspace(values) ? (
-                  <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={requiredSelect}>
-                    <option value="">Select payment</option>
-                    {stripeConnected ? (<option value="credit card">Credit card</option>) : null}
-                    <option value="cash">Cash</option>
-                  </FieldSelect>
-                ): null }
-
+              {/* { {hoursValid(values) && isChooseWorkspace(values) ? ( TODOS }
+              ): null } */}
+              <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={requiredSelect}>
+                <option value="">Select payment</option>
+                {stripeConnected ? (<option value="credit card">Credit card</option>) : null}
+                <option value="cash">Cash</option>
+              </FieldSelect>
+ 
               {currentRentalType === 'hourly' ? (
                 <FieldArray
                   name="extraDays"
@@ -832,7 +830,9 @@ export class BookingDatesFormComponent extends Component {
               ) : null}
 
               {hoursError}
+
               {bookingInfo}
+
               <p className={css.smallPrint}>
                 <FormattedMessage
                   id={
@@ -842,6 +842,7 @@ export class BookingDatesFormComponent extends Component {
                   }
                 />
               </p>
+
               <div className={submitButtonClasses}>
                 <PrimaryButton type="submit">
                   <FormattedMessage id="BookingDatesForm.requestToBook" />
