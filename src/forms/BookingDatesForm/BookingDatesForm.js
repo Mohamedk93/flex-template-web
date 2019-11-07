@@ -377,19 +377,6 @@ export class BookingDatesFormComponent extends Component {
 
           const requiredSelect = required('This field is required');
 
-          // let seatsFeeCalc = seatsFee;
-          // let officeRoomsFeeCalc = officeRoomsFee;
-          // let meetingRoomsFeeCalc = meetingRoomsFee;
-          // if(currentRentalType === "daily") {
-          //   seatsFeeCalc = moneyDivider(seatsFee, 24);
-          //   officeRoomsFeeCalc = moneyDivider(officeRoomsFee, 24);
-          //   meetingRoomsFeeCalc =moneyDivider(meetingRoomsFee, 24);
-          // } else if(currentRentalType === "monthly") {
-          //   seatsFeeCalc = moneyDivider(seatsFee, 720);
-          //   officeRoomsFeeCalc = moneyDivider(officeRoomsFee, 720);
-          //   meetingRoomsFeeCalc =moneyDivider(meetingRoomsFee, 720);
-          // }
-
           // Selected fee
           let selectedSeatsFee =
           values &&
@@ -677,7 +664,7 @@ export class BookingDatesFormComponent extends Component {
               endDateLabel={bookingEndLabel}
               endDatePlaceholderText={endDatePlaceholderText}
               focusedInput={this.state.focusedInput}
-              onFocusedInputChange={this.onFocusedInputChange}
+              // onFocusedInputChange={this.onFocusedInputChange}
               format={identity}
               timeSlots={null} // All days must be available
               useMobileMargins
@@ -694,7 +681,6 @@ export class BookingDatesFormComponent extends Component {
               intl={intl}
               values={values}
               onDateChange={v => {
-                // TODOS delete it
                 const hasFirstDate = firstDate && firstDate.bookingDate;
                 if (hasFirstDate && firstDate.bookingDate.date.getTime() !== v.date.getTime()) {
                   form.change('extraDays', []);
@@ -712,11 +698,23 @@ export class BookingDatesFormComponent extends Component {
           return (
             <Form
               onSubmit={e => {
-                if (firstDate && firstDate.bookingDate) {
-                  handleSubmit(e);
+                if (currentRentalType === 'daily') {
+                  if (startDate && endDate) {
+                    handleSubmit(e);
+                  } else if(!startDate) {
+                    e.preventDefault();
+                    this.setState({ focusedInput: 'startDate' });
+                  } else if(!endDate) {
+                    e.preventDefault();
+                    this.setState({ focusedInput: 'endDate' });
+                  }
                 } else {
-                  e.preventDefault();
-                  this.setState({ focusedInput: 'bookingDate' });
+                  if (firstDate && firstDate.bookingDate) {
+                    handleSubmit(e);
+                  } else {
+                    e.preventDefault();
+                    this.setState({ focusedInput: 'bookingDate' });
+                  }
                 }
               }}
               className={classes}
