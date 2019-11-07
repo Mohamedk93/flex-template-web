@@ -43,8 +43,11 @@
 }
 
 .labelHolder {
-  width: 150px;
+  width: 130px;
   padding-top: 3px;
+  @media (--viewportMedium) {
+    width: 150px; 
+  }
 }
 
 .availLabel {
@@ -73,8 +76,11 @@
 
 .hourEnd,
 .hourStart {
-  width: 130px;
+  width: 120px;
   padding: 0 10px;
+  @media (--viewportMedium) {
+    width: 130px; 
+  }
 }
 
 
@@ -97,7 +103,7 @@
 }
 
 .rentalTypesList {
-  margin-top: 15px;
+  margin: 15px 0;
 }
 
 .rentalTypesList span {

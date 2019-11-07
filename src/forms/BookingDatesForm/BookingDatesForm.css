@@ -36,7 +36,7 @@
   /* Font */
   color: var(--matterColorAnti);
 
-  margin-top: 0;
+  margin-top: 20px;
   margin-bottom: 10px;
   @media (--viewportMedium) {
     margin-top: 0;
@@ -115,9 +115,9 @@
 .availsBox {
   margin: 10px 0;
   padding: 0 24px;
-@media (--viewportMedium) {
-  padding: 0;
-}
+  @media (--viewportMedium) {
+    padding: 0;
+  }
 }
 .availsTitle {
   margin: 0;
@@ -137,4 +137,30 @@
 
 .extraDays {
   margin: 20px 0 0;
+}
+
+.rentalTypeWrapper {
+  margin: 10px 0;
+  padding: 0 24px;
+  @media (--viewportMedium) {
+    padding: 0;
+  }
+}
+
+.DateMonthPicker {
+  padding: 0 24px;
+  @media (--viewportMedium) {
+    padding: 0;
+  }
+}
+
+.DateMonthPicker {
+  & :global(.SingleDatePickerInput) {
+    width: auto;
+    margin: 0;
+  }
+  & :global(.DateInput input) {
+    padding: 5px 0 10px 0;
+    border-bottom-width: 3px;
+  }
 }

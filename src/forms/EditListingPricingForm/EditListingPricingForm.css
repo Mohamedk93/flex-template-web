@@ -42,8 +42,11 @@
 }
 
 .priceHead {
-  width: calc(100% - 160px);
   display: flex;
+  width: 100%;
+  @media (--viewportMedium) {
+    width: calc(100% - 160px);
+  }
 }
 
 .rentalLables {
@@ -57,16 +60,29 @@
 
 .priceRow {
   display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  @media (--viewportMedium) {
+    flex-direction: row;
+    margin-top: 0;
+  }
 }
 
 .priceLabel {
-  width: 160px;
-  padding-top: 15px;
+  width: 100%;
+  text-align: center;
+  @media (--viewportMedium) {
+    width: 160px;
+    padding-top: 15px;
+  }
 }
 
 .priceFields {
   display: flex;
-  width: calc(100% - 160px);
+  width: 100%;
+  @media (--viewportMedium) {
+    width: calc(100% - 160px);
+  }
 }
 
 .priceField {

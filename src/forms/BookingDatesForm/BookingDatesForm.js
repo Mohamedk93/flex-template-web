@@ -671,6 +671,7 @@ export class BookingDatesFormComponent extends Component {
             dateChoosBox = <DateMonthPicker
               id="firstDate"
               name="firstDate"
+              className={css.DateMonthPicker}
               {...firstDate}
               intl={intl}
               values={values}
@@ -714,10 +715,12 @@ export class BookingDatesFormComponent extends Component {
               className={classes}
             >
 
-              <label>
-                <FormattedMessage id="BookingDatesForm.choosePlan" />
-              </label>
-              {rentalTypesFieldset}
+              <div className={css.rentalTypeWrapper}>
+                <label>
+                  <FormattedMessage id="BookingDatesForm.choosePlan" />
+                </label>
+                {rentalTypesFieldset}
+              </div>
 
               {availsView}
 
