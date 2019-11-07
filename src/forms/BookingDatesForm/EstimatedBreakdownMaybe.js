@@ -157,7 +157,7 @@ const estimatedTransaction = (
     code: LINE_ITEM_SEATS_FEE,
     includeFor: ['customer', 'provider'],
     unitPrice: seatsFee,
-    quantity: seatsQuantity,
+    quantity: new Decimal(seatsQuantity),
     lineTotal: seatsFee,
     reversal: false,
   };
@@ -174,7 +174,7 @@ const estimatedTransaction = (
     lineTotal: officeRoomsFee,
     reversal: false,
   };
-  
+ 
   const officeRoomsFeeLineItemMaybe = officeRoomsFee
     ? [officeRoomsFeeLineItem]
     : [];

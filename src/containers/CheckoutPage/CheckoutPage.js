@@ -692,8 +692,6 @@ export class CheckoutPageComponent extends Component {
       saveAfterOnetimePayment: !!saveAfterOnetimePayment,
     };
 
-    console.log("requestPaymentParams", requestPaymentParams);
-
     this.handlePaymentIntent(requestPaymentParams)
       .then(res => {
         const { orderId, messageSuccess, paymentMethodSaved } = res; // Update: check data

@@ -261,7 +261,7 @@ export class BookingPanel extends Component {
     });
 
     const maxQuantity = {
-      seats: publicData.seatsRoomsQuantity ? publicData.seatsQuantity : 500,
+      seats: publicData.seatsQuantity ? publicData.seatsQuantity : 500,
       office_rooms: publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 100,
       meeting_rooms: publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 100,
     };
