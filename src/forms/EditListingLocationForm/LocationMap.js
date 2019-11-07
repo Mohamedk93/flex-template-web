@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps";
+import SearchMapWithGoogleMap, {
+  getMapCenter,
+} from '../../components/SearchMap/SearchMapWithGoogleMap';
 import css from './LocationMap.css';
 import config from '../../config';
-import { getMapCenter } from '../../components/SearchMap/SearchMapWithGoogleMap';
+import { types as sdkTypes } from '../../util/sdkLoader';
+const { LatLng } = sdkTypes;
 
 class LocationMap extends Component {
   constructor(props){
@@ -29,24 +33,27 @@ class LocationMap extends Component {
         defaultZoom={10}
         defaultCenter={{ lat, lng }}
         options={{gestureHandling: "greedy"}}
-        // ref={(map) => this._map = map}
-        // onDragEnd={() => console.log("dwed", getMapCenter(this._map))}
+        ref={(map) => this._map = map}
+        onDragEnd={(e) => {
+          let center = getMapCenter(this._map)
+          let latLng = new LatLng(center.lat, center.lng);
+          onMarkerDragEnd({latLng});
+        }}
         // onZoomChanged={() => console.log("ded dwed")}
       >
-        <Marker
-          position={{ lat, lng }}
-          draggable={true}
-          onDragEnd={coordsObj => onMarkerDragEnd(coordsObj)}
-        />
       </GoogleMap>
     ));
 
     return (
-      <div className={css.mapWrapper}>
-        <MapField 
-          containerElement={ <div style={{ height: `500px`, width: '100%' }} /> }
-          mapElement={ <div style={{ height: `100%` }} /> }
-        />
+      <div className={css.mapWrapperOuter}>
+        <div className={css.mapMarker}>
+        </div>
+        <div className={css.mapWrapper}>
+          <MapField 
+            containerElement={ <div style={{ height: `500px`, width: '100%' }} /> }
+            mapElement={ <div style={{ height: `100%` }} /> }
+          />
+        </div>
       </div>
     )
   }

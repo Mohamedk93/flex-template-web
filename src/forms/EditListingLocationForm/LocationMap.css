@@ -1,0 +1,22 @@
+.mapWrapperOuter {
+  height: 500px;
+}
+
+.mapWrapper {
+  height: 100%;
+}
+
+/* .mapWrapper:after{ */
+.mapMarker{
+  content: "";
+  width:40px;
+  position: relative;
+  left: calc(50% - 20px);
+  top: calc(50%);
+  /* right: 0;
+  bottom: 0; */
+  background: url('../../assets/map-pointer-icon-12.jpg') no-repeat 0 0;
+  background-size: 40px 40px;
+  padding: 20px 20px 20px 20px;
+  z-index: 3;
+}

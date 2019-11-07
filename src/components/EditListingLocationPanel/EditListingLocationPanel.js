@@ -181,8 +181,8 @@ class EditListingLocationPanel extends Component {
   onMarkerDragEnd(coordsObj) {
     const { latLng } = coordsObj;
     const coords = { 
-      lat: latLng.lat(), 
-      lng: latLng.lng(),
+      lat: latLng.lat, 
+      lng: latLng.lng,
     };
     const updateForm = true;
     this.getLocationPoint(coords, updateForm);
