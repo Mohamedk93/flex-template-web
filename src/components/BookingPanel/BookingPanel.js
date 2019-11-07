@@ -94,7 +94,6 @@ export class BookingPanel extends Component {
 
     const currentRentalType = this.state.rentalType;
     
-    
     // Prices calculation
 
     let seatsFeeData;
@@ -144,10 +143,16 @@ export class BookingPanel extends Component {
       meetingRoomsAmount && meetingRoomsCurrency
         ? new Money(meetingRoomsAmount, meetingRoomsCurrency)
         : null;
+        
+    const sortRentalType = {
+      "hourly": 1,
+      "daily": 2,
+      "monthly": 3,
+    };
 
-
-    const rentalTypes = publicData.rentalTypes;
-
+    const rentalTypes = publicData.rentalTypes.sort(function sortRental(a, b) {
+      return sortRentalType[a] - sortRentalType[b];
+    });
 
     const handleSubmit = values => {
       const selectedSeatsFee =

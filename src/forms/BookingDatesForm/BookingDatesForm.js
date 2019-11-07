@@ -377,8 +377,6 @@ export class BookingDatesFormComponent extends Component {
 
           const requiredSelect = required('This field is required');
 
-          // TODOS Not default for hourly!
-
           // let seatsFeeCalc = seatsFee;
           // let officeRoomsFeeCalc = officeRoomsFee;
           // let meetingRoomsFeeCalc = meetingRoomsFee;
@@ -391,7 +389,6 @@ export class BookingDatesFormComponent extends Component {
           //   officeRoomsFeeCalc = moneyDivider(officeRoomsFee, 720);
           //   meetingRoomsFeeCalc =moneyDivider(meetingRoomsFee, 720);
           // }
-
 
           // Selected fee
           let selectedSeatsFee =
@@ -432,8 +429,6 @@ export class BookingDatesFormComponent extends Component {
           values.meeting_rooms_quantity
             ? values.meeting_rooms_quantity
             : null;
-
-
 
           // Quantity and StartDate and EndDate calculations
           // Each quantity depends on rental_type. 
@@ -498,7 +493,6 @@ export class BookingDatesFormComponent extends Component {
             endDate = startDate ? moment(startDate).add(monthCount, 'M').subtract(1,'d').toDate() : null;
 
           };
-
 
           // This is the place to collect breakdown estimation data. See the
           // EstimatedBreakdownMaybe component to change the calculations

@@ -157,7 +157,7 @@ const estimatedTransaction = (
     code: LINE_ITEM_SEATS_FEE,
     includeFor: ['customer', 'provider'],
     unitPrice: seatsFee,
-    quantity: new Decimal(seatsQuantity),
+    quantity: seatsQuantity,
     lineTotal: seatsFee,
     reversal: false,
   };

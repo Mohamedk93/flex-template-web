@@ -545,7 +545,7 @@ const mapStateToProps = state => {
     enquiryModalOpenForListingId,
   } = state.ListingPage;
   const { currentUser } = state.user;
-
+  
   const getListing = id => {
     const ref = { id, type: 'listing' };
     const listings = getMarketplaceEntities(state, [ref]);
