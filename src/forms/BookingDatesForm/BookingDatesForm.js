@@ -118,7 +118,7 @@ const hoursValid = dateHour => {
 };
 
 const isChooseWorkspace = values => {  
-  return values.workspaces
+  return (values.workspaces && values.workspaces.length !== 0)
 };
 
 const identity = v => v;
@@ -380,8 +380,8 @@ export class BookingDatesFormComponent extends Component {
 
           const requiredSelect = required('This field is required');
 
-
           // TODOS Not default for hourly!
+
           // let seatsFeeCalc = seatsFee;
           // let officeRoomsFeeCalc = officeRoomsFee;
           // let meetingRoomsFeeCalc = meetingRoomsFee;
@@ -438,10 +438,10 @@ export class BookingDatesFormComponent extends Component {
 
 
 
-          // Quantity calculations
+          // Quantity and StartDate and EndDate calculations
           // Each quantity depends on rental_type. 
           // Quantity can be in hours, days, months.
-          let quantity = 0;
+          let quantity = null;
           let startDate = null;
           let endDate = null;
 
@@ -500,14 +500,6 @@ export class BookingDatesFormComponent extends Component {
             quantity = monthCount;
             endDate = startDate ? moment(startDate).add(monthCount, 'M').toDate() : null;
 
-            // if (startDate && endDate) {
-            //   // const startDateObj = moment(startDate);
-            //   // const endDateObj = moment(endDate);           
-            //   // let duration = moment.duration(endDateObj.diff(startDateObj));
-            //   // totalHours = duration.asHours();
-            //   totalHours = monthCount * 720;
-            // };
-
           };
 
 
@@ -515,7 +507,7 @@ export class BookingDatesFormComponent extends Component {
           // EstimatedBreakdownMaybe component to change the calculations
           // for customised payment processes.
           const bookingData =
-            startDate && endDate
+            startDate && endDate && quantity
               ? {
                 unitType, 
                 unitPrice, // no used
@@ -537,7 +529,6 @@ export class BookingDatesFormComponent extends Component {
               : null;
 
           // TODOS need correct validation
-          // bookingData && hoursValid(values) && isChooseWorkspace(values) ? (
           const bookingInfo = bookingData && isChooseWorkspace(values) ? (
             <div className={css.priceBreakdownContainer}>
               <h3 className={css.priceBreakdownTitle}>
@@ -546,6 +537,7 @@ export class BookingDatesFormComponent extends Component {
               <EstimatedBreakdownMaybe bookingData={bookingData} />
             </div>
           ) : null;
+
 
           // Definion of messages and texts
           const hoursError = this.state.bookingHoursError ? (
@@ -712,6 +704,7 @@ export class BookingDatesFormComponent extends Component {
               intl={intl}
               values={values}
               onDateChange={v => {
+                // TODOS delete it
                 const hasFirstDate = firstDate && firstDate.bookingDate;
                 if (hasFirstDate && firstDate.bookingDate.date.getTime() !== v.date.getTime()) {
                   form.change('extraDays', []);
