@@ -13,6 +13,7 @@ import {
 } from '../../util/types';
 
 import LineItemBookingHours from './LineItemBookingHours';
+import LineItemBookingDays from './LineItemBookingDays';
 import LineItemCustomPrices from './LineItemCustomPrices';
 import LineItemSubTotalMaybe from './LineItemSubTotalMaybe';
 import LineItemCustomerCommissionMaybe from './LineItemCustomerCommissionMaybe';
@@ -34,6 +35,7 @@ export const BookingBreakdownComponent = props => {
     booking,
     intl,
     dateType,
+    currentRentalType,
   } = props;
 
   const isCustomer = userRole === 'customer';
@@ -83,9 +85,21 @@ export const BookingBreakdownComponent = props => {
    *
    */
 
+  // Customize lines for different rental type
+
+  let timeBasedLine = null;
+  if(currentRentalType === 'hourly') {
+    timeBasedLine = <LineItemBookingHours transaction={transaction} booking={booking} unitType={unitType} />
+  } else if(currentRentalType === 'daily') {
+    timeBasedLine = <LineItemBookingDays currentRentalType={currentRentalType} transaction={transaction} booking={booking} unitType={unitType} />
+  } else if(currentRentalType === 'monthly') {
+    timeBasedLine = <LineItemBookingDays currentRentalType={currentRentalType} transaction={transaction} booking={booking} unitType={unitType} />
+  }
+
   return (
     <div className={classes}>
-      <LineItemBookingHours transaction={transaction} booking={booking} unitType={unitType} />
+
+      {timeBasedLine}
 
       <LineItemCustomPrices 
         transaction={transaction}         

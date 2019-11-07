@@ -260,15 +260,13 @@ export class BookingDatesFormComponent extends Component {
       sdtFinal = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
         
       const { monthCount } = values;
-      edtFinal = sdtFinal ? moment(sdtFinal).add(monthCount, 'M').toDate() : null;
+      edtFinal = sdtFinal ? moment(sdtFinal).add(monthCount, 'M').subtract(1,'d').toDate() : null;
 
       if (sdtFinal && edtFinal) {
         totalHours = monthCount * 720;
       };
 
-    }
-
-      
+    }    
 
     this.props.onSubmit({
       paymentMethod,
@@ -498,7 +496,7 @@ export class BookingDatesFormComponent extends Component {
             startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
             const { monthCount } = values;
             quantity = monthCount;
-            endDate = startDate ? moment(startDate).add(monthCount, 'M').toDate() : null;
+            endDate = startDate ? moment(startDate).add(monthCount, 'M').subtract(1,'d').toDate() : null;
 
           };
 
@@ -524,7 +522,7 @@ export class BookingDatesFormComponent extends Component {
                 officeRoomsQuantity: selectedOfficeRoomsQuantity,
                 meetingRoomsQuantity: selectedMeetingRoomsQuantity,
 
-                rentalType: currentRentalType,
+                currentRentalType,
               }
               : null;
 
