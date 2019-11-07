@@ -102,12 +102,13 @@ export class ListingPageComponent extends Component {
     const listingId = new UUID(params.id);
     const listing = getListing(listingId);
 
-    const { bookingDates, paymentMethod, ...bookingData } = values;
+    const { bookingDates, paymentMethod, rental_type, ...bookingData } = values;
 
     const initialValues = {
       listing,
       bookingData,
       paymentMethod,
+      rentalType: rental_type,
       bookingDates: {
         bookingStart: bookingDates.startDate,
         bookingEnd: bookingDates.endDate,

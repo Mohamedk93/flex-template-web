@@ -14,8 +14,12 @@ import { ensureTransaction } from './data';
 // At this transition a PaymentIntent is created by Marketplace API.
 // After this transition, the actual payment must be made on client-side directly to Stripe.
 export const TRANSITION_REQUEST_PAYMENT = 'transition/request-payment';
+export const TRANSITION_REQUEST_PAYMENT_DAILY = 'transition/request-payment-daily';
+export const TRANSITION_REQUEST_PAYMENT_MONTHLY = 'transition/request-payment-monthly';
 
 export const TRANSITION_REQUEST = 'transition/request';
+export const TRANSITION_REQUEST_DAILY = 'transition/request-daily';
+export const TRANSITION_REQUEST_MONTHLY = 'transition/request-monthly';
 
 // A customer can also initiate a transaction with an enquiry, and
 // then transition that with a request.

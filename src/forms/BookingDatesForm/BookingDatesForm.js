@@ -288,7 +288,7 @@ export class BookingDatesFormComponent extends Component {
       seatsQuantity: seats_quantity,
       officeRoomsQuantity: office_rooms_quantity,
       meetingRoomsQuantity: meeting_rooms_quantity,
-      rental_type,
+      rentalType: rental_type,
     });
 
   }
@@ -525,7 +525,6 @@ export class BookingDatesFormComponent extends Component {
               }
               : null;
 
-          // TODOS need correct validation
           const bookingInfo = bookingData && isChooseWorkspace(values) ? (
             <div className={css.priceBreakdownContainer}>
               <h3 className={css.priceBreakdownTitle}>
@@ -748,8 +747,6 @@ export class BookingDatesFormComponent extends Component {
                 fees={fees}
               />
 
-              {/* { {hoursValid(values) && isChooseWorkspace(values) ? ( TODOS }
-              ): null } */}
               <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={requiredSelect}>
                 <option value="">Select payment</option>
                 {stripeConnected ? (<option value="credit card">Credit card</option>) : null}
