@@ -181,11 +181,11 @@ class EditListingLocationPanel extends Component {
   onMarkerDragEnd(coordsObj) {
     const { latLng } = coordsObj;
     const coords = { 
-      lat: latLng.lat(), 
-      lng: latLng.lng(),
+      lat: latLng.lat, 
+      lng: latLng.lng,
     };
 
-    console.log("coords from marker", coords);
+    // console.log("coords from marker", coords);
     const updateForm = true;
     this.getLocationPoint(coords, updateForm);
   }
