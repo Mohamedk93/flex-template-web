@@ -184,8 +184,6 @@ class EditListingLocationPanel extends Component {
       lat: latLng.lat, 
       lng: latLng.lng,
     };
-
-    // console.log("coords from marker", coords);
     const updateForm = true;
     this.getLocationPoint(coords, updateForm);
   }
