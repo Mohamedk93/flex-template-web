@@ -762,7 +762,7 @@ export class CheckoutPageComponent extends Component {
       currentUser,
     } = this.props;
 
-    const { rentalType } = bookingData;
+    const rentalType = bookingData && bookingData.rentalType ? bookingData.rentalType : null;
 
     // Since the listing data is already given from the ListingPage
     // and stored to handle refreshes, it might not have the possible
