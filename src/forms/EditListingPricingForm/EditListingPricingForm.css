@@ -87,8 +87,11 @@
 
 .priceField {
   width: 33%;
-  padding: 0 20px;
+  padding: 0 5px;
   text-align: center;
+  @media (--viewportMedium) {
+    padding: 0 20px;
+  }
 }
 
 .priceField input {

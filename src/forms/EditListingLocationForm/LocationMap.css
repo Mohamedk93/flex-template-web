@@ -1,5 +1,9 @@
 .mapWrapperOuter {
   height: 500px;
+  margin-bottom: 50px;
+  @media (--viewportMedium) {
+    margin-bottom: 10px;
+  }
 }
 
 .mapWrapper {
