@@ -250,7 +250,7 @@ export class BookingDatesFormComponent extends Component {
         const startDateObj = moment(sdtFinal);
         const endDateObj = moment(edtFinal);           
         let duration = moment.duration(endDateObj.diff(startDateObj));
-        quantity = duration.asHours();
+        quantity = duration.asDays();
       };
 
     } else if (rental_type === 'monthly') {

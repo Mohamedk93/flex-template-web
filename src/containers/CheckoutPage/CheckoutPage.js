@@ -266,6 +266,8 @@ export class CheckoutPageComponent extends Component {
       ...rest 
     } = params;
 
+    console.log("params", params);
+
     let seatsFeePriceTotal, 
         officeRoomsFeePriceTotal,
         meetingRoomsFeePriceTotal;
