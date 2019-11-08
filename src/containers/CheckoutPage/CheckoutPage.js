@@ -762,6 +762,8 @@ export class CheckoutPageComponent extends Component {
       currentUser,
     } = this.props;
 
+    const { rentalType } = bookingData;
+
     // Since the listing data is already given from the ListingPage
     // and stored to handle refreshes, it might not have the possible
     // deleted or closed information in it. If the transaction
@@ -847,6 +849,7 @@ export class CheckoutPageComponent extends Component {
           transaction={tx}
           booking={txBooking}
           dateType={DATE_TYPE_DATE}
+          currentRentalType={rentalType}
         />
       ) : null;
 
