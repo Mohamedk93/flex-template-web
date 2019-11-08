@@ -74,6 +74,7 @@
   @media (--viewportMedium) {
     width: 160px;
     padding-top: 15px;
+    text-align: left;
   }
 }
 
