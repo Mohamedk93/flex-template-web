@@ -361,6 +361,8 @@
   "ListingCard.perDay": "per day",
   "ListingCard.perNight": "per night",
   "ListingCard.perUnit": "per hour",
+  "ListingCard.perHour": "per hour",
+  "ListingCard.perMonth": "per month",
   "ListingCard.unsupportedPrice": "({currency})",
   "ListingCard.unsupportedPriceTitle": "Unsupported currency ({currency})",
   "ListingPage.bookingSubTitle": "Start by choosing your dates.",

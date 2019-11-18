@@ -3,6 +3,7 @@ import { FormattedMessage } from '../../util/reactIntl';
 import { InlineTextButton } from '../../components';
 import { LINE_ITEM_NIGHT, LINE_ITEM_DAY } from '../../util/types';
 import config from '../../config';
+import { listingCalculateMinPrice } from '../../components/ListingCard/ListingCard';
 
 import css from './ListingPage.css';
 
@@ -15,13 +16,15 @@ const SectionHeading = props => {
     hostLink,
     showContactUser,
     onContactUser,
+    publicData,
   } = props;
 
   const unitType = config.bookingUnitType;
   const isNightly = unitType === LINE_ITEM_NIGHT;
   const isDaily = unitType === LINE_ITEM_DAY;
-
-  const unitTranslationKey = 'ListingPage.perHour';
+  const calculatedPrice = listingCalculateMinPrice(publicData);
+  const unitTranslationKey = calculatedPrice &&
+    calculatedPrice.meta && calculatedPrice.meta.unit || 'ListingPage.perHour';
 
   return (
     <div className={css.sectionHeading}>
