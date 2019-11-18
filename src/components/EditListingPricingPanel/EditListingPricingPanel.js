@@ -114,7 +114,7 @@ const EditListingPricingPanel = props => {
           price_meeting_rooms_daily,
           price_meeting_rooms_monthly,
         ].filter(function(x) {
-          return x !== undefined && x !== null
+          return x !== undefined && x !== null && x.amount && x.amount > 0
         });
         const priceArray = priceArrayFiltered.map(function(x) {
           return x.amount
