@@ -41,6 +41,86 @@ class ListingImage extends Component {
 }
 const LazyImage = lazyLoadWithDimensions(ListingImage, { loadAfterInitialRendering: 3000 });
 
+export const listingAvailablePricesMeta = [
+  {
+    type: 'priceSeatsHourly',
+    unit: 'ListingCard.perHour',
+    rentalType: 'hourly'
+  },
+  {
+    type: 'priceSeatsDaily',
+    unit: 'ListingCard.perDay',
+    rentalType: 'daily'
+  },
+  {
+    type: 'priceSeatsMonthly',
+    unit: 'ListingCard.perMonth',
+    rentalType: 'monthly'
+  },
+  {
+    type: 'priceOfficeRoomsHourly',
+    unit: 'ListingCard.perHour',
+    rentalType: 'hourly'
+  },
+  {
+    type: 'priceOfficeRoomsDaily',
+    unit: 'ListingCard.perDay',
+    rentalType: 'daily'
+  },
+  {
+    type: 'priceOfficeRoomsMonthly',
+    unit: 'ListingCard.perMonth',
+    rentalType: 'monthly'
+  },
+  {
+    type: 'priceMeetingRoomsHourly',
+    unit: 'ListingCard.perHour',
+    rentalType: 'hourly'
+  },
+  {
+    type: 'priceMeetingRoomsDaily',
+    unit: 'ListingCard.perDay',
+    rentalType: 'daily'
+  },
+  {
+    type: 'priceMeetingRoomsMonthly',
+    unit: 'ListingCard.perMonth',
+    rentalType: 'monthly'
+  },
+];
+
+export const listingCalculateMinPrice = (pubData) => {
+  let min_price_meta = listingAvailablePricesMeta.filter((priceItem) => {
+    
+    if (!pubData[priceItem.type] || !pubData.rentalTypes) {
+      return false;
+    }
+
+    if (pubData.rentalTypes.indexOf(priceItem.rentalType) !== -1 && 
+      Number(pubData[priceItem.type].amount) > 0) {
+      return true
+    } else {
+      return false
+    }
+  }).sort((a, b) => {
+    let a_val = Number(pubData[a.type] && pubData[a.type].amount);
+    let b_val = Number(pubData[b.type] && pubData[b.type].amount);
+
+    if (a_val === b_val) {
+      return 0;
+    } else if (a_val > b_val) {
+      return 1;
+    } else {
+      return -1;
+    }
+  })[0];
+
+  return min_price_meta && {
+    price: pubData[min_price_meta.type],
+    meta: min_price_meta
+  }
+};
+
 export const ListingCardComponent = props => {
   const { className, rootClassName, intl, listing, renderSizes, setActiveListing, searchPoint } = props;
   const classes = classNames(rootClassName || css.root, className);
@@ -74,11 +154,9 @@ export const ListingCardComponent = props => {
     distance = (window.google.maps.geometry.spherical.computeDistanceBetween(listingPointCoord, searchPointCoord) / 1000).toFixed(2);
   };
 
-  const unitTranslationKey = isNightly
-    ? 'ListingCard.perNight'
-    : isDaily
-    ? 'ListingCard.perDay'
-    : 'ListingCard.perUnit';
+  let min_price = listingCalculateMinPrice(publicData);
+
+  const unitTranslationKey = min_price && min_price.meta && min_price.meta.unit || 'ListingCard.perHour';
 
   const locationInfo = city && country ? (
     <p className={css.locationInfoPar}>

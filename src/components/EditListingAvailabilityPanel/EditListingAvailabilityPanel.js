@@ -6,6 +6,7 @@ import { ensureOwnListing } from '../../util/data';
 import { LISTING_STATE_DRAFT } from '../../util/types';
 import { ListingLink } from '../../components';
 import { EditListingAvailabilityForm } from '../../forms';
+import { listingCalculateMinPrice } from '../../components/ListingCard/ListingCard';
 
 import css from './EditListingAvailabilityPanel.css';
 
@@ -115,19 +116,47 @@ const EditListingAvailabilityPanel = props => {
           });
 
           const rentalTypes = values.rental_types ? values.rental_types : [];
+          const rentalTypesBefore = publicData.rentalTypes ? publicData.rentalTypes : [];
 
-          onSubmit({
+          const publicDataDiff = {
+            timezone: usersTimeZone,
+            rentalTypes,
+            workingSchedule: availabilityPlan,
+          }
+
+          let estPublicData = {}
+          Object.assign(estPublicData, publicData);
+          Object.assign(estPublicData, publicDataDiff);
+
+          const shouldRecalculatePrice = !(rentalTypesBefore.length === rentalTypes.length &&
+            rentalTypesBefore.every((el) => {
+              return rentalTypes.indexOf(el) !== -1;
+            })
+          );
+          
+          let newPrice = null;
+
+          if (shouldRecalculatePrice) {
+            let calculatedPrice = listingCalculateMinPrice(estPublicData)
+            newPrice = calculatedPrice && calculatedPrice.price;
+          }
+
+          let updateValues = {
             availabilityPlan: {
               type: 'availability-plan/time',
               timezone: usersTimeZone,
               entries: updatedValues
             },
-            publicData: {
-              timezone: usersTimeZone,
-              rentalTypes,
-              workingSchedule: availabilityPlan,
-            }
-          });
+            publicData: publicDataDiff
+          };
+
+          if (newPrice) {
+            Object.assign(updateValues, {
+              price: newPrice
+            })
+          }
+
+          onSubmit(updateValues);
         }}
         onChange={onChange}
         saveActionMsg={submitButtonText}

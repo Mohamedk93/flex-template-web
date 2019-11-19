@@ -428,6 +428,7 @@ export class ListingPageComponent extends Component {
                     hostLink={hostLink}
                     showContactUser={showContactUser}
                     onContactUser={this.onContactUser}
+                    publicData={publicData}
                   />
                   <SectionDescriptionMaybe description={description} />
                   <SectionFeaturesMaybe options={amenitiesConfig} publicData={publicData} />
