@@ -14,7 +14,7 @@ import {
   txIsPaymentExpired,
   txIsPaymentPending,
 } from '../../util/transaction';
-import { propTypes, DATE_TYPE_DATE } from '../../util/types';
+import { propTypes, DATE_TYPE_DATETIME } from '../../util/types';
 import { ensureCurrentUser } from '../../util/data';
 import { getMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import { isScrollingDisabled } from '../../ducks/UI.duck';
@@ -206,7 +206,7 @@ const BookingInfoMaybe = props => {
         intl={intl}
         tx={tx}
         unitType={unitType}
-        dateType={DATE_TYPE_DATE}
+        dateType={DATE_TYPE_DATETIME}
       />
     </div>
   );

@@ -1,0 +1,64 @@
+@import '../../marketplace.css';
+
+.root {
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  margin-bottom: 15px;
+  margin-top: 10px;
+
+  /* Ensure that calendar dropdown gets some stacking context relative to other form items below */
+  z-index: 1;
+
+  /* @media (--viewportMedium) {
+    margin-bottom: 46px;
+  } */
+}
+
+.monthChooseHead {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+}
+
+.monthChooseBody {
+  display: flex;
+  justify-content: space-between;
+}
+
+.label {
+  width: 33%;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.label:nth-child(2) {
+  text-align: center;
+}
+
+.startDateField {
+  width: 33%;
+}
+
+.startDateField input {
+  font-size: 16px !important;
+}
+
+.monthCount {
+  width: 33%;
+  padding: 4px 10px;
+}
+
+.monthCount input {
+  width: 100%;
+  padding: 0 0 9px 0;
+  border-bottom-width: 3px;
+}
+
+.endDateField {
+  width: 33%;
+  padding: 4px 0 9px 0;
+  border-bottom: 3px solid var(--successColor);
+  margin-bottom: 4px;
+  font-size: 16px;
+}

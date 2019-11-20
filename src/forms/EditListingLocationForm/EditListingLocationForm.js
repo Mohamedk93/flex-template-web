@@ -4,7 +4,9 @@ import { compose } from 'redux';
 import { Form as FinalForm } from 'react-final-form';
 import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
+import config from '../../config';
 import { propTypes } from '../../util/types';
+import LocationMap from "./LocationMap";
 import {
   autocompleteSearchRequired,
   autocompletePlaceSelected,
@@ -32,7 +34,8 @@ export const EditListingLocationFormComponent = props => (
         updateInProgress,
         fetchErrors,
         values,
-        setAdditionalGeodata
+        getLocationPoint,
+        updateMap,
       } = fieldRenderProps;
 
       const titleRequiredMessage = intl.formatMessage({ id: 'EditListingLocationForm.address' });
@@ -76,6 +79,10 @@ export const EditListingLocationFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
 
+      const googleMapURL = `https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${config.maps.googleMapsAPIKey}`
+
+      const { coords, city, onMarkerDragEnd } = fieldRenderProps;
+
       return (
         <Form className={classes} onSubmit={handleSubmit}>
           {errorMessage}
@@ -86,14 +93,13 @@ export const EditListingLocationFormComponent = props => (
             iconClassName={css.locationAutocompleteInputIcon}
             predictionsClassName={css.predictionsRoot}
             validClassName={css.validLocation}
-            autoFocus
             name="location"
             label={titleRequiredMessage}
             placeholder={addressPlaceholderMessage}
             useDefaultPredictions={false}
             format={identity}
             valueFromForm={values.location}
-            setAdditionalGeodata={setAdditionalGeodata}
+            getLocationPoint={getLocationPoint}
             validate={composeValidators(
               autocompleteSearchRequired(addressRequiredMessage),
               autocompletePlaceSelected(addressNotRecognizedMessage)
@@ -107,6 +113,17 @@ export const EditListingLocationFormComponent = props => (
             id="building"
             label={buildingMessage}
             placeholder={buildingPlaceholderMessage}
+          />
+
+          <LocationMap
+            googleMapURL
+            loadingElement={<div style={{ height: `100%` }} />}
+            containerElement={<div style={{ height: `400px` }} />}
+            mapElement={<div style={{ height: `100%` }} />}
+
+            coords={coords}
+            onMarkerDragEnd={onMarkerDragEnd}
+            updateMap={updateMap}
           />
 
           <Button

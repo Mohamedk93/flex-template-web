@@ -6,34 +6,55 @@ import { LISTING_STATE_DRAFT } from '../../util/types';
 import { ensureOwnListing } from '../../util/data';
 import { ListingLink } from '../../components';
 import { EditListingLocationForm } from '../../forms';
+import config from '../../config';
+import { types as sdkTypes } from '../../util/sdkLoader';
+import filter from 'lodash/filter';
 
 import css from './EditListingLocationPanel.css';
 
+const { LatLng } = sdkTypes;
+
+function getMapDataByTypes(geodata, types) {
+
+  const gmItem = filter(geodata, (item) => {
+    const components = filter(item.address_components, (subitem) => {
+      return (subitem.types.indexOf(types) !== -1)
+    });
+    return (components.length !== 0);
+  });
+
+  let gmItemFormat = [];
+  if(gmItem.length !== 0) {
+    gmItemFormat = filter(gmItem[0].address_components, (item) => {
+      return (item.types.indexOf(types) !== -1)
+    }); 
+  };
+
+  let result = (gmItemFormat.length !== 0) ? gmItemFormat[0].long_name : null
+
+  return result
+
+};
+
 class EditListingLocationPanel extends Component {
   constructor(props) {
-    super(props);
-
-    this.getInitialValues = this.getInitialValues.bind(this);
-    this.setAdditionalGeodata = this.setAdditionalGeodata.bind(this);
-
-    const publicData = this.props.listing &&
-    this.props.listing.attributes &&
-    this.props.listing.attributes.publicData ?
-    this.props.listing.attributes.publicData : null;
+    super(props);  
     
     this.state = {
       initialValues: this.getInitialValues(),
-      city: publicData ? publicData.city : null,
-      country: publicData ? publicData.country : null,
-    };
-  }
 
-  setAdditionalGeodata(params) {
-    const { city, country} = params;
-    this.setState({
-      city,
-      country,
-    })
+      city: this.getInitialCustomValues('city'),
+      country: this.getInitialCustomValues('country'),
+      coords: this.getInitialCoords(),
+      updateMap: false,
+    };
+
+    this.getInitialCoords = this.getInitialCoords.bind(this);
+    this.getInitialValues = this.getInitialValues.bind(this);
+    this.onMarkerDragEnd = this.onMarkerDragEnd.bind(this);
+    this.getLocationPoint = this.getLocationPoint.bind(this);
+    this.setNewInitialValues = this.setNewInitialValues.bind(this);
+    this.getInitialCustomValues = this.getInitialCustomValues.bind(this);
   }
 
   getInitialValues() {
@@ -57,6 +78,114 @@ class EditListingLocationPanel extends Component {
           }
         : null,
     };
+  }
+
+  getInitialCustomValues(param) {
+    const { listing } = this.props;
+    const currentListing = ensureOwnListing(listing);
+    const { publicData } = currentListing.attributes;
+    const value = publicData ? publicData[param] : null;
+    return value
+  }
+
+  setNewInitialValues(coords, formattedAddress) {
+
+    const building = this.state.initialValues.building;
+    const coordsObj = new LatLng(coords.lat, coords.lng);
+    const address = formattedAddress ? formattedAddress : "";
+
+    const initialValues = {
+      building,
+      location: {
+        search: address,
+        selectedPlace: { 
+          address: address, 
+          origin: coordsObj,
+        },
+      },
+    }
+
+    this.setState({
+      initialValues
+    })
+
+  }
+
+  getInitialCoords() {
+    const { listing } = this.props;
+    const currentListing = ensureOwnListing(listing);
+    const { geolocation } = currentListing.attributes;
+
+    const coords = {
+      lat: geolocation ? geolocation.lat : 30.03,
+      lng: geolocation ? geolocation.lng : 31.24,
+    }
+
+    return coords
+  }
+
+  getLocationPoint(coords, updateForm = false, updateMap = false) { 
+    // const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&language=en&result_type=locality&result_type=country&result_type=street_address&key=${config.maps.googleMapsAPIKey}`
+    const requestUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&language=en&key=${config.maps.googleMapsAPIKey}`
+    fetch(requestUrl)
+      .then(response => response.json())
+      .then(data => {
+
+        const geodata = data ? data.results : null;
+
+        const city = getMapDataByTypes(geodata, 'locality');
+        const country = getMapDataByTypes(geodata, 'country');
+
+        const formattedAddress = data &&
+          data.results &&
+          data.results[0] &&
+          data.results[0].formatted_address ?
+          data.results[0].formatted_address : null;
+
+        // const address = data &&
+        //   data.results &&
+        //   data.results[0] &&
+        //   data.results[0].address_components ?
+        //   data.results[0].address_components : null;
+
+        // const city = address ? address.filter(function(item){
+        //   return item.types.indexOf("locality") !== -1
+        // }) : null;
+        // const cityString = city.length !== 0 ? city[0].long_name : null;
+
+        // const country = address ? address.filter(function(item){
+        //   return item.types.indexOf("country") !== -1
+        // }) : null;
+        // const countryString = country.length !== 0 ? country[0].long_name : null;
+
+        this.setState({ 
+          city,
+          country,
+          coords,
+        });
+
+        if(updateForm) {
+          this.setNewInitialValues(coords, formattedAddress);
+        };
+
+        if(updateMap) {
+          this.setState({
+            updateMap: !this.state.updateMap
+          });
+        };
+
+      })
+      .catch(error => {console.log(error)});
+  }
+
+  onMarkerDragEnd(coordsObj) {
+    const { latLng } = coordsObj;
+    const coords = { 
+      lat: latLng.lat, 
+      lng: latLng.lng,
+    };
+    const updateForm = true;
+    this.getLocationPoint(coords, updateForm);
   }
 
   render() {
@@ -121,7 +250,11 @@ class EditListingLocationPanel extends Component {
           updated={panelUpdated}
           updateInProgress={updateInProgress}
           fetchErrors={errors}
-          setAdditionalGeodata={this.setAdditionalGeodata}
+          getLocationPoint={this.getLocationPoint}
+          coords={this.state.coords}
+          city={this.state.city}
+          onMarkerDragEnd={this.onMarkerDragEnd}
+          updateMap={this.state.updateMap}
         />
       </div>
     );

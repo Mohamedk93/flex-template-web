@@ -4,7 +4,11 @@ import { denormalisedResponseEntities } from '../../util/data';
 import { storableError } from '../../util/errors';
 import {
   TRANSITION_REQUEST,
+  TRANSITION_REQUEST_DAILY,
+  TRANSITION_REQUEST_MONTHLY,
   TRANSITION_REQUEST_PAYMENT,
+  TRANSITION_REQUEST_PAYMENT_DAILY,
+  TRANSITION_REQUEST_PAYMENT_MONTHLY,
   TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
   TRANSITION_CONFIRM_PAYMENT,
 } from '../../util/transaction';
@@ -161,9 +165,28 @@ export const stripeCustomerError = e => ({
 
 /* ================ Thunks ================ */
 
-export const initiateOrder = (orderParams, transactionId, processAlias) => (dispatch, getState, sdk) => {
+export const initiateOrder = (orderParams, transactionId, processAlias, rentalType) => (dispatch, getState, sdk) => {
   dispatch(initiateOrderRequest());
-  const transition = (processAlias === config.cashBookingProcessAlias) ? TRANSITION_REQUEST : TRANSITION_REQUEST_PAYMENT;
+
+  let transition;
+  if(processAlias === config.cashBookingProcessAlias) {
+    if(rentalType === 'hourly') {
+      transition = TRANSITION_REQUEST;
+    } else if(rentalType === 'daily') {
+      transition = TRANSITION_REQUEST_DAILY;
+    } else if(rentalType === 'monthly') {
+      transition = TRANSITION_REQUEST_MONTHLY;
+    }
+  } else {
+    if(rentalType === 'hourly') {
+      transition = TRANSITION_REQUEST_PAYMENT;
+    } else if(rentalType === 'daily') {
+      transition = TRANSITION_REQUEST_PAYMENT_DAILY;
+    } else if(rentalType === 'monthly') {
+      transition = TRANSITION_REQUEST_PAYMENT_MONTHLY;
+    }
+  };
+  
   const bodyParams = transactionId
     ? {
         id: transactionId,

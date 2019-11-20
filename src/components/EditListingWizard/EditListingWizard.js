@@ -35,8 +35,8 @@ export const TABS = [
   FEATURES,
   POLICY,
   LOCATION,
-  PRICING,
   ...availabilityMaybe,
+  PRICING,
   PHOTOS,
 ];
 

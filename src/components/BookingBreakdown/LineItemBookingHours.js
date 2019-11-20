@@ -66,7 +66,8 @@ const LineItemBookingHours = props => {
   // const count = unitPurchase.quantity.toFixed();
 
   const hourStart = moment(booking.attributes.start).format('HH:mm');
-  const hourEnd = moment(booking.attributes.end).format('HH:mm');
+  const hourEnd = moment(booking.attributes.end).format('HH:mm') !== "00:00" ? 
+    moment(booking.attributes.end).format('HH:mm') : "24:00";
   const date = moment(booking.attributes.start).startOf('day');
   const startMoment = moment(`${date.format('YYYY MM DD')} ${hourStart}`, 'YYYY MM DD HH:mm');
   const endMoment = moment(`${date.format('YYYY MM DD')} ${hourEnd}`, 'YYYY MM DD HH:mm');

@@ -98,15 +98,17 @@ export class ListingPageComponent extends Component {
       callSetInitialValues,
       onInitializeCardPaymentData,
     } = this.props;
+
     const listingId = new UUID(params.id);
     const listing = getListing(listingId);
 
-    const { bookingDates, paymentMethod, ...bookingData } = values;
+    const { bookingDates, paymentMethod, rental_type, ...bookingData } = values;
 
     const initialValues = {
       listing,
       bookingData,
       paymentMethod,
+      rentalType: rental_type,
       bookingDates: {
         bookingStart: bookingDates.startDate,
         bookingEnd: bookingDates.endDate,
@@ -426,6 +428,7 @@ export class ListingPageComponent extends Component {
                     hostLink={hostLink}
                     showContactUser={showContactUser}
                     onContactUser={this.onContactUser}
+                    publicData={publicData}
                   />
                   <SectionDescriptionMaybe description={description} />
                   <SectionFeaturesMaybe options={amenitiesConfig} publicData={publicData} />
@@ -543,7 +546,7 @@ const mapStateToProps = state => {
     enquiryModalOpenForListingId,
   } = state.ListingPage;
   const { currentUser } = state.user;
-
+  
   const getListing = id => {
     const ref = { id, type: 'listing' };
     const listings = getMarketplaceEntities(state, [ref]);

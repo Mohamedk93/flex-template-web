@@ -114,6 +114,14 @@ export const daysBetween = (startDate, endDate) => {
   return days;
 };
 
+export const monthsBetween = (startDate, endDate) => {
+  const months = moment(endDate).diff(startDate, 'months') + 1;
+  if (months < 0) {
+    throw new Error('End date cannot be before start date');
+  }
+  return months;
+};
+
 /**
  * Calculate the number of minutes between the given dates
  *

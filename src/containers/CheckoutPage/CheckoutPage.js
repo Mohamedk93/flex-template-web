@@ -213,6 +213,7 @@ export class CheckoutPageComponent extends Component {
         seatsQuantity,
         officeRoomsQuantity, 
         meetingRoomsQuantity,
+        rentalType,
       } = pageData.bookingData;
 
       const preliminaryParams = {
@@ -227,6 +228,7 @@ export class CheckoutPageComponent extends Component {
         officeRoomsQuantity, 
         meetingRoomsQuantity,
         preliminaryParams: true,
+        rentalType,
       }
 
       // Fetch speculated transaction for showing price in booking breakdown
@@ -356,7 +358,7 @@ export class CheckoutPageComponent extends Component {
     };
   }
 
-  handleCashSubmit(values){
+  handleCashSubmit(values) {
     if (this.state.submitting) {
       return;
     }
@@ -368,7 +370,7 @@ export class CheckoutPageComponent extends Component {
     // NOTE: if unit type is line-item/units, quantity needs to be added.
     // The way to pass it to checkout page is through pageData.bookingData
 
-    const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity } = bookingData;
+    const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity, rentalType } = bookingData;
 
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
       item => item.code === LINE_ITEM_SEATS_FEE
@@ -405,7 +407,7 @@ export class CheckoutPageComponent extends Component {
 
     const processAlias = config.cashBookingProcessAlias;
 
-    sendOrderRequest(requestParams, initialMessage, processAlias)
+    sendOrderRequest(requestParams, initialMessage, processAlias, rentalType)
       .then(res => {
         const { id, messageSuccess } = res; //Update: check data
         this.setState({ submitting: false });
@@ -466,6 +468,8 @@ export class CheckoutPageComponent extends Component {
     const { bookingData, bookingDates, listing } = pageData;
     const processAlias = config.scaBookingProcessAlias;
 
+    const rentalType = pageData.bookingData.rentalType;
+
     // Step 1: initiate order by requesting payment from Marketplace API
     const fnRequestPayment = fnParams => {
       // fnParams should be { listingId, bookingStart, bookingEnd }
@@ -473,7 +477,7 @@ export class CheckoutPageComponent extends Component {
         storedTx.attributes.protectedData && storedTx.attributes.protectedData.stripePaymentIntents;
 
       // If paymentIntent exists, order has been initiated previously.
-      return hasPaymentIntents ? Promise.resolve(storedTx) : onInitiateOrder(fnParams, storedTx.id, processAlias);
+      return hasPaymentIntents ? Promise.resolve(storedTx) : onInitiateOrder(fnParams, storedTx.id, processAlias, rentalType);
     };
 
     // Step 2: pay using Stripe SDK
@@ -653,48 +657,6 @@ export class CheckoutPageComponent extends Component {
       saveAfterOnetimePayment,
     } = formValues;
 
-    // Update: Old version
-    // const cardToken = values.token;
-    // const initialMessage = values.message;
-    // const { history, sendOrderRequest, speculatedTransaction, dispatch, bookingData } = this.props;
-    // const processAlias = config.bookingProcessAlias;
-    // Create order aka transaction
-    // NOTE: if unit type is line-item/units, quantity needs to be added.
-    // The way to pass it to checkout page is through pageData.bookingData
-    // const requestParams = {
-    //   listingId: this.state.pageData.listing.id,
-    //   cardToken,
-    //   bookingStart: speculatedTransaction.booking.attributes.start,
-    //   bookingEnd: speculatedTransaction.booking.attributes.end,
-    //   quantity: bookingData.hours,
-    // };
-
-    // sendOrderRequest(requestParams, initialMessage, processAlias)
-    //   .then(values => {
-    //     const { id, initialMessageSuccess } = values;
-    //     this.setState({ submitting: false });
-    //     const routes = routeConfiguration();
-    //     const OrderPage = findRouteByRouteName('OrderDetailsPage', routes);
-
-    //     // Transaction is already created, but if the initial message
-    //     // sending failed, we tell it to the OrderDetailsPage.
-    //     dispatch(
-    //       OrderPage.setInitialValues({
-    //         initialMessageFailedToTransaction: initialMessageSuccess ? null : id,
-    //       })
-    //     );
-    //     const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, {
-    //       id: id.uuid,
-    //     });
-    //     clearData(STORAGE_KEY);
-    //     history.push(orderDetailsPath);
-    //   })
-    //   .catch(() => {
-    //     this.setState({ submitting: false });
-    //   });
-    // End
-
-
     // Billing address is recommended.
     // However, let's not assume that <StripePaymentAddress> data is among formValues.
     // Read more about this from Stripe's docs
@@ -800,6 +762,8 @@ export class CheckoutPageComponent extends Component {
       currentUser,
     } = this.props;
 
+    const rentalType = bookingData && bookingData.rentalType ? bookingData.rentalType : null;
+
     // Since the listing data is already given from the ListingPage
     // and stored to handle refreshes, it might not have the possible
     // deleted or closed information in it. If the transaction
@@ -885,6 +849,7 @@ export class CheckoutPageComponent extends Component {
           transaction={tx}
           booking={txBooking}
           dateType={DATE_TYPE_DATE}
+          currentRentalType={rentalType}
         />
       ) : null;
 
@@ -1271,11 +1236,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   dispatch,
-  sendOrderRequest: (params, initialMessage, processAlias) => dispatch(initiateOrder(params, initialMessage, processAlias)),
+  sendOrderRequest: (params, initialMessage, processAlias, rentalType) => dispatch(initiateOrder(params, initialMessage, processAlias, rentalType)),
   fetchSpeculatedTransaction: params => dispatch(speculateTransaction(params)),
   fetchSpeculatedCashTransaction: params => dispatch(speculateCashTransaction(params)),
   fetchStripeCustomer: () => dispatch(stripeCustomer()),
-  onInitiateOrder: (params, transactionId, processAlias) => dispatch(initiateOrder(params, transactionId, processAlias)),
+  onInitiateOrder: (params, transactionId, processAlias, rentalType) => dispatch(initiateOrder(params, transactionId, processAlias, rentalType)),
   onRetrievePaymentIntent: params => dispatch(retrievePaymentIntent(params)),
   onHandleCardPayment: params => dispatch(handleCardPayment(params)),
   onConfirmPayment: params => dispatch(confirmPayment(params)),
