@@ -99,6 +99,9 @@ if (typeof window !== 'undefined') {
   const analyticsHandlers = setupAnalyticsHandlers();
   const store = configureStore(initialState, sdk, analyticsHandlers);
 
+  // pass facebook client ID
+  localStorage.setItem('REACT_APP_FB_APP_ID', process.env.REACT_APP_FB_APP_ID);
+
   require('./util/polyfills');
   render(store, !!window.__PRELOADED_STATE__);
 
