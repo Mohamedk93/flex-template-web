@@ -690,9 +690,68 @@ export class BookingDatesFormComponent extends Component {
             />
           };
 
+          const googleTagTrackerSend = () => {
+            if (!bookingData || !values || !values.workspaces) {
+              return false;
+            }
+            window.gtag_report_conversion(listing.id.uuid)
+          };
+
+          const faceBookTrackerSend = () => {
+            if (typeof (FB) === 'undefined') {
+              return false;
+            }
+
+            let fb = window.FB;
+            let fbParams = {};
+
+            if (!bookingData || !values || !values.workspaces) {
+              return false;
+            }
+
+            // calculate numItems:
+            let numItems = 0;
+            if (values.workspaces && (values.workspaces.indexOf('seats') !== -1)) {
+              numItems = numItems + values.seats_quantity;
+            }
+            if (values.workspaces && (values.workspaces.indexOf('meeting_rooms') !== -1)) {
+              numItems = numItems + values.meeting_rooms_quantity;
+            }
+            if (values.workspaces && (values.workspaces.indexOf('office_rooms') !== -1)) {
+              numItems = numItems + values.office_rooms_quantity;
+            }
+
+            // calculate totalPrice:
+            let totalPrice = 0;
+            if (bookingData.meetingRoomsFee) {
+              totalPrice = totalPrice +
+                (bookingData.meetingRoomsFee.amount * bookingData.meetingRoomsQuantity);
+            }
+            if (bookingData.officeRoomsFee) {
+              totalPrice = totalPrice +
+                (bookingData.officeRoomsFee.amount * bookingData.officeRoomsQuantity);
+            }
+            if (bookingData.seatsFee) {
+              totalPrice = totalPrice +
+                (bookingData.seatsFee.amount * bookingData.seatsQuantity);
+            }
+
+            fbParams[fb.AppEvents.ParameterNames.DESCRIPTION] = listing.attributes.title;
+            fbParams[fb.AppEvents.ParameterNames.CONTENT_ID] = listing.id.uuid;
+            fbParams[fb.AppEvents.ParameterNames.CONTENT_TYPE] = 'listing';
+            fbParams[fb.AppEvents.ParameterNames.NUM_ITEMS] = numItems;
+            fbParams[fb.AppEvents.ParameterNames.PAYMENT_INFO_AVAILABLE] = 1;
+            fbParams[fb.AppEvents.ParameterNames.CURRENCY] = listing.attributes.price.currency;
+
+            fb.AppEvents.logEvent(fb.AppEvents.EventNames.INITIATED_CHECKOUT, totalPrice, fbParams);
+          
+          };
+
           return (
             <Form
               onSubmit={e => {
+                faceBookTrackerSend();
+                googleTagTrackerSend();
                 if (currentRentalType === 'daily') {
                   if (startDate && endDate) {
                     handleSubmit(e);

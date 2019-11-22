@@ -101,6 +101,9 @@ if (typeof window !== 'undefined') {
 
   // pass facebook client ID
   localStorage.setItem('REACT_APP_FB_APP_ID', process.env.REACT_APP_FB_APP_ID);
+  localStorage.setItem('REACT_APP_FB_PIXEL_ID', process.env.REACT_APP_FB_PIXEL_ID);
+  localStorage.setItem('REACT_APP_GOOGLE_ANALYTICS_ID', process.env.REACT_APP_GOOGLE_ANALYTICS_ID);
+  localStorage.setItem('REACT_APP_GA_SEND_TO_ID', process.env.REACT_APP_GA_SEND_TO_ID);
 
   require('./util/polyfills');
   render(store, !!window.__PRELOADED_STATE__);

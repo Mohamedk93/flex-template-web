@@ -122,6 +122,21 @@ exports.render = function(requestUrl, context, preloadedState) {
           ga('create', '${process.env.REACT_APP_GOOGLE_ANALYTICS_ID}', 'auto');
         </script>
         <script async src="https://www.google-analytics.com/analytics.js"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=${process.env.REACT_APP_GOOGLE_ADS_CONV_ID}"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${process.env.REACT_APP_GOOGLE_ADS_CONV_ID}');
+
+          window.gtag_report_conversion = function (listingId) {
+            gtag('event', 'conversion', {
+                'send_to': '${process.env.REACT_APP_GA_SEND_TO_ID}',
+                'listing_id': listingId,
+            });
+            return false;
+          };
+        </script>
         `
     : '';
 
