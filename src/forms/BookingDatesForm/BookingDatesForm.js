@@ -690,6 +690,13 @@ export class BookingDatesFormComponent extends Component {
             />
           };
 
+          const googleTagTrackerSend = () => {
+            if (!bookingData || !values || !values.workspaces) {
+              return false;
+            }
+            window.gtag_report_conversion(listing.id.uuid)
+          };
+
           const faceBookTrackerSend = () => {
             if (typeof (FB) === 'undefined') {
               return false;
@@ -744,6 +751,7 @@ export class BookingDatesFormComponent extends Component {
             <Form
               onSubmit={e => {
                 faceBookTrackerSend();
+                googleTagTrackerSend();
                 if (currentRentalType === 'daily') {
                   if (startDate && endDate) {
                     handleSubmit(e);
