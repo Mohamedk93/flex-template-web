@@ -21,8 +21,7 @@ const CashPaymentFormComponent = props => (
         formId,
         handleSubmit,
         inProgress,
-        listingTitle,
-        timeTitle,
+        listingTitle
       } = fieldRenderProps;
 
       const classes = classNames(rootClassName || css.root, className);
@@ -34,7 +33,6 @@ const CashPaymentFormComponent = props => (
           <h2 className={css.heading}>
             { listingTitle }
           </h2>
-          <h2> { timeTitle } </h2>
 
           <div className={submitButtonWrapperClassName}>
             <PrimaryButton type="submit" inProgress={submitInProgress} disabled={submitDisabled}>
