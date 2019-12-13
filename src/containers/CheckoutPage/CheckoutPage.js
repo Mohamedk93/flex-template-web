@@ -1010,8 +1010,6 @@ export class CheckoutPageComponent extends Component {
     // const bookingTime = bookingData && bookingData.message[1] ? bookingData.message[1] : null;
 
     const formTitle = intl.formatMessage({ id: 'EnquiryForm.heading' }, { listingTitle });
-    const timeTitle = intl.formatMessage({ id: 'CheckoutPage.bookingTime' }, { bookingTime });
-
 
     return (
       <Page {...pageProps}>
@@ -1086,8 +1084,6 @@ export class CheckoutPageComponent extends Component {
               ) : <CashPaymentForm
               className={css.enquiryForm}
               submitButtonWrapperClassName={css.enquirySubmitButtonWrapper}
-              listingTitle={formTitle}
-              timeTitle={timeTitle}
               bookingData={bookingData}
               onSubmit={this.handleCashSubmit}
           />}
