@@ -62,6 +62,7 @@ import {
   speculateCashTransaction,
   stripeCustomer,
   confirmPayment,
+  acceptTransaction,
   sendMessage,
 } from './CheckoutPage.duck';
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
@@ -362,6 +363,8 @@ export class CheckoutPageComponent extends Component {
     if (this.state.submitting) {
       return;
     }
+    let resTr = false
+    const quickRent =  this.state.pageData.listing.attributes.publicData.quickRent
     this.setState({ submitting: true });
     const initialMessage = '';
     const { history, sendOrderRequest, speculatedTransaction, dispatch, bookingData } = this.props;
@@ -406,24 +409,28 @@ export class CheckoutPageComponent extends Component {
     });
 
     const processAlias = config.cashBookingProcessAlias;
-
     sendOrderRequest(requestParams, initialMessage, processAlias, rentalType)
       .then(res => {
-        const { id, messageSuccess } = res; //Update: check data
-        this.setState({ submitting: false });
-        const routes = routeConfiguration();
-        const initialMessageFailedToTransaction = messageSuccess ? null : id;
-        const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: id.uuid });
-        const initialValues = {
-          initialMessageFailedToTransaction,
-        };
-        initializeOrderPage(initialValues, routes, dispatch);
-        clearData(STORAGE_KEY);
-        history.push(orderDetailsPath);
+        if(quickRent){
+          this.props.acceptTransaction(res).then(tmp => {
+            const { id, messageSuccess } = res; //Update: check data
+            this.setState({ submitting: false });
+            const routes = routeConfiguration();
+            const initialMessageFailedToTransaction = messageSuccess ? null : id;
+            const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: id.uuid });
+            const initialValues = {
+              initialMessageFailedToTransaction,
+            };
+            initializeOrderPage(initialValues, routes, dispatch);
+            clearData(STORAGE_KEY);
+            history.push(orderDetailsPath);
+          })
+        }
       })
       .catch(() => {
         this.setState({ submitting: false });
       });
+      
   }
 
   handlePaymentIntent(handlePaymentParams) {
@@ -1085,6 +1092,7 @@ export class CheckoutPageComponent extends Component {
               className={css.enquiryForm}
               submitButtonWrapperClassName={css.enquirySubmitButtonWrapper}
               bookingData={bookingData}
+              listing={listing}
               onSubmit={this.handleCashSubmit}
           />}
               {isPaymentExpired ? (
@@ -1243,6 +1251,7 @@ const mapDispatchToProps = dispatch => ({
   onSendMessage: params => dispatch(sendMessage(params)),
   onSavePaymentMethod: (stripeCustomer, stripePaymentMethodId) =>
     dispatch(savePaymentMethod(stripeCustomer, stripePaymentMethodId)),
+  acceptTransaction: res => dispatch(acceptTransaction(res))
 });
 
 const CheckoutPage = compose(

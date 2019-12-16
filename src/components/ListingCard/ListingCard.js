@@ -11,6 +11,8 @@ import { createSlug } from '../../util/urlHelpers';
 import config from '../../config';
 import { NamedLink, ResponsiveImage } from '../../components';
 import { isMapsLibLoaded } from '../../components/Map/GoogleMap';
+import { IconRocket } from '../../components';
+
 import css from './ListingCard.css';
 
 const MIN_LENGTH_FOR_LONG_WORDS = 10;
@@ -140,6 +142,7 @@ export const ListingCardComponent = props => {
   const isDaily = unitType === LINE_ITEM_DAY;
 
   const { publicData } = currentListing.attributes;
+  const quickRent = publicData.quickRent
   const city = publicData ? publicData.city : null;
   const country = publicData ? publicData.country : null;
 
@@ -187,6 +190,7 @@ export const ListingCardComponent = props => {
         <div className={css.category}>
           {category}
         </div>
+     
         <div className={css.locationInfo}>
           {locationInfo}
         </div>
@@ -219,6 +223,9 @@ export const ListingCardComponent = props => {
           <div className={css.authorInfo}>
             <FormattedMessage id="ListingCard.hostedBy" values={{ authorName }} />
           </div>
+        </div>
+        <div>
+          {quickRent !== undefined && quickRent.length > 0 ? <IconRocket className={css.iconRocket} /> : ' '}
         </div>
       </div>
     </NamedLink>

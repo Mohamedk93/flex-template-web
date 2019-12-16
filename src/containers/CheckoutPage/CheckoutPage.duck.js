@@ -4,6 +4,7 @@ import { denormalisedResponseEntities } from '../../util/data';
 import { storableError } from '../../util/errors';
 import {
   TRANSITION_REQUEST,
+  TRANSITION_ACCEPT_BY_CUSTOMER,
   TRANSITION_REQUEST_DAILY,
   TRANSITION_REQUEST_MONTHLY,
   TRANSITION_REQUEST_PAYMENT,
@@ -86,13 +87,12 @@ export default function checkoutPageReducer(state = initialState, action = {}) {
       console.error(payload); // eslint-disable-line no-console
       return { ...state, initiateOrderError: payload };
 
-    // case CONFIRM_PAYMENT_REQUEST:
-    //   return { ...state, confirmPaymentError: null };
-    // case CONFIRM_PAYMENT_SUCCESS:
-    //   return state;
-    // case CONFIRM_PAYMENT_ERROR:
-    //   console.error(payload); // eslint-disable-line no-console
-    //   return { ...state, confirmPaymentError: payload };
+    case CONFIRM_PAYMENT_REQUEST:
+      return { ...state, confirmPaymentError: null };
+    case CONFIRM_PAYMENT_SUCCESS:
+      return state;
+    case CONFIRM_PAYMENT_ERROR:
+      return { ...state, confirmPaymentError: payload };
 
     case STRIPE_CUSTOMER_REQUEST:
       return { ...state, stripeCustomerFetched: false };
@@ -129,18 +129,16 @@ const initiateOrderError = e => ({
   payload: e,
 });
 
-// const confirmPaymentRequest = () => ({ type: CONFIRM_PAYMENT_REQUEST });
-
-// const confirmPaymentSuccess = orderId => ({
-//   type: CONFIRM_PAYMENT_SUCCESS,
-//   payload: orderId,
-// });
-
-// const confirmPaymentError = e => ({
-//   type: CONFIRM_PAYMENT_ERROR,
-//   error: true,
-//   payload: e,
-// });
+ const confirmPaymentRequest = () => ({ type: CONFIRM_PAYMENT_REQUEST })
+ const confirmPaymentSuccess = orderId => ({
+   type: CONFIRM_PAYMENT_SUCCESS,
+   payload: orderId,
+ })
+ const confirmPaymentError = e => ({
+   type: CONFIRM_PAYMENT_ERROR,
+   error: true,
+   payload: e,
+ });
 
 export const speculateTransactionRequest = () => ({ type: SPECULATE_TRANSACTION_REQUEST });
 
@@ -225,6 +223,31 @@ export const initiateOrder = (orderParams, transactionId, processAlias, rentalTy
       throw e;
     });
 };
+
+export const acceptTransaction = res => (dispatch, getState, sdk) => {
+  dispatch(confirmPaymentRequest());
+  const bodyParams = {
+    id: res.id.uuid,
+    transition: TRANSITION_ACCEPT_BY_CUSTOMER,
+    params: {},
+  };
+  
+  return sdk.transactions
+  .transition({id: res.id.uuid,
+    transition: TRANSITION_ACCEPT_BY_CUSTOMER,
+    params: {}},
+    {expand: true})
+  .then(res => {
+    const order = res.data.data;
+    dispatch(confirmPaymentSuccess(order.id));
+  })
+  .catch(e => {
+    dispatch(confirmPaymentError(storableError(e)));
+  });
+
+};
+
+
 
 export const confirmPayment = orderParams => (dispatch, getState, sdk) => {
   // dispatch(confirmPaymentRequest());
