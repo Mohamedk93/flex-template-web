@@ -226,11 +226,6 @@ export const initiateOrder = (orderParams, transactionId, processAlias, rentalTy
 
 export const acceptTransaction = res => (dispatch, getState, sdk) => {
   dispatch(confirmPaymentRequest());
-  const bodyParams = {
-    id: res.id.uuid,
-    transition: TRANSITION_ACCEPT_BY_CUSTOMER,
-    params: {},
-  };
   
   return sdk.transactions
   .transition({id: res.id.uuid,
