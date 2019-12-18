@@ -225,13 +225,12 @@ export const initiateOrder = (orderParams, transactionId, processAlias, rentalTy
 };
 
 export const acceptTransaction = res => (dispatch, getState, sdk) => {
+  const currentId = res.id !== undefined ? res.id.uuid : res.orderId.uuid
   dispatch(confirmPaymentRequest());
-  
   return sdk.transactions
-  .transition({id: res.id.uuid,
+  .transition({id: currentId,
     transition: TRANSITION_ACCEPT_BY_CUSTOMER,
-    params: {}},
-    {expand: true})
+    params: {}})
   .then(res => {
     const order = res.data.data;
     dispatch(confirmPaymentSuccess(order.id));
@@ -239,7 +238,6 @@ export const acceptTransaction = res => (dispatch, getState, sdk) => {
   .catch(e => {
     dispatch(confirmPaymentError(storableError(e)));
   });
-
 };
 
 
@@ -252,12 +250,11 @@ export const confirmPayment = orderParams => (dispatch, getState, sdk) => {
     transition: TRANSITION_CONFIRM_PAYMENT,
     params: {},
   };
-
   return sdk.transactions
     .transition(bodyParams)
     .then(response => {
       const order = response.data.data;
-      // dispatch(confirmPaymentSuccess(order.id));
+      dispatch(confirmPaymentSuccess(order.id));
       return order;
     })
     .catch(e => {
@@ -320,6 +317,7 @@ export const speculateTransaction = params => (dispatch, getState, sdk) => {
   return sdk.transactions
     .initiateSpeculative(bodyParams, queryParams)
     .then(response => {
+      console.log('This is yes .initiateSpeculative(bodyParams, queryParams)')
       const entities = denormalisedResponseEntities(response);
       if (entities.length !== 1) {
         throw new Error('Expected a resource in the sdk.transactions.initiateSpeculative response');
@@ -376,9 +374,10 @@ export const speculateCashTransaction = params => (dispatch, getState, sdk) => {
 // We need to fetch currentUser with correct params to include relationship
 export const stripeCustomer = () => (dispatch, getState, sdk) => {
   dispatch(stripeCustomerRequest());
-
+  console.log(' stripeCustomer')
   return dispatch(fetchCurrentUser({ include: ['stripeCustomer.defaultPaymentMethod'] }))
     .then(response => {
+      console.log(' stripeCustomer END', response)
       dispatch(stripeCustomerSuccess());
     })
     .catch(e => {

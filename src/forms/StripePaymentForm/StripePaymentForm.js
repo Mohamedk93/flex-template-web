@@ -395,6 +395,7 @@ class StripePaymentForm extends Component {
     const showOnetimePaymentFields = ['onetimeCardPayment', 'replaceCard'].includes(
       selectedPaymentMethod
     );
+    const quickRent = this.props.quickRent
     return hasStripeKey ? (
       <Form className={classes} onSubmit={handleSubmit}>
         {billingDetailsNeeded && !loadingData ? (
@@ -484,7 +485,9 @@ class StripePaymentForm extends Component {
             disabled={submitDisabled}
           >
             {billingDetailsNeeded ? (
-              <FormattedMessage id="StripePaymentForm.submitPaymentInfo" />
+              <FormattedMessage id=
+              {quickRent !== undefined && quickRent.length > 0 ? "StripePaymentForm.pay" : "StripePaymentForm.submitPaymentInfo"}
+               />
             ) : (
               <FormattedMessage id="StripePaymentForm.submitConfirmPaymentInfo" />
             )}

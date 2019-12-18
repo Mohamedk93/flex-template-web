@@ -411,26 +411,30 @@ export class CheckoutPageComponent extends Component {
     const processAlias = config.cashBookingProcessAlias;
     sendOrderRequest(requestParams, initialMessage, processAlias, rentalType)
       .then(res => {
-        if(quickRent){
+        const { id, messageSuccess } = res;
+        this.setState({ submitting: false });
+        const routes = routeConfiguration();
+        const initialMessageFailedToTransaction = messageSuccess ? null : id;
+        const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: id.uuid });
+        const initialValues = {
+          initialMessageFailedToTransaction,
+        };
+        if(quickRent !== undefined && quickRent.length > 0){
           this.props.acceptTransaction(res).then(tmp => {
-            const { id, messageSuccess } = res; //Update: check data
-            this.setState({ submitting: false });
-            const routes = routeConfiguration();
-            const initialMessageFailedToTransaction = messageSuccess ? null : id;
-            const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: id.uuid });
-            const initialValues = {
-              initialMessageFailedToTransaction,
-            };
             initializeOrderPage(initialValues, routes, dispatch);
             clearData(STORAGE_KEY);
             history.push(orderDetailsPath);
           })
         }
+        else{
+          initializeOrderPage(initialValues, routes, dispatch);
+          clearData(STORAGE_KEY);
+          history.push(orderDetailsPath);
+        }
       })
       .catch(() => {
         this.setState({ submitting: false });
       });
-      
   }
 
   handlePaymentIntent(handlePaymentParams) {
@@ -686,6 +690,7 @@ export class CheckoutPageComponent extends Component {
       email: ensureCurrentUser(currentUser).attributes.email,
       ...addressMaybe,
     };
+    const quickRent =  this.state.pageData.listing.attributes.publicData.quickRent
 
     const requestPaymentParams = {
       pageData: this.state.pageData,
@@ -700,26 +705,33 @@ export class CheckoutPageComponent extends Component {
     };
 
     this.handlePaymentIntent(requestPaymentParams)
-      .then(res => {
-        const { orderId, messageSuccess, paymentMethodSaved } = res; // Update: check data
-        this.setState({ submitting: false });
-
-        const routes = routeConfiguration();
-        const initialMessageFailedToTransaction = messageSuccess ? null : orderId;
-        const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: orderId.uuid });
-        const initialValues = {
-          initialMessageFailedToTransaction,
-          savePaymentMethodFailed: !paymentMethodSaved,
-        };
-
+    .then(res => {
+      const { orderId, messageSuccess, paymentMethodSaved } = res;
+      this.setState({ submitting: false });
+      const routes = routeConfiguration();
+      const initialMessageFailedToTransaction = messageSuccess ? null : orderId;
+      const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: orderId.uuid });
+      const initialValues = {
+        initialMessageFailedToTransaction,
+        savePaymentMethodFailed: !paymentMethodSaved,
+      };
+      if(quickRent !== undefined && quickRent.length > 0){
+        this.props.acceptTransaction(res).then(tmp => {
+          initializeOrderPage(initialValues, routes, dispatch);
+          clearData(STORAGE_KEY);
+          history.push(orderDetailsPath);
+        })
+      }
+      else{
         initializeOrderPage(initialValues, routes, dispatch);
         clearData(STORAGE_KEY);
         history.push(orderDetailsPath);
-      })
-      .catch(err => {
-        console.error(err);
-        this.setState({ submitting: false });
-      });
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      this.setState({ submitting: false });
+    });
   }
 
   onStripeInitialized(stripe) {
@@ -1017,6 +1029,7 @@ export class CheckoutPageComponent extends Component {
     // const bookingTime = bookingData && bookingData.message[1] ? bookingData.message[1] : null;
 
     const formTitle = intl.formatMessage({ id: 'EnquiryForm.heading' }, { listingTitle });
+    const quickRent =  listing.attributes.publicData.quickRent
 
     return (
       <Page {...pageProps}>
@@ -1080,6 +1093,7 @@ export class CheckoutPageComponent extends Component {
                   initiateOrderError={initiateOrderError}
                   handleCardPaymentError={handleCardPaymentError}
                   confirmPaymentError={confirmPaymentError}
+                  quickRent={quickRent}
                   hasHandledCardPayment={hasPaymentIntentUserActionsDone}
                   loadingData={!stripeCustomerFetched}
                   defaultPaymentMethod={
@@ -1120,7 +1134,7 @@ export class CheckoutPageComponent extends Component {
             </div>
             <div className={css.detailsHeadings}>
               <h2 className={css.detailsTitle}>{listingTitle}</h2>
-              {/* <p className={css.detailsSubtitle}>{detailsSubTitle}</p> */}
+              {/* <p classNaame={css.detailsSubtitle}>{detailsSubTitle}</p> */}
               <p className={css.detailsSubtitle}>
                 <FormattedMessage
                   id="CheckoutPage.hostedBy"

@@ -881,7 +881,8 @@ export class BookingDatesFormComponent extends Component {
               <div className={submitButtonClasses}>
                 <PrimaryButton type="submit">
                   {quickRent !== undefined && quickRent.length > 0 ? <IconRocket className={css.iconRocket} /> : ''}
-                  <FormattedMessage id="BookingDatesForm.requestToBook" />
+                  <FormattedMessage id=
+                    {quickRent !== undefined && quickRent.length > 0 ? "BookingDatesForm.quickRent" : "BookingDatesForm.requestToBook"} />
                 </PrimaryButton>
               </div>
             </Form>
