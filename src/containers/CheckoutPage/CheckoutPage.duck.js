@@ -317,7 +317,6 @@ export const speculateTransaction = params => (dispatch, getState, sdk) => {
   return sdk.transactions
     .initiateSpeculative(bodyParams, queryParams)
     .then(response => {
-      console.log('This is yes .initiateSpeculative(bodyParams, queryParams)')
       const entities = denormalisedResponseEntities(response);
       if (entities.length !== 1) {
         throw new Error('Expected a resource in the sdk.transactions.initiateSpeculative response');
@@ -374,10 +373,8 @@ export const speculateCashTransaction = params => (dispatch, getState, sdk) => {
 // We need to fetch currentUser with correct params to include relationship
 export const stripeCustomer = () => (dispatch, getState, sdk) => {
   dispatch(stripeCustomerRequest());
-  console.log(' stripeCustomer')
   return dispatch(fetchCurrentUser({ include: ['stripeCustomer.defaultPaymentMethod'] }))
     .then(response => {
-      console.log(' stripeCustomer END', response)
       dispatch(stripeCustomerSuccess());
     })
     .catch(e => {
