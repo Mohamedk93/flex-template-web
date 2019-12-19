@@ -1086,7 +1086,7 @@ export class CheckoutPageComponent extends Component {
                   paymentMethod={paymentMethod}
                   inProgress={this.state.submitting}
                   formId="CheckoutPagePaymentForm"
-                  paymentInfo={intl.formatMessage({ id: 'CheckoutPage.paymentInfo' })}
+                  paymentInfo={intl.formatMessage({ id:  quickRent !== undefined && quickRent.length > 0 ? " " : 'CheckoutPage.paymentInfo' })}
                   authorDisplayName={currentAuthor.attributes.profile.displayName}
                   showInitialMessageInput={showInitialMessageInput}
                   initialValues={initalValuesForStripePayment}
