@@ -39,6 +39,7 @@ export const TRANSITION_EXPIRE_PAYMENT = 'transition/expire-payment';
 // When the provider accepts or declines a transaction from the
 // SalePage, it is transitioned with the accept or decline transition.
 export const TRANSITION_ACCEPT = 'transition/accept';
+export const TRANSITION_ACCEPT_BY_CUSTOMER = 'transition/accept-by-customer';
 export const TRANSITION_DECLINE = 'transition/decline';
 
 // The backend automatically expire the transaction.
@@ -153,6 +154,7 @@ const stateDescription = {
         [TRANSITION_DECLINE]: STATE_DECLINED,
         [TRANSITION_EXPIRE]: STATE_DECLINED,
         [TRANSITION_ACCEPT]: STATE_ACCEPTED,
+        [TRANSITION_ACCEPT_BY_CUSTOMER]: STATE_ACCEPTED,
       },
     },
 
@@ -247,8 +249,6 @@ export const txIsPaymentExpired = tx =>
 // Note: state name used in Marketplace API docs (and here) is actually preauthorized
 // However, word "requested" is used in many places so that we decided to keep it.
 export const txIsRequested = tx => {
-  console.log(getTransitionsToState(STATE_PREAUTHORIZED))
-  console.log(txLastTransition(tx))
   return getTransitionsToState(STATE_PREAUTHORIZED).includes(txLastTransition(tx));
 }
 

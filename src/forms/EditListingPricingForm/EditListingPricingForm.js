@@ -9,7 +9,7 @@ import { LINE_ITEM_NIGHT, LINE_ITEM_DAY, propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
 import { formatMoney } from '../../util/currency';
 import { types as sdkTypes } from '../../util/sdkLoader';
-import { Button, Form, FieldCurrencyInput } from '../../components';
+import { Button, Form, FieldCurrencyInput, FieldCheckbox } from '../../components';
 import css from './EditListingPricingForm.css';
 
 const { Money } = sdkTypes;
@@ -78,7 +78,7 @@ export const EditListingPricingFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
       const { updateListingError, showListingsError } = fetchErrors || {};
-
+      const labelText = intl.formatMessage({ id: 'EditListingPricingForm.enable_quick_rent' });
       const priceHead = rentalTypes.map(item => {
         const rentalLabel = intl.formatMessage({
           id: `EditListingPricingForm.rentalType_${item}`,
@@ -148,6 +148,13 @@ export const EditListingPricingFormComponent = props => (
               {priceTable}
             </div>
           </div>
+          <FieldCheckbox
+            id="quickRent"
+            name="quickRent"
+            className={css.title}
+            label={labelText}
+            value='quickRent'
+          />
           <Button
             className={css.submitButton}
             type="submit"
@@ -171,6 +178,7 @@ EditListingPricingFormComponent.defaultProps = {
 
 EditListingPricingFormComponent.propTypes = {
   intl: intlShape.isRequired,
+  quickRent: bool,
   onSubmit: func.isRequired,
   saveActionMsg: string.isRequired,
   updated: bool.isRequired,
