@@ -1,45 +1,41 @@
-import React from 'react';
-import { string } from 'prop-types';
+import React, { Component } from 'react';
+import { string, object } from 'prop-types';
 import { FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
-import { NamedLink } from '../../components';
 
-import css from './SectionHero.css';
+import css from './SectionHero.css'; 
+import Button from '../Button/Button';
 
-const SectionHero = props => {
-  const { rootClassName, className } = props;
-
-  const classes = classNames(rootClassName || css.root, className);
-
-  return (
-    <div className={classes}>
-      <div className={css.heroContent}>
-        <h1 className={css.heroMainTitle}>
-          <FormattedMessage id="SectionHero.title" />
-        </h1>
-        <h2 className={css.heroSubTitle}>
-          <FormattedMessage id="SectionHero.subTitle" />
-        </h2>
-        <NamedLink
-          name="SearchPage"
-          to={{
-            search:
-              'address=Cairo%2C%20Cairo%20Governorate%2C%20Egypt&bounds=79.34942401%2C56.31453229%2C-57.56893982%2C-133.52921771',
-          }}
-          className={css.heroButton}
-        >
-          <FormattedMessage id="SectionHero.browseButton" />
-        </NamedLink>
+export class SectionHero extends Component {
+  render (){
+    const rootClassName = this.props.rootClassName
+    const className = this.props.className
+    const classes = classNames(rootClassName || css.root, className);
+    return (
+      <div className={classes}>
+        <div className={css.heroContent}>
+          <h1 className={css.heroMainTitle}>
+            <FormattedMessage id="SectionHero.title" />
+          </h1>
+          <h2 className={css.heroSubTitle}>
+            <FormattedMessage id="SectionHero.subTitle" />
+          </h2>
+          <Button className={css.heroButton}>
+            <span className={css.heroText}>
+              <FormattedMessage id="SectionHero.browseButton" />
+            </span>
+          </Button>
+        </div>
       </div>
-    </div>
-  );
-};
-
-SectionHero.defaultProps = { rootClassName: null, className: null };
+    );
+  };
+  }
+  
+SectionHero.defaultProps = { rootClassName: null, className: null,  };
 
 SectionHero.propTypes = {
   rootClassName: string,
-  className: string,
+  className: string
 };
 
 export default SectionHero;

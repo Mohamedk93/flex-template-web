@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -18,69 +18,121 @@ import {
   Footer,
 } from '../../components';
 import { TopbarContainer } from '../../containers';
-
+import { locationBounds } from '../../util/googleMaps';
 import facebookImage from '../../assets/HotdeskFacebook1200.jpg';
 import twitterImage from '../../assets/HotdeskTwitter600.jpg';
 import css from './LandingPage.css';
 
-export const LandingPageComponent = props => {
-  const { history, intl, location, scrollingDisabled } = props;
-
+export class LandingPageComponent extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      path: '',
+      canRedirect: false
+    };
+    this.success = this.success.bind(this);
+    this.error = this.error.bind(this);
+  }
   // Schema for search engines (helps them to understand what this page is about)
   // http://schema.org
   // We are using JSON-LD format
-  const siteTitle = config.siteTitle;
-  const schemaTitle = intl.formatMessage({ id: 'LandingPage.schemaTitle' }, { siteTitle });
-  const schemaDescription = intl.formatMessage({ id: 'LandingPage.schemaDescription' });
-  const schemaImage = `${config.canonicalRootURL}${facebookImage}`;
+  handleClick (e){
+    if(e.target.innerText == 'Find work spaces'){
+      let options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      };
+      navigator.geolocation.getCurrentPosition(this.success, this.error, options)
+    }
+  }
 
-  return (
-    <Page
-      className={css.root}
-      scrollingDisabled={scrollingDisabled}
-      contentType="website"
-      description={schemaDescription}
-      title={schemaTitle}
-      facebookImages={[{ url: facebookImage, width: 1200, height: 470 }]}
-      twitterImages={[
-        { url: `${config.canonicalRootURL}${twitterImage}`, width: 600, height: 235 },
-      ]}
-      schema={{
-        '@context': 'http://schema.org',
-        '@type': 'WebPage',
-        description: schemaDescription,
-        name: schemaTitle,
-        image: [schemaImage],
-      }}
-    >
-      <LayoutSingleColumn>
-        <LayoutWrapperTopbar>
-          <TopbarContainer />
-        </LayoutWrapperTopbar>
-        <LayoutWrapperMain>
-          <div className={css.heroContainer}>
-            <SectionHero className={css.hero} history={history} location={location} />
-          </div>
-          <ul className={css.sections}>
-            <li className={css.section}>
-              <div className={css.sectionContentFirstChild}>
-                <SectionLocations />
-              </div>
-            </li>
-            <li className={css.section}>
-              <div className={css.sectionContent}>
-                <SectionHowItWorks />
-              </div>
-            </li>
-          </ul>
-        </LayoutWrapperMain>
-        <LayoutWrapperFooter>
-          <Footer />
-        </LayoutWrapperFooter>
-      </LayoutSingleColumn>
-    </Page>
-  );
-};
+  componentDidUpdate(prevProps, prevState){
+    const {path, canRedirect} = this.state;
+    
+    if(prevState.path !== path &&  path.length > 0 && canRedirect){
+      this.props.history.push(this.state.path);
+    }
+  }
+  
+  success(pos) {
+    let crd = pos.coords;
+    const latlng = {
+      lat: crd.latitude,
+      lng: crd.longitude
+    }
+    const coordindates = locationBounds(latlng, config.maps.search.currentLocationBoundsDistance)
+    const path = this.generateSearch(coordindates)
+    this.setState({path: path, canRedirect: true});
+  }
+  
+  error(err) {
+    const path = 's?address=Cairo%2C%20Cairo%20Governorate%2C%20Egypt&bounds=79.34942401%2C56.31453229%2C-57.56893982%2C-133.52921771' 
+    this.setState({path: path, canRedirect: true});
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  };
+
+  generateSearch(coordindates){
+    if(Object.keys(coordindates).length !== 0){
+      return `s?address=&bounds=${coordindates.ne.lat}%2C${coordindates.ne.lng}%2C${coordindates.sw.lat}%2C${coordindates.sw.lng}`
+    }
+  }
+  
+  render (){
+    const { history, intl, location, scrollingDisabled } = this.props;
+    const siteTitle = config.siteTitle;
+    const schemaTitle = intl.formatMessage({ id: 'LandingPage.schemaTitle' }, { siteTitle });
+    const schemaDescription = intl.formatMessage({ id: 'LandingPage.schemaDescription' });
+    const schemaImage = `${config.canonicalRootURL}${facebookImage}`;
+
+    return (
+      <Page
+        className={css.root}
+        scrollingDisabled={scrollingDisabled}
+        contentType="website"
+        description={schemaDescription}
+        title={schemaTitle}
+        facebookImages={[{ url: facebookImage, width: 1200, height: 470 }]}
+        twitterImages={[
+          { url: `${config.canonicalRootURL}${twitterImage}`, width: 600, height: 235 },
+        ]}
+        schema={{
+          '@context': 'http://schema.org',
+          '@type': 'WebPage',
+          description: schemaDescription,
+          name: schemaTitle,
+          image: [schemaImage],
+        }}
+      >
+        <LayoutSingleColumn>
+          <LayoutWrapperTopbar>
+            <TopbarContainer />
+          </LayoutWrapperTopbar>
+          <LayoutWrapperMain>
+            <div className={css.heroContainer} onClick={((e) => this.handleClick(e))}>
+              <SectionHero className={css.hero} history={history} location={location} />
+            </div>
+            <ul className={css.sections}>
+              <li className={css.section}>
+                <div className={css.sectionContentFirstChild}>
+                  <SectionLocations />
+                </div>
+              </li>
+              <li className={css.section}>
+                <div className={css.sectionContent}>
+                  <SectionHowItWorks />
+                </div>
+              </li>
+            </ul>
+          </LayoutWrapperMain>
+          <LayoutWrapperFooter>
+            <Footer />
+          </LayoutWrapperFooter>
+        </LayoutSingleColumn>
+      </Page>
+    );
+  };
+}
 
 const { bool, object } = PropTypes;
 
