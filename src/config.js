@@ -121,7 +121,7 @@ const maps = {
 
     // Distance in meters for calculating the bounding box around the
     // current location.
-    currentLocationBoundsDistance: 100000,
+    currentLocationBoundsDistance: 10000,
 
     // Example location can be edited in the
     // `default-location-searches.js` file.
