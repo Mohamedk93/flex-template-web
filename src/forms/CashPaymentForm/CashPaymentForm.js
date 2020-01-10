@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { Form, PrimaryButton, FieldTextInput, IconEnquiry } from '../../components';
 import * as validators from '../../util/validators';
 import { propTypes } from '../../util/types';
+import { IconRocket } from '../../components';
 
 import css from './CashPaymentForm.css';
 
@@ -22,22 +23,22 @@ const CashPaymentFormComponent = props => (
         handleSubmit,
         inProgress,
         listingTitle,
-        timeTitle,
+        listing,
       } = fieldRenderProps;
 
       const classes = classNames(rootClassName || css.root, className);
       const submitInProgress = inProgress;
       const submitDisabled = submitInProgress;
+      const quickRent = listing.attributes.publicData.quickRent
 
       return (
         <Form className={classes} onSubmit={handleSubmit}>
           <h2 className={css.heading}>
             { listingTitle }
           </h2>
-          <h2> { timeTitle } </h2>
-
           <div className={submitButtonWrapperClassName}>
             <PrimaryButton type="submit" inProgress={submitInProgress} disabled={submitDisabled}>
+              {quickRent !== undefined && quickRent.length > 0 ? <IconRocket className={css.iconRocket} /> : ''}
               <FormattedMessage id="EnquiryForm.submitButtonText" />
             </PrimaryButton>
           </div>

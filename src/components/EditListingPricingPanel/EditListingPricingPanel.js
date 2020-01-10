@@ -85,6 +85,7 @@ const EditListingPricingPanel = props => {
         price_meeting_rooms_hourly,
         price_meeting_rooms_daily,
         price_meeting_rooms_monthly,
+        quickRent: publicData.quickRent,
       }}
       onSubmit={values => {
         const { 
@@ -97,6 +98,7 @@ const EditListingPricingPanel = props => {
           price_meeting_rooms_hourly,
           price_meeting_rooms_daily,
           price_meeting_rooms_monthly,
+          quickRent,
         } = values;
         const nullPrice = {
           amount: 0,
@@ -175,6 +177,7 @@ const EditListingPricingPanel = props => {
             priceMeetingRoomsHourly,
             priceMeetingRoomsDaily,
             priceMeetingRoomsMonthly,
+            quickRent,
           },
         };
         onSubmit(updateValues);

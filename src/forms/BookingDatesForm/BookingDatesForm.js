@@ -26,6 +26,7 @@ import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
 import DateMonthPicker from './DateMonthPicker';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
 import { types as sdkTypes } from '../../util/sdkLoader';
+import { IconRocket } from '../../components';
 
 import css from './BookingDatesForm.css';
 
@@ -568,7 +569,7 @@ export class BookingDatesFormComponent extends Component {
             office_rooms: publicDataObj.officeRoomsQuantity ? publicDataObj.officeRoomsQuantity : 100,
             meeting_rooms: publicDataObj.meetingRoomsQuantity ? publicDataObj.meetingRoomsQuantity : 100,
           };
-          
+          const quickRent =  listing.attributes.publicData.quickRent
           const quantityErrors = [];
           if(fieldRenderProps.errors.seats_quantity) {
             quantityErrors.push(fieldRenderProps.errors.seats_quantity)
@@ -877,10 +878,11 @@ export class BookingDatesFormComponent extends Component {
                   }
                 />
               </p>
-
               <div className={submitButtonClasses}>
                 <PrimaryButton type="submit">
-                  <FormattedMessage id="BookingDatesForm.requestToBook" />
+                  {quickRent !== undefined && quickRent.length > 0 ? <IconRocket className={css.iconRocket} /> : ''}
+                  <FormattedMessage id=
+                    {quickRent !== undefined && quickRent.length > 0 ? "BookingDatesForm.quickRent" : "BookingDatesForm.requestToBook"} />
                 </PrimaryButton>
               </div>
             </Form>

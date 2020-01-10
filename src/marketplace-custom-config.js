@@ -81,6 +81,10 @@ export const categoriesDefaultName = {
   office: "Office Space",
 }
 
+export const quickRent = {
+  active: false
+};
+
 export const weekDays = [
   { key: 'mon', label: 'Monday' },
   { key: 'tue', label: 'Tuesday' },
