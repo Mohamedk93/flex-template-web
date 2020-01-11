@@ -65,6 +65,8 @@ export const workspacesDefaultQuantity = {
   meeting_rooms: 100,
 }
 
+
+
 export const workspacesDefaultName = {
   seats: "Seats",
   office_rooms: "Office rooms",
@@ -84,6 +86,35 @@ export const categoriesDefaultName = {
 export const quickRent = {
   active: false
 };
+
+export const rates = [
+                     {name: 'Austaralian dollar',    iso_code: 'AUD', symbol: '$'},
+                     {name: 'Algerian Dinar',        iso_code: 'DZD', symbol: 'دج'},
+                     {name: 'Bahraini Dinar',        iso_code: 'BHD', symbol: '.د.ب'},
+                     {name: 'Canadian Dollar',       iso_code: 'CAD', symbol: '$'},
+                     {name: 'Emirati Dirham',        iso_code: 'AED', symbol: 'د.إ'},
+                     {name: 'Egyptian Pound',        iso_code: 'EGP', symbol: 'ج.م'},
+                     {name: 'Euro',                  iso_code: 'EUR', symbol: '€'},
+                     {name: 'Indian Rupee',          iso_code: 'INR', symbol: '₹'},
+                     {name: 'Jordanian Dinar',       iso_code: 'JOD', symbol: 'JD'},
+                     {name: 'Kenyan Shilling',       iso_code: 'KES', symbol: '$'},
+                     {name: 'Kuwaiti Dinar',         iso_code: 'KWD', symbol: 'K.D.'},
+                     {name: 'Moroccan Dirham',       iso_code: 'MAD', symbol: 'د.م.'},
+                     {name: 'New Zealand Dollar',    iso_code: 'NZD', symbol: '$'},
+                     {name: 'Nigerian Naira',        iso_code: 'NGN', symbol: '₦'},
+                     {name: 'Norweigan Krone',       iso_code: 'NOK', symbol: 'NKr'},
+                     {name: 'Omani Rial',            iso_code: 'OMR', symbol: 'ر.ع.'},
+                     {name: 'Pound Sterling',        iso_code: 'GBP', symbol: '£'},
+                     {name: 'Pakistani Rupee',       iso_code: 'PKR', symbol: '₨'},
+                     {name: 'Qatari Riyal',          iso_code: 'QAR', symbol: ' ر.ق'},
+                     {name: 'Saudi Riyal',           iso_code: 'SAR', symbol: 'ر.س'},
+                     {name: 'South African Rand',    iso_code: 'ZAR', symbol: 'R'},
+                     {name: 'Swedish Krona',         iso_code: 'SEK', symbol: 'kr'},
+                     {name: 'Swiss Franc',           iso_code: 'CHF', symbol: 'CHF'},
+                     {name: 'Turkish Lira',          iso_code: 'TRY', symbol: '₺'},
+                     {name: 'Tunisian Dinar',        iso_code: 'TND', symbol: 'DT'},
+                     {name: 'United States Dollars', iso_code: 'USD', symbol: '$'}
+                    ]
 
 export const weekDays = [
   { key: 'mon', label: 'Monday' },

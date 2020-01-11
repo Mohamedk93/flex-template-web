@@ -340,6 +340,8 @@ export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => 
       return currentUser;
     })
     .then(currentUser => {
+      console.log('This is login ----------==(Login)==----------->')
+      console.log(currentUser)
       dispatch(fetchCurrentUserHasListings());
       dispatch(fetchCurrentUserNotifications());
       if (!currentUser.attributes.emailVerified) {

@@ -71,7 +71,6 @@ const EditListingPricingPanel = props => {
   const price_meeting_rooms_monthly = publicData && publicData.priceMeetingRoomsMonthly && publicData.workspaces.indexOf('meeting_rooms') != -1 ? 
   new Money(publicData.priceMeetingRoomsMonthly.amount, publicData.priceMeetingRoomsMonthly.currency) : null;
 
-
   const form = priceCurrencyValid ? (
     <EditListingPricingForm
       className={css.form}
@@ -86,6 +85,7 @@ const EditListingPricingPanel = props => {
         price_meeting_rooms_daily,
         price_meeting_rooms_monthly,
         quickRent: publicData.quickRent,
+        rates: publicData.rates,
       }}
       onSubmit={values => {
         const { 
@@ -99,6 +99,7 @@ const EditListingPricingPanel = props => {
           price_meeting_rooms_daily,
           price_meeting_rooms_monthly,
           quickRent,
+          rates,
         } = values;
         const nullPrice = {
           amount: 0,
@@ -178,6 +179,7 @@ const EditListingPricingPanel = props => {
             priceMeetingRoomsDaily,
             priceMeetingRoomsMonthly,
             quickRent,
+            rates,
           },
         };
         onSubmit(updateValues);

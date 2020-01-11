@@ -9,7 +9,7 @@ import { LINE_ITEM_NIGHT, LINE_ITEM_DAY, propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
 import { formatMoney } from '../../util/currency';
 import { types as sdkTypes } from '../../util/sdkLoader';
-import { Button, Form, FieldCurrencyInput, FieldCheckbox } from '../../components';
+import { Button, Form, FieldCurrencyInput, FieldCheckbox, FieldSelect } from '../../components';
 import css from './EditListingPricingForm.css';
 
 const { Money } = sdkTypes;
@@ -27,6 +27,7 @@ export const EditListingPricingFormComponent = props => (
         pristine,
         saveActionMsg,
         updated,
+        rates,
         updateInProgress,
         fetchErrors,
         workspaces,
@@ -36,7 +37,8 @@ export const EditListingPricingFormComponent = props => (
       const unitType = config.bookingUnitType;
       const isNightly = unitType === LINE_ITEM_NIGHT;
       const isDaily = unitType === LINE_ITEM_DAY;
-
+      console.log('This is props');
+      console.log(props);
       const translationKey = isNightly
         ? 'EditListingPricingForm.pricePerNight'
         : isDaily
@@ -79,6 +81,9 @@ export const EditListingPricingFormComponent = props => (
       const submitDisabled = invalid || disabled || submitInProgress;
       const { updateListingError, showListingsError } = fetchErrors || {};
       const labelText = intl.formatMessage({ id: 'EditListingPricingForm.enable_quick_rent' });
+      const capacityPlaceholder = intl.formatMessage({
+        id: 'EditListingPricingForm.defaultCurrency',
+      });
       const priceHead = rentalTypes.map(item => {
         const rentalLabel = intl.formatMessage({
           id: `EditListingPricingForm.rentalType_${item}`,
@@ -130,6 +135,19 @@ export const EditListingPricingFormComponent = props => (
           <p className={css.priceGeneral}>
             <FormattedMessage id="EditListingPricingForm.priceGeneral" />
           </p>
+
+          <FieldSelect
+            name="rates"
+            id="rates"
+          >
+            <option value="">{capacityPlaceholder}</option>
+            {rates.map(c => (
+              <option key={c.iso_code} value={c.isdo_code}>
+                {c.iso_code}
+              </option>
+            ))}
+          </FieldSelect>
+
           {updateListingError ? (
             <p className={css.error}>
               <FormattedMessage id="EditListingPricingForm.updateFailed" />
@@ -148,6 +166,7 @@ export const EditListingPricingFormComponent = props => (
               {priceTable}
             </div>
           </div>
+
           <FieldCheckbox
             id="quickRent"
             name="quickRent"
@@ -174,6 +193,7 @@ EditListingPricingFormComponent.defaultProps = {
   fetchErrors: null,
   workspaces: [],
   rentalTypes: [],
+  rates: config.custom.rates,
 };
 
 EditListingPricingFormComponent.propTypes = {
@@ -185,6 +205,7 @@ EditListingPricingFormComponent.propTypes = {
   updateInProgress: bool.isRequired,
   workspaces: array.isRequired,
   rentalTypes: array.isRequired,
+  rates: array,
   fetchErrors: shape({
     showListingsError: propTypes.error,
     updateListingError: propTypes.error,
