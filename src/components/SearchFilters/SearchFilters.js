@@ -12,6 +12,8 @@ import {
   SelectMultipleFilter,
   PriceFilter,
   KeywordFilter,
+  SectionLocations,
+  NamedLink,
 } from '../../components';
 import routeConfiguration from '../../routeConfiguration';
 import { parseDateFromISO8601, stringifyDateToISO8601 } from '../../util/dates';
@@ -246,6 +248,19 @@ const SearchFiltersComponent = props => {
       />
     </button>
   ) : null;
+
+  const currentLoc = props.location;
+  const createNewListing = (
+    <NamedLink className={css.createListingLink} name="NewListingPage">
+      <FormattedMessage id="SearchPage.createListing" />
+    </NamedLink>
+  );
+  const monetizeEmptySpace = (
+    <NamedLink className={css.createListingLink} name="NewListingPage">
+      <FormattedMessage id="SearchPage.createListingMonetize" />
+    </NamedLink>
+  );
+
   return (
     <div className={classes}>
       <div className={css.filters}>
@@ -267,7 +282,15 @@ const SearchFiltersComponent = props => {
 
       {hasNoResult ? (
         <div className={css.noSearchResults}>
-          <FormattedMessage id="SearchFilters.noResults" />
+          <span>
+            <FormattedMessage
+              id="SearchPage.dontHaveListings"
+              values={{ createNewListing, monetizeEmptySpace }}
+            />
+          </span>
+          <div className={css.noSearchResultsLocations}>
+            <SectionLocations location={currentLoc} />
+          </div>
         </div>
       ) : null}
 

@@ -84,6 +84,7 @@ export class LandingPageComponent extends Component {
     const schemaTitle = intl.formatMessage({ id: 'LandingPage.schemaTitle' }, { siteTitle });
     const schemaDescription = intl.formatMessage({ id: 'LandingPage.schemaDescription' });
     const schemaImage = `${config.canonicalRootURL}${facebookImage}`;
+    const currentLoc = this.props.location;
 
     return (
       <Page
@@ -115,7 +116,9 @@ export class LandingPageComponent extends Component {
             <ul className={css.sections}>
               <li className={css.section}>
                 <div className={css.sectionContentFirstChild}>
-                  <SectionLocations />
+                  <SectionLocations 
+                    location={currentLoc}
+                  />
                 </div>
               </li>
               <li className={css.section}>

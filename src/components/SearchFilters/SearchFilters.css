@@ -104,3 +104,7 @@
     border: 1px solid var(--marketplaceColorDark);
   }
 }
+
+.noSearchResultsLocations {
+  padding: 50px 0;
+}
