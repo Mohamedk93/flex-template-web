@@ -250,11 +250,13 @@ const SearchFiltersComponent = props => {
   ) : null;
 
   const currentLoc = props.location;
+
   const createNewListing = (
     <NamedLink className={css.createListingLink} name="NewListingPage">
       <FormattedMessage id="SearchPage.createListing" />
     </NamedLink>
   );
+  
   const monetizeEmptySpace = (
     <NamedLink className={css.createListingLink} name="NewListingPage">
       <FormattedMessage id="SearchPage.createListingMonetize" />

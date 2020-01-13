@@ -16,6 +16,8 @@ import {
   SelectSingleFilter,
   SelectMultipleFilter,
   BookingDateRangeFilter,
+  NamedLink,
+  SectionLocations,
 } from '../../components';
 import { propTypes } from '../../util/types';
 import css from './SearchFiltersMobile.css';
@@ -297,11 +299,43 @@ class SearchFiltersMobileComponent extends Component {
         />
       ) : null;
 
+    const currentLoc = this.props.location;
+
+    const createNewListing = (
+      <NamedLink className={css.createListingLink} name="NewListingPage">
+        <FormattedMessage id="SearchPage.createListing" />
+      </NamedLink>
+    );
+    
+    const monetizeEmptySpace = (
+      <NamedLink className={css.createListingLink} name="NewListingPage">
+        <FormattedMessage id="SearchPage.createListingMonetize" />
+      </NamedLink>
+    );
+
     return (
       <div className={classes}>
         <div className={css.searchResultSummary}>
           {listingsAreLoaded && resultsCount > 0 ? resultsFound : null}
-          {listingsAreLoaded && resultsCount === 0 ? noResults : null}
+          {listingsAreLoaded && resultsCount === 0 ? (
+            <div className={css.noSearchResults}>
+              <span>
+                <FormattedMessage
+                  id="SearchPage.dontHaveListings"
+                  values={{ createNewListing, monetizeEmptySpace }}
+                />
+              </span>
+              <div className={css.noSearchResultsLocations}>
+                <SectionLocations location={currentLoc} />
+              </div>
+            </div>
+          ) : null}
+
+      {searchInProgress ? (
+        <div className={css.loadingResults}>
+          <FormattedMessage id="SearchFilters.loadingResults" />
+        </div>
+      ) : null}
           {searchInProgress ? loadingResults : null}
         </div>
         <div className={css.buttons}>
