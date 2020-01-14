@@ -4,6 +4,7 @@
   display: flex;
   justify-content: space-between;
   background-color: var(--matterColorBright);
+  flex-wrap: wrap;
 
   /* sticky result summary in mobile */
   position: sticky;
@@ -13,7 +14,7 @@
 
 .searchResultSummary {
   @apply --marketplaceH3FontStyles;
-  margin-top: 6px;
+  margin-top: 36px;
 
   display: flex;
   justify-content: space-between;
@@ -131,4 +132,8 @@
   background-color: var(--marketplaceColor);
   display: inline-block;
   border-radius: 3px;
+}
+
+.noSearchResultsLocations {
+  padding: 50px 0;
 }
