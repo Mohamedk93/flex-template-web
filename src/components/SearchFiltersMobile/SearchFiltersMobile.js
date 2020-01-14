@@ -315,6 +315,14 @@ class SearchFiltersMobileComponent extends Component {
 
     return (
       <div className={classes}>
+        <div className={css.buttons}>
+          <Button rootClassName={filtersButtonClasses} onClick={this.openFilters}>
+            <FormattedMessage id="SearchFilters.filtersButtonLabel" className={css.mapIconText} />
+          </Button>
+          <div className={css.mapIcon} onClick={onMapIconClick}>
+            <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
+          </div>
+        </div>
         <div className={css.searchResultSummary}>
           {listingsAreLoaded && resultsCount > 0 ? resultsFound : null}
           {listingsAreLoaded && resultsCount === 0 ? (
@@ -337,14 +345,6 @@ class SearchFiltersMobileComponent extends Component {
         </div>
       ) : null}
           {searchInProgress ? loadingResults : null}
-        </div>
-        <div className={css.buttons}>
-          <Button rootClassName={filtersButtonClasses} onClick={this.openFilters}>
-            <FormattedMessage id="SearchFilters.filtersButtonLabel" className={css.mapIconText} />
-          </Button>
-          <div className={css.mapIcon} onClick={onMapIconClick}>
-            <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
-          </div>
         </div>
         <ModalInMobile
           id="SearchFiltersMobile.filters"

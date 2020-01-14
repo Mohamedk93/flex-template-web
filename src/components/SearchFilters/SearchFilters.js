@@ -256,7 +256,7 @@ const SearchFiltersComponent = props => {
       <FormattedMessage id="SearchPage.createListing" />
     </NamedLink>
   );
-  
+
   const monetizeEmptySpace = (
     <NamedLink className={css.createListingLink} name="NewListingPage">
       <FormattedMessage id="SearchPage.createListingMonetize" />

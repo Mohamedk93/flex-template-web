@@ -107,4 +107,22 @@
 
 .noSearchResultsLocations {
   padding: 50px 0;
+
+  @media (--viewportMedium) {
+    & div[class*="SectionLocations_locations"] {
+      flex-direction: column;
+    }
+    & div[class*="SectionLocations_location"] {
+      margin-bottom: 20px;
+    }
+  }
+
+  @media (--viewportLarge) {
+    & div[class*="SectionLocations_locations"] {
+      flex-direction: row;
+    }
+    & div[class*="SectionLocations_location"] {
+      margin-bottom: 0;
+    }
+  }
 }
