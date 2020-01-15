@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { Form, PrimaryButton, FieldTextInput, IconEnquiry } from '../../components';
 import * as validators from '../../util/validators';
 import { propTypes } from '../../util/types';
-import { IconRocket } from '../../components';
+import { IconLightning } from '../../components';
 
 import css from './CashPaymentForm.css';
 
@@ -38,7 +38,7 @@ const CashPaymentFormComponent = props => (
           </h2>
           <div className={submitButtonWrapperClassName}>
             <PrimaryButton type="submit" inProgress={submitInProgress} disabled={submitDisabled}>
-              {quickRent !== undefined && quickRent.length > 0 ? <IconRocket className={css.iconRocket} /> : ''}
+              {quickRent !== undefined && quickRent.length > 0 ? <IconLightning className={css.iconLightning} /> : ''}
               <FormattedMessage id="EnquiryForm.submitButtonText" />
             </PrimaryButton>
           </div>
