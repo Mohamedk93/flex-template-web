@@ -270,3 +270,8 @@
     margin: 0;
   }
 }
+
+.menuHolder {
+  display: flex;
+  align-items: center;
+}
