@@ -789,6 +789,7 @@ export class CheckoutPageComponent extends Component {
       bookingData,
       paymentMethod,
       currentUser,
+      showBackButton,
     } = this.props;
 
     const rentalType = bookingData && bookingData.rentalType ? bookingData.rentalType : null;
