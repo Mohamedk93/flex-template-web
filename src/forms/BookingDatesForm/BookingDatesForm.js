@@ -26,7 +26,7 @@ import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
 import DateMonthPicker from './DateMonthPicker';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
 import { types as sdkTypes } from '../../util/sdkLoader';
-import { IconRocket } from '../../components';
+import { IconLightning } from '../../components';
 
 import css from './BookingDatesForm.css';
 
@@ -880,7 +880,7 @@ export class BookingDatesFormComponent extends Component {
               </p>
               <div className={submitButtonClasses}>
                 <PrimaryButton type="submit">
-                  {quickRent !== undefined && quickRent.length > 0 ? <IconRocket className={css.iconRocket} /> : ''}
+                  {quickRent !== undefined && quickRent.length > 0 ? <IconLightning className={css.iconLightning} /> : ''}
                   <FormattedMessage id=
                     {quickRent !== undefined && quickRent.length > 0 ? "BookingDatesForm.quickRent" : "BookingDatesForm.requestToBook"} />
                 </PrimaryButton>

@@ -13,6 +13,7 @@ import {
   MenuContent,
   MenuItem,
   NamedLink,
+  HistoryBackButton,
 } from '../../components';
 import { TopbarSearchForm } from '../../forms';
 
@@ -31,6 +32,7 @@ const TopbarDesktop = props => {
     onLogout,
     onSearchSubmit,
     initialSearchFormValues,
+    showBackButton,
   } = props;
   const [mounted, setMounted] = useState(false);
 
@@ -142,6 +144,7 @@ const TopbarDesktop = props => {
         />
       </NamedLink>
       {search}
+      <HistoryBackButton show={showBackButton}/>
       <NamedLink className={css.createListingLink} name="NewListingPage">
         <span className={css.createListing}>
           <FormattedMessage id="TopbarDesktop.createListing" />

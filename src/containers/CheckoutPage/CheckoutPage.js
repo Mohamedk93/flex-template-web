@@ -49,6 +49,7 @@ import {
   NamedRedirect,
   Page,
   ResponsiveImage,
+  HistoryBackButton,
 } from '../../components';
 import { StripePaymentForm, CashPaymentForm } from '../../forms';
 import { isScrollingDisabled } from '../../ducks/UI.duck';
@@ -115,6 +116,7 @@ export class CheckoutPageComponent extends Component {
       pageData: {},
       dataLoaded: false,
       submitting: false,
+      showBackButton: false,
     };
     this.stripe = null;
 
@@ -128,6 +130,14 @@ export class CheckoutPageComponent extends Component {
   componentDidMount() {
     if (window) {
       this.loadInitialData();
+    }
+
+    const matchListing = '/l';
+
+    if (this.props.history.location.pathname.includes(matchListing) && !this.state.showBackButton) {
+      this.setState({
+        showBackButton: true
+      });
     }
   }
 
@@ -779,6 +789,7 @@ export class CheckoutPageComponent extends Component {
       bookingData,
       paymentMethod,
       currentUser,
+      showBackButton,
     } = this.props;
 
     const rentalType = bookingData && bookingData.rentalType ? bookingData.rentalType : null;
@@ -807,6 +818,9 @@ export class CheckoutPageComponent extends Component {
     const pageProps = { title, scrollingDisabled };
     const topbar = (
       <div className={css.topbar}>
+        <div className={css.back}>
+          <HistoryBackButton show={this.state.showBackButton}/>
+        </div>
         <NamedLink className={css.home} name="LandingPage">
           <Logo
             className={css.logoMobile}

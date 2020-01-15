@@ -12,6 +12,10 @@
 
   /* Clear padding that is set for link elements looking like buttons */
   padding: 0;
+
+  & span {
+    vertical-align: middle;
+  }
 }
 
 .secondaryButtonRoot {

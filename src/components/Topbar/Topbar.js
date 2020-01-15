@@ -18,6 +18,7 @@ import {
   NamedLink,
   TopbarDesktop,
   TopbarMobileMenu,
+  HistoryBackButton,
 } from '../../components';
 import { TopbarSearchForm } from '../../forms';
 
@@ -78,6 +79,10 @@ class TopbarComponent extends Component {
     this.handleLogout = this.handleLogout.bind(this);
   }
 
+  state = {
+    showBackButton: false
+  }
+
   handleMobileMenuOpen() {
     redirectToURLWithModalState(this.props, 'mobilemenu');
   }
@@ -126,6 +131,18 @@ class TopbarComponent extends Component {
     });
   }
 
+
+  
+  componentDidMount() {
+    const matchListing = '/l';
+
+    if(this.props.history.location.pathname.includes(matchListing) && !this.state.showBackButton) {
+      this.setState({
+        showBackButton: true
+      })
+    }
+  }
+
   render() {
     const {
       className,
@@ -148,6 +165,7 @@ class TopbarComponent extends Component {
       sendVerificationEmailInProgress,
       sendVerificationEmailError,
       showGenericError,
+      showBackButton,
     } = this.props;
 
     const { mobilemenu, mobilesearch, address, origin, bounds } = parse(location.search, {
@@ -190,14 +208,17 @@ class TopbarComponent extends Component {
     return (
       <div className={classes}>
         <div className={classNames(mobileRootClassName || css.container, mobileClassName)}>
-          <Button
-            rootClassName={css.menu}
-            onClick={this.handleMobileMenuOpen}
-            title={intl.formatMessage({ id: 'Topbar.menuIcon' })}
-          >
-            <MenuIcon className={css.menuIcon} />
-            {notificationDot}
-          </Button>
+          <div className={css.menuHolder}>
+            <Button
+              rootClassName={css.menu}
+              onClick={this.handleMobileMenuOpen}
+              title={intl.formatMessage({ id: 'Topbar.menuIcon' })}
+            >
+              <MenuIcon className={css.menuIcon} />
+              {notificationDot}
+            </Button>
+            <HistoryBackButton show={this.state.showBackButton}/>
+          </div>
           <NamedLink
             className={css.home}
             name="LandingPage"
@@ -225,6 +246,7 @@ class TopbarComponent extends Component {
             notificationCount={notificationCount}
             onLogout={this.handleLogout}
             onSearchSubmit={this.handleSubmit}
+            showBackButton={this.state.showBackButton}
           />
         </div>
         <Modal

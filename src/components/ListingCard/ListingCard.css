@@ -167,3 +167,11 @@
   word-break: break-word;
   hyphens: auto;
 }
+
+.quickRent {
+  padding: 5px 10px 5px 5px;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background-color: #fff;
+}

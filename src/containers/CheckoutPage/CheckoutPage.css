@@ -32,6 +32,8 @@
   /* shadows */
   box-shadow: var(--boxShadow);
 
+  position: relative;
+
   @media (--viewportLarge) {
     height: var(--topbarHeightDesktop);
     justify-content: center;
@@ -344,4 +346,11 @@
   @media (--viewportLarge) {
     margin: 0 48px;
   }
+}
+
+.back {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
 }
