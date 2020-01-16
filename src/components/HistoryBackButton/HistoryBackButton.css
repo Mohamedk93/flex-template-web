@@ -29,8 +29,14 @@
 
   &:hover,
   &:focus {
-    border-bottom: 4px solid #000000;
     color: #000000;
     transition: ease-in-out 0.1s;
+  }
+
+  @media (--viewportMedium) {
+    &:hover,
+    &:focus {
+      border-bottom: 4px solid #000000;
+    }
   }
 }
