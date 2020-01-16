@@ -25,7 +25,7 @@ const HistoryBackButton = props => {
 
   return (
     <div className={classes}>
-     { show && <div className={css.root}>
+     { show && <div className={css.root} onClick={handleClick}>
         <svg className={css.svg}
            width="511.63px" 
            height="511.631px" 
@@ -43,9 +43,7 @@ const HistoryBackButton = props => {
               C511.63,291.039,506.589,259.344,496.5,233.842z"/>
           </g>
         </svg>
-        <div
-          className={css.historyBackButton}
-          onClick={handleClick}>
+        <div className={css.historyBackButton}>
           <FormattedMessage id="TopbarDesktop.backButton" />
         </div>
       </div>
