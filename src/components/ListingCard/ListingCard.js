@@ -207,7 +207,6 @@ export const ListingCardComponent = props => {
         {quickRent !== undefined && quickRent.length > 0 ? 
           <div className={css.quickRent}>
             <div>
-              <IconLightning className={css.iconLightning} />
               <FormattedMessage id="SearchPage.quickBooking" />
             </div>
           </div> : ' '}
