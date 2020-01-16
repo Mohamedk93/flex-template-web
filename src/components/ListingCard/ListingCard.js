@@ -12,6 +12,7 @@ import config from '../../config';
 import { NamedLink, ResponsiveImage } from '../../components';
 import { isMapsLibLoaded } from '../../components/Map/GoogleMap';
 import { IconLightning } from '../../components';
+import { withRouter } from 'react-router-dom';
 
 import css from './ListingCard.css';
 
@@ -124,7 +125,7 @@ export const listingCalculateMinPrice = (pubData) => {
 };
 
 export const ListingCardComponent = props => {
-  const { className, rootClassName, intl, listing, renderSizes, setActiveListing, searchPoint } = props;
+  const { className, rootClassName, intl, listing, renderSizes, setActiveListing, searchPoint, location } = props;
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureListing(listing);
   const id = currentListing.id.uuid;
@@ -181,7 +182,7 @@ export const ListingCardComponent = props => {
   ) : null;
 
   return (
-    <NamedLink className={classes} name="ListingPage" params={{ id, slug }}>
+    <NamedLink className={classes} name="ListingPage" to={{state: {prevLocation: location}}} params={{ id, slug }}>
       <div
         className={css.threeToTwoWrapper}
         onMouseEnter={() => setActiveListing(currentListing.id)}
@@ -203,13 +204,14 @@ export const ListingCardComponent = props => {
             sizes={renderSizes}
           />
         </div>
-        <div className={css.quickRent}>
-          {quickRent !== undefined && quickRent.length > 0 ? 
+        {quickRent !== undefined && quickRent.length > 0 ? 
+          <div className={css.quickRent}>
             <div>
               <IconLightning className={css.iconLightning} />
               <FormattedMessage id="SearchPage.quickBooking" />
-            </div> : ' '}
-        </div>
+            </div>
+          </div> : ' '}
+        
       </div>
       <div className={css.info}>
         <div className={css.price}>
@@ -256,4 +258,4 @@ ListingCardComponent.propTypes = {
   setActiveListing: func,
 };
 
-export default injectIntl(ListingCardComponent);
+export default withRouter(injectIntl(ListingCardComponent));
