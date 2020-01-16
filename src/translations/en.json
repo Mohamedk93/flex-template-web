@@ -869,7 +869,7 @@
   "TransactionPanel.orderPreauthorizedTitle": "Great success, {customerName}!",
   "TransactionPanel.perDay": "per day",
   "TransactionPanel.perNight": "per night",
-  "TransactionPanel.perUnit": "per unit",
+  "TransactionPanel.perUnit": "per hour",
   "TransactionPanel.requestToBook": "Request to book",
   "TransactionPanel.saleAcceptedTitle": "You accepted a request from {customerName} to book {listingLink}.",
   "TransactionPanel.saleCancelledTitle": "The booking from {customerName} for {listingLink} has been cancelled.",
