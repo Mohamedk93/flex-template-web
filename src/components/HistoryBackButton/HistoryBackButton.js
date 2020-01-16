@@ -8,7 +8,7 @@ import css from './HistoryBackButton.css';
 
 const HistoryBackButton = props => {
   const { show, className, rootClassName, history, location } = props;
-  const classes = classNames(rootClassName, className);
+  const classes = classNames(rootClassName, className, css.backButtonContainer);
 
   const searchPath = '/s';
   const checkoutPagePath = '/checkout';
@@ -24,7 +24,7 @@ const HistoryBackButton = props => {
   }
 
   return (
-    <div className={css.backButtonContainer}>
+    <div className={classes}>
      { show && <div className={css.root}>
         <svg className={css.svg}
            width="511.63px" 

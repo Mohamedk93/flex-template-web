@@ -291,7 +291,7 @@ const SearchFiltersComponent = props => {
             />
           </span>
           <div className={css.noSearchResultsLocations}>
-            <SectionLocations location={currentLoc} />
+            <SectionLocations location={currentLoc} rootClassName={css.searchFiltersLocation} rootLocationClassName={css.locations}/>
           </div>
         </div>
       ) : null}

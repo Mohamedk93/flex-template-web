@@ -275,3 +275,11 @@
   display: flex;
   align-items: center;
 }
+
+.listingButton {
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 25%;
+  transform: translate(0, -50%);
+}
