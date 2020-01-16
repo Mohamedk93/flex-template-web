@@ -819,7 +819,7 @@ export class CheckoutPageComponent extends Component {
     const topbar = (
       <div className={css.topbar}>
         <div className={css.back}>
-          <HistoryBackButton show={this.state.showBackButton}/>
+          <HistoryBackButton rootClassName={css.checkoutBackButton} show={this.state.showBackButton}/>
         </div>
         <NamedLink className={css.home} name="LandingPage">
           <Logo
