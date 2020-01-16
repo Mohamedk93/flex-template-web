@@ -7,12 +7,20 @@ import { FormattedMessage } from '../../util/reactIntl';
 import css from './HistoryBackButton.css';
 
 const HistoryBackButton = props => {
-  const { show, className, rootClassName, history } = props;
+  const { show, className, rootClassName, history, location } = props;
   const classes = classNames(rootClassName, className);
 
   const searchPath = '/s';
+  const checkoutPagePath = '/checkout';
+
   const handleClick = () => {
-    history.push(searchPath);
+    if (location.state && location.state.prevLocation) {
+      history.push(`${location.state.prevLocation.pathname}${location.state.prevLocation.search}`);
+    } else if (location.pathname.includes(checkoutPagePath)) {
+      history.goBack();
+    } else {
+      history.push(searchPath);
+    }
   }
 
   return (
