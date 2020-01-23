@@ -606,9 +606,9 @@ export class BookingDatesFormComponent extends Component {
           const selectedWorkspaces = values && values.workspaces ? values.workspaces : [];
 
           const fees = {
-            seats: seatsFee ? `${converter(formatMoney(intl, seatsFee), currentUser)}` : null,
-            office_rooms: officeRoomsFee ? `${converter(formatMoney(intl, officeRoomsFee), currentUser)}` : null,
-            meeting_rooms: meetingRoomsFee ? `${converter(formatMoney(intl, meetingRoomsFee), currentUser)}` : null,
+            seats: seatsFee ? `(${converter(formatMoney(intl, seatsFee), currentUser)})` : null,
+            office_rooms: officeRoomsFee ? `(${converter(formatMoney(intl, officeRoomsFee), currentUser)})` : null,
+            meeting_rooms: meetingRoomsFee ? `(${converter(formatMoney(intl, meetingRoomsFee), currentUser)})` : null,
           };
 
           const availsView = avails ? (
