@@ -456,6 +456,7 @@ export class ListingPageComponent extends Component {
                 <BookingPanel
                   className={css.bookingPanel}
                   listing={currentListing}
+                  currentUser={currentUser}
                   isOwnListing={isOwnListing}
                   unitType={unitType}
                   onSubmit={handleBookingSubmit}

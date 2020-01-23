@@ -90,6 +90,7 @@ export class BookingPanel extends Component {
       history,
       location,
       intl,
+      currentUser,
     } = this.props;
 
     const publicData = listing.attributes.publicData;
@@ -268,6 +269,7 @@ export class BookingPanel extends Component {
       office_rooms: publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 100,
       meeting_rooms: publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 100,
     };
+    
 
     return (
       <div className={classes}>
@@ -293,6 +295,7 @@ export class BookingPanel extends Component {
           {showBookingDatesForm ? (
             <BookingDatesForm
               avails={$avails}
+              currentUser={currentUser}
               className={css.bookingForm}
               formId="BookingPanel"
               submitButtonWrapperClassName={css.bookingDatesSubmitButtonWrapper}

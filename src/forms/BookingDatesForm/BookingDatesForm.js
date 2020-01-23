@@ -47,6 +47,27 @@ const moneyDivider = (money, divider) => {
   }
 };
 
+const converter = (item, currentUser) => {
+  if(currentUser && item){
+    let currency = null;
+    let rates = [];
+    if(currentUser.attributes.profile.protectedData.currency){
+      currency = currentUser.attributes.profile.protectedData.currency;
+      rates = currentUser.attributes.profile.protectedData.rates;
+      const result = rates.find(e => e.iso_code == currency);
+      if(result){
+        item = item.substr(1)
+        item = item * result.current_rate
+        item = item.toFixed(2);
+        item = result.symbol.toString() + item;
+        return item
+      }
+    }
+  }else {
+    return item
+  }
+}
+
 const rangeEndDate = dateHour => {
   if (!dateHour) {
     return null;
@@ -364,6 +385,7 @@ export class BookingDatesFormComponent extends Component {
             officeRoomsFee,
             meetingRoomsFee,
             rentalTypes,
+            currentUser,
             currentRentalType,
             handleChangeRentalType,
             avails,
@@ -584,9 +606,9 @@ export class BookingDatesFormComponent extends Component {
           const selectedWorkspaces = values && values.workspaces ? values.workspaces : [];
 
           const fees = {
-            seats: seatsFee ? `(${formatMoney(intl, seatsFee)})` : null,
-            office_rooms: officeRoomsFee ? `(${formatMoney(intl, officeRoomsFee)})` : null,
-            meeting_rooms: meetingRoomsFee ? `(${formatMoney(intl, meetingRoomsFee)})` : null,
+            seats: seatsFee ? `${converter(formatMoney(intl, seatsFee), currentUser)}` : null,
+            office_rooms: officeRoomsFee ? `${converter(formatMoney(intl, officeRoomsFee), currentUser)}` : null,
+            meeting_rooms: meetingRoomsFee ? `${converter(formatMoney(intl, meetingRoomsFee), currentUser)}` : null,
           };
 
           const availsView = avails ? (
