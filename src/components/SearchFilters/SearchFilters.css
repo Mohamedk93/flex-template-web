@@ -104,3 +104,21 @@
     border: 1px solid var(--marketplaceColorDark);
   }
 }
+
+.noSearchResultsLocations {
+  padding: 50px 0;
+}
+
+.searchFiltersLocation {
+  & .locations {
+   @media (--viewportMedium) {
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    @media (--viewportLarge) {
+      flex-direction: row;
+      margin-bottom: 0;
+    }
+  }
+}

@@ -13,7 +13,7 @@ import { ModalInMobile, Button } from '../../components';
 import { BookingDatesForm } from '../../forms';
 import moment from 'moment';
 import { types as sdkTypes } from '../../util/sdkLoader';
-import { IconRocket } from '../../components';
+import { IconLightning } from '../../components';
 
 
 import css from './BookingPanel.css';
@@ -338,7 +338,7 @@ export class BookingPanel extends Component {
               rootClassName={css.bookButton}
               onClick={() => openBookModal(isOwnListing, isClosed, history, location)}
             >
-              {quickRent !== undefined && quickRent.length > 0 ? <IconRocket className={css.iconRocket} /> : ''}
+              {quickRent !== undefined && quickRent.length > 0 ? <IconLightning className={css.iconLightning} /> : ''}
               <FormattedMessage id=
                 {quickRent !== undefined && quickRent.length > 0 ? "BookingDatesForm.quickRent" : "BookingPanel.ctaButtonMessage"} />
             </Button>

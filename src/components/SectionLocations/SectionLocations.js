@@ -40,16 +40,18 @@ const locationLink = (name, image, searchQuery) => {
 };
 
 const SectionLocations = props => {
-  const { rootClassName, className } = props;
+  const { rootClassName, className, rootLocationClassName } = props;
 
   const classes = classNames(rootClassName || css.root, className);
+  const title = props.location.pathname === '/' ? <FormattedMessage id="SectionLocations.title" /> : <FormattedMessage id="SearchPage.listingsAround" />;
+  const classesLocations = classNames(rootLocationClassName, css.locations || css.locations);
 
   return (
     <div className={classes}>
       <div className={css.title}>
-        <FormattedMessage id="SectionLocations.title" />
+        {title}
       </div>
-      <div className={css.locations}>
+      <div className={classesLocations}>
         {locationLink(
           'United States & Canada',
           helsinkiImage,
