@@ -12,9 +12,29 @@ import { types as sdkTypes } from '../../util/sdkLoader';
 import css from './BookingBreakdown.css';
 const { Money } = sdkTypes;
 
+const converter = (item, currentUser) => {
+  if(currentUser && item){
+    let currency = null;
+    let rates = [];
+    if(currentUser.attributes.profile.protectedData.currency){
+      currency = currentUser.attributes.profile.protectedData.currency;
+      rates = currentUser.attributes.profile.protectedData.rates;
+      const result = rates.find(e => e.iso_code == currency);
+      if(result){
+        item = item.substr(1)
+        item = item * result.current_rate
+        item = item.toFixed(2);
+        item = result.symbol.toString() + item;
+        return item
+      }
+    }
+  }else {
+    return item
+  }
+}
 
 const LineItemCustomPrices = props => {
-  const { transaction, unitType, intl } = props;
+  const { transaction, unitType, intl, currentUser } = props;
   
   const mainLineItems = transaction.attributes.lineItems.filter((item) => {
     return item.code === LINE_ITEM_SEATS_FEE || item.code === LINE_ITEM_OFFICE_ROOMS_FEE || item.code === LINE_ITEM_MEETING_ROOMS_FEE
@@ -33,15 +53,18 @@ const LineItemCustomPrices = props => {
     const numericTotalPrice = new Decimal(convertMoneyToNumber(item.unitPrice))
       .mul(quantity)
       .toNumber();
-    const totalPrice = new Money(
+    let totalPrice = new Money(
       convertUnitToSubUnit(numericTotalPrice, unitDivisor(currency)),
       currency
     );
 
-    const formattedTotalPrice = formatMoney(intl, totalPrice);
+    let formattedTotalPrice = formatMoney(intl, totalPrice);
 
-    const formattedUnitPrice = formatMoney(intl, item.unitPrice);
-
+    let formattedUnitPrice = formatMoney(intl, item.unitPrice);
+    if(currentUser){
+      formattedTotalPrice = converter(formattedTotalPrice, currentUser)
+      formattedUnitPrice = converter(formattedUnitPrice, currentUser)
+    }
     return (
       <div className={css.lineItem} key={guid()}>
         <span className={css.itemLabel}>

@@ -36,6 +36,7 @@ export const BookingBreakdownComponent = props => {
     intl,
     dateType,
     currentRentalType,
+    currentUser,
   } = props;
 
   const isCustomer = userRole === 'customer';
@@ -102,7 +103,8 @@ export const BookingBreakdownComponent = props => {
       {timeBasedLine}
 
       <LineItemCustomPrices
-        transaction={transaction}         
+        transaction={transaction}
+        currentUser={currentUser}         
         intl={intl} 
         unitType={unitType} 
       />

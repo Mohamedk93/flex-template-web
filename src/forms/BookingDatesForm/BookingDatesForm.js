@@ -523,16 +523,16 @@ export class BookingDatesFormComponent extends Component {
               }
               : null;
 
-          const bookingInfo = bookingData && isChooseWorkspace(values) ? (
+            const bookingInfo = bookingData && isChooseWorkspace(values) ? (
             <div className={css.priceBreakdownContainer}>
               <h3 className={css.priceBreakdownTitle}>
                 <FormattedMessage id="BookingDatesForm.priceBreakdownTitle" />
               </h3>
-              <EstimatedBreakdownMaybe bookingData={bookingData} />
+              <EstimatedBreakdownMaybe bookingData={bookingData} currentUser={currentUser} />
             </div>
           ) : null;
 
-
+          
           // Definion of messages and texts
           const hoursError = this.state.bookingHoursError ? (
               <span className={css.hoursError}>
