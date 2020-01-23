@@ -283,3 +283,10 @@
   left: 25%;
   transform: translate(0, -50%);
 }
+
+
+.currencySelect {
+  width: 15%;
+  padding-left: 7px;
+  border: 0;
+}

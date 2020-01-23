@@ -191,7 +191,22 @@ export class BookingPanel extends Component {
     const isClosed = hasListingState && listing.attributes.state === LISTING_STATE_CLOSED;
     const showBookingDatesForm = hasListingState && !isClosed;
     const showClosedListingHelpText = listing.id && isClosed;
-    const { formattedPrice, priceTitle } = priceData(price, intl);
+    let { formattedPrice, priceTitle } = priceData(price, intl);
+    if(currentUser){
+      let currency = null;
+      let rates = [];
+      if(currentUser.attributes.profile.protectedData.currency){
+        currency = currentUser.attributes.profile.protectedData.currency;
+        rates = currentUser.attributes.profile.protectedData.rates;
+        const result = rates.find(e => e.iso_code == currency);
+        if(result){
+          formattedPrice = formattedPrice.substr(1)
+          formattedPrice = formattedPrice * result.current_rate
+          formattedPrice = formattedPrice.toFixed(2);
+          formattedPrice = result.symbol.toString() + formattedPrice;
+        }
+      }
+    }
     const isBook = !!parse(location.search).book;
 
     const subTitleText = !!subTitle
@@ -270,6 +285,7 @@ export class BookingPanel extends Component {
       meeting_rooms: publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 100,
     };
     
+
 
     return (
       <div className={classes}>

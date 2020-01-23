@@ -166,6 +166,7 @@ class TopbarComponent extends Component {
       sendVerificationEmailError,
       showGenericError,
       showBackButton,
+      onUpdateUserCurrency,
     } = this.props;
 
     const { mobilemenu, mobilesearch, address, origin, bounds } = parse(location.search, {
@@ -202,7 +203,12 @@ class TopbarComponent extends Component {
           }
         : null,
     };
-
+     let currency = '';
+  let rates = [];
+  if(currentUser){
+    rates = currentUser.attributes.profile.protectedData.rates;
+    currency = currentUser.attributes.profile.protectedData.currency;
+  }
     const classes = classNames(rootClassName || css.root, className);
 
     return (
@@ -226,6 +232,20 @@ class TopbarComponent extends Component {
           >
             <Logo format="mobile" />
           </NamedLink>
+          <select
+            className={css.currencySelect}
+            onChange={e => onUpdateUserCurrency(e.target.value)}
+            >
+                <option value={currency}>
+                {currency}
+                </option>
+                {rates.map(c => (
+                  <option key={c.iso_code} value={c.iso_code}>
+                    {c.iso_code}
+                  </option>
+                ))}
+          </select>
+
           <Button
             rootClassName={css.searchMenu}
             onClick={this.handleMobileSearchOpen}
