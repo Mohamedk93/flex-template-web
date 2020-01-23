@@ -274,6 +274,7 @@ export class SearchPageComponent extends Component {
               dateRangeFilter: filters.dateRangeFilter,
               keywordFilter: filters.keywordFilter,
             }}
+            currentUser={this.props.currentUser}
           />
           <ModalInMobile
             className={css.mapPanel}
@@ -294,6 +295,7 @@ export class SearchPageComponent extends Component {
                   location={location}
                   listings={mapListings || []}
                   onMapMoveEnd={this.onMapMoveEnd}
+                  currentUser={this.props.currentUser}
                   onCloseAsModal={() => {
                     onManageDisableScrolling('SearchPage.map', false);
                   }}
@@ -367,6 +369,7 @@ const mapStateToProps = state => {
     searchMapListingIds,
     activeListingId,
   } = state.SearchPage;
+  const { currentUser } = state.user;
   const pageListings = getListingsById(state, currentPageResultIds);
   const mapListings = getListingsById(
     state,
@@ -376,6 +379,7 @@ const mapStateToProps = state => {
   return {
     listings: pageListings,
     mapListings,
+    currentUser,
     pagination,
     scrollingDisabled: isScrollingDisabled(state),
     searchInProgress,

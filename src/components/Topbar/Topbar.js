@@ -225,6 +225,7 @@ class TopbarComponent extends Component {
             notificationCount={notificationCount}
             onLogout={this.handleLogout}
             onSearchSubmit={this.handleSubmit}
+            onUpdateUserCurrency={this.props.onUpdateUserCurrency}
           />
         </div>
         <Modal

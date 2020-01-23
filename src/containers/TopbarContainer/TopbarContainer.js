@@ -4,7 +4,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { propTypes } from '../../util/types';
-import { sendVerificationEmail, hasCurrentUserErrors } from '../../ducks/user.duck';
+import { sendVerificationEmail, hasCurrentUserErrors, updateUserCurrency } from '../../ducks/user.duck';
 import { logout, authenticationInProgress } from '../../ducks/Auth.duck';
 import { manageDisableScrolling } from '../../ducks/UI.duck';
 import { Topbar } from '../../components';
@@ -116,6 +116,7 @@ const mapDispatchToProps = dispatch => ({
   onManageDisableScrolling: (componentId, disableScrolling) =>
     dispatch(manageDisableScrolling(componentId, disableScrolling)),
   onResendVerificationEmail: () => dispatch(sendVerificationEmail()),
+  onUpdateUserCurrency: params => dispatch(updateUserCurrency(params))
 });
 
 // Note: it is important that the withRouter HOC is **outside** the

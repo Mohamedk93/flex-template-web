@@ -108,3 +108,9 @@
   font-size: 25px;
   margin: 0 0 30px;
 }
+.inlineDiv > * {
+  display: inline-block;
+}
+.inlineDiv span {
+  margin: 0 10px;
+}

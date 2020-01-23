@@ -14,11 +14,13 @@ import {
   MenuItem,
   NamedLink,
 } from '../../components';
+
 import { TopbarSearchForm } from '../../forms';
 
 import css from './TopbarDesktop.css';
 
 const TopbarDesktop = props => {
+
   const {
     className,
     currentUser,
@@ -31,6 +33,7 @@ const TopbarDesktop = props => {
     onLogout,
     onSearchSubmit,
     initialSearchFormValues,
+    onUpdateUserCurrency,
   } = props;
   const [mounted, setMounted] = useState(false);
 
@@ -131,7 +134,13 @@ const TopbarDesktop = props => {
       </span>
     </NamedLink>
   );
-
+  let currency = '';
+  let rates = [];
+  if(currentUser){
+    rates = currentUser.attributes.profile.protectedData.rates;
+    currency = currentUser.attributes.profile.protectedData.currency;
+  }
+  
   return (
     <nav className={classes}>
       <NamedLink className={css.logoLink} name="LandingPage">
@@ -142,6 +151,21 @@ const TopbarDesktop = props => {
         />
       </NamedLink>
       {search}
+      
+      <select
+        className={css.currencySelect}
+        onChange={e => onUpdateUserCurrency(e.target.value)}
+        >
+            <option value={currency}>
+             {currency}
+            </option>
+            {rates.map(c => (
+              <option key={c.iso_code} value={c.iso_code}>
+                {c.iso_code}
+              </option>
+            ))}
+          </select>
+            
       <NamedLink className={css.createListingLink} name="NewListingPage">
         <span className={css.createListing}>
           <FormattedMessage id="TopbarDesktop.createListing" />

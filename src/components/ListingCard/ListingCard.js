@@ -124,7 +124,7 @@ export const listingCalculateMinPrice = (pubData) => {
 };
 
 export const ListingCardComponent = props => {
-  const { className, rootClassName, intl, listing, renderSizes, setActiveListing, searchPoint } = props;
+  const { className, rootClassName, intl, listing, renderSizes, setActiveListing, searchPoint, currentUser } = props;
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureListing(listing);
   const id = currentListing.id.uuid;
@@ -134,8 +134,20 @@ export const ListingCardComponent = props => {
   const authorName = author.attributes.profile.displayName;
   const firstImage =
     currentListing.images && currentListing.images.length > 0 ? currentListing.images[0] : null;
-
-  const { formattedPrice, priceTitle } = priceData(price, intl);
+  let { formattedPrice, priceTitle } = priceData(price, intl);
+  let currency = null;
+  let rates = [];
+  if(currentUser && currentUser.attributes.profile.protectedData.currency){
+    currency = currentUser.attributes.profile.protectedData.currency;
+    rates = currentUser.attributes.profile.protectedData.rates;
+    const result = rates.find(e => e.iso_code == currency);
+    if(result){
+      formattedPrice = formattedPrice.substr(1)
+      formattedPrice = formattedPrice * result.current_rate
+      formattedPrice = formattedPrice.toFixed(2);
+      formattedPrice = result.symbol.toString() + formattedPrice;
+    }
+  }
 
   const unitType = config.bookingUnitType;
   const isNightly = unitType === LINE_ITEM_NIGHT;
@@ -179,6 +191,7 @@ export const ListingCardComponent = props => {
       {categories[publicData.category]}
     </p>
   ) : null;
+
 
   return (
     <NamedLink className={classes} name="ListingPage" params={{ id, slug }}>

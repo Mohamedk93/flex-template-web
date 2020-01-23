@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { bool, func, shape, string, array } from 'prop-types';
 import { compose } from 'redux';
 import { Form as FinalForm } from 'react-final-form';
@@ -7,6 +7,8 @@ import classNames from 'classnames';
 import config from '../../config';
 import { LINE_ITEM_NIGHT, LINE_ITEM_DAY, propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
+import { required } from '../../util/validators';
+
 import { formatMoney } from '../../util/currency';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import { Button, Form, FieldCurrencyInput, FieldCheckbox, FieldSelect } from '../../components';
@@ -14,7 +16,10 @@ import css from './EditListingPricingForm.css';
 
 const { Money } = sdkTypes;
 
-export const EditListingPricingFormComponent = props => (
+export const EditListingPricingFormComponent = props => {
+  let [userInfo, setUserInfo] = useState(props.initialValues.rates);
+  
+  return (
   <FinalForm
     {...props}
     render={fieldRenderProps => {
@@ -37,8 +42,7 @@ export const EditListingPricingFormComponent = props => (
       const unitType = config.bookingUnitType;
       const isNightly = unitType === LINE_ITEM_NIGHT;
       const isDaily = unitType === LINE_ITEM_DAY;
-      console.log('This is props');
-      console.log(props);
+      const authorProfile = props.initialValues.author.attributes.profile;
       const translationKey = isNightly
         ? 'EditListingPricingForm.pricePerNight'
         : isDaily
@@ -94,7 +98,10 @@ export const EditListingPricingFormComponent = props => (
           </div>
         )
       });
-
+      const requiredSelect = required('This field is required');
+      if(!userInfo){
+        setUserInfo('USD')
+      }
       const priceTable = workspaces.map(price => {
 
         const priceLabel = intl.formatMessage({
@@ -109,6 +116,8 @@ export const EditListingPricingFormComponent = props => (
                 id={fieldId}
                 name={fieldId}
                 key={fieldId}
+                authorProfile={authorProfile}
+                userInfo={userInfo}
                 className={css.priceInput}
                 placeholder={pricePlaceholderMessage}
                 currencyConfig={config.currencyConfig}
@@ -129,24 +138,32 @@ export const EditListingPricingFormComponent = props => (
           </div>
         )
       });
-
+      
       return (
         <Form onSubmit={handleSubmit} className={classes}>
-          <p className={css.priceGeneral}>
-            <FormattedMessage id="EditListingPricingForm.priceGeneral" />
-          </p>
+          
+          <div className={css.inlineDiv}>
+            <span>Pricing in</span> 
+            <FieldSelect
+              name="rates"
+              id="rates"
+              validate={requiredSelect}
+              onClick={e => {
+                setUserInfo(
+                  e.target.value
+                )}}
+            >
+              <option value={userInfo}>{userInfo}</option>
+              {rates.map(c => (
+                <option key={c.iso_code} value={c.iso_code}>
+                  {c.iso_code}
+                </option>
+              ))}
+            </FieldSelect>
+            <span>for different types of rental</span>
+          </div>
+         
 
-          <FieldSelect
-            name="rates"
-            id="rates"
-          >
-            <option value="">{capacityPlaceholder}</option>
-            {rates.map(c => (
-              <option key={c.iso_code} value={c.isdo_code}>
-                {c.iso_code}
-              </option>
-            ))}
-          </FieldSelect>
 
           {updateListingError ? (
             <p className={css.error}>
@@ -188,6 +205,7 @@ export const EditListingPricingFormComponent = props => (
     }}
   />
 );
+  }
 
 EditListingPricingFormComponent.defaultProps = { 
   fetchErrors: null,
@@ -205,7 +223,7 @@ EditListingPricingFormComponent.propTypes = {
   updateInProgress: bool.isRequired,
   workspaces: array.isRequired,
   rentalTypes: array.isRequired,
-  rates: array,
+  rates: array.isRequired,
   fetchErrors: shape({
     showListingsError: propTypes.error,
     updateListingError: propTypes.error,

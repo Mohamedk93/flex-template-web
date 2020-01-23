@@ -23,14 +23,27 @@ class SearchMapPriceLabel extends Component {
   }
 
   render() {
-    const { className, rootClassName, intl, listing, onListingClicked, isActive } = this.props;
+    const { className, rootClassName, intl, listing, onListingClicked, isActive, currentUser } = this.props;
     const currentListing = ensureListing(listing);
     const { price } = currentListing.attributes;
 
     // Create formatted price if currency is known or alternatively show just the unknown currency.
-    const formattedPrice =
+    let formattedPrice =
       price && price.currency === config.currency ? formatMoney(intl, price) : price.currency;
 
+    let currency = null;
+    let rates = [];
+    if(currentUser && currentUser.attributes.profile.protectedData.currency){
+      currency = currentUser.attributes.profile.protectedData.currency;
+      rates = currentUser.attributes.profile.protectedData.rates;
+      const result = rates.find(e => e.iso_code == currency);
+      if(result){
+        formattedPrice = formattedPrice.substr(1)
+        formattedPrice = formattedPrice * result.current_rate
+        formattedPrice = formattedPrice.toFixed(2);
+        formattedPrice = result.symbol.toString() + formattedPrice;
+      }
+    }
     const classes = classNames(rootClassName || css.root, className);
     const priceLabelClasses = classNames(css.priceLabel, { [css.priceLabelActive]: isActive });
     const caretClasses = classNames(css.caret, { [css.caretActive]: isActive });

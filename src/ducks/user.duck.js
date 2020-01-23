@@ -4,6 +4,7 @@ import { transitionsToRequested } from '../util/transaction';
 import { LISTING_STATE_DRAFT } from '../util/types';
 import * as log from '../util/log';
 import { authInfo } from './Auth.duck';
+import axios from 'axios';
 import { stripeAccountCreateSuccess } from './stripe.duck.js';
 
 // ================ Action types ================ //
@@ -37,6 +38,7 @@ export const FETCH_CURRENT_USER_HAS_ORDERS_ERROR = 'app/user/FETCH_CURRENT_USER_
 export const SEND_VERIFICATION_EMAIL_REQUEST = 'app/user/SEND_VERIFICATION_EMAIL_REQUEST';
 export const SEND_VERIFICATION_EMAIL_SUCCESS = 'app/user/SEND_VERIFICATION_EMAIL_SUCCESS';
 export const SEND_VERIFICATION_EMAIL_ERROR = 'app/user/SEND_VERIFICATION_EMAIL_ERROR';
+const API_URL = process.env.REACT_APP_API_URL;
 
 // ================ Reducer ================ //
 
@@ -305,6 +307,41 @@ export const fetchCurrentUserNotifications = () => (dispatch, getState, sdk) => 
     .catch(e => dispatch(fetchCurrentUserNotificationsError(storableError(e))));
 };
 
+export const updateUserCurrency = (currency = null) => (dispatch, getState, sdk) => {
+  console.log('This is new method from user duck file',  currency)
+  const { isAuthenticated } = getState().Auth;
+  if (!isAuthenticated) {
+    dispatch(currentUserShowSuccess(null));
+    return Promise.resolve({});
+  }
+  if(currency){
+    return sdk.currentUser
+    .updateProfile(
+      { protectedData: { currency } },
+      { expand: true }
+    )
+    .then(response => {
+      console.log('This is response value', response);
+      const entities = denormalisedResponseEntities(response);
+      if (entities.length !== 1) {
+        throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+      }
+      dispatch(fetchCurrentUserHasListings());
+      dispatch(fetchCurrentUserNotifications());
+      dispatch(authInfo());
+
+      const currentUser = entities[0];
+      log.setUserId(currentUser.id.uuid);
+      dispatch(currentUserShowSuccess(currentUser));  
+      return currentUser;
+    })
+    .catch(e => {
+      throw e;
+    });
+  }
+
+}
+
 export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => {
   dispatch(currentUserShowRequest());
   const { isAuthenticated } = getState().Auth;
@@ -340,8 +377,32 @@ export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => 
       return currentUser;
     })
     .then(currentUser => {
-      console.log('This is login ----------==(Login)==----------->')
-      console.log(currentUser)
+      let lastRateUpdate = new Date(currentUser.attributes.profile.protectedData.lastRateUpdate);
+      lastRateUpdate.setDate(lastRateUpdate.getDate() + 1);
+      let currentDate = new Date();
+      if(lastRateUpdate < currentDate){
+        axios.get(`${API_URL}/api/v1/rates`)
+        .then(function (response) {
+          const rates = response.data;
+          lastRateUpdate = currentDate.toDateString();
+          return sdk.currentUser
+          .updateProfile(
+            { protectedData: { rates,  lastRateUpdate} },
+            { expand: true }
+          )
+          .then(response => {
+            const entities = denormalisedResponseEntities(response);
+            if (entities.length !== 1) {
+              throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+            }
+            const currentUser = entities[0];
+            return currentUser;
+          })
+          .catch(e => {
+            throw e;
+          });
+        })
+      }
       dispatch(fetchCurrentUserHasListings());
       dispatch(fetchCurrentUserNotifications());
       if (!currentUser.attributes.emailVerified) {

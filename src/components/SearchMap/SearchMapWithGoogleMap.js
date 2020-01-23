@@ -165,6 +165,7 @@ class SearchMapPriceLabelWithOverlay extends Component {
       className,
       listing,
       onListingClicked,
+      currentUser,
       mapComponentRefreshToken,
     } = this.props;
 
@@ -175,6 +176,7 @@ class SearchMapPriceLabelWithOverlay extends Component {
         getPixelPositionOffset={getPixelPositionOffset}
       >
         <SearchMapPriceLabel
+          currentUser={currentUser}
           isActive={isActive}
           className={className}
           listing={listing}
@@ -233,7 +235,8 @@ const priceLabelsInLocations = (
   activeListingId,
   infoCardOpen,
   onListingClicked,
-  mapComponentRefreshToken
+  mapComponentRefreshToken,
+  currentUser
 ) => {
   const listingArraysInLocations = reducedToArray(groupedByCoordinates(listings));
   const priceLabels = listingArraysInLocations.reverse().map(listingArr => {
@@ -254,7 +257,6 @@ const priceLabelsInLocations = (
       // Explicit type change to object literal for Google OverlayViews (geolocation is SDK type)
       const { geolocation } = listing.attributes;
       const latLngLiteral = { lat: geolocation.lat, lng: geolocation.lng };
-
       return (
         <SearchMapPriceLabelWithOverlay
           key={listing.id.uuid}
@@ -265,6 +267,7 @@ const priceLabelsInLocations = (
           listing={listing}
           onListingClicked={onListingClicked}
           mapComponentRefreshToken={mapComponentRefreshToken}
+          currentUser={currentUser}
         />
       );
     }
@@ -342,8 +345,9 @@ const MapWithGoogleMap = withGoogleMap(props => {
     onMapLoad,
     zoom,
     mapComponentRefreshToken,
+    currentUser,
   } = props;
-
+  
   const controlPosition =
     typeof window !== 'undefined' && typeof window.google !== 'undefined'
       ? window.google.maps.ControlPosition.LEFT_TOP
@@ -354,7 +358,8 @@ const MapWithGoogleMap = withGoogleMap(props => {
     activeListingId,
     infoCardOpen,
     onListingClicked,
-    mapComponentRefreshToken
+    mapComponentRefreshToken,
+    currentUser,
   );
   const infoCard = infoCardComponent(
     infoCardOpen,
@@ -464,10 +469,11 @@ class SearchMapWithGoogleMap extends Component {
       }
     }
   }
+  
 
   render() {
-    const { onMapLoad, onMapMoveEnd, ...rest } = this.props;
-    return <MapWithGoogleMap onMapLoad={this.onMapLoad} onIdle={this.onIdle} {...rest} />;
+    const { onMapLoad, onMapMoveEnd, currentUser, ...rest } = this.props;
+    return <MapWithGoogleMap currentUser={currentUser} onMapLoad={this.onMapLoad} onIdle={this.onIdle} {...rest} />;
   }
 }
 

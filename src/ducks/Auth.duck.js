@@ -127,7 +127,7 @@ export const authInfo = () => (dispatch, getState, sdk) => {
       // store (i.e. cookies), and should not fail in normal
       // circumstances. If it fails, it's due to a programming
       // error. In that case we mark the operation done and dispatch
-      
+
       // `null` success action that marks the user as unauthenticated.
       log.error(e, 'auth-info-failed');
       dispatch(authInfoSuccess(null));
@@ -179,10 +179,11 @@ export const signup = params => (dispatch, getState, sdk) => {
   axios.get(`${API_URL}/api/v1/rates`)
   .then(function (response) {
     const rates = response.data;
+    const currency = '';
     let lastRateUpdate = new Date();
     lastRateUpdate.setDate(lastRateUpdate.getDate() - 2);
     lastRateUpdate = lastRateUpdate.toDateString();
-    const createUserParams = { email, password, firstName, lastName, protectedData: { lastRateUpdate, rates, ...rest }};
+    const createUserParams = { email, password, firstName, lastName, protectedData: { lastRateUpdate, rates, currency, ...rest }};
   return sdk.currentUser
     .create(createUserParams)
     .then(() => dispatch(signupSuccess()))
