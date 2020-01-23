@@ -327,7 +327,23 @@ export class ListingPageComponent extends Component {
     // banned or deleted display names for the function
     const authorDisplayName = userDisplayNameAsString(ensuredAuthor, '');
 
-    const { formattedPrice, priceTitle } = priceData(price, intl);
+    let { formattedPrice, priceTitle } = priceData(price, intl);
+
+    if(currentUser){
+      let currency = null;
+      let rates = [];
+      if(currentUser.attributes.profile.protectedData.currency){
+        currency = currentUser.attributes.profile.protectedData.currency;
+        rates = currentUser.attributes.profile.protectedData.rates;
+        const result = rates.find(e => e.iso_code == currency);
+        if(result){
+          formattedPrice = formattedPrice.substr(1)
+          formattedPrice = formattedPrice * result.current_rate
+          formattedPrice = formattedPrice.toFixed(2);
+          formattedPrice = result.symbol.toString() + formattedPrice;
+        }
+      }
+    }
 
     const handleBookingSubmit = values => {
       const isCurrentlyClosed = currentListing.attributes.state === LISTING_STATE_CLOSED;
@@ -420,6 +436,7 @@ export class ListingPageComponent extends Component {
               <div className={css.contentContainer}>
                 <SectionAvatar user={currentAuthor} params={params} />
                 <div className={css.mainContent}>
+                  
                   <SectionHeading
                     priceTitle={priceTitle}
                     formattedPrice={formattedPrice}
@@ -430,6 +447,7 @@ export class ListingPageComponent extends Component {
                     onContactUser={this.onContactUser}
                     publicData={publicData}
                   />
+                  
                   <SectionDescriptionMaybe description={description} />
                   <SectionFeaturesMaybe options={amenitiesConfig} publicData={publicData} />
                   <SectionRulesMaybe publicData={publicData} />

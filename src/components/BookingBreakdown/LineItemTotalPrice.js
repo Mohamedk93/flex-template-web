@@ -8,7 +8,7 @@ import { propTypes } from '../../util/types';
 import css from './BookingBreakdown.css';
 
 const LineItemUnitPrice = props => {
-  const { transaction, isProvider, intl } = props;
+  const { transaction, isProvider, intl, currentUser } = props;
 
   let providerTotalMessageId = 'BookingBreakdown.providerTotalDefault';
   if (txIsDelivered(transaction)) {
@@ -28,8 +28,23 @@ const LineItemUnitPrice = props => {
   const totalPrice = isProvider
     ? transaction.attributes.payoutTotal
     : transaction.attributes.payinTotal;
-  const formattedTotalPrice = formatMoney(intl, totalPrice);
-
+  let formattedTotalPrice = formatMoney(intl, totalPrice);
+  
+  if(currentUser){
+    let currency = null;
+    let rates = [];
+    if(currentUser.attributes.profile.protectedData.currency){
+      currency = currentUser.attributes.profile.protectedData.currency;
+      rates = currentUser.attributes.profile.protectedData.rates;
+      const result = rates.find(e => e.iso_code == currency);
+      if(result){
+        formattedTotalPrice = formattedTotalPrice.substr(1)
+        formattedTotalPrice = formattedTotalPrice * result.current_rate
+        formattedTotalPrice = formattedTotalPrice.toFixed(2);
+        formattedTotalPrice = result.symbol.toString() + formattedTotalPrice;
+      }
+    }
+  }
   return (
     <>
       <hr className={css.totalDivider} />
