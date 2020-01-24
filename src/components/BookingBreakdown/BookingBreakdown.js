@@ -111,6 +111,7 @@ export const BookingBreakdownComponent = props => {
       
       <LineItemSubTotalMaybe
         transaction={transaction}
+        currentUser={currentUser}         
         unitType={unitType}
         userRole={userRole}
         intl={intl}

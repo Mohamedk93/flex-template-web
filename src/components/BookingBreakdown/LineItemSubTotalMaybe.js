@@ -62,7 +62,7 @@ const txHasCommission = (transaction, userRole) => {
 };
 
 const LineItemSubTotalMaybe = props => {
-  const { transaction, unitType, userRole, intl } = props;
+  const { transaction, unitType, userRole, intl, currentUser } = props;
 
   const refund = transaction.attributes.lineItems.find(
     item => item.code === unitType && item.reversal
@@ -78,7 +78,21 @@ const LineItemSubTotalMaybe = props => {
   // line totals of those line items combined
   const subTotal = lineItemsTotal(subTotalLineItems);
 
-  const formattedSubTotal = subTotalLineItems.length > 0 ? formatMoney(intl, subTotal) : null;
+  let formattedSubTotal = subTotalLineItems.length > 0 ? formatMoney(intl, subTotal) : null;
+
+
+  if(currentUser && currentUser.attributes.profile.protectedData.currency){
+    let currency = currentUser.attributes.profile.protectedData.currency;
+    let rates = currentUser.attributes.profile.protectedData.rates;
+    const result = rates.find(e => e.iso_code == currency);
+    if(result){
+      formattedSubTotal = formattedSubTotal.substr(2)
+      formattedSubTotal = formattedSubTotal * result.current_rate
+      formattedSubTotal = formattedSubTotal.toFixed(2);
+      formattedSubTotal = result.symbol.toString() + formattedSubTotal;
+    }
+  }
+
 
   return formattedSubTotal && showSubTotal ? (
     <>
