@@ -286,8 +286,11 @@
 
 
 .currencySelect {
+  position: absolute;
+  right: 19%;
   width: 60px;
   padding: 0;
   border: 0;
   background-size: 12px 12px;
+  font-size: 16px;
 }

@@ -154,6 +154,7 @@ const TopbarDesktop = props => {
       </NamedLink>
       {search}
       
+      <HistoryBackButton show={showBackButton}/>
       <select
         className={css.currencySelect}
         onChange={e => onUpdateUserCurrency(e.target.value)}
@@ -168,7 +169,6 @@ const TopbarDesktop = props => {
             ))}
           </select>
             
-      <HistoryBackButton show={showBackButton}/>
       <NamedLink className={css.createListingLink} name="NewListingPage">
         <span className={css.createListing}>
           <FormattedMessage id="TopbarDesktop.createListing" />

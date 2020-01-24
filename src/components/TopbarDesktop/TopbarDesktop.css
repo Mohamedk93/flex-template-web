@@ -367,4 +367,6 @@
   font-size: 16px;
   line-height: 24px;
   background-size: 12px 12px;
+  margin-left: 7px;
+  flex-shrink: 0;
 }
