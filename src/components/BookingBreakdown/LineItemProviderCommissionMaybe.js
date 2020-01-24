@@ -43,7 +43,7 @@ const LineItemProviderCommissionMaybe = props => {
       let rates = currentUser.attributes.profile.protectedData.rates;
       const result = rates.find(e => e.iso_code == currency);
       if(result){
-        formattedCommission = formattedCommission.substr(1)
+        formattedCommission = formattedCommission.substr(2)
         formattedCommission = formattedCommission * result.current_rate
         formattedCommission = formattedCommission.toFixed(2);
         formattedCommission = result.symbol.toString() + formattedCommission;
