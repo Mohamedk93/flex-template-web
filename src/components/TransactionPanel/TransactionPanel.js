@@ -326,8 +326,8 @@ export class TransactionPanelComponent extends Component {
     );
 
     if(currentUser && currentUser.attributes.profile.protectedData.currency){
-      currency = currentUser.attributes.profile.protectedData.currency;
-      rates = currentUser.attributes.profile.protectedData.rates;
+      let currency = currentUser.attributes.profile.protectedData.currency;
+      let rates = currentUser.attributes.profile.protectedData.rates;
       const result = rates.find(e => e.iso_code == currency);
       if(result){
         bookingSubTitle = bookingSubTitle.substr(1)
