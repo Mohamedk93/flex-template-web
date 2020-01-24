@@ -306,7 +306,7 @@ export class TransactionPanelComponent extends Component {
       : 'TransactionPanel.perUnit';
 
     const price = currentListing.attributes.price;
-    const bookingSubTitle = price
+    let bookingSubTitle = price
       ? `${formatMoney(intl, price)} ${intl.formatMessage({ id: unitTranslationKey })}`
       : '';
 
@@ -324,6 +324,18 @@ export class TransactionPanelComponent extends Component {
         onDeclineSale={() => onDeclineSale(currentTransaction.id)}
       />
     );
+
+    if(currentUser && currentUser.attributes.profile.protectedData.currency){
+      currency = currentUser.attributes.profile.protectedData.currency;
+      rates = currentUser.attributes.profile.protectedData.rates;
+      const result = rates.find(e => e.iso_code == currency);
+      if(result){
+        bookingSubTitle = bookingSubTitle.substr(1)
+        bookingSubTitle = bookingSubTitle * result.current_rate
+        bookingSubTitle = bookingSubTitle.toFixed(2);
+        bookingSubTitle = result.symbol.toString() + bookingSubTitle;
+      }
+    }
 
     const showSendMessageForm =
       !isCustomerBanned && !isCustomerDeleted && !isProviderBanned && !isProviderDeleted;
