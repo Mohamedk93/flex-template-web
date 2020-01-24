@@ -297,7 +297,8 @@ const infoCardComponent = (
   infoCardOpen,
   onListingInfoCardClicked,
   createURLToListing,
-  mapComponentRefreshToken
+  mapComponentRefreshToken,
+  currentUser
 ) => {
   const listingsArray = Array.isArray(infoCardOpen) ? infoCardOpen : [infoCardOpen];
 
@@ -323,6 +324,7 @@ const infoCardComponent = (
         listings={listingsArray}
         onListingInfoCardClicked={onListingInfoCardClicked}
         createURLToListing={createURLToListing}
+        currentUser={currentUser}
       />
     </CustomOverlayView>
   );
@@ -365,7 +367,8 @@ const MapWithGoogleMap = withGoogleMap(props => {
     infoCardOpen,
     onListingInfoCardClicked,
     createURLToListing,
-    mapComponentRefreshToken
+    mapComponentRefreshToken,
+    currentUser,
   );
 
   return (
