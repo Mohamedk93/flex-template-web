@@ -102,9 +102,6 @@ export const BookingBreakdownComponent = props => {
 
       {timeBasedLine}
 
-      <h2>
-        LineItemCustomPrices
-      </h2>
       <LineItemCustomPrices
         transaction={transaction}
         currentUser={currentUser}         
@@ -112,43 +109,34 @@ export const BookingBreakdownComponent = props => {
         unitType={unitType} 
       />
       
-      <h2>
-        LineItemSubTotalMaybe 
-      </h2>
       <LineItemSubTotalMaybe
         transaction={transaction}
         unitType={unitType}
         userRole={userRole}
         intl={intl}
       />
-      <h2>LineItemRefundMaybe</h2>
       <LineItemRefundMaybe transaction={transaction} unitType={unitType} intl={intl} />
 
-      <h2>LineItemCustomerCommissionMaybe</h2>
       <LineItemCustomerCommissionMaybe
         transaction={transaction}
         isCustomer={isCustomer}
         intl={intl}
       />
-      <h2>LineItemCustomerCommissionRefundMaybe</h2>
       <LineItemCustomerCommissionRefundMaybe
         transaction={transaction}
         isCustomer={isCustomer}
         intl={intl}
       />
-      <h2>LineItemProviderCommissionMaybe</h2>
       <LineItemProviderCommissionMaybe
         transaction={transaction}
         isProvider={isProvider}
         intl={intl}
       />
-      <h2>LineItemProviderCommissionRefundMaybe</h2>
       <LineItemProviderCommissionRefundMaybe
         transaction={transaction}
         isProvider={isProvider}
         intl={intl}
       />
-      <h2>LineItemTotalPrice</h2>
       <LineItemTotalPrice transaction={transaction} currentUser={currentUser} isProvider={isProvider} intl={intl} />
 
       {hasCommissionLineItem ? (

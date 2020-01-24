@@ -459,6 +459,7 @@ export class TransactionPanelComponent extends Component {
                 />
               ) : null}
               <BreakdownMaybe
+                currentUser={currentUser}
                 className={css.breakdownContainer}
                 transaction={currentTransaction}
                 transactionRole={transactionRole}
