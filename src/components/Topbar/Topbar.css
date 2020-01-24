@@ -286,7 +286,8 @@
 
 
 .currencySelect {
-  width: 15%;
-  padding-left: 7px;
+  width: 65px;
+  /*padding-left: 7px;*/
+  padding: 0;
   border: 0;
 }

@@ -361,7 +361,9 @@
 }
 
 .currencySelect {
-  width: 5%;
-  padding-left: 7px;
+  width: 65px;
+  padding: 0;
   border: 0;
+  font-size: 16px;
+  line-height: 24px;
 }
