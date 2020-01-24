@@ -80,6 +80,30 @@ const displayNames = (currentUser, currentProvider, currentCustomer, intl) => {
   };
 };
 
+const converter = (item, currentUser) => {
+  if(currentUser && item){
+    let currency = null;
+    let rates = [];
+    if(currentUser.attributes.profile.protectedData.currency){
+      currency = currentUser.attributes.profile.protectedData.currency;
+      rates = currentUser.attributes.profile.protectedData.rates;
+      const result = rates.find(e => e.iso_code == currency);
+      if(result){
+        item = item.substr(1)
+        item = item * result.current_rate
+        item = item.toFixed(2);
+        item = result.symbol.toString() + item;
+        return item
+      }
+    }
+  }else {
+    return item
+  }
+}
+
+
+
+
 export class TransactionPanelComponent extends Component {
   constructor(props) {
     super(props);
@@ -307,7 +331,7 @@ export class TransactionPanelComponent extends Component {
 
     const price = currentListing.attributes.price;
     let bookingSubTitle = price
-      ? `${formatMoney(intl, price)} ${intl.formatMessage({ id: unitTranslationKey })}`
+      ? `${converter(formatMoney(intl, price), currentUser)} ${intl.formatMessage({ id: unitTranslationKey })}`
       : '';
 
     const firstImage =
@@ -324,18 +348,6 @@ export class TransactionPanelComponent extends Component {
         onDeclineSale={() => onDeclineSale(currentTransaction.id)}
       />
     );
-
-    if(currentUser && currentUser.attributes.profile.protectedData.currency){
-      let currency = currentUser.attributes.profile.protectedData.currency;
-      let rates = currentUser.attributes.profile.protectedData.rates;
-      const result = rates.find(e => e.iso_code == currency);
-      if(result){
-        bookingSubTitle = bookingSubTitle.substr(1)
-        bookingSubTitle = bookingSubTitle * result.current_rate
-        bookingSubTitle = bookingSubTitle.toFixed(2);
-        bookingSubTitle = result.symbol.toString() + bookingSubTitle;
-      }
-    }
 
     const showSendMessageForm =
       !isCustomerBanned && !isCustomerDeleted && !isProviderBanned && !isProviderDeleted;
