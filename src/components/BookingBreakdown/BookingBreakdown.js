@@ -131,6 +131,7 @@ export const BookingBreakdownComponent = props => {
         transaction={transaction}
         isProvider={isProvider}
         intl={intl}
+        currentUser={currentUser}
       />
       <LineItemProviderCommissionRefundMaybe
         transaction={transaction}

@@ -16,7 +16,7 @@ const isValidCommission = commissionLineItem => {
 };
 
 const LineItemProviderCommissionMaybe = props => {
-  const { transaction, isProvider, intl } = props;
+  const { transaction, isProvider, intl, currentUser } = props;
 
   const providerCommissionLineItem = transaction.attributes.lineItems.find(
     item => item.code === LINE_ITEM_PROVIDER_COMMISSION && !item.reversal
@@ -36,7 +36,19 @@ const LineItemProviderCommissionMaybe = props => {
     }
 
     const commission = providerCommissionLineItem.lineTotal;
-    const formattedCommission = commission ? formatMoney(intl, commission) : null;
+    let formattedCommission = commission ? formatMoney(intl, commission) : null;
+
+    if(currentUser && currentUser.attributes.profile.protectedData.currency){
+      let currency = currentUser.attributes.profile.protectedData.currency;
+      let rates = currentUser.attributes.profile.protectedData.rates;
+      const result = rates.find(e => e.iso_code == currency);
+      if(result){
+        formattedCommission = formattedCommission.substr(1)
+        formattedCommission = formattedCommission * result.current_rate
+        formattedCommission = formattedCommission.toFixed(2);
+        formattedCommission = result.symbol.toString() + formattedCommission;
+      }
+    }
 
     commissionItem = (
       <div className={css.lineItem}>
