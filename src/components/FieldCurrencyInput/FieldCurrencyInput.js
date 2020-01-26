@@ -111,7 +111,8 @@ class CurrencyInputComponent extends Component {
     // Update value strings on state
     const { unformattedValue } = this.updateValues(event);
     // Notify parent component about current price change
-    const price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
+    //const price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
+    const price = getPrice(ensureDotSeparator('123'), this.props.currencyConfig);
     this.props.input.onChange(price);
   }
 
@@ -124,14 +125,8 @@ class CurrencyInputComponent extends Component {
     } = this.props;
     this.setState(prevState => {
       if (onBlur) {
-        let unformattedValue = prevState.unformattedValue.toString();
-        const result = this.props.rates.find(e => e.iso_code == this.props.currency);
-        if(result){
-          unformattedValue = unformattedValue.toString() / result.current_rate;
-          unformattedValue = unformattedValue.toFixed(2)
-        }
         // If parent component has provided onBlur function, call it with current price.
-        const price = getPrice(ensureDotSeparator(unformattedValue), currencyConfig);
+        const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
         onBlur(price);
       }
       return {
