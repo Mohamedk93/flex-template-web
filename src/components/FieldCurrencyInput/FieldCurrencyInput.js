@@ -111,8 +111,7 @@ class CurrencyInputComponent extends Component {
     // Update value strings on state
     const { unformattedValue } = this.updateValues(event);
     // Notify parent component about current price change
-    //const price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
-    const price = getPrice(ensureDotSeparator('123'), this.props.currencyConfig);
+    const price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
     this.props.input.onChange(price);
   }
 
