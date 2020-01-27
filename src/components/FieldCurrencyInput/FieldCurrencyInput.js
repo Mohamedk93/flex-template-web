@@ -93,11 +93,6 @@ class CurrencyInputComponent extends Component {
         unformattedValue,
         value: formattedValue,
         usesComma,
-        currentEvent: 'defaultEvent',
-        currentRates: 'default False',
-        defaultValue: '',
-        unformattedValueTest: ''
-
       };
     } catch (e) {
       log.error(e, 'currency-input-init-failed', { currencyConfig, defaultValue, initialValue });
@@ -113,10 +108,6 @@ class CurrencyInputComponent extends Component {
   onInputChange(event) {
     event.preventDefault();
     event.stopPropagation();
-    const currentEvent = ' change event'
-    this.setState({
-      currentEvent: currentEvent,
-    }) 
     // Update value strings on state
     const { unformattedValue } = this.updateValues(event);
     // Notify parent component about current price change
@@ -127,22 +118,30 @@ class CurrencyInputComponent extends Component {
   onInputBlur(event) {
     event.preventDefault();
     event.stopPropagation();
-    const currentEvent = ' blur event'
-    this.setState({
-      currentEvent: currentEvent,
-    }) 
+    const result = this.props.rates.find(e => e.iso_code == this.props.currency);
+
     const {
       currencyConfig,
       input: { onBlur },
     } = this.props;
+    let unformattedValue = this.state.unformattedValue;
     this.setState(prevState => {
       if (onBlur) {
         // If parent component has provided onBlur function, call it with current price.
         const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
-        onBlur(price);
+        if(result){
+          unformattedValue = unformattedValue / result.current_rate;
+          unformattedValue = truncateToSubUnitPrecision(
+            unformattedValue,
+            unitDivisor(currencyConfig.currency),
+            this.state.usesComma
+          ); 
+          onBlur(price);
+        }
       }
       return {
         value: prevState.formattedValue,
+        unformattedValue: unformattedValue,
       };
     });
   }
@@ -150,10 +149,6 @@ class CurrencyInputComponent extends Component {
   onInputFocus(event) {
     event.preventDefault();
     event.stopPropagation();
-    const currentEvent = ' focus event'
-    this.setState({
-      currentEvent: currentEvent,
-    }) 
     const {
       currencyConfig,
       input: { onFocus },
@@ -172,10 +167,6 @@ class CurrencyInputComponent extends Component {
 
   updateValues(event) {
     try {
-      const currentEvent = ' update event'
-      this.setState({
-        currentEvent: currentEvent,
-      }) 
       const { currencyConfig, intl } = this.props;
       const result = this.props.rates.find(e => e.iso_code == this.props.currency);
       const targetValue = event.target.value.trim();
@@ -212,19 +203,12 @@ class CurrencyInputComponent extends Component {
         
       if(result){
         unformattedValue = unformattedValue / result.current_rate;
-        const currentRates  = 'default TRUE';
 
         unformattedValue = truncateToSubUnitPrecision(
           unformattedValue,
           unitDivisor(currencyConfig.currency),
           this.state.usesComma
         );
-
-        this.setState({
-          currentRates: currentRates,
-          defaultValue: formattedValue,
-          unformattedValueTest: unformattedValue
-        })
       }
       
       return { formattedValue, value: unformattedValue, unformattedValue };
@@ -243,8 +227,6 @@ class CurrencyInputComponent extends Component {
     const { className, currencyConfig, defaultValue, placeholder, intl } = this.props;
     const placeholderText = placeholder || intl.formatNumber(defaultValue, currencyConfig);
     return (
-      <div>
-
       <input
         className={className}
         {...allowedInputProps(this.props)}
@@ -255,22 +237,6 @@ class CurrencyInputComponent extends Component {
         type="text"
         placeholder={placeholderText}
       />
-      current event:
-      {this.state.currentEvent}
-      <br></br>
-
-      current rates:
-      {this.state.currentRates}
-      <br></br>
-
-      default value:
-      {this.state.defaultValue}
-      <br></br>
-      
-      unformattedValueTest:
-      {this.state.unformattedValueTest}
-      </div>
-
     );
   }
 }
