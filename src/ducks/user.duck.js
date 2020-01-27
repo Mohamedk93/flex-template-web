@@ -347,7 +347,7 @@ export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => 
   dispatch(currentUserShowRequest());
   const { isAuthenticated } = getState().Auth;
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && typeof window !== 'undefined') {
     let lastUpdateCurrency = new Date(localStorage.getItem('lastUpdateCurrency'))
     lastUpdateCurrency.setDate(lastUpdateCurrency.getDate() + 1);
     if(lastUpdateCurrency < new Date()){

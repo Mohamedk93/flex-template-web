@@ -33,16 +33,21 @@ class SearchMapPriceLabel extends Component {
 
     let currency = null;
     let rates = [];
+    let result = null;
     if(currentUser && currentUser.attributes.profile.protectedData.currency){
       currency = currentUser.attributes.profile.protectedData.currency;
       rates = currentUser.attributes.profile.protectedData.rates;
-      const result = rates.find(e => e.iso_code == currency);
-      if(result){
-        formattedPrice = formattedPrice.substr(1)
-        formattedPrice = formattedPrice * result.current_rate
-        formattedPrice = formattedPrice.toFixed(2);
-        formattedPrice = result.symbol.toString() + formattedPrice;
-      }
+      result = rates.find(e => e.iso_code == currency);
+    }else if(typeof window !== 'undefined'){
+      rates = JSON.parse(localStorage.getItem('rates'));
+      currency = localStorage.getItem('currentCode');
+      result = !rates ? null : rates.find(e => e.iso_code == currency);
+    }
+    if(result){
+      formattedPrice = formattedPrice.substr(1)
+      formattedPrice = formattedPrice * result.current_rate
+      formattedPrice = formattedPrice.toFixed(2);
+      formattedPrice = result.symbol.toString() + formattedPrice;
     }
     const classes = classNames(rootClassName || css.root, className);
     const priceLabelClasses = classNames(css.priceLabel, { [css.priceLabelActive]: isActive });

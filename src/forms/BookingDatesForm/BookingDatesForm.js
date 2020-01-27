@@ -55,10 +55,10 @@ const converter = (item, currentUser) => {
       currency = currentUser.attributes.profile.protectedData.currency;
       rates = currentUser.attributes.profile.protectedData.rates;
       result = rates.find(e => e.iso_code == currency);
-  }else {
+  }else if(typeof window !== 'undefined') {
     rates = JSON.parse(localStorage.getItem('rates'));
     currency = localStorage.getItem('currentCode');
-    result = rates.find(e => e.iso_code == currency);
+    result = !rates ? null :rates.find(e => e.iso_code == currency);
   }
   if(result){
     item = item.substr(1)
