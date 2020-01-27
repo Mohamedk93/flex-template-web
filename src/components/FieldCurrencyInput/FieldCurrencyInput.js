@@ -93,6 +93,7 @@ class CurrencyInputComponent extends Component {
         unformattedValue,
         value: formattedValue,
         usesComma,
+        currentEvent: 'defaultEvent'
       };
     } catch (e) {
       log.error(e, 'currency-input-init-failed', { currencyConfig, defaultValue, initialValue });
@@ -108,6 +109,10 @@ class CurrencyInputComponent extends Component {
   onInputChange(event) {
     event.preventDefault();
     event.stopPropagation();
+    const currentEvent = ' change event'
+    this.setState({
+      currentEvent: currentEvent,
+    }) 
     // Update value strings on state
     const { unformattedValue } = this.updateValues(event);
     // Notify parent component about current price change
@@ -118,6 +123,10 @@ class CurrencyInputComponent extends Component {
   onInputBlur(event) {
     event.preventDefault();
     event.stopPropagation();
+    const currentEvent = ' blur event'
+    this.setState({
+      currentEvent: currentEvent,
+    }) 
     const {
       currencyConfig,
       input: { onBlur },
@@ -137,6 +146,10 @@ class CurrencyInputComponent extends Component {
   onInputFocus(event) {
     event.preventDefault();
     event.stopPropagation();
+    const currentEvent = ' focus event'
+    this.setState({
+      currentEvent: currentEvent,
+    }) 
     const {
       currencyConfig,
       input: { onFocus },
@@ -155,6 +168,10 @@ class CurrencyInputComponent extends Component {
 
   updateValues(event) {
     try {
+      const currentEvent = ' update event'
+      this.setState({
+        currentEvent: currentEvent,
+      }) 
       const { currencyConfig, intl } = this.props;
       const result = this.props.rates.find(e => e.iso_code == this.props.currency);
       const targetValue = event.target.value.trim();
@@ -215,6 +232,8 @@ class CurrencyInputComponent extends Component {
     const { className, currencyConfig, defaultValue, placeholder, intl } = this.props;
     const placeholderText = placeholder || intl.formatNumber(defaultValue, currencyConfig);
     return (
+      <div>
+
       <input
         className={className}
         {...allowedInputProps(this.props)}
@@ -225,6 +244,9 @@ class CurrencyInputComponent extends Component {
         type="text"
         placeholder={placeholderText}
       />
+      {this.state.currentEvent}
+      </div>
+
     );
   }
 }
