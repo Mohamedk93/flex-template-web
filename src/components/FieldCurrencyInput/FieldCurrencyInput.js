@@ -124,42 +124,56 @@ class CurrencyInputComponent extends Component {
       input: { onBlur },
     } = this.props;
     let unformattedValue = this.state.unformattedValue;
-    //this.setState(prevState => {
-    //  if (onBlur) {
-    //    // If parent component has provided onBlur function, call it with current price.
-    //    const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
-    //    if(result){
-    //      unformattedValue = unformattedValue / result.current_rate;
-    //      unformattedValue = truncateToSubUnitPrecision(
-    //        unformattedValue,
-    //        unitDivisor(currencyConfig.currency),
-    //        this.state.usesComma
-    //      ); 
-    //      onBlur(price);
-    //    }
-    //  }
-    //  return {
-    //    value: prevState.formattedValue,
-    //    unformattedValue: unformattedValue,
-    //  };
-    //});
+    this.setState(prevState => {
+      if (onBlur) {
+        // If parent component has provided onBlur function, call it with current price.
+        const price = getPrice(ensureDotSeparator('12'), currencyConfig);
+        onBlur(price);
+        if(result){
+          unformattedValue = unformattedValue / result.current_rate;
+          unformattedValue = truncateToSubUnitPrecision(
+            unformattedValue,
+            unitDivisor(currencyConfig.currency),
+            this.state.usesComma
+          ); 
+        }
+      }
+      return {
+        value: prevState.formattedValue,
+        unformattedValue: unformattedValue,
+      };
+    });
   }
 
   onInputFocus(event) {
     event.preventDefault();
     event.stopPropagation();
+    const result = this.props.rates.find(e => e.iso_code == this.props.currency);
+
     const {
       currencyConfig,
       input: { onFocus },
     } = this.props;
+    let unformattedValue = this.state.unformattedValue;
+
     this.setState(prevState => {
       if (onFocus) {
         // If parent component has provided onFocus function, call it with current price.
         const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
+
         onFocus(price);
+        if(result){
+          unformattedValue = unformattedValue / result.current_rate;
+          unformattedValue = truncateToSubUnitPrecision(
+            unformattedValue,
+            unitDivisor(currencyConfig.currency),
+            this.state.usesComma
+          ); 
+        }
       }
       return {
         value: prevState.unformattedValue,
+        unformattedValue: unformattedValue,
       };
     });
   }
@@ -171,11 +185,9 @@ class CurrencyInputComponent extends Component {
       const targetValue = event.target.value.trim();
       const isEmptyString = targetValue === '';
       const valueOrZero = isEmptyString ? '0' : targetValue;
-
       const targetDecimalValue = isEmptyString
         ? null
         : new Decimal(ensureDotSeparator(targetValue));
-
       const isSafeValue =
         isEmptyString || (targetDecimalValue.isPositive() && isSafeNumber(targetDecimalValue));
       if (!isSafeValue) {
@@ -188,6 +200,7 @@ class CurrencyInputComponent extends Component {
         unitDivisor(currencyConfig.currency),
         this.state.usesComma
       );
+
       let unformattedValue = !isEmptyString ? truncatedValueString : '';
       let formattedValue = !isEmptyString
         ? intl.formatNumber(ensureDotSeparator(truncatedValueString), currencyConfig)
