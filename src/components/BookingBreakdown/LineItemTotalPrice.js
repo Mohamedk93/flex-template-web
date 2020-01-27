@@ -30,20 +30,24 @@ const LineItemUnitPrice = props => {
     : transaction.attributes.payinTotal;
   let formattedTotalPrice = formatMoney(intl, totalPrice);
   
-  if(currentUser){
-    let currency = null;
-    let rates = [];
-    if(currentUser.attributes.profile.protectedData.currency){
-      currency = currentUser.attributes.profile.protectedData.currency;
-      rates = currentUser.attributes.profile.protectedData.rates;
-      const result = rates.find(e => e.iso_code == currency);
-      if(result){
-        formattedTotalPrice = formattedTotalPrice.substr(1)
-        formattedTotalPrice = formattedTotalPrice * result.current_rate
-        formattedTotalPrice = formattedTotalPrice.toFixed(2);
-        formattedTotalPrice = result.symbol.toString() + formattedTotalPrice;
-      }
-    }
+  let currency = null;
+  let rates = [];
+  let result = null;
+  
+  if(currentUser && currentUser.attributes.profile.protectedData.currency){
+    currency = currentUser.attributes.profile.protectedData.currency;
+    rates = currentUser.attributes.profile.protectedData.rates;
+    result = rates.find(e => e.iso_code == currency);
+  }else{
+    rates = JSON.parse(localStorage.getItem('rates'));
+    currency = localStorage.getItem('currentCode');
+    result = rates.find(e => e.iso_code == currency);
+  }
+  if(result){
+    formattedTotalPrice = formattedTotalPrice.substr(1)
+    formattedTotalPrice = formattedTotalPrice * result.current_rate
+    formattedTotalPrice = formattedTotalPrice.toFixed(2);
+    formattedTotalPrice = result.symbol.toString() + formattedTotalPrice;
   }
   return (
     <>

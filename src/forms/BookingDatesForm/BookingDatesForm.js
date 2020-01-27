@@ -48,24 +48,25 @@ const moneyDivider = (money, divider) => {
 };
 
 const converter = (item, currentUser) => {
-  if(currentUser && item){
-    let currency = null;
-    let rates = [];
-    if(currentUser.attributes.profile.protectedData.currency){
+  let currency = null;
+  let rates = [];
+  let result = null;
+  if(currentUser && item && currentUser.attributes.profile.protectedData.currency){
       currency = currentUser.attributes.profile.protectedData.currency;
       rates = currentUser.attributes.profile.protectedData.rates;
-      const result = rates.find(e => e.iso_code == currency);
-      if(result){
-        item = item.substr(1)
-        item = item * result.current_rate
-        item = item.toFixed(2);
-        item = result.symbol.toString() + item;
-        return item
-      }
-    }
+      result = rates.find(e => e.iso_code == currency);
   }else {
-    return item
+    rates = JSON.parse(localStorage.getItem('rates'));
+    currency = localStorage.getItem('currentCode');
+    result = rates.find(e => e.iso_code == currency);
   }
+  if(result){
+    item = item.substr(1)
+    item = item * result.current_rate
+    item = item.toFixed(2);
+    item = result.symbol.toString() + item;
+  }
+  return item;
 }
 
 const rangeEndDate = dateHour => {

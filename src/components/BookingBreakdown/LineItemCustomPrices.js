@@ -13,24 +13,25 @@ import css from './BookingBreakdown.css';
 const { Money } = sdkTypes;
 
 const converter = (item, currentUser) => {
-  if(currentUser && item){
-    let currency = null;
-    let rates = [];
-    if(currentUser.attributes.profile.protectedData.currency){
-      currency = currentUser.attributes.profile.protectedData.currency;
-      rates = currentUser.attributes.profile.protectedData.rates;
-      const result = rates.find(e => e.iso_code == currency);
-      if(result){
-        item = item.substr(1)
-        item = item * result.current_rate
-        item = item.toFixed(2);
-        item = result.symbol.toString() + item;
-        return item
-      }
-    }
+  let currency = null;
+  let rates = [];
+  let result = null;
+  if(currentUser && item && currentUser.attributes.profile.protectedData.currency){
+    currency = currentUser.attributes.profile.protectedData.currency;
+    rates = currentUser.attributes.profile.protectedData.rates;
+    result = rates.find(e => e.iso_code == currency);
   }else {
-    return item
+    rates = JSON.parse(localStorage.getItem('rates'));
+    currency = localStorage.getItem('currentCode');
+    result = rates.find(e => e.iso_code == currency);
   }
+  if(result){
+    item = item.substr(1)
+    item = item * result.current_rate
+    item = item.toFixed(2);
+    item = result.symbol.toString() + item;
+  }
+  return item;
 }
 
 const LineItemCustomPrices = props => {
@@ -58,13 +59,10 @@ const LineItemCustomPrices = props => {
       currency
     );
 
-    let formattedTotalPrice = formatMoney(intl, totalPrice);
+    let formattedTotalPrice = converter(formatMoney(intl, totalPrice), currentUser);
 
-    let formattedUnitPrice = formatMoney(intl, item.unitPrice);
-    if(currentUser){
-      formattedTotalPrice = converter(formattedTotalPrice, currentUser)
-      formattedUnitPrice = converter(formattedUnitPrice, currentUser)
-    }
+    let formattedUnitPrice = converter(formatMoney(intl, item.unitPrice), currentUser);
+    
     return (
       <div className={css.lineItem} key={guid()}>
         <span className={css.itemLabel}>

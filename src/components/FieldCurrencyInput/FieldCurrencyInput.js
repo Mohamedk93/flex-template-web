@@ -124,14 +124,8 @@ class CurrencyInputComponent extends Component {
     } = this.props;
     this.setState(prevState => {
       if (onBlur) {
-        let unformattedValue = prevState.unformattedValue.toString();
-        const result = this.props.rates.find(e => e.iso_code == this.props.currency);
-        if(result){
-          unformattedValue = unformattedValue.toString() / result.current_rate;
-          unformattedValue = unformattedValue.toFixed(2)
         // If parent component has provided onBlur function, call it with current price.
-        }
-        const price = getPrice(ensureDotSeparator(unformattedValue), currencyConfig);
+        const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
         onBlur(price);
       }
       return {
@@ -149,14 +143,8 @@ class CurrencyInputComponent extends Component {
     } = this.props;
     this.setState(prevState => {
       if (onFocus) {
-        let unformattedValue = prevState.unformattedValue.toString();
-        const result = this.props.rates.find(e => e.iso_code == this.props.currency);
-        if(result){
-          unformattedValue = unformattedValue.toString() / result.current_rate;
-          unformattedValue = unformattedValue.toFixed(2)
-        }
         // If parent component has provided onFocus function, call it with current price.
-        const price = getPrice(ensureDotSeparator(unformattedValue), currencyConfig);
+        const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
         onFocus(price);
       }
       return {

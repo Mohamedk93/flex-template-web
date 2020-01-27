@@ -6,6 +6,8 @@ import * as log from '../util/log';
 import { authInfo } from './Auth.duck';
 import axios from 'axios';
 import { stripeAccountCreateSuccess } from './stripe.duck.js';
+import { locationBounds } from '../util/googleMaps';
+
 
 // ================ Action types ================ //
 
@@ -308,7 +310,6 @@ export const fetchCurrentUserNotifications = () => (dispatch, getState, sdk) => 
 };
 
 export const updateUserCurrency = (currency = null) => (dispatch, getState, sdk) => {
-  console.log('This is new method from user duck file',  currency)
   const { isAuthenticated } = getState().Auth;
   if (!isAuthenticated) {
     dispatch(currentUserShowSuccess(null));
@@ -321,7 +322,6 @@ export const updateUserCurrency = (currency = null) => (dispatch, getState, sdk)
       { expand: true }
     )
     .then(response => {
-      console.log('This is response value', response);
       const entities = denormalisedResponseEntities(response);
       if (entities.length !== 1) {
         throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
@@ -341,12 +341,38 @@ export const updateUserCurrency = (currency = null) => (dispatch, getState, sdk)
   }
 
 }
+export const GEO_API = 'https://api.ipdata.co?api-key=test'
 
 export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => {
   dispatch(currentUserShowRequest());
   const { isAuthenticated } = getState().Auth;
 
   if (!isAuthenticated) {
+    let lastUpdateCurrency = new Date(localStorage.getItem('lastUpdateCurrency'))
+    lastUpdateCurrency.setDate(lastUpdateCurrency.getDate() + 1);
+    if(lastUpdateCurrency < new Date()){
+      axios.get(`${API_URL}/api/v1/rates`)
+        .then(function (response) {
+          const rates = response.data;
+          localStorage.setItem('rates', JSON.stringify(rates));
+          localStorage.setItem('lastUpdateCurrency', new Date);
+          axios.get(GEO_API)
+          .then( response => {
+            const currentCode = response.data.currency.code
+            const result = rates.find(e => e.iso_code == currentCode);
+            const code = result ? result.iso_code : 'USD'
+            localStorage.setItem('currentCode', code)
+          } )
+          .catch( e => {
+            throw e;
+            }
+          )
+        })
+        .catch(e => {
+          throw e;
+        });
+    }
+
     // Make sure current user is null
     dispatch(currentUserShowSuccess(null));
     return Promise.resolve({});
@@ -385,22 +411,34 @@ export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => 
         .then(function (response) {
           const rates = response.data;
           lastRateUpdate = currentDate.toDateString();
-          return sdk.currentUser
-          .updateProfile(
-            { protectedData: { rates,  lastRateUpdate} },
-            { expand: true }
-          )
-          .then(response => {
-            const entities = denormalisedResponseEntities(response);
-            if (entities.length !== 1) {
-              throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
-            }
-            const currentUser = entities[0];
-            return currentUser;
-          })
-          .catch(e => {
+
+          axios.get(GEO_API)
+          .then( response => {
+            const currentCode = response.data.currency.code
+            const result = rates.find(e => e.iso_code == currentCode);
+            const currency = result ? result.iso_code : ''
+            return sdk.currentUser
+            .updateProfile(
+              { protectedData: { rates,  lastRateUpdate, currency} },
+              { expand: true }
+            )
+            .then(response => {
+              const entities = denormalisedResponseEntities(response);
+              if (entities.length !== 1) {
+                throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+              }
+
+              const currentUser = entities[0];
+              return currentUser;
+            })
+            .catch(e => {
+              throw e;
+            });
+          } )
+          .catch( e => {
             throw e;
-          });
+            }
+          )
         })
       }
       dispatch(fetchCurrentUserHasListings());

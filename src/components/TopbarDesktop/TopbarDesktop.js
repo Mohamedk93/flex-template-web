@@ -78,6 +78,13 @@ const TopbarDesktop = props => {
     return currentPage === page || isAccountSettingsPage ? css.currentPage : null;
   };
 
+  const updateLocalCurrency = value => {
+    if(typeof window !== 'undefined'){
+      localStorage.setItem('currentCode', value);
+      return onUpdateUserCurrency(null);
+    }
+  };
+
   const profileMenu = authenticatedOnClientSide ? (
     <Menu>
       <MenuLabel className={css.profileMenuLabel} isOpenClassName={css.profileMenuIsOpen}>
@@ -141,8 +148,27 @@ const TopbarDesktop = props => {
   if(currentUser){
     rates = currentUser.attributes.profile.protectedData.rates;
     currency = currentUser.attributes.profile.protectedData.currency;
+  }else if (typeof window !== 'undefined'){
+    rates = JSON.parse(localStorage.getItem('rates'));
+    currency = localStorage.getItem('currentCode');
   }
-  
+
+  const selectCurrency = !rates ? null : (
+    <select
+        className={css.currencySelect}
+        onChange={currentUser ? e => onUpdateUserCurrency(e.target.value) : e => updateLocalCurrency(e.target.value)}
+        >
+            <option value={currency}>
+             {currency}
+            </option>
+            {rates.map(c => (
+              <option key={c.iso_code} value={c.iso_code}>
+                {c.iso_code}
+              </option>
+            ))}
+          </select>
+
+  );
   return (
     <nav className={classes}>
       <NamedLink className={css.logoLink} name="LandingPage">
@@ -155,19 +181,7 @@ const TopbarDesktop = props => {
       {search}
       
       <HistoryBackButton show={showBackButton}/>
-      <select
-        className={css.currencySelect}
-        onChange={e => onUpdateUserCurrency(e.target.value)}
-        >
-            <option value={currency}>
-             {currency}
-            </option>
-            {rates.map(c => (
-              <option key={c.iso_code} value={c.iso_code}>
-                {c.iso_code}
-              </option>
-            ))}
-          </select>
+      {selectCurrency}
             
       <NamedLink className={css.createListingLink} name="NewListingPage">
         <span className={css.createListing}>

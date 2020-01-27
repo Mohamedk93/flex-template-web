@@ -328,21 +328,24 @@ export class ListingPageComponent extends Component {
     const authorDisplayName = userDisplayNameAsString(ensuredAuthor, '');
 
     let { formattedPrice, priceTitle } = priceData(price, intl);
-
-    if(currentUser){
-      let currency = null;
-      let rates = [];
-      if(currentUser.attributes.profile.protectedData.currency){
-        currency = currentUser.attributes.profile.protectedData.currency;
-        rates = currentUser.attributes.profile.protectedData.rates;
-        const result = rates.find(e => e.iso_code == currency);
-        if(result){
-          formattedPrice = formattedPrice.substr(1)
-          formattedPrice = formattedPrice * result.current_rate
-          formattedPrice = formattedPrice.toFixed(2);
-          formattedPrice = result.symbol.toString() + formattedPrice;
-        }
-      }
+    
+    let currency = null;
+    let rates = [];
+    let result = null;
+    if(currentUser && currentUser.attributes.profile.protectedData.currency){
+      currency = currentUser.attributes.profile.protectedData.currency;
+      rates = currentUser.attributes.profile.protectedData.rates;
+      result = rates.find(e => e.iso_code == currency);
+    }else{
+      rates = JSON.parse(localStorage.getItem('rates'));
+      currency = localStorage.getItem('currentCode');
+      result = rates.find(e => e.iso_code == currency);
+    }
+    if(result){
+      formattedPrice = formattedPrice.substr(1)
+      formattedPrice = formattedPrice * result.current_rate
+      formattedPrice = formattedPrice.toFixed(2);
+      formattedPrice = result.symbol.toString() + formattedPrice;
     }
 
     const handleBookingSubmit = values => {
