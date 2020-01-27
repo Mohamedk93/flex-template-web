@@ -116,6 +116,8 @@ class CurrencyInputComponent extends Component {
   }
 
   onInputBlur(event) {
+    event.preventDefault();
+    event.stopPropagation();
     const {
       currencyConfig,
       input: { onBlur },
@@ -127,12 +129,13 @@ class CurrencyInputComponent extends Component {
         onBlur(price);
       }
       return {
-        value: '$13',
+        value: prevState.formattedValue,
       };
     });
   }
 
   onInputFocus(event) {
+    event.preventDefault();
     event.stopPropagation();
     const {
       currencyConfig,
@@ -145,12 +148,13 @@ class CurrencyInputComponent extends Component {
         onFocus(price);
       }
       return {
-        value: '13',
+        value: prevState.unformattedValue,
       };
     });
   }
 
   updateValues(event) {
+    try {
       const { currencyConfig, intl } = this.props;
       const result = this.props.rates.find(e => e.iso_code == this.props.currency);
       const targetValue = event.target.value.trim();
@@ -196,6 +200,15 @@ class CurrencyInputComponent extends Component {
       }
       
       return { formattedValue, value: unformattedValue, unformattedValue };
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+
+      // If an error occurs while filling input field, use previous values
+      // This ensures that string like '12.3r' doesn't end up to a state.
+      const { formattedValue, unformattedValue, value } = this.state;
+      return { formattedValue, unformattedValue, value };
+    }
   }
 
   render() {
