@@ -93,7 +93,11 @@ class CurrencyInputComponent extends Component {
         unformattedValue,
         value: formattedValue,
         usesComma,
-        currentEvent: 'defaultEvent'
+        currentEvent: 'defaultEvent',
+        currentRates: 'default False',
+        defaultValue: '',
+        unformattedValueTest: ''
+
       };
     } catch (e) {
       log.error(e, 'currency-input-init-failed', { currencyConfig, defaultValue, initialValue });
@@ -208,12 +212,19 @@ class CurrencyInputComponent extends Component {
         
       if(result){
         unformattedValue = unformattedValue / result.current_rate;
+        const currentRates  = 'default TRUE';
 
         unformattedValue = truncateToSubUnitPrecision(
           unformattedValue,
           unitDivisor(currencyConfig.currency),
           this.state.usesComma
         );
+
+        this.setState({
+          currentRates: currentRates,
+          defaultValue: formattedValue,
+          unformattedValueTest: unformattedValue
+        })
       }
       
       return { formattedValue, value: unformattedValue, unformattedValue };
@@ -244,7 +255,20 @@ class CurrencyInputComponent extends Component {
         type="text"
         placeholder={placeholderText}
       />
+      current event:
       {this.state.currentEvent}
+      <br></br>
+
+      current rates:
+      {this.state.currentRates}
+      <br></br>
+
+      default value:
+      {this.state.defaultValue}
+      <br></br>
+      
+      unformattedValueTest:
+      {this.state.unformattedValueTest}
       </div>
 
     );
