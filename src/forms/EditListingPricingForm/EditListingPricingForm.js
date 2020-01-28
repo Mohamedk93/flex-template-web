@@ -18,7 +18,7 @@ const { Money } = sdkTypes;
 
 export const EditListingPricingFormComponent = props => {
   let [userInfo, setUserInfo] = useState(props.initialValues.rates);
-  
+
   return (
   <FinalForm
     {...props}
@@ -138,22 +138,24 @@ export const EditListingPricingFormComponent = props => {
           </div>
         )
       });
-      
+
       return (
         <Form onSubmit={handleSubmit} className={classes}>
-          
+
           <div className={css.inlineDiv}>
-            <span>Pricing in</span> 
+            <span>Pricing in</span>
             <FieldSelect
               name="rates"
               id="rates"
               validate={requiredSelect}
               onClick={e => {
+                console.log(e.target.value)
+                handleSubmit();
                 setUserInfo(
                   e.target.value
                 )}}
             >
-              <option value={userInfo}>{userInfo}</option>
+              {/*<option value={userInfo}>{userInfo}</option>*/}
               {rates.map(c => (
                 <option key={c.iso_code} value={c.iso_code}>
                   {c.iso_code}
@@ -162,7 +164,7 @@ export const EditListingPricingFormComponent = props => {
             </FieldSelect>
             <span>for different types of rental</span>
           </div>
-         
+
 
 
           {updateListingError ? (
@@ -207,7 +209,7 @@ export const EditListingPricingFormComponent = props => {
 );
   }
 
-EditListingPricingFormComponent.defaultProps = { 
+EditListingPricingFormComponent.defaultProps = {
   fetchErrors: null,
   workspaces: [],
   rentalTypes: [],
