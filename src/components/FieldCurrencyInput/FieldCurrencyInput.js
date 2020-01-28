@@ -93,6 +93,8 @@ class CurrencyInputComponent extends Component {
         unformattedValue,
         value: formattedValue,
         usesComma,
+        currentEvent: '',
+        currentIf: '',
       };
     } catch (e) {
       log.error(e, 'currency-input-init-failed', { currencyConfig, defaultValue, initialValue });
@@ -118,6 +120,9 @@ class CurrencyInputComponent extends Component {
   onInputBlur(event) {
     event.preventDefault();
     event.stopPropagation();
+    this.setState({
+      currentEvent: 'blur'
+    });
     const {
       currencyConfig,
       input: { onBlur },
@@ -125,11 +130,14 @@ class CurrencyInputComponent extends Component {
     this.setState(prevState => {
       if (onBlur) {
         // If parent component has provided onBlur function, call it with current price.
-        const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
+        const price = getPrice(ensureDotSeparator('17'), currencyConfig);
+        this.props.input.onChange(price);
+
         onBlur(price);
       }
       return {
         value: prevState.formattedValue,
+        currentIf: 'blur if yes'
       };
     });
   }
@@ -137,6 +145,9 @@ class CurrencyInputComponent extends Component {
   onInputFocus(event) {
     event.preventDefault();
     event.stopPropagation();
+    this.setState({
+      currentEvent: 'focus'
+    });
     const {
       currencyConfig,
       input: { onFocus },
@@ -149,6 +160,7 @@ class CurrencyInputComponent extends Component {
       }
       return {
         value: prevState.unformattedValue,
+        currentIf: 'focus if yes',
       };
     });
   }
@@ -215,16 +227,24 @@ class CurrencyInputComponent extends Component {
     const { className, currencyConfig, defaultValue, placeholder, intl } = this.props;
     const placeholderText = placeholder || intl.formatNumber(defaultValue, currencyConfig);
     return (
-      <input
-        className={className}
-        {...allowedInputProps(this.props)}
-        value={this.state.value}
-        onChange={this.onInputChange}
-        onBlur={this.onInputBlur}
-        onFocus={this.onInputFocus}
-        type="text"
-        placeholder={placeholderText}
-      />
+      <div>
+        <input
+          className={className}
+          {...allowedInputProps(this.props)}
+          value={this.state.value}
+          onChange={this.onInputChange}
+          onBlur={this.onInputBlur}
+          onFocus={this.onInputFocus}
+          type="text"
+          placeholder={placeholderText}
+        />
+          Event:
+          {this.state.currentEvent}
+          if: 
+          {this.state.currentIf}
+          def_value:
+          {defaultValue}
+      </div>
     );
   }
 }
