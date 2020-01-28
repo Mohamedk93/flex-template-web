@@ -149,12 +149,12 @@ class SearchMapPriceLabelWithOverlay extends Component {
     const currentListing = ensureListing(this.props.listing);
     const nextListing = ensureListing(nextProps.listing);
     const isSameListing = currentListing.id.uuid === nextListing.id.uuid;
+    const cr = this.props.currentUser.attributes.profile.protectedData.currency === nextProps.currentUser.attributes.profile.protectedData.currency;
     const hasSamePrice = currentListing.attributes.price === nextListing.attributes.price;
     const hasSameActiveStatus = this.props.isActive === nextProps.isActive;
     const hasSameRefreshToken =
       this.props.mapComponentRefreshToken === nextProps.mapComponentRefreshToken;
-
-    return !(isSameListing && hasSamePrice && hasSameActiveStatus && hasSameRefreshToken);
+    return !(isSameListing && hasSamePrice && hasSameActiveStatus && hasSameRefreshToken ) || cr;
   }
 
   render() {

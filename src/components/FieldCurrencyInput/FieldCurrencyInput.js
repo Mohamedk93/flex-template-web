@@ -129,7 +129,7 @@ class CurrencyInputComponent extends Component {
         onBlur(price);
       }
       return {
-        value: prevState.unformattedValue,
+        value: prevState.formattedValue,
       };
     });
   }
