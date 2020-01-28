@@ -120,6 +120,7 @@ class CurrencyInputComponent extends Component {
   onInputBlur(event) {
     event.preventDefault();
     event.stopPropagation();
+    let currentIf = 'blur not'
     this.setState({
       currentEvent: 'blur'
     });
@@ -127,17 +128,18 @@ class CurrencyInputComponent extends Component {
       currencyConfig,
       input: { onBlur },
     } = this.props;
+    const price = getPrice(ensureDotSeparator('17'), currencyConfig);
     this.setState(prevState => {
       if (onBlur) {
+        currentIf = 'blur yes'
         // If parent component has provided onBlur function, call it with current price.
-        const price = getPrice(ensureDotSeparator('17'), currencyConfig);
         this.props.input.onChange(price);
 
         onBlur(price);
       }
       return {
         value: prevState.formattedValue,
-        currentIf: 'blur if yes'
+        currentIf: currentIf
       };
     });
   }
