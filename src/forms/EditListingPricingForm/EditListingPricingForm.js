@@ -142,7 +142,6 @@ export const EditListingPricingFormComponent = props => {
 
         return (
           <Form onSubmit={handleSubmit} className={classes}>
-            <FormSpy onChange={(values) => alert(values.values.rates)} />
             <div className={css.inlineDiv}>
               <span>Pricing in</span>
               <FieldSelect
