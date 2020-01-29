@@ -11,14 +11,19 @@ import { required } from '../../util/validators';
 
 import { formatMoney } from '../../util/currency';
 import { types as sdkTypes } from '../../util/sdkLoader';
-import { Button, Form, FieldCurrencyInput, FieldCheckbox, FieldSelect } from '../../components';
+import { Button, Form, FieldCurrencyInput, FieldCheckbox, FieldSelect} from '../../components';
+import Select from 'react-select'
+
 import css from './EditListingPricingForm.css';
 
 const { Money } = sdkTypes;
 
 export const EditListingPricingFormComponent = props => {
   let [userInfo, setUserInfo] = useState(props.initialValues.rates);
-  let [rate, setRate] = useState(props.initialValues.rate);
+  let [rate, setRate] = useState(props.initialValues.rates);
+  const handleSelect = (value) => {
+      setRate(value.iso_code)
+  }
   
   return (
   <FinalForm
@@ -45,7 +50,6 @@ export const EditListingPricingFormComponent = props => {
       const isDaily = unitType === LINE_ITEM_DAY;
       const authorProfile = props.initialValues.author.attributes.profile;
       const currentUser = props.initialValues.currentUser;
-      let rate = props.initialValues.rates;
       const translationKey = isNightly
         ? 'EditListingPricingForm.pricePerNight'
         : isDaily
@@ -88,6 +92,8 @@ export const EditListingPricingFormComponent = props => {
       const submitDisabled = invalid || disabled || submitInProgress;
       const { updateListingError, showListingsError } = fetchErrors || {};
       const labelText = intl.formatMessage({ id: 'EditListingPricingForm.enable_quick_rent' });
+      const pricingIn = intl.formatMessage({ id: 'EditListingPricingForm.pricingIn' });
+      const forDiferentType = intl.formatMessage({ id: 'EditListingPricingForm.forDiferentType' });
       const capacityPlaceholder = intl.formatMessage({
         id: 'EditListingPricingForm.defaultCurrency',
       });
@@ -102,7 +108,6 @@ export const EditListingPricingFormComponent = props => {
         )
       });
       const requiredSelect = required('This field is required');
-      
       const priceTable = workspaces.map(price => {
 
         const priceLabel = intl.formatMessage({
@@ -139,33 +144,47 @@ export const EditListingPricingFormComponent = props => {
           </div>
         )
       });
-      console.log('This is rate ==>', rate)
+
       return (
         <Form onSubmit={handleSubmit} className={classes}>
-          
           <div className={css.inlineDiv}>
-            <span>Pricing in</span> 
-            <FieldSelect
-              name="rates"
-              id="rates"
-              validate={requiredSelect}
-              onClick={e => {
-                setRate(
+            <span>{pricingIn}</span> 
+            <div className={css.hideDiv}>
+              <FieldSelect
+                name="rates"
+                id="rates"
+                value={rate}
+                defaultValue={rate}
+                validate={requiredSelect}
+                onClick={e => {
+                  setRate(
                   e.target.value
                 )}}
-            >
-              <option value={rate}>{rate}</option> 
-              {rates.map(c => (
-                <option key={c.iso_code} value={c.iso_code}>
-                  {c.iso_code}
-                </option>
-              ))}
-            </FieldSelect>
-            <span>for different types of rental</span>
+              >
+                <option value=''>{rate}</option> 
+                {rates.map(c => (
+                  <option key={c.iso_code} value={c.iso_code}>
+                    {c.iso_code}
+                  </option>
+                ))}
+              </FieldSelect>
+            </div>
+            <Select
+              value={rates.find(searchRate => {
+                return searchRate.iso_code === rate
+             })}
+              getOptionLabel={option =>
+                `${option.iso_code}`
+              }
+              getOptionValue={option => `${option.iso_code}`}
+              required={required}
+              onChange={ e => {handleSelect(e)} }
+              options={rates}
+              isSearchable={false}
+              className={css.customSelect}
+            />
+            <span>{forDiferentType}</span>
           </div>
-         
-
-
           {updateListingError ? (
             <p className={css.error}>
               <FormattedMessage id="EditListingPricingForm.updateFailed" />

@@ -248,6 +248,8 @@
   "EditListingPricingForm.updateFailed": "Failed to update listing. Please try again.",
   "EditListingPricingForm.priceGeneral": "Pricing in USD for different types of rental",
   "EditListingPricingForm.enable_quick_rent" : "Enable Quick Rent",
+  "EditListingPricingForm.pricingIn": "Pricing in",
+  "EditListingPricingForm.forDiferentType": "for different types of rental",
   "EditListingPricingForm.defaultCurrency" : "USD",
   "EditListingPricingForm.priceLabel_seats": "Seats",
   "EditListingPricingForm.priceLabel_office_rooms": "Office rooms",

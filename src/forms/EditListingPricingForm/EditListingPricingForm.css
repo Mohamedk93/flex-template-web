@@ -114,3 +114,13 @@
 .inlineDiv span {
   margin: 0 10px;
 }
+
+
+.hideDiv {
+  display: none;
+}
+
+.customSelect{
+  width: 110px;
+
+}
