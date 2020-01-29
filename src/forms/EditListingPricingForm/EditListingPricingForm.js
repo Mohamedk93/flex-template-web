@@ -207,7 +207,7 @@ export const EditListingPricingFormComponent = props => {
           <FieldCheckbox
             id="quickRent"
             name="quickRent"
-            className={css.title}
+            className={css.quickRent}
             label={labelText}
             value='quickRent'
           />
