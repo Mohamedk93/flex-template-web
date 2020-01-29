@@ -117,3 +117,16 @@
   font-weight: bold;
   margin: 0 10px;
 }
+
+
+.hideDiv {
+  display: none;
+}
+
+.customSelect{
+  width: 110px;
+}
+
+.quickRent {
+  width: 160px;
+}

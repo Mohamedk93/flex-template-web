@@ -57,6 +57,7 @@ export const EditListingPricingFormComponent = props => (
 
         const pricePlaceholderMessage = intl.formatMessage({
           id: 'EditListingPricingForm.priceInputPlaceholder',
+
         });
 
         const priceRequired = validators.required(
@@ -174,7 +175,7 @@ export const EditListingPricingFormComponent = props => (
             <FieldCheckbox
               id="quickRent"
               name="quickRent"
-              className={css.title}
+              className={css.quickRent}
               label={labelText}
               value='quickRent'
             />
@@ -195,6 +196,7 @@ export const EditListingPricingFormComponent = props => (
 
 
 EditListingPricingFormComponent.defaultProps = {
+
   fetchErrors: null,
   workspaces: [],
   rentalTypes: [],

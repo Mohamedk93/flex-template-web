@@ -11,6 +11,7 @@ import config from '../../config';
 
 
 import css from './EditListingPricingPanel.css';
+import { currentUserShowError } from '../../ducks/user.duck';
 
 const { Money } = sdkTypes;
 
@@ -29,6 +30,7 @@ const EditListingPricingPanel = props => {
     panelUpdated,
     updateInProgress,
     errors,
+    currentUser,
   } = props;
 
   const classes = classNames(rootClassName || css.root, className);
@@ -81,6 +83,7 @@ const EditListingPricingPanel = props => {
         price_meeting_rooms_monthly,
         quickRent: publicData.quickRent,
         author: author,
+        currentUser: currentUser,
       }}
       onSubmit={values => {
         const {
