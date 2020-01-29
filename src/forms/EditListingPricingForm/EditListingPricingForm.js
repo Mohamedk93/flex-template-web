@@ -18,6 +18,7 @@ const { Money } = sdkTypes;
 
 export const EditListingPricingFormComponent = props => {
   let [userInfo, setUserInfo] = useState(props.initialValues.rates);
+  let [rate, setRate] = useState(props.initialValues.rate);
   
   return (
   <FinalForm
@@ -43,6 +44,8 @@ export const EditListingPricingFormComponent = props => {
       const isNightly = unitType === LINE_ITEM_NIGHT;
       const isDaily = unitType === LINE_ITEM_DAY;
       const authorProfile = props.initialValues.author.attributes.profile;
+      const currentUser = props.initialValues.currentUser;
+      let rate = props.initialValues.rates;
       const translationKey = isNightly
         ? 'EditListingPricingForm.pricePerNight'
         : isDaily
@@ -99,9 +102,7 @@ export const EditListingPricingFormComponent = props => {
         )
       });
       const requiredSelect = required('This field is required');
-      if(!userInfo){
-        setUserInfo('USD')
-      }
+      
       const priceTable = workspaces.map(price => {
 
         const priceLabel = intl.formatMessage({
@@ -138,7 +139,7 @@ export const EditListingPricingFormComponent = props => {
           </div>
         )
       });
-      
+      console.log('This is rate ==>', rate)
       return (
         <Form onSubmit={handleSubmit} className={classes}>
           
@@ -149,11 +150,11 @@ export const EditListingPricingFormComponent = props => {
               id="rates"
               validate={requiredSelect}
               onClick={e => {
-                setUserInfo(
+                setRate(
                   e.target.value
                 )}}
             >
-              <option value={userInfo}>{userInfo}</option>
+              <option value={rate}>{rate}</option> 
               {rates.map(c => (
                 <option key={c.iso_code} value={c.iso_code}>
                   {c.iso_code}

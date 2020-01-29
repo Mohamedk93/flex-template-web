@@ -10,6 +10,7 @@ import { types as sdkTypes } from '../../util/sdkLoader';
 import config from '../../config';
 
 import css from './EditListingPricingPanel.css';
+import { currentUserShowError } from '../../ducks/user.duck';
 
 const { Money } = sdkTypes;
 
@@ -28,6 +29,7 @@ const EditListingPricingPanel = props => {
     panelUpdated,
     updateInProgress,
     errors,
+    currentUser,
   } = props;
 
   const classes = classNames(rootClassName || css.root, className);
@@ -69,8 +71,9 @@ const EditListingPricingPanel = props => {
   new Money(publicData.priceMeetingRoomsDaily.amount, publicData.priceMeetingRoomsDaily.currency) : null;
   const price_meeting_rooms_monthly = publicData && publicData.priceMeetingRoomsMonthly && publicData.workspaces.indexOf('meeting_rooms') != -1 ? 
   new Money(publicData.priceMeetingRoomsMonthly.amount, publicData.priceMeetingRoomsMonthly.currency) : null;
-  if(!publicData.rates){
-    publicData.rates = "USD"
+  if(!publicData.rates && currentUser && currentUser.attributes.profile.protectedData.currency){
+    const userCurrency = currentUser.attributes.profile.protectedData.currency
+    publicData.rates = userCurrency;
   }
   const form = priceCurrencyValid ? (
     <EditListingPricingForm
@@ -88,6 +91,7 @@ const EditListingPricingPanel = props => {
         quickRent: publicData.quickRent,
         rates: publicData.rates,
         author: author,
+        currentUser: currentUser,
       }}
       onSubmit={values => {
         const { 
