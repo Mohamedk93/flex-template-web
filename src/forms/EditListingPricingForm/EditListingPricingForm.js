@@ -149,6 +149,7 @@ export const EditListingPricingFormComponent = props => {
                 id="rates"
                 validate={requiredSelect}
                 onClick={e => {
+                  handleSubmit();
                   setUserInfo(
                     e.target.value
                   )
