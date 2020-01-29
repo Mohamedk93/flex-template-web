@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {bool, func, shape, string, array} from 'prop-types';
+import {bool, func, shape, string, array, arrayOf} from 'prop-types';
 import {compose} from 'redux';
 import {Form as FinalForm, FormSpy} from 'react-final-form';
 import {intlShape, injectIntl, FormattedMessage} from '../../util/reactIntl';
@@ -8,6 +8,7 @@ import config from '../../config';
 import {LINE_ITEM_NIGHT, LINE_ITEM_DAY, propTypes} from '../../util/types';
 import * as validators from '../../util/validators';
 import {required} from '../../util/validators';
+import arrayMutators from 'final-form-arrays';
 
 import {formatMoney} from '../../util/currency';
 import {types as sdkTypes} from '../../util/sdkLoader';
@@ -16,34 +17,34 @@ import css from './EditListingPricingForm.css';
 
 const {Money} = sdkTypes;
 
-export const EditListingPricingFormComponent = props => {
-  let [userInfo, setUserInfo] = useState(props.initialValues.rates);
-
-  return (
+export const EditListingPricingFormComponent = props => (
     <FinalForm
       {...props}
+      mutators={{ ...arrayMutators }}
       render={fieldRenderProps => {
         const {
           className,
           disabled,
           handleSubmit,
-          onChange,
           intl,
           invalid,
           pristine,
           saveActionMsg,
           updated,
-          rates,
+          currencies,
           updateInProgress,
           fetchErrors,
           workspaces,
           rentalTypes,
+          values,
         } = fieldRenderProps;
+
+        console.log(values)
 
         const unitType = config.bookingUnitType;
         const isNightly = unitType === LINE_ITEM_NIGHT;
         const isDaily = unitType === LINE_ITEM_DAY;
-        const authorProfile = props.initialValues.author.attributes.profile;
+        const authorProfile = props.initialValues.author ? props.initialValues.author.attributes.profile : '';
         const translationKey = isNightly
           ? 'EditListingPricingForm.pricePerNight'
           : isDaily
@@ -99,12 +100,10 @@ export const EditListingPricingFormComponent = props => {
             </div>
           )
         });
-        const requiredSelect = required('This field is required');
-        if (!userInfo) {
-          setUserInfo('USD')
-        }
-        const priceTable = workspaces.map(price => {
 
+        const requiredSelect = required('This field is required');
+
+        const priceTable = workspaces.map(price => {
           const priceLabel = intl.formatMessage({
             id: `EditListingPricingForm.priceLabel_${price}`,
           });
@@ -118,7 +117,7 @@ export const EditListingPricingFormComponent = props => {
                   name={fieldId}
                   key={fieldId}
                   authorProfile={authorProfile}
-                  userInfo={userInfo}
+                  userInfo={values.currency.toUpperCase()}
                   className={css.priceInput}
                   placeholder={pricePlaceholderMessage}
                   currencyConfig={config.currencyConfig}
@@ -141,41 +140,28 @@ export const EditListingPricingFormComponent = props => {
         });
 
         return (
-          <Form onSubmit={handleSubmit} className={classes}>
-            <div className={css.inlineDiv}>
-              <span>Pricing in</span>
-              <FieldSelect
-                name="rates"
-                id="rates"
-                validate={requiredSelect}
-                onClick={e => {
-                  handleSubmit();
-                  setUserInfo(
-                    e.target.value
-                  )
-                }}
-              >
-                {/*<option value={userInfo}>{userInfo}</option>*/}
-                {rates.map(c => (
-                  <option key={c.iso_code} value={c.iso_code}>
-                    {c.iso_code}
-                  </option>
-                ))}
-              </FieldSelect>
-              <span>for different types of rental</span>
+          <Form onSubmit={handleSubmit}
+                className={classes}
+          >
+            <div className={css.currencyHolder}>
+              <span><FormattedMessage id="EditListingPricingForm.pricingSpan1"/></span>
+              <span className={css.currencyName}>{values.currency.toUpperCase()}</span>
+              <span><FormattedMessage id="EditListingPricingForm.pricingCurrency"/></span>
+              <span><FormattedMessage id="EditListingPricingForm.pricingSpan2"/></span>
             </div>
-
 
             {updateListingError ? (
                 <p className={css.error}>
                   <FormattedMessage id="EditListingPricingForm.updateFailed"/>
                 </p>
               ) : null}
+
             {showListingsError ? (
                 <p className={css.error}>
                   <FormattedMessage id="EditListingPricingForm.showListingFailed"/>
                 </p>
               ) : null}
+
             <div className={css.priceTableWrapper}>
               <div className={css.priceHead}>
                 {priceHead}
@@ -206,13 +192,12 @@ export const EditListingPricingFormComponent = props => {
       }}
     />
   );
-};
+
 
 EditListingPricingFormComponent.defaultProps = {
   fetchErrors: null,
   workspaces: [],
   rentalTypes: [],
-  rates: config.custom.rates,
 };
 
 EditListingPricingFormComponent.propTypes = {
@@ -224,7 +209,6 @@ EditListingPricingFormComponent.propTypes = {
   updateInProgress: bool.isRequired,
   workspaces: array.isRequired,
   rentalTypes: array.isRequired,
-  rates: array.isRequired,
   fetchErrors: shape({
     showListingsError: propTypes.error,
     updateListingError: propTypes.error,

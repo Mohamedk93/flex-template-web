@@ -9,6 +9,7 @@ import { ensureOwnListing } from '../../util/data';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import config from '../../config';
 
+
 import css from './EditListingPricingPanel.css';
 
 const { Money } = sdkTypes;
@@ -49,60 +50,53 @@ const EditListingPricingPanel = props => {
   const priceCurrencyValid = price instanceof Money ? price.currency === config.currency : true;
 
   const author =  props.listing.author;
-  const price_seats_hourly = publicData && publicData.priceSeatsHourly && publicData.workspaces.indexOf('seats') != -1 ? 
-  new Money(publicData.priceSeatsHourly.amount, publicData.priceSeatsHourly.currency) : null;
-  const price_seats_daily = publicData && publicData.priceSeatsDaily && publicData.workspaces.indexOf('seats') != -1 ? 
-  new Money(publicData.priceSeatsDaily.amount, publicData.priceSeatsDaily.currency) : null;
-  const price_seats_monthly = publicData && publicData.priceSeatsMonthly && publicData.workspaces.indexOf('seats') != -1 ? 
-  new Money(publicData.priceSeatsMonthly.amount, publicData.priceSeatsMonthly.currency) : null;
-  
-  const price_office_rooms_hourly = publicData && publicData.priceOfficeRoomsHourly && publicData.workspaces.indexOf('office_rooms') != -1 ? 
-  new Money(publicData.priceOfficeRoomsHourly.amount, publicData.priceOfficeRoomsHourly.currency) : null;
-  const price_office_rooms_daily = publicData && publicData.priceOfficeRoomsDaily && publicData.workspaces.indexOf('office_rooms') != -1 ? 
-  new Money(publicData.priceOfficeRoomsDaily.amount, publicData.priceOfficeRoomsDaily.currency) : null;
-  const price_office_rooms_monthly = publicData && publicData.priceOfficeRoomsMonthly && publicData.workspaces.indexOf('office_rooms') != -1 ? 
-  new Money(publicData.priceOfficeRoomsMonthly.amount, publicData.priceOfficeRoomsMonthly.currency) : null;
+  const price_seats_hourly = publicData && publicData.priceSeatsHourly && publicData.workspaces.indexOf('seats') !== -1 ? new Money(publicData.priceSeatsHourly.amount, publicData.priceSeatsHourly.currency) : null;
+  const price_seats_daily = publicData && publicData.priceSeatsDaily && publicData.workspaces.indexOf('seats') !== -1 ? new Money(publicData.priceSeatsDaily.amount, publicData.priceSeatsDaily.currency) : null;
+  const price_seats_monthly = publicData && publicData.priceSeatsMonthly && publicData.workspaces.indexOf('seats') !== -1 ? new Money(publicData.priceSeatsMonthly.amount, publicData.priceSeatsMonthly.currency) : null;
 
-  const price_meeting_rooms_hourly = publicData && publicData.priceMeetingRoomsHourly && publicData.workspaces.indexOf('meeting_rooms') != -1 ? 
-  new Money(publicData.priceMeetingRoomsHourly.amount, publicData.priceMeetingRoomsHourly.currency) : null;
-  const price_meeting_rooms_daily = publicData && publicData.priceMeetingRoomsDaily && publicData.workspaces.indexOf('meeting_rooms') != -1 ? 
-  new Money(publicData.priceMeetingRoomsDaily.amount, publicData.priceMeetingRoomsDaily.currency) : null;
-  const price_meeting_rooms_monthly = publicData && publicData.priceMeetingRoomsMonthly && publicData.workspaces.indexOf('meeting_rooms') != -1 ? 
-  new Money(publicData.priceMeetingRoomsMonthly.amount, publicData.priceMeetingRoomsMonthly.currency) : null;
-  if(!publicData.rates){
-    publicData.rates = "USD"
-  }
+  const price_office_rooms_hourly = publicData && publicData.priceOfficeRoomsHourly && publicData.workspaces.indexOf('office_rooms') !== -1 ? new Money(publicData.priceOfficeRoomsHourly.amount, publicData.priceOfficeRoomsHourly.currency) : null;
+  const price_office_rooms_daily = publicData && publicData.priceOfficeRoomsDaily && publicData.workspaces.indexOf('office_rooms') !== -1 ? new Money(publicData.priceOfficeRoomsDaily.amount, publicData.priceOfficeRoomsDaily.currency) : null;
+  const price_office_rooms_monthly = publicData && publicData.priceOfficeRoomsMonthly && publicData.workspaces.indexOf('office_rooms') !== -1 ? new Money(publicData.priceOfficeRoomsMonthly.amount, publicData.priceOfficeRoomsMonthly.currency) : null;
+
+  const price_meeting_rooms_hourly = publicData && publicData.priceMeetingRoomsHourly && publicData.workspaces.indexOf('meeting_rooms') !== -1 ? new Money(publicData.priceMeetingRoomsHourly.amount, publicData.priceMeetingRoomsHourly.currency) : null;
+  const price_meeting_rooms_daily = publicData && publicData.priceMeetingRoomsDaily && publicData.workspaces.indexOf('meeting_rooms') !== -1 ? new Money(publicData.priceMeetingRoomsDaily.amount, publicData.priceMeetingRoomsDaily.currency) : null;
+  const price_meeting_rooms_monthly = publicData && publicData.priceMeetingRoomsMonthly && publicData.workspaces.indexOf('meeting_rooms') !== -1 ? new Money(publicData.priceMeetingRoomsMonthly.amount, publicData.priceMeetingRoomsMonthly.currency) : null;
+  // if(!publicData.rates){
+  //   publicData.rates = "USD"
+  // }
+
   const form = priceCurrencyValid ? (
     <EditListingPricingForm
       className={css.form}
       initialValues={{
+        currency: publicData.currency,
         price_seats_hourly,
         price_seats_daily,
         price_seats_monthly,
-        price_office_rooms_hourly, 
-        price_office_rooms_daily, 
-        price_office_rooms_monthly, 
+        price_office_rooms_hourly,
+        price_office_rooms_daily,
+        price_office_rooms_monthly,
         price_meeting_rooms_hourly,
         price_meeting_rooms_daily,
         price_meeting_rooms_monthly,
         quickRent: publicData.quickRent,
-        rates: publicData.rates,
         author: author,
       }}
       onSubmit={values => {
-        const { 
+        const {
           price_seats_hourly,
           price_seats_daily,
           price_seats_monthly,
-          price_office_rooms_hourly, 
-          price_office_rooms_daily, 
-          price_office_rooms_monthly, 
+          price_office_rooms_hourly,
+          price_office_rooms_daily,
+          price_office_rooms_monthly,
           price_meeting_rooms_hourly,
           price_meeting_rooms_daily,
           price_meeting_rooms_monthly,
           quickRent,
-          rates,
+          currency,
         } = values;
+
         const nullPrice = {
           amount: 0,
           currency: 'USD',
@@ -112,9 +106,9 @@ const EditListingPricingPanel = props => {
           price_seats_hourly,
           price_seats_daily,
           price_seats_monthly,
-          price_office_rooms_hourly, 
-          price_office_rooms_daily, 
-          price_office_rooms_monthly, 
+          price_office_rooms_hourly,
+          price_office_rooms_daily,
+          price_office_rooms_monthly,
           price_meeting_rooms_hourly,
           price_meeting_rooms_daily,
           price_meeting_rooms_monthly,
@@ -154,7 +148,7 @@ const EditListingPricingPanel = props => {
           amount: price_office_rooms_monthly.amount,
           currency: price_office_rooms_monthly.currency,
         } : nullPrice;
-  
+
         const priceMeetingRoomsHourly = price_meeting_rooms_hourly ? {
           amount: price_meeting_rooms_hourly.amount,
           currency: price_meeting_rooms_hourly.currency,
@@ -170,7 +164,7 @@ const EditListingPricingPanel = props => {
 
         const updateValues = {
           price: minimalPrice,
-          publicData: { 
+          publicData: {
             priceSeatsHourly,
             priceSeatsDaily,
             priceSeatsMonthly,
@@ -181,7 +175,7 @@ const EditListingPricingPanel = props => {
             priceMeetingRoomsDaily,
             priceMeetingRoomsMonthly,
             quickRent,
-            rates,
+            currency,
           },
         };
         onSubmit(updateValues);
@@ -193,6 +187,7 @@ const EditListingPricingPanel = props => {
       fetchErrors={errors}
       workspaces={workspaces}
       rentalTypes={rentalTypes}
+      currencies={config.custom.currencies}
     />
   ) : (
     <div className={css.priceCurrencyInvalid}>

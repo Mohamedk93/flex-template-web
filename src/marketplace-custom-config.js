@@ -63,15 +63,13 @@ export const workspacesDefaultQuantity = {
   seats: 500,
   office_rooms: 100,
   meeting_rooms: 100,
-}
-
-
+};
 
 export const workspacesDefaultName = {
   seats: "Seats",
   office_rooms: "Office rooms",
   meeting_rooms: "Meeting rooms",
-}
+};
 
 export const categories = [
   { key: 'coworking', label: 'Coworking Space' },
@@ -81,7 +79,7 @@ export const categories = [
 export const categoriesDefaultName = {
   coworking: "Coworking Space",
   office: "Office Space",
-}
+};
 
 export const quickRent = {
   active: false
@@ -114,7 +112,36 @@ export const rates = [
                      {name: 'Turkish Lira',          iso_code: 'TRY', symbol: '₺'},
                      {name: 'Tunisian Dinar',        iso_code: 'TND', symbol: 'DT'},
                      {name: 'United States Dollars', iso_code: 'USD', symbol: '$'}
-                    ]
+                    ];
+
+export const currencies = [
+  { key: 'aud', label: 'AUD' },
+  { key: 'dzd', label: 'DZD' },
+  { key: 'bhd', label: 'BHD' },
+  { key: 'cad', label: 'CAD' },
+  { key: 'aed', label: 'AED' },
+  { key: 'egp', label: 'EGP' },
+  { key: 'eur', label: 'EUR' },
+  { key: 'inr', label: 'INR' },
+  { key: 'jod', label: 'JOD' },
+  { key: 'kes', label: 'KES' },
+  { key: 'kwd', label: 'KWD' },
+  { key: 'mad', label: 'MAD' },
+  { key: 'nzd', label: 'NZD' },
+  { key: 'ngn', label: 'NGN' },
+  { key: 'nok', label: 'NOK' },
+  { key: 'omr', label: 'OMR' },
+  { key: 'gbr', label: 'GBP' },
+  { key: 'pkr', label: 'PKR' },
+  { key: 'qar', label: 'QAR' },
+  { key: 'sar', label: 'SAR' },
+  { key: 'zar', label: 'ZAR' },
+  { key: 'sek', label: 'SEK' },
+  { key: 'chf', label: 'CHF' },
+  { key: 'try', label: 'TRY' },
+  { key: 'tnd', label: 'TND' },
+  { key: 'usd', label: 'USD' },
+];
 
 export const weekDays = [
   { key: 'mon', label: 'Monday' },
