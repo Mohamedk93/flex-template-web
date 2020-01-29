@@ -1,217 +1,203 @@
 import React, {useState} from 'react';
-import { bool, func, shape, string, array } from 'prop-types';
-import { compose } from 'redux';
-import { Form as FinalForm } from 'react-final-form';
-import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
+import {bool, func, shape, string, array, arrayOf} from 'prop-types';
+import {compose} from 'redux';
+import {Form as FinalForm, FormSpy} from 'react-final-form';
+import {intlShape, injectIntl, FormattedMessage} from '../../util/reactIntl';
 import classNames from 'classnames';
 import config from '../../config';
-import { LINE_ITEM_NIGHT, LINE_ITEM_DAY, propTypes } from '../../util/types';
+import {LINE_ITEM_NIGHT, LINE_ITEM_DAY, propTypes} from '../../util/types';
 import * as validators from '../../util/validators';
-import { required } from '../../util/validators';
+import {required} from '../../util/validators';
+import arrayMutators from 'final-form-arrays';
 
-import { formatMoney } from '../../util/currency';
-import { types as sdkTypes } from '../../util/sdkLoader';
-import { Button, Form, FieldCurrencyInput, FieldCheckbox, FieldSelect } from '../../components';
+import {formatMoney} from '../../util/currency';
+import {types as sdkTypes} from '../../util/sdkLoader';
+import {Button, Form, FieldCurrencyInput, FieldCheckbox, FieldSelect} from '../../components';
 import css from './EditListingPricingForm.css';
 
-const { Money } = sdkTypes;
+const {Money} = sdkTypes;
 
-export const EditListingPricingFormComponent = props => {
-  let [userInfo, setUserInfo] = useState(props.initialValues.rates);
-  
-  return (
-  <FinalForm
-    {...props}
-    render={fieldRenderProps => {
-      const {
-        className,
-        disabled,
-        handleSubmit,
-        intl,
-        invalid,
-        pristine,
-        saveActionMsg,
-        updated,
-        rates,
-        updateInProgress,
-        fetchErrors,
-        workspaces,
-        rentalTypes,
-      } = fieldRenderProps;
+export const EditListingPricingFormComponent = props => (
+    <FinalForm
+      {...props}
+      mutators={{ ...arrayMutators }}
+      render={fieldRenderProps => {
+        const {
+          className,
+          disabled,
+          handleSubmit,
+          intl,
+          invalid,
+          pristine,
+          saveActionMsg,
+          updated,
+          currencies,
+          updateInProgress,
+          fetchErrors,
+          workspaces,
+          rentalTypes,
+          values,
+        } = fieldRenderProps;
 
-      const unitType = config.bookingUnitType;
-      const isNightly = unitType === LINE_ITEM_NIGHT;
-      const isDaily = unitType === LINE_ITEM_DAY;
-      const authorProfile = props.initialValues.author.attributes.profile;
-      const translationKey = isNightly
-        ? 'EditListingPricingForm.pricePerNight'
-        : isDaily
-        ? 'EditListingPricingForm.pricePerDay'
-        : 'EditListingPricingForm.pricePerUnit';
+        console.log(values)
 
-      const pricePerUnitMessage = intl.formatMessage({
-        id: translationKey,
-      });
+        const unitType = config.bookingUnitType;
+        const isNightly = unitType === LINE_ITEM_NIGHT;
+        const isDaily = unitType === LINE_ITEM_DAY;
+        const authorProfile = props.initialValues.author ? props.initialValues.author.attributes.profile : '';
+        const translationKey = isNightly
+          ? 'EditListingPricingForm.pricePerNight'
+          : isDaily
+            ? 'EditListingPricingForm.pricePerDay'
+            : 'EditListingPricingForm.pricePerUnit';
 
-      const pricePlaceholderMessage = intl.formatMessage({
-        id: 'EditListingPricingForm.priceInputPlaceholder',
-      });
-
-      const priceRequired = validators.required(
-        intl.formatMessage({
-          id: 'EditListingPricingForm.priceRequired',
-        })
-      );
-
-      const minPrice = new Money(config.listingMinimumPriceSubUnits, config.currency);
-      const minPriceRequired = validators.moneySubUnitAmountAtLeast(
-        intl.formatMessage(
-          {
-            id: 'EditListingPricingForm.priceTooLow',
-          },
-          {
-            minPrice: formatMoney(intl, minPrice),
-          }
-        ),
-        config.listingMinimumPriceSubUnits
-      );
-      const priceValidators = config.listingMinimumPriceSubUnits
-        ? validators.composeValidators(priceRequired, minPriceRequired)
-        : priceRequired;
-
-      const classes = classNames(css.root, className);
-      const submitReady = updated && pristine;
-      const submitInProgress = updateInProgress;
-      const submitDisabled = invalid || disabled || submitInProgress;
-      const { updateListingError, showListingsError } = fetchErrors || {};
-      const labelText = intl.formatMessage({ id: 'EditListingPricingForm.enable_quick_rent' });
-      const capacityPlaceholder = intl.formatMessage({
-        id: 'EditListingPricingForm.defaultCurrency',
-      });
-      const priceHead = rentalTypes.map(item => {
-        const rentalLabel = intl.formatMessage({
-          id: `EditListingPricingForm.rentalType_${item}`,
-        });
-        return (
-          <div className={css.rentalLables} key={item}>
-            {rentalLabel}
-          </div>
-        )
-      });
-      const requiredSelect = required('This field is required');
-      if(!userInfo){
-        setUserInfo('USD')
-      }
-      const priceTable = workspaces.map(price => {
-
-        const priceLabel = intl.formatMessage({
-          id: `EditListingPricingForm.priceLabel_${price}`,
+        const pricePerUnitMessage = intl.formatMessage({
+          id: translationKey,
         });
 
-        const priceFields = rentalTypes.map(item => {
-          const fieldId = `price_${price}_${item}`;
+        const pricePlaceholderMessage = intl.formatMessage({
+          id: 'EditListingPricingForm.priceInputPlaceholder',
+        });
+
+        const priceRequired = validators.required(
+          intl.formatMessage({
+            id: 'EditListingPricingForm.priceRequired',
+          })
+        );
+
+        const minPrice = new Money(config.listingMinimumPriceSubUnits, config.currency);
+        const minPriceRequired = validators.moneySubUnitAmountAtLeast(
+          intl.formatMessage(
+            {
+              id: 'EditListingPricingForm.priceTooLow',
+            },
+            {
+              minPrice: formatMoney(intl, minPrice),
+            }
+          ),
+          config.listingMinimumPriceSubUnits
+        );
+        const priceValidators = config.listingMinimumPriceSubUnits
+          ? validators.composeValidators(priceRequired, minPriceRequired)
+          : priceRequired;
+
+        const classes = classNames(css.root, className);
+        const submitReady = updated && pristine;
+        const submitInProgress = updateInProgress;
+        const submitDisabled = invalid || disabled || submitInProgress;
+        const {updateListingError, showListingsError} = fetchErrors || {};
+        const labelText = intl.formatMessage({id: 'EditListingPricingForm.enable_quick_rent'});
+        const capacityPlaceholder = intl.formatMessage({
+          id: 'EditListingPricingForm.defaultCurrency',
+        });
+        const priceHead = rentalTypes.map(item => {
+          const rentalLabel = intl.formatMessage({
+            id: `EditListingPricingForm.rentalType_${item}`,
+          });
           return (
-            <div className={css.priceField} key={fieldId}>
-              <FieldCurrencyInput
-                id={fieldId}
-                name={fieldId}
-                key={fieldId}
-                authorProfile={authorProfile}
-                userInfo={userInfo}
-                className={css.priceInput}
-                placeholder={pricePlaceholderMessage}
-                currencyConfig={config.currencyConfig}
-                validate={priceValidators}
-              />
+            <div className={css.rentalLables} key={item}>
+              {rentalLabel}
+            </div>
+          )
+        });
+
+        const requiredSelect = required('This field is required');
+
+        const priceTable = workspaces.map(price => {
+          const priceLabel = intl.formatMessage({
+            id: `EditListingPricingForm.priceLabel_${price}`,
+          });
+
+          const priceFields = rentalTypes.map(item => {
+            const fieldId = `price_${price}_${item}`;
+            return (
+              <div className={css.priceField} key={fieldId}>
+                <FieldCurrencyInput
+                  id={fieldId}
+                  name={fieldId}
+                  key={fieldId}
+                  authorProfile={authorProfile}
+                  userInfo={values.currency.toUpperCase()}
+                  className={css.priceInput}
+                  placeholder={pricePlaceholderMessage}
+                  currencyConfig={config.currencyConfig}
+                  validate={priceValidators}
+                />
+              </div>
+            )
+          });
+
+          return (
+            <div className={css.priceRow} key={price}>
+              <div className={css.priceLabel}>
+                {priceLabel}
+              </div>
+              <div className={css.priceFields}>
+                {priceFields}
+              </div>
             </div>
           )
         });
 
         return (
-          <div className={css.priceRow} key={price}>
-            <div className={css.priceLabel}>
-              {priceLabel}
-            </div>
-            <div className={css.priceFields}>
-              {priceFields}
-            </div>
-          </div>
-        )
-      });
-      
-      return (
-        <Form onSubmit={handleSubmit} className={classes}>
-          
-          <div className={css.inlineDiv}>
-            <span>Pricing in</span> 
-            <FieldSelect
-              name="rates"
-              id="rates"
-              validate={requiredSelect}
-              onClick={e => {
-                setUserInfo(
-                  e.target.value
-                )}}
-            >
-              <option value={userInfo}>{userInfo}</option>
-              {rates.map(c => (
-                <option key={c.iso_code} value={c.iso_code}>
-                  {c.iso_code}
-                </option>
-              ))}
-            </FieldSelect>
-            <span>for different types of rental</span>
-          </div>
-         
-
-
-          {updateListingError ? (
-            <p className={css.error}>
-              <FormattedMessage id="EditListingPricingForm.updateFailed" />
-            </p>
-          ) : null}
-          {showListingsError ? (
-            <p className={css.error}>
-              <FormattedMessage id="EditListingPricingForm.showListingFailed" />
-            </p>
-          ) : null}
-          <div className={css.priceTableWrapper}>
-            <div className={css.priceHead}>
-              {priceHead}
-            </div>
-            <div className={css.priceTable}>
-              {priceTable}
-            </div>
-          </div>
-
-          <FieldCheckbox
-            id="quickRent"
-            name="quickRent"
-            className={css.title}
-            label={labelText}
-            value='quickRent'
-          />
-          <Button
-            className={css.submitButton}
-            type="submit"
-            inProgress={submitInProgress}
-            disabled={submitDisabled}
-            ready={submitReady}
+          <Form onSubmit={handleSubmit}
+                className={classes}
           >
-            {saveActionMsg}
-          </Button>
-        </Form>
-      );
-    }}
-  />
-);
-  }
+            <div className={css.currencyHolder}>
+              <span><FormattedMessage id="EditListingPricingForm.pricingSpan1"/></span>
+              <span className={css.currencyName}>{values.currency.toUpperCase()}</span>
+              <span><FormattedMessage id="EditListingPricingForm.pricingCurrency"/></span>
+              <span><FormattedMessage id="EditListingPricingForm.pricingSpan2"/></span>
+            </div>
 
-EditListingPricingFormComponent.defaultProps = { 
+            {updateListingError ? (
+                <p className={css.error}>
+                  <FormattedMessage id="EditListingPricingForm.updateFailed"/>
+                </p>
+              ) : null}
+
+            {showListingsError ? (
+                <p className={css.error}>
+                  <FormattedMessage id="EditListingPricingForm.showListingFailed"/>
+                </p>
+              ) : null}
+
+            <div className={css.priceTableWrapper}>
+              <div className={css.priceHead}>
+                {priceHead}
+              </div>
+              <div className={css.priceTable}>
+                {priceTable}
+              </div>
+            </div>
+
+            <FieldCheckbox
+              id="quickRent"
+              name="quickRent"
+              className={css.title}
+              label={labelText}
+              value='quickRent'
+            />
+            <Button
+              className={css.submitButton}
+              type="submit"
+              inProgress={submitInProgress}
+              disabled={submitDisabled}
+              ready={submitReady}
+            >
+              {saveActionMsg}
+            </Button>
+          </Form>
+        );
+      }}
+    />
+  );
+
+
+EditListingPricingFormComponent.defaultProps = {
   fetchErrors: null,
   workspaces: [],
   rentalTypes: [],
-  rates: config.custom.rates,
 };
 
 EditListingPricingFormComponent.propTypes = {
@@ -223,7 +209,6 @@ EditListingPricingFormComponent.propTypes = {
   updateInProgress: bool.isRequired,
   workspaces: array.isRequired,
   rentalTypes: array.isRequired,
-  rates: array.isRequired,
   fetchErrors: shape({
     showListingsError: propTypes.error,
     updateListingError: propTypes.error,

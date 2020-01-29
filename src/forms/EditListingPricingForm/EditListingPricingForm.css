@@ -108,9 +108,12 @@
   font-size: 25px;
   margin: 0 0 30px;
 }
-.inlineDiv > * {
-  display: inline-block;
+
+.currencyHolder {
+  margin-bottom: 30px;
 }
-.inlineDiv span {
+
+.currencyName {
+  font-weight: bold;
   margin: 0 10px;
 }
