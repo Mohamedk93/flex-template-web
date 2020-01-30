@@ -14,6 +14,7 @@ import {formatMoney} from '../../util/currency';
 import {types as sdkTypes} from '../../util/sdkLoader';
 import {Button, Form, FieldCurrencyInput, FieldCheckbox, FieldSelect} from '../../components';
 import css from './EditListingPricingForm.css';
+import { format } from 'path';
 
 const {Money} = sdkTypes;
 
@@ -39,10 +40,10 @@ export const EditListingPricingFormComponent = props => (
           values,
         } = fieldRenderProps;
 
-
         const unitType = config.bookingUnitType;
         const isNightly = unitType === LINE_ITEM_NIGHT;
         const isDaily = unitType === LINE_ITEM_DAY;
+        const currentUser = props.initialValues.currentUser; 
         const authorProfile = props.initialValues.author ? props.initialValues.author.attributes.profile : '';
         const translationKey = isNightly
           ? 'EditListingPricingForm.pricePerNight'
@@ -65,14 +66,28 @@ export const EditListingPricingFormComponent = props => (
           })
         );
 
-        const minPrice = new Money(config.listingMinimumPriceSubUnits, config.currency);
+        let minPrice = new Money(config.listingMinimumPriceSubUnits, config.currency);
+        let symbol = null;
+        let formarMinPrice = minPrice;
+        if(currentUser && values && values.currency){
+          let currency = values.currency.toUpperCase();
+          let rates = currentUser.attributes.profile.protectedData.rates;
+          const result = rates.find(e => e.iso_code == currency);
+          if(result){
+            const amount = formarMinPrice.amount;
+            formarMinPrice.amount = amount * result.current_rate / 100;
+            formarMinPrice.currency = currency;
+            symbol = result.symbol;
+          }
+        }
+        const priceInfo = !symbol ? formatMoney(intl, minPrice) : `${formarMinPrice.amount.toFixed(2)} ${symbol}`;  
         const minPriceRequired = validators.moneySubUnitAmountAtLeast(
           intl.formatMessage(
             {
               id: 'EditListingPricingForm.priceTooLow',
             },
             {
-              minPrice: formatMoney(intl, minPrice),
+              minPrice:priceInfo,
             }
           ),
           config.listingMinimumPriceSubUnits
@@ -107,7 +122,7 @@ export const EditListingPricingFormComponent = props => (
           const priceLabel = intl.formatMessage({
             id: `EditListingPricingForm.priceLabel_${price}`,
           });
-
+          
           const priceFields = rentalTypes.map(item => {
             const fieldId = `price_${price}_${item}`;
             return (
