@@ -54,35 +54,21 @@ class CurrencyInputComponent extends Component {
     super(props);
     const { currencyConfig, defaultValue, input, intl, rates, currency } = props;
     const initialValueIsMoney = input.value instanceof Money;
-    if (initialValueIsMoney && input.value.currency !== currencyConfig.currency) {
-      const e = new Error('Value currency different from marketplace currency');
-      log.error(e, 'currency-input-invalid-currency', { currencyConfig, inputValue: input.value });
-      throw e;
-    };
+  
     const result = rates.find(e => e.iso_code == currency);
     const initialValue = initialValueIsMoney ? convertMoneyToNumber(input.value) : defaultValue;
     const hasInitialValue = typeof initialValue === 'number' && !isNaN(initialValue);
-    const newInitialValue = result && initialValue ? initialValue.toString() * result.current_rate : ''; 
+    const newInitialValue = result && initialValue ? initialValue.toString() * result.current_rate : '';
     // We need to handle number format - some locales use dots and some commas as decimal separator
     // TODO Figure out if this could be digged from React-Intl directly somehow
     const testSubUnitFormat = intl.formatNumber('1.1', currencyConfig.config);
     const usesComma = testSubUnitFormat.indexOf(',') >= 0;
-    console.log('initialValue ==>', initialValue);
     try {
       // whatever is passed as a default value, will be converted to currency string
       // Unformatted value is digits + localized sub unit separator ("9,99")
       let unformattedValue = hasInitialValue
-        ? truncateToSubUnitPrecision(
-            ensureSeparator(newInitialValue.toString(), usesComma),
-            unitDivisor(currencyConfig.currency),
-            usesComma
-          )
+        ? newInitialValue.toFixed(2)
         : '';
-      //console.log('rates =>', rates);
-      //console.log('currency =>', currency);
-      //console.log('current_rate =>', props)
-      //let newCurrencyConfig = currencyConfig
-      //newCurrencyConfig.currency = currency
       // Formatted value fully localized currency string ("$1,000.99")
       let formattedValue = hasInitialValue
         ? intl.formatNumber(ensureDotSeparator(unformattedValue), currencyConfig)
@@ -109,9 +95,14 @@ class CurrencyInputComponent extends Component {
     event.preventDefault();
     event.stopPropagation();
     // Update value strings on state
-    const { unformattedValue } = this.updateValues(event);
+    let { unformattedValue, tmpPrice } = this.updateValues(event);
     // Notify parent component about current price change
-    const price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
+    let price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
+    if(tmpPrice){
+      tmpPrice = tmpPrice * 100;
+      price.amount = tmpPrice;
+    }
+
     this.props.input.onChange(price);
   }
 
@@ -160,6 +151,7 @@ class CurrencyInputComponent extends Component {
       const targetValue = event.target.value.trim();
       const isEmptyString = targetValue === '';
       const valueOrZero = isEmptyString ? '0' : targetValue;
+      let tmpPrice = null;
 
       const targetDecimalValue = isEmptyString
         ? null
@@ -191,15 +183,14 @@ class CurrencyInputComponent extends Component {
         
       if(result){
         unformattedValue = unformattedValue / result.current_rate;
-
+        tmpPrice = unformattedValue.toFixed(5);
         unformattedValue = truncateToSubUnitPrecision(
           unformattedValue,
           unitDivisor(currencyConfig.currency),
           this.state.usesComma
         );
       }
-      
-      return { formattedValue, value: unformattedValue, unformattedValue };
+      return { formattedValue, value: unformattedValue, unformattedValue, tmpPrice };
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e);
@@ -274,8 +265,6 @@ const FieldCurrencyInputComponent = props => {
   });
   const rates = authorProfile.protectedData.rates;
   const currency = userInfo; 
-  //console.log('This is props from inout component', userInfo);
-  //console.log('This is props from inout authorProfile', authorProfile);
   const inputProps = { className: inputClasses, id, input, rates, currency, ...rest };
   
   const classes = classNames(rootClassName, className);

@@ -137,9 +137,9 @@ export const truncateToSubUnitPrecision = (inputString, subUnitDivisor, useComma
   // We don't deal with subunit fragments like 1000.345¢
   if (amount.isInteger()) {
     // accepted strings: '9', '9,' '9.' '9,99'
-    const decimalCount2 = value.toFixed(2);
+    const decimalCount2 = value.toFixed(3);
     const decimalPrecisionMax2 =
-      decimalCount2.length >= inputString.length ? inputString : value.toFixed(2);
+      decimalCount2.length >= inputString.length ? inputString : value.toFixed(5);
     return ensureSeparator(decimalPrecisionMax2, useComma);
   } else {
     // truncate strings ('9.999' => '9.99')
@@ -253,7 +253,7 @@ export const formatMoney = (intl, value) => {
     currencyDisplay: 'symbol',
     useGrouping: true,
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 5,
   };
 
   return intl.formatNumber(valueAsNumber, numberFormatOptions);

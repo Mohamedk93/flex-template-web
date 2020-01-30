@@ -39,7 +39,6 @@ export const EditListingPricingFormComponent = props => (
           values,
         } = fieldRenderProps;
 
-        console.log(values)
 
         const unitType = config.bookingUnitType;
         const isNightly = unitType === LINE_ITEM_NIGHT;
