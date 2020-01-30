@@ -407,16 +407,16 @@ export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => 
       lastRateUpdate.setDate(lastRateUpdate.getDate() + 1);
       let currentDate = new Date();
       if(lastRateUpdate < currentDate){
+        debugger
         axios.get(`${API_URL}/api/v1/rates`)
         .then(function (response) {
           const rates = response.data;
           lastRateUpdate = currentDate.toDateString();
-
           axios.get(GEO_API)
           .then( response => {
             const currentCode = response.data.currency.code
             const result = rates.find(e => e.iso_code == currentCode);
-            const currency = result ? result.iso_code : ''
+            const currency = result && !currentUser.attributes.profile.protectedData.currency ? result.iso_code : currentUser.attributes.profile.protectedData.currency
             return sdk.currentUser
             .updateProfile(
               { protectedData: { rates,  lastRateUpdate, currency} },
