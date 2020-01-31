@@ -165,7 +165,7 @@ export const truncateToSubUnitPrecision = (inputString, subUnitDivisor, useComma
  */
 export const convertUnitToSubUnit = (value, subUnitDivisor, useComma = false) => {
   const subUnitDivisorAsDecimal = convertDivisorToDecimal(subUnitDivisor);
-
+  value = value.toFixed(2);
   if (!(typeof value === 'string' || typeof value === 'number')) {
     throw new TypeError('Value must be either number or string');
   }
@@ -285,3 +285,77 @@ export const formatCurrencyMajorUnit = (intl, currency, valueWithoutSubunits) =>
 
   return intl.formatNumber(valueAsNumber, numberFormatOptions);
 };
+
+
+Array.min = function( array ){
+  return Math.min.apply( Math, array );
+};
+
+
+export const listingMinPrice = (listing) => {
+  if(!listing){ return null;}
+  
+  try{
+    const publicData = listing.attributes.publicData;
+
+    const price_seats_hourly = publicData && publicData.priceSeatsHourly && publicData.workspaces.indexOf('seats') !== -1 ? new Money(publicData.priceSeatsHourly.amount, publicData.priceSeatsHourly.currency) : null;
+    const price_seats_daily = publicData && publicData.priceSeatsDaily && publicData.workspaces.indexOf('seats') !== -1 ? new Money(publicData.priceSeatsDaily.amount, publicData.priceSeatsDaily.currency) : null;
+    const price_seats_monthly = publicData && publicData.priceSeatsMonthly && publicData.workspaces.indexOf('seats') !== -1 ? new Money(publicData.priceSeatsMonthly.amount, publicData.priceSeatsMonthly.currency) : null;
+  
+    const price_office_rooms_hourly = publicData && publicData.priceOfficeRoomsHourly && publicData.workspaces.indexOf('office_rooms') !== -1 ? new Money(publicData.priceOfficeRoomsHourly.amount, publicData.priceOfficeRoomsHourly.currency) : null;
+    const price_office_rooms_daily = publicData && publicData.priceOfficeRoomsDaily && publicData.workspaces.indexOf('office_rooms') !== -1 ? new Money(publicData.priceOfficeRoomsDaily.amount, publicData.priceOfficeRoomsDaily.currency) : null;
+    const price_office_rooms_monthly = publicData && publicData.priceOfficeRoomsMonthly && publicData.workspaces.indexOf('office_rooms') !== -1 ? new Money(publicData.priceOfficeRoomsMonthly.amount, publicData.priceOfficeRoomsMonthly.currency) : null;
+  
+    const price_meeting_rooms_hourly = publicData && publicData.priceMeetingRoomsHourly && publicData.workspaces.indexOf('meeting_rooms') !== -1 ? new Money(publicData.priceMeetingRoomsHourly.amount, publicData.priceMeetingRoomsHourly.currency) : null;
+    const price_meeting_rooms_daily = publicData && publicData.priceMeetingRoomsDaily && publicData.workspaces.indexOf('meeting_rooms') !== -1 ? new Money(publicData.priceMeetingRoomsDaily.amount, publicData.priceMeetingRoomsDaily.currency) : null;
+    const price_meeting_rooms_monthly = publicData && publicData.priceMeetingRoomsMonthly && publicData.workspaces.indexOf('meeting_rooms') !== -1 ? new Money(publicData.priceMeetingRoomsMonthly.amount, publicData.priceMeetingRoomsMonthly.currency) : null;
+    
+    const priceArrayFiltered = [
+      price_seats_hourly,
+      price_seats_daily,
+      price_seats_monthly,
+      price_office_rooms_hourly,
+      price_office_rooms_daily,
+      price_office_rooms_monthly,
+      price_meeting_rooms_hourly,
+      price_meeting_rooms_daily,
+      price_meeting_rooms_monthly,
+    ].filter(function(x) {
+      return x !== undefined && x !== null && x.amount && x.amount > 0
+    });
+
+    const priceArray = priceArrayFiltered.map(function(x) {
+      return x.amount
+    });
+    const minimalPrice = Array.min(priceArray);
+    return minimalPrice;
+
+  }catch (e) {
+    console.log(e);
+    return listing.attributes.price.amount;
+  }
+}
+
+
+export const convertPrice = (currentUser, oldPriceAmount, defaultPrice) => {
+  let currency = null;
+  let rates = [];
+  let result = null;
+  let oldPrice = oldPriceAmount / 100;
+  if(currentUser && currentUser.attributes.profile.protectedData.currency){
+    currency = currentUser.attributes.profile.protectedData.currency;
+    rates = currentUser.attributes.profile.protectedData.rates;
+    result = rates.find(e => e.iso_code == currency);
+  }else if(typeof window !== 'undefined'){
+    rates = JSON.parse(localStorage.getItem('rates'));
+    currency = localStorage.getItem('currentCode');
+    result = !rates ? null : rates.find(e => e.iso_code == currency);
+  }
+  if(result){
+    oldPrice = oldPrice * result.current_rate
+    oldPrice = oldPrice.toFixed(2);
+    oldPrice = result.symbol.toString() + oldPrice;
+    return oldPrice;
+  }
+  return defaultPrice;
+}

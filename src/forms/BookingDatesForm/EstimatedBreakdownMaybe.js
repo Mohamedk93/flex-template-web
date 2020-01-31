@@ -247,7 +247,7 @@ const EstimatedBreakdownMaybe = props => {
     officeRoomsQuantity,
     meetingRoomsQuantity,
     currentRentalType,
-    
+    listing,
   } = props.bookingData;
   const { currentUser } = props;
   const isUnits = unitType === LINE_ITEM_UNITS;
@@ -281,6 +281,7 @@ const EstimatedBreakdownMaybe = props => {
       booking={tx.booking}
       dateType={DATE_TYPE_DATE}
       currentRentalType={currentRentalType}
+      listing={listing}
     />
   );
 };

@@ -4,7 +4,8 @@ import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { lazyLoadWithDimensions } from '../../util/contextHelpers';
 import { LINE_ITEM_DAY, LINE_ITEM_NIGHT, propTypes } from '../../util/types';
-import { formatMoney } from '../../util/currency';
+import { formatMoney, listingMinPrice, convertPrice } from '../../util/currency';
+
 import { ensureListing, ensureUser } from '../../util/data';
 import { richText } from '../../util/richText';
 import { createSlug } from '../../util/urlHelpers';
@@ -136,24 +137,13 @@ export const ListingCardComponent = props => {
   const firstImage =
     currentListing.images && currentListing.images.length > 0 ? currentListing.images[0] : null;
   let { formattedPrice, priceTitle } = priceData(price, intl);
-  let currency = null;
-  let rates = [];
-  let result = null;
-  if(currentUser && currentUser.attributes.profile.protectedData.currency){
-    currency = currentUser.attributes.profile.protectedData.currency;
-    rates = currentUser.attributes.profile.protectedData.rates;
-    result = rates.find(e => e.iso_code == currency);
-  }else if(typeof window !== 'undefined'){
-    rates = JSON.parse(localStorage.getItem('rates'));
-    currency = localStorage.getItem('currentCode');
-    result = !rates ? null : rates.find(e => e.iso_code == currency);
+  let minPrice= null;
+  
+  if(currentListing && currentListing.id){
+     minPrice = listingMinPrice(currentListing);
   }
-  if(result){
-    formattedPrice = formattedPrice.substr(1)
-    formattedPrice = formattedPrice * result.current_rate
-    formattedPrice = formattedPrice.toFixed(2);
-    formattedPrice = result.symbol.toString() + formattedPrice;
-  }
+
+  formattedPrice = convertPrice(currentUser, minPrice, formattedPrice);
 
   const unitType = config.bookingUnitType;
   const isNightly = unitType === LINE_ITEM_NIGHT;

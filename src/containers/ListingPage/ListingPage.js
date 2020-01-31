@@ -16,7 +16,7 @@ import {
   LISTING_PAGE_PARAM_TYPE_EDIT,
   createSlug,
 } from '../../util/urlHelpers';
-import { formatMoney } from '../../util/currency';
+import { formatMoney, listingMinPrice, convertPrice } from '../../util/currency';
 import { createResourceLocatorString, findRouteByRouteName } from '../../util/routes';
 import {
   ensureListing,
@@ -198,11 +198,16 @@ export class ListingPageComponent extends Component {
     const listingId = new UUID(rawParams.id);
     const isPendingApprovalVariant = rawParams.variant === LISTING_PAGE_PENDING_APPROVAL_VARIANT;
     const isDraftVariant = rawParams.variant === LISTING_PAGE_DRAFT_VARIANT;
+    let minPrice = null;
     const currentListing =
       isPendingApprovalVariant || isDraftVariant
         ? ensureOwnListing(getOwnListing(listingId))
         : ensureListing(getListing(listingId));
 
+    if(currentListing && currentListing.id){
+       minPrice = listingMinPrice(currentListing);
+    }
+    
     const listingSlug = rawParams.slug || createSlug(currentListing.attributes.title || '');
     const params = { slug: listingSlug, ...rawParams };
 
@@ -329,24 +334,7 @@ export class ListingPageComponent extends Component {
 
     let { formattedPrice, priceTitle } = priceData(price, intl);
     
-    let currency = null;
-    let rates = [];
-    let result = null;
-    if(currentUser && currentUser.attributes.profile.protectedData.currency){
-      currency = currentUser.attributes.profile.protectedData.currency;
-      rates = currentUser.attributes.profile.protectedData.rates;
-      result = rates.find(e => e.iso_code == currency);
-    }else if(typeof window !== 'undefined'){
-      rates = JSON.parse(localStorage.getItem('rates'));
-      currency = localStorage.getItem('currentCode');
-      result = !rates ? null : rates.find(e => e.iso_code == currency);
-    }
-    if(result){
-      formattedPrice = formattedPrice.substr(1)
-      formattedPrice = formattedPrice * result.current_rate
-      formattedPrice = formattedPrice.toFixed(2);
-      formattedPrice = result.symbol.toString() + formattedPrice;
-    }
+    formattedPrice = convertPrice(currentUser, minPrice, formattedPrice);
 
     const handleBookingSubmit = values => {
       const isCurrentlyClosed = currentListing.attributes.state === LISTING_STATE_CLOSED;

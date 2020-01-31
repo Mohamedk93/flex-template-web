@@ -5,7 +5,7 @@ import { injectIntl, intlShape } from '../../util/reactIntl';
 import classNames from 'classnames';
 import config from '../../config';
 import { propTypes } from '../../util/types';
-import { formatMoney } from '../../util/currency';
+import { formatMoney, listingMinPrice, convertPrice  } from '../../util/currency';
 import { ensureListing } from '../../util/data';
 import { ResponsiveImage } from '../../components';
 
@@ -20,24 +20,13 @@ const ListingCard = props => {
     price && price.currency === config.currency ? formatMoney(intl, price) : price.currency;
   const firstImage = listing.images && listing.images.length > 0 ? listing.images[0] : null;
   
-  let currency = null;
-  let rates = [];
-  let result = null;
-  if(currentUser && currentUser.attributes.profile.protectedData.currency){
-    currency = currentUser.attributes.profile.protectedData.currency;
-    rates = currentUser.attributes.profile.protectedData.rates;
-    result = rates.find(e => e.iso_code == currency);
-  }else if(typeof window !== 'undefined') {
-    rates = JSON.parse(localStorage.getItem('rates'));
-    currency = localStorage.getItem('currentCode');
-    result = !rates ? null : rates.find(e => e.iso_code == currency);
+  let minPrice= null;
+  
+  if(listing && listing.id){
+    minPrice = listingMinPrice(listing);
   }
-  if(result){
-    formattedPrice = formattedPrice.substr(1)
-    formattedPrice = formattedPrice * result.current_rate
-    formattedPrice = formattedPrice.toFixed(2);
-    formattedPrice = result.symbol.toString() + formattedPrice;
-  }
+    
+  formattedPrice = convertPrice(currentUser, minPrice, formattedPrice);
   
 
 
