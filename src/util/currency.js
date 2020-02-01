@@ -165,9 +165,9 @@ export const truncateToSubUnitPrecision = (inputString, subUnitDivisor, useComma
  */
 const f = value => ( (value.toString().includes('.')) ? (value.toString().split('.').pop().length) : (0) );
 
- export const convertUnitToSubUnit = (value, subUnitDivisor, useComma = false) => {
+ export const convertUnitToSubUnit = (value, subUnitDivisor, useComma = false, fixed = true) => {
   const subUnitDivisorAsDecimal = convertDivisorToDecimal(subUnitDivisor);
-  if(f(value) !== 2 ){
+  if(f(value) !== 2 && fixed){
     value = value.toFixed(2);
   }
   if (!(typeof value === 'string' || typeof value === 'number')) {

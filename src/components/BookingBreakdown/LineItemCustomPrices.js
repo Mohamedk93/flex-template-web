@@ -50,7 +50,7 @@ const LineItemCustomPrices = props => {
     const key = item.code.split('/')[1];
     const quantity = item.quantity;
     const currency = item.unitPrice.currency;
-
+    const fiexed = false;
     const numericTotalPrice = new Decimal(convertMoneyToNumber(item.unitPrice))
       .mul(quantity)
       .toNumber();

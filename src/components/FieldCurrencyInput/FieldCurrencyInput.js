@@ -41,7 +41,7 @@ const getPrice = (unformattedValue, currencyConfig) => {
     return isEmptyString
       ? null
       : new Money(
-          convertUnitToSubUnit(unformattedValue, unitDivisor(currencyConfig.currency)),
+          convertUnitToSubUnit(unformattedValue, unitDivisor(currencyConfig.currency), false, false),
           currencyConfig.currency
         );
   } catch (e) {
