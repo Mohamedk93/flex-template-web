@@ -199,7 +199,6 @@ export const signup = params => (dispatch, getState, sdk) => {
   })
   .catch(error => {
     console.log(error)
-    debugger
   });
 
 };

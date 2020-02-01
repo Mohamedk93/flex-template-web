@@ -67,7 +67,7 @@ class CurrencyInputComponent extends Component {
       // whatever is passed as a default value, will be converted to currency string
       // Unformatted value is digits + localized sub unit separator ("9,99")
       let unformattedValue = hasInitialValue
-        ? newInitialValue.toFixed(2)
+        ? newInitialValue ? newInitialValue.toFixed(2) : ''
         : '';
       // Formatted value fully localized currency string ("$1,000.99")
       let formattedValue = hasInitialValue
