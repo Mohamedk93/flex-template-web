@@ -61,8 +61,9 @@ const converter = (item, currentUser) => {
     result = !rates ? null :rates.find(e => e.iso_code == currency);
   }
   if(result){
-    item = item.substr(1)
-    item = item * result.current_rate
+    item = item.substr(1);
+    item = item.replace(/,/g, '');
+    item = item * result.current_rate;
     item = item.toFixed(2);
     item = result.symbol.toString() + item;
   }

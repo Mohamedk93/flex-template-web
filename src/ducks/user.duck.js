@@ -364,7 +364,7 @@ export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => 
             localStorage.setItem('currentCode', code)
           } )
           .catch( e => {
-            throw e;
+            localStorage.setItem('currentCode', 'USD')
             }
           )
         })
@@ -415,7 +415,8 @@ export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => 
           .then( response => {
             const currentCode = response.data.currency.code
             const result = rates.find(e => e.iso_code == currentCode);
-            const currency = result && !currentUser.attributes.profile.protectedData.currency ? result.iso_code : currentUser.attributes.profile.protectedData.currency
+            let currency = result && !currentUser.attributes.profile.protectedData.currency ? result.iso_code : currentUser.attributes.profile.protectedData.currency
+            currency = currency ? currency : 'USD'; 
             return sdk.currentUser
             .updateProfile(
               { protectedData: { rates,  lastRateUpdate, currency} },
@@ -435,7 +436,25 @@ export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => 
             });
           } )
           .catch( e => {
-            throw e;
+            const currentCode = 'USD'
+            const result = rates.find(e => e.iso_code == currentCode);
+            const currency = result && !currentUser.attributes.profile.protectedData.currency ? result.iso_code : currentUser.attributes.profile.protectedData.currency
+            debugger
+            return sdk.currentUser
+            .updateProfile(
+              { protectedData: { rates,  lastRateUpdate, currency} },
+              { expand: true }
+            )
+            .then(response => {
+              const entities = denormalisedResponseEntities(response);
+              if (entities.length !== 1) {
+                throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+              }
+
+              const currentUser = entities[0];
+              return currentUser;
+            })
+            
             }
           )
         })

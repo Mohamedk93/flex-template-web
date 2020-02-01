@@ -98,7 +98,7 @@ class CurrencyInputComponent extends Component {
     let { unformattedValue, tmpPrice } = this.updateValues(event);
     // Notify parent component about current price change
     let price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
-    if(tmpPrice){
+    if(tmpPrice && price){
       tmpPrice = tmpPrice * 100;
       price.amount = tmpPrice;
     }
