@@ -439,7 +439,6 @@ export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => 
             const currentCode = 'USD'
             const result = rates.find(e => e.iso_code == currentCode);
             const currency = result && !currentUser.attributes.profile.protectedData.currency ? result.iso_code : currentUser.attributes.profile.protectedData.currency
-            debugger
             return sdk.currentUser
             .updateProfile(
               { protectedData: { rates,  lastRateUpdate, currency} },
