@@ -44,7 +44,7 @@ const LineItemUnitPrice = props => {
     result = rates.find(e => e.iso_code == currency);
   }
   if(result){
-    formattedTotalPrice = formattedTotalPrice.substr(1)
+    formattedTotalPrice = formattedTotalPrice.substr(1).replace(/,/g, '');
     formattedTotalPrice = formattedTotalPrice * result.current_rate
     formattedTotalPrice = formattedTotalPrice.toFixed(2);
     formattedTotalPrice = result.symbol.toString() + formattedTotalPrice;
