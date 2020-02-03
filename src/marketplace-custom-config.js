@@ -131,7 +131,7 @@ export const currencies = [
   { key: 'ngn', label: 'NGN' },
   { key: 'nok', label: 'NOK' },
   { key: 'omr', label: 'OMR' },
-  { key: 'gbr', label: 'GBP' },
+  { key: 'gbp', label: 'GBP' },
   { key: 'pkr', label: 'PKR' },
   { key: 'qar', label: 'QAR' },
   { key: 'sar', label: 'SAR' },
