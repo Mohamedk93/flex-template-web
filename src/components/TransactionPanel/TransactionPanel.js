@@ -380,6 +380,7 @@ export class TransactionPanelComponent extends Component {
               image={firstImage}
               provider={currentProvider}
               isCustomer={isCustomer}
+              currentUser={currentUser}
             />
             {isProvider ? (
               <div className={css.avatarWrapperProviderDesktop}>

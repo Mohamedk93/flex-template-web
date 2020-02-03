@@ -56,6 +56,7 @@ const LineItemRefundMaybe = props => {
       <span className={css.itemLabel}>
         <FormattedMessage id="BookingBreakdown.refund" />
       </span>
+      <span>nonCommissionReversalLineItems</span>
       <span className={css.itemValue}>{formattedRefund}</span>
     </div>
   ) : null;
