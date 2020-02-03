@@ -363,3 +363,24 @@ export const convertPrice = (currentUser, oldPriceAmount, defaultPrice) => {
   }
   return defaultPrice;
 }
+
+export const converter = (item, currentUser) => {
+  if(currentUser && item){
+    let currency = null;
+    let rates = [];
+    if(currentUser.attributes.profile.protectedData.currency){
+      currency = currentUser.attributes.profile.protectedData.currency;
+      rates = currentUser.attributes.profile.protectedData.rates;
+      const result = rates.find(e => e.iso_code == currency);
+      if(result){
+        item = item.substr(1).replace(/,/g, '');
+        item = item * result.current_rate
+        item = item.toFixed(2);
+        item = result.symbol.toString() + item;
+        return item
+      }
+    }
+  }else {
+    return item
+  }
+}

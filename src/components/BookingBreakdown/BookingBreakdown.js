@@ -117,7 +117,7 @@ export const BookingBreakdownComponent = props => {
         userRole={userRole}
         intl={intl}
       />
-      <LineItemRefundMaybe transaction={transaction} unitType={unitType} intl={intl} />
+      <LineItemRefundMaybe transaction={transaction} unitType={unitType} intl={intl} currentUser={currentUser} />
 
       <LineItemCustomerCommissionMaybe
         transaction={transaction}
@@ -139,6 +139,7 @@ export const BookingBreakdownComponent = props => {
         transaction={transaction}
         isProvider={isProvider}
         intl={intl}
+        currentUser={currentUser}
       />
       
       <LineItemTotalPrice transaction={transaction} currentUser={currentUser} isProvider={isProvider} intl={intl} listing={listing}/>
