@@ -406,7 +406,7 @@ export class TransactionPanelComponent extends Component {
                 geolocation={geolocation}
                 showAddress={stateData.showAddress}
               />
-              <BreakdownMaybe transaction={currentTransaction} transactionRole={transactionRole} />
+              <BreakdownMaybe transaction={currentTransaction} transactionRole={transactionRole} currentUser={currentUser} />
             </div>
 
             {savePaymentMethodFailed ? (

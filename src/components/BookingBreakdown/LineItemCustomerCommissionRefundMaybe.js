@@ -17,7 +17,6 @@ const LineItemCustomerCommissionRefundMaybe = props => {
       <span className={css.itemLabel}>
         <FormattedMessage id="BookingBreakdown.refundCustomerFee" />
       </span>
-      <span>LineItemCustomerCommissionRefundMaybe</span>
       <span className={css.itemValue}>{formatMoney(intl, refund.lineTotal)}</span>
     </div>
   ) : null;
