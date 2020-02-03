@@ -26,7 +26,8 @@ const converter = (item, currentUser) => {
     result = rates.find(e => e.iso_code == currency);
   }
   if(result){
-    item = item.substr(1)
+    item = item.substr(1).replace(/,/g, '');
+    item = item.replace('$', '');
     item = item * result.current_rate
     item = item.toFixed(2);
     item = result.symbol.toString() + item;

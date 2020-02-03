@@ -200,7 +200,7 @@ export class BookingPanel extends Component {
         rates = currentUser.attributes.profile.protectedData.rates;
         const result = rates.find(e => e.iso_code == currency);
         if(result){
-          formattedPrice = formattedPrice.substr(1)
+          formattedPrice = formattedPrice.substr(1).replace(/,/g, '');
           formattedPrice = formattedPrice * result.current_rate
           formattedPrice = formattedPrice.toFixed(2);
           formattedPrice = result.symbol.toString() + formattedPrice;

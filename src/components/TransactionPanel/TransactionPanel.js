@@ -89,7 +89,7 @@ const converter = (item, currentUser) => {
       rates = currentUser.attributes.profile.protectedData.rates;
       const result = rates.find(e => e.iso_code == currency);
       if(result){
-        item = item.substr(1)
+        item = item.substr(1).replace(/,/g, '');
         item = item * result.current_rate
         item = item.toFixed(2);
         item = result.symbol.toString() + item;

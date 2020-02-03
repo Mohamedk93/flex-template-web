@@ -86,7 +86,7 @@ const LineItemSubTotalMaybe = props => {
     let rates = currentUser.attributes.profile.protectedData.rates;
     const result = rates.find(e => e.iso_code == currency);
     if(result){
-      formattedSubTotal = formattedSubTotal.substr(2)
+      formattedSubTotal = formattedSubTotal.substr(1).replace(/,/g, '');
       formattedSubTotal = formattedSubTotal * result.current_rate
       formattedSubTotal = formattedSubTotal.toFixed(2);
       formattedSubTotal = result.symbol.toString() + formattedSubTotal;
