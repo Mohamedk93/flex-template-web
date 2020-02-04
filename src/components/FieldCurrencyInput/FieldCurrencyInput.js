@@ -86,7 +86,6 @@ class CurrencyInputComponent extends Component {
     }
 
     this.onInputChange = this.onInputChange.bind(this);
-    this.onInputBlur = this.onInputBlur.bind(this);
     this.onInputFocus = this.onInputFocus.bind(this);
     this.updateValues = this.updateValues.bind(this);
   }
@@ -107,22 +106,22 @@ class CurrencyInputComponent extends Component {
   }
 
   onInputBlur(event) {
-    //event.preventDefault();
-    //event.stopPropagation();
-    //const {
-    //  currencyConfig,
-    //  input: { onBlur },
-    //} = this.props;
-    //this.setState(prevState => {
-    //  if (onBlur) {
-    //    // If parent component has provided onBlur function, call it with current price.
-    //    const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
-    //    onBlur(price);
-    //  }
-    //  return {
-    //    value: prevState.formattedValue,
-    //  };
-    //});
+    event.preventDefault();
+    event.stopPropagation();
+    const {
+      currencyConfig,
+      input: { onBlur },
+    } = this.props;
+    this.setState(prevState => {
+      if (onBlur) {
+        // If parent component has provided onBlur function, call it with current price.
+        const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
+        onBlur(price);
+      }
+      return {
+        value: prevState.formattedValue,
+      };
+    });
   }
 
   onInputFocus(event) {
@@ -211,7 +210,6 @@ class CurrencyInputComponent extends Component {
         {...allowedInputProps(this.props)}
         value={this.state.value}
         onChange={this.onInputChange}
-        onBlur={this.onInputBlur}
         onFocus={this.onInputFocus}
         type="text"
         placeholder={placeholderText}
