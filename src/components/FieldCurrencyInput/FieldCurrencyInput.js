@@ -77,6 +77,7 @@ class CurrencyInputComponent extends Component {
       this.state = {
         formattedValue,
         unformattedValue,
+        defaultValue: unformattedValue,
         value: formattedValue,
         usesComma,
       };
@@ -86,6 +87,7 @@ class CurrencyInputComponent extends Component {
     }
 
     this.onInputChange = this.onInputChange.bind(this);
+    this.onInputBlur = this.onInputBlur.bind(this);
     this.onInputFocus = this.onInputFocus.bind(this);
     this.updateValues = this.updateValues.bind(this);
   }
@@ -93,6 +95,11 @@ class CurrencyInputComponent extends Component {
   onInputChange(event) {
     event.preventDefault();
     event.stopPropagation();
+    this.setState({
+      value: event.currentTarget.value,
+      unformattedValue: event.currentTarget.value,
+      defaultValue: event.currentTarget.value
+    })
     // Update value strings on state
     let { unformattedValue, tmpPrice } = this.updateValues(event);
     // Notify parent component about current price change
@@ -210,6 +217,7 @@ class CurrencyInputComponent extends Component {
         {...allowedInputProps(this.props)}
         value={this.state.value}
         onChange={this.onInputChange}
+        onBlur={this.onInputBlur}
         onFocus={this.onInputFocus}
         type="text"
         placeholder={placeholderText}
