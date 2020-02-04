@@ -126,15 +126,6 @@ const EditListingPricingPanel = props => {
           currency: 'USD',
         };
         
-        let tmp = 0;
-        if(typeof window !== 'undefined'){
-          console.log('This is custom value from pael ----START')
-          tmp = JSON.parse(localStorage.getItem('price_seats_hourly'));
-          debugger
-          console.log('This is tmp', tmp);
-          console.log('This is custom value from pael ----END')
-
-        }
 
         const priceSeatsHourly = price_seats_hourly ? {
           amount: price_seats_hourly.amount,
@@ -163,7 +154,7 @@ const EditListingPricingPanel = props => {
         } : nullPrice;
 
         const priceMeetingRoomsHourly = price_meeting_rooms_hourly ? {
-          amount: tmp.amount,
+          amount: localStorage.getItem('price_meeting_rooms_hourly'),
           currency: price_meeting_rooms_hourly.currency,
         } : nullPrice;
         const priceMeetingRoomsDaily = price_meeting_rooms_daily ? {

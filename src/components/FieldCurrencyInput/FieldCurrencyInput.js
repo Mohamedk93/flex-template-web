@@ -190,7 +190,10 @@ class CurrencyInputComponent extends Component {
           this.state.usesComma
         );
       }
-      return { formattedValue, value: unformattedValue, unformattedValue, tmpPrice };
+      if(typeof window !== 'undefined'){
+        localStorage.setItem(this.props.input.name, tmpPrice * 100);
+      }
+      return { formattedValue, value: unformattedValue, unformattedValue, tmpPrice};
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e);
@@ -205,13 +208,7 @@ class CurrencyInputComponent extends Component {
   render() {
     const { className, currencyConfig, defaultValue, placeholder, intl } = this.props;
     const placeholderText = placeholder || intl.formatNumber(defaultValue, currencyConfig);
-    let customValue = {
-      "amount": 3300,
-      "currency": this.props.currency
-    };
-    if(typeof window !== 'undefined'){
-      localStorage.setItem('price_seats_hourly', JSON.stringify(customValue));
-    }
+   
     return (
       <input
         className={className}
