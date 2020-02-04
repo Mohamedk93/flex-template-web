@@ -89,8 +89,6 @@ class CurrencyInputComponent extends Component {
     this.onInputBlur = this.onInputBlur.bind(this);
     this.onInputFocus = this.onInputFocus.bind(this);
     this.updateValues = this.updateValues.bind(this);
-    this.onMouseEnter = this.onMouseEnter.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
   }
 
   onInputChange(event) {
@@ -115,6 +113,15 @@ class CurrencyInputComponent extends Component {
       currencyConfig,
       input: { onBlur },
     } = this.props;
+    let { unformattedValue, tmpPrice } = this.updateValues(event);
+    // Notify parent component about current price change
+    let price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
+    if(tmpPrice && price){
+      tmpPrice = tmpPrice * 100;
+      price.amount = tmpPrice;
+    }
+
+    this.props.input.onChange(price);
     this.setState(prevState => {
       if (onBlur) {
         // If parent component has provided onBlur function, call it with current price.
@@ -126,31 +133,6 @@ class CurrencyInputComponent extends Component {
       };
     });
   }
-  
-  onMouseLeave(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const {
-      currencyConfig,
-      input: { onBlur },
-    } = this.props;
-    this.setState(prevState => {
-      if (onBlur) {
-        // If parent component has provided onBlur function, call it with current price.
-        const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
-        onBlur(price);
-      }
-      return {
-        value: prevState.formattedValue,
-      };
-    });
-  }
-
-  onMouseEnter(event) {
-    console.log('This is mosue enter', event)
-  }
-
-  
 
   onInputFocus(event) {
     event.preventDefault();
@@ -239,8 +221,6 @@ class CurrencyInputComponent extends Component {
         value={this.state.value}
         onChange={this.onInputChange}
         onBlur={this.onInputBlur}
-        onMouseEnter={this.onMouseEnter} 
-        onMouseLeave={this.onMouseLeave}
         onFocus={this.onInputFocus}
         type="text"
         placeholder={placeholderText}
