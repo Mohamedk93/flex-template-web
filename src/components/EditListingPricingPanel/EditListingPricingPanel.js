@@ -127,8 +127,8 @@ const EditListingPricingPanel = props => {
         };
 
         const priceSeatsHourly = price_seats_hourly ? {
-          amount: price_seats_hourly.amount,
-          currency: price_seats_hourly.currency,
+          amount: 2222,
+          currency: 'USD',
         } : nullPrice;
         const priceSeatsDaily = price_seats_daily ? {
           amount: price_seats_daily.amount,
