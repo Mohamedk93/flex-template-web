@@ -92,13 +92,10 @@ class CurrencyInputComponent extends Component {
   }
 
   onInputChange(event) {
-    //event.preventDefault();
-    //event.stopPropagation();
+    event.preventDefault();
+    event.stopPropagation();
     // Update value strings on state
     let { unformattedValue, tmpPrice } = this.updateValues(event);
-    this.setState({
-      value: unformattedValue
-    })
     // Notify parent component about current price change
     let price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
     if(tmpPrice && price){
@@ -117,7 +114,6 @@ class CurrencyInputComponent extends Component {
       input: { onBlur },
     } = this.props;
     this.setState(prevState => {
-      console.log(prevState);
       if (onBlur) {
         // If parent component has provided onBlur function, call it with current price.
         const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
@@ -209,6 +205,13 @@ class CurrencyInputComponent extends Component {
   render() {
     const { className, currencyConfig, defaultValue, placeholder, intl } = this.props;
     const placeholderText = placeholder || intl.formatNumber(defaultValue, currencyConfig);
+    let customValue = {
+      "amount": 3300,
+      "currency": this.props.currency
+    };
+    if(typeof window !== 'undefined'){
+      localStorage.setItem('price_seats_hourly', JSON.stringify(customValue));
+    }
     return (
       <input
         className={className}
