@@ -136,6 +136,7 @@ export const EditListingPricingFormComponent = props => (
                   className={css.priceInput}
                   placeholder={pricePlaceholderMessage}
                   currencyConfig={config.currencyConfig}
+                  validate={priceValidators}
                 />
               </div>
             )
