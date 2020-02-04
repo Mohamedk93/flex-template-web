@@ -107,31 +107,22 @@ class CurrencyInputComponent extends Component {
   }
 
   onInputBlur(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const {
-      currencyConfig,
-      input: { onBlur },
-    } = this.props;
-    let { unformattedValue, tmpPrice } = this.updateValues(event);
-    // Notify parent component about current price change
-    let price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
-    if(tmpPrice && price){
-      tmpPrice = tmpPrice * 100;
-      price.amount = tmpPrice;
-    }
-
-    this.props.input.onChange(price);
-    this.setState(prevState => {
-      if (onBlur) {
-        // If parent component has provided onBlur function, call it with current price.
-        const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
-        onBlur(price);
-      }
-      return {
-        value: prevState.formattedValue,
-      };
-    });
+    //event.preventDefault();
+    //event.stopPropagation();
+    //const {
+    //  currencyConfig,
+    //  input: { onBlur },
+    //} = this.props;
+    //this.setState(prevState => {
+    //  if (onBlur) {
+    //    // If parent component has provided onBlur function, call it with current price.
+    //    const price = getPrice(ensureDotSeparator(prevState.unformattedValue), currencyConfig);
+    //    onBlur(price);
+    //  }
+    //  return {
+    //    value: prevState.formattedValue,
+    //  };
+    //});
   }
 
   onInputFocus(event) {
