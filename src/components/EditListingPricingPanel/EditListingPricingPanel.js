@@ -127,8 +127,8 @@ const EditListingPricingPanel = props => {
         };
 
         const priceSeatsHourly = price_seats_hourly ? {
-          amount: 2222,
-          currency: 'USD',
+          amount: price_seats_hourly.amount,
+          currency: price_seats_hourly.currency,
         } : nullPrice;
         const priceSeatsDaily = price_seats_daily ? {
           amount: price_seats_daily.amount,
@@ -202,7 +202,12 @@ const EditListingPricingPanel = props => {
     <div className={classes}>
       <h1 className={css.title}>{panelTitle}</h1>
       {form}
+      <p>
+       price_seats_hourly =
+      {currentListing.attributes.publicData.priceSeatsHourly.amount}
+    </p>
     </div>
+    
   );
 };
 
