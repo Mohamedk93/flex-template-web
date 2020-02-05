@@ -146,7 +146,7 @@ export default function reducer(state = initialState, action = {}) {
 export const hasCurrentUserErrors = state => {
   const { user } = state;
   return (
-    user.currentUserShowError ||
+    //user.currentUserShowError || need to fix fetchCurrentUser method
     user.currentUserHasListingsError ||
     user.currentUserNotificationCountError ||
     user.currentUserHasOrdersError
