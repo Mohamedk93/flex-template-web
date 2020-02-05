@@ -385,11 +385,11 @@ export const converter = (item, currentUser) => {
   }
 }
 
-export const getValueToMobile = (value) => {
-  const amount = localStorage.getItem(Object.keys({value})[0]);
+export const getValueToMobile = (name, defaultValue) => {
+  const amount = localStorage.getItem(name);
   if(amount){
     return amount;
   }else{
-    return value.amount; 
+    return defaultValue.amount; 
   } 
 }
