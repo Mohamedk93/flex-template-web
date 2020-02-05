@@ -393,3 +393,96 @@ export const getValueToMobile = (name, defaultValue) => {
     return defaultValue.amount; 
   } 
 }
+
+export const getMinPrice = (array) => {
+  array = array.filter(function(x) {
+    return x !== undefined && x !== null && x.amount && x.amount > 0
+  });
+  const priceArray = array.map(function(x) {
+    return x.amount
+  });
+  const minAmount = Array.min(priceArray);
+  return minAmount;
+};
+
+
+export const listingAvailablePricesMeta = [
+  {
+    type: 'priceSeatsHourly',
+    unit: 'ListingCard.perHour',
+    rentalType: 'hourly'
+  },
+  {
+    type: 'priceSeatsDaily',
+    unit: 'ListingCard.perDay',
+    rentalType: 'daily'
+  },
+  {
+    type: 'priceSeatsMonthly',
+    unit: 'ListingCard.perMonth',
+    rentalType: 'monthly'
+  },
+  {
+    type: 'priceOfficeRoomsHourly',
+    unit: 'ListingCard.perHour',
+    rentalType: 'hourly'
+  },
+  {
+    type: 'priceOfficeRoomsDaily',
+    unit: 'ListingCard.perDay',
+    rentalType: 'daily'
+  },
+  {
+    type: 'priceOfficeRoomsMonthly',
+    unit: 'ListingCard.perMonth',
+    rentalType: 'monthly'
+  },
+  {
+    type: 'priceMeetingRoomsHourly',
+    unit: 'ListingCard.perHour',
+    rentalType: 'hourly'
+  },
+  {
+    type: 'priceMeetingRoomsDaily',
+    unit: 'ListingCard.perDay',
+    rentalType: 'daily'
+  },
+  {
+    type: 'priceMeetingRoomsMonthly',
+    unit: 'ListingCard.perMonth',
+    rentalType: 'monthly'
+  },
+];
+
+
+export const listingCalculateMinPrice = (pubData) => {
+  let min_price_meta = listingAvailablePricesMeta.filter((priceItem) => {
+    
+    if (!pubData[priceItem.type] || !pubData.rentalTypes) {
+      return false;
+    }
+
+    if (pubData.rentalTypes.indexOf(priceItem.rentalType) !== -1 && 
+      Number(pubData[priceItem.type].amount) > 0) {
+      return true
+    } else {
+      return false
+    }
+  }).sort((a, b) => {
+    let a_val = Number(pubData[a.type] && pubData[a.type].amount);
+    let b_val = Number(pubData[b.type] && pubData[b.type].amount);
+
+    if (a_val === b_val) {
+      return 0;
+    } else if (a_val > b_val) {
+      return 1;
+    } else {
+      return -1;
+    }
+  })[0];
+
+  return min_price_meta && {
+    price: pubData[min_price_meta.type],
+    meta: min_price_meta
+  }
+};

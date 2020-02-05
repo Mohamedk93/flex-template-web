@@ -631,6 +631,10 @@ export function requestUpdateListing(tab, data) {
       localStorage.removeItem(name);
     })
   }
+
+  if(tab === 'availability'){
+    delete data.price;
+  }
   return (dispatch, getState, sdk) => {
     dispatch(updateListing(data));
     const { id } = data;

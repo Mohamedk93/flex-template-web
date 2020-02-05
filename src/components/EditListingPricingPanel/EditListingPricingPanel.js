@@ -6,7 +6,7 @@ import { LISTING_STATE_DRAFT } from '../../util/types';
 import { ListingLink } from '../../components';
 import { EditListingPricingForm } from '../../forms';
 import { ensureOwnListing } from '../../util/data';
-import { setValueToMobile, getValueToMobile } from '../../util/currency';
+import { setValueToMobile, getValueToMobile, getMinPrice } from '../../util/currency';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import config from '../../config';
 
@@ -124,7 +124,7 @@ const EditListingPricingPanel = props => {
         const priceArray = priceArrayFiltered.map(function(x) {
           return x.amount
         });
-        const minimalPrice = {
+        let minimalPrice = {
           amount: Array.min(priceArray),
           currency: 'USD',
         };
@@ -168,6 +168,22 @@ const EditListingPricingPanel = props => {
           amount: isMobile ? getValueToMobile('price_meeting_rooms_monthly', price_meeting_rooms_monthly) : price_meeting_rooms_monthly.amount,
           currency: price_meeting_rooms_monthly.currency,
         } : nullPrice;
+
+        if(isMobile){
+          const  mobilePriceArray = [
+            priceSeatsHourly,
+            priceSeatsDaily,
+            priceSeatsMonthly,
+            priceOfficeRoomsHourly,
+            priceOfficeRoomsDaily,
+            priceOfficeRoomsMonthly,
+            priceMeetingRoomsHourly,
+            priceMeetingRoomsDaily,
+            priceMeetingRoomsMonthly,
+          ];
+          const minAmount = getMinPrice(mobilePriceArray);
+          minimalPrice.amount = minAmount;
+        }
 
         const updateValues = {
           price: minimalPrice,

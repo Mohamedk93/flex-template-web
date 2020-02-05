@@ -6,7 +6,7 @@ import { arrayOf, bool, func, node, oneOfType, shape, string } from 'prop-types'
 import classNames from 'classnames';
 import omit from 'lodash/omit';
 import { propTypes, LISTING_STATE_CLOSED, LINE_ITEM_NIGHT, LINE_ITEM_DAY } from '../../util/types';
-import { formatMoney } from '../../util/currency';
+import { formatMoney, listingCalculateMinPrice } from '../../util/currency';
 import { parse, stringify } from '../../util/urlHelpers';
 import config from '../../config';
 import { ModalInMobile, Button } from '../../components';
@@ -219,7 +219,7 @@ export class BookingPanel extends Component {
     const isDaily = unitType === LINE_ITEM_DAY;
 
     const unitTranslationKey = 'BookingPanel.perHour';
-
+    const currentListingType = listingCalculateMinPrice(listing.attributes.publicData).meta.rentalType;
     const classes = classNames(rootClassName || css.root, className);
     const titleClasses = classNames(titleClassName || css.bookingTitle);
     const quickRent =  listing.attributes.publicData.quickRent
@@ -345,7 +345,7 @@ export class BookingPanel extends Component {
               {formattedPrice}
             </div>
             <div className={css.perUnit}>
-              <FormattedMessage id={unitTranslationKey} />
+              {currentListingType} 
             </div>
           </div>
 
