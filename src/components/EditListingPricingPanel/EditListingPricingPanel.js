@@ -6,6 +6,7 @@ import { LISTING_STATE_DRAFT } from '../../util/types';
 import { ListingLink } from '../../components';
 import { EditListingPricingForm } from '../../forms';
 import { ensureOwnListing } from '../../util/data';
+import { setValueToMobile, getValueToMobile } from '../../util/currency';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import config from '../../config';
 
@@ -40,6 +41,8 @@ const EditListingPricingPanel = props => {
   const rentalTypes = publicData.rentalTypes ? publicData.rentalTypes : null;
 
   const isPublished = currentListing.id && currentListing.attributes.state !== LISTING_STATE_DRAFT;
+  const MAX_MOBILE_SCREEN_WIDTH = 768;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < MAX_MOBILE_SCREEN_WIDTH
   const panelTitle = isPublished ? (
     <FormattedMessage
       id="EditListingPricingPanel.title"
@@ -128,41 +131,41 @@ const EditListingPricingPanel = props => {
         
 
         const priceSeatsHourly = price_seats_hourly ? {
-          amount: price_seats_hourly.amount,
+          amount: isMobile ? getValueToMobile(price_seats_hourly) : price_seats_hourly.amount,
           currency: price_seats_hourly.currency,
         } : nullPrice;
         const priceSeatsDaily = price_seats_daily ? {
-          amount: price_seats_daily.amount,
+          amount: isMobile ? getValueToMobile(price_seats_daily) : price_seats_daily.amount,
           currency: price_seats_daily.currency,
         } : nullPrice;
         const priceSeatsMonthly = price_seats_monthly ? {
-          amount: price_seats_monthly.amount,
+          amount: isMobile ? getValueToMobile(price_seats_monthly) : price_seats_monthly.amount,
           currency: price_seats_monthly.currency,
         } : nullPrice;
 
         const priceOfficeRoomsHourly = price_office_rooms_hourly ? {
-          amount: price_office_rooms_hourly.amount,
+          amount: isMobile ? getValueToMobile(price_office_rooms_hourly) : price_office_rooms_hourly.amount,
           currency: price_office_rooms_hourly.currency,
         } : nullPrice;
         const priceOfficeRoomsDaily = price_office_rooms_daily ? {
-          amount: price_office_rooms_daily.amount,
+          amount: isMobile ? getValueToMobile(price_office_rooms_daily) : price_office_rooms_daily.amount,
           currency: price_office_rooms_daily.currency,
         } : nullPrice;
         const priceOfficeRoomsMonthly = price_office_rooms_monthly ? {
-          amount: price_office_rooms_monthly.amount,
+          amount: isMobile ? getValueToMobile(price_office_rooms_monthly) : price_office_rooms_monthly.amount,
           currency: price_office_rooms_monthly.currency,
         } : nullPrice;
 
         const priceMeetingRoomsHourly = price_meeting_rooms_hourly ? {
-          amount: localStorage.getItem('price_meeting_rooms_hourly'),
+          amount: isMobile ? getValueToMobile(price_meeting_rooms_hourly) : price_meeting_rooms_hourly.amount,
           currency: price_meeting_rooms_hourly.currency,
         } : nullPrice;
         const priceMeetingRoomsDaily = price_meeting_rooms_daily ? {
-          amount: price_meeting_rooms_daily.amount,
+          amount: isMobile ? getValueToMobile(price_meeting_rooms_daily) : price_meeting_rooms_daily.amount,
           currency: price_meeting_rooms_daily.currency,
         } : nullPrice;
         const priceMeetingRoomsMonthly = price_meeting_rooms_monthly ? {
-          amount: price_meeting_rooms_monthly.amount,
+          amount: isMobile ? getValueToMobile(price_meeting_rooms_monthly) : price_meeting_rooms_monthly.amount,
           currency: price_meeting_rooms_monthly.currency,
         } : nullPrice;
 

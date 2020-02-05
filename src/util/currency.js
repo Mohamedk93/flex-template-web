@@ -384,3 +384,12 @@ export const converter = (item, currentUser) => {
     return item
   }
 }
+
+export const getValueToMobile = (value) => {
+  const amount = localStorage.getItem(Object.keys({value})[0]);
+  if(amount){
+    return amount;
+  }else{
+    return value.amount; 
+  } 
+}
