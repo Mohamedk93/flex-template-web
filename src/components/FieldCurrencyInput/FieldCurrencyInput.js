@@ -33,6 +33,9 @@ const allowedInputProps = allProps => {
   const { currencyConfig, defaultValue, intl, input, meta, ...inputProps } = allProps;
   return inputProps;
 };
+const MAX_MOBILE_SCREEN_WIDTH = 768;
+const isMobile = typeof window !== 'undefined' && window.innerWidth < MAX_MOBILE_SCREEN_WIDTH
+
 
 // Convert unformatted value (e.g. 10,00) to Money (or null)
 const getPrice = (unformattedValue, currencyConfig) => {
@@ -96,12 +99,16 @@ class CurrencyInputComponent extends Component {
     event.stopPropagation();
     // Update value strings on state
     let { unformattedValue, tmpPrice } = this.updateValues(event);
+    if(isMobile){
+      unformattedValue = localStorage.getItem('unformattedValue');
+    }
     // Notify parent component about current price change
     let price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
     if(tmpPrice && price){
       tmpPrice = tmpPrice * 100;
       price.amount = tmpPrice;
     }
+    localStorage.removeItem('unformattedValue');
 
     this.props.input.onChange(price);
   }
@@ -192,6 +199,7 @@ class CurrencyInputComponent extends Component {
       }
       if(typeof window !== 'undefined'){
         localStorage.setItem(this.props.input.name, tmpPrice * 100);
+        localStorage.setItem('unformattedValue', unformattedValue);
       }
       return { formattedValue, value: unformattedValue, unformattedValue, tmpPrice};
     } catch (e) {
