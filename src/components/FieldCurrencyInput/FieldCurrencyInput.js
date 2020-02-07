@@ -6,6 +6,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { intlShape, injectIntl } from '../../util/reactIntl';
+import { PRICING_LOCAL_NAMES } from '../../util/dates';
+
 import { Field } from 'react-final-form';
 import classNames from 'classnames';
 import Decimal from 'decimal.js';
@@ -99,9 +101,6 @@ class CurrencyInputComponent extends Component {
     event.stopPropagation();
     // Update value strings on state
     let { unformattedValue, tmpPrice } = this.updateValues(event);
-    if(isMobile){
-      unformattedValue = localStorage.getItem('unformattedValue');
-    }
     // Notify parent component about current price change
     let price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
     if(tmpPrice && price){
@@ -126,7 +125,7 @@ class CurrencyInputComponent extends Component {
         onBlur(price);
       }
       return {
-        value: isMobile && localStorage.getItem('unformattedValue') ? localStorage.getItem('unformattedValue') : prevState.formattedValue,
+        value: prevState.formattedValue,
       };
     });
   }
@@ -198,7 +197,10 @@ class CurrencyInputComponent extends Component {
       }
       if(typeof window !== 'undefined'){
         localStorage.setItem(this.props.input.name, tmpPrice * 100);
-        localStorage.setItem('unformattedValue', unformattedValue);
+        const index = PRICING_LOCAL_NAMES.findIndex( value => { return value == this.props.input.name } );
+        if(index !== -1){
+          localStorage.setItem('currentIndex', index);
+        }
       }
       return { formattedValue, value: unformattedValue, unformattedValue, tmpPrice};
     } catch (e) {

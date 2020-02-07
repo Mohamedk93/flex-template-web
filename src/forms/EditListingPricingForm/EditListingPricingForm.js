@@ -17,6 +17,8 @@ import css from './EditListingPricingForm.css';
 import { format } from 'path';
 
 const {Money} = sdkTypes;
+const MAX_MOBILE_SCREEN_WIDTH = 768;
+const isMobile = typeof window !== 'undefined' && window.innerWidth < MAX_MOBILE_SCREEN_WIDTH
 
 export const EditListingPricingFormComponent = props => (
     <FinalForm
@@ -81,8 +83,14 @@ export const EditListingPricingFormComponent = props => (
           }
         }
         const priceInfo = !symbol ? formatMoney(intl, minPrice) : `${formarMinPrice.amount.toFixed(2)} ${symbol}`;
+        const count = 0;
+        let currentIndex = null;
+        if(typeof window !== 'undefined'){
+          currentIndex = localStorage.getItem('currentIndex');
+        }
         const minPriceRequired = validators.moneySubUnitAmountAtLeast(
           intl.formatMessage(
+
             {
               id: 'EditListingPricingForm.priceTooLow',
             },
@@ -90,7 +98,10 @@ export const EditListingPricingFormComponent = props => (
               minPrice:priceInfo,
             }
           ),
-          config.listingMinimumPriceSubUnits
+          config.listingMinimumPriceSubUnits,
+          isMobile,
+          count,
+          currentIndex,
         );
         const priceValidators = config.listingMinimumPriceSubUnits
           ? validators.composeValidators(priceRequired, minPriceRequired)
@@ -141,9 +152,7 @@ export const EditListingPricingFormComponent = props => (
               </div>
             )
           });
-          if(typeof window !== 'undefined'){
-            localStorage.removeItem('unformattedValue');
-          }
+
           return (
             <div className={css.priceRow} key={price}>
               <div className={css.priceLabel}>

@@ -630,6 +630,7 @@ export function requestUpdateListing(tab, data) {
     PRICING_LOCAL_NAMES.forEach( name => {
       localStorage.removeItem(name);
     })
+    localStorage.removeItem('currentIndex');
   }
 
   if(tab === 'availability'){

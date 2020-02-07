@@ -1,6 +1,8 @@
 import moment from 'moment';
 import { types as sdkTypes } from './sdkLoader';
 import toPairs from 'lodash/toPairs';
+import { PRICING_LOCAL_NAMES } from './dates';
+
 
 const { LatLng, Money } = sdkTypes;
 
@@ -110,8 +112,21 @@ export const emailFormatValid = message => value => {
   return value && EMAIL_RE.test(value) ? VALID : message;
 };
 
-export const moneySubUnitAmountAtLeast = (message, minValue) => value => {
-  return value instanceof Money && value.amount >= minValue ? VALID : message;
+export const moneySubUnitAmountAtLeast = (message, minValue, isMobile = false, count = 0, currentIndex = null) => value => {
+  let flag = false;
+  let currentAmount = '';
+  if(isMobile && currentIndex){
+    if(count == currentIndex){
+      currentAmount = localStorage.getItem(PRICING_LOCAL_NAMES[currentIndex]);
+      flag = true;
+    }
+  }
+  count = count + 1;
+  if(flag){
+    return currentAmount >= minValue ? VALID : message;
+  }else{
+    return value instanceof Money && value.amount >= minValue ? VALID : message;
+  }
 };
 
 const parseNum = str => {

@@ -7,15 +7,15 @@ export const START_DATE = 'startDate';
 export const END_DATE = 'endDate';
 
 export const PRICING_LOCAL_NAMES = [
-                              'price_meeting_rooms_daily',
-                              'price_meeting_rooms_hourly',
-                              'price_meeting_rooms_monthly',
-                              'price_office_rooms_daily',
-                              'price_office_rooms_hourly',
-                              'price_office_rooms_monthly',
-                              'price_seats_daily',
                               'price_seats_hourly',
-                              'price_seats_monthly'
+                              'price_seats_daily',
+                              'price_seats_monthly',
+                              'price_office_rooms_hourly',
+                              'price_office_rooms_daily',
+                              'price_office_rooms_monthly',
+                              'price_meeting_rooms_hourly',
+                              'price_meeting_rooms_daily',
+                              'price_meeting_rooms_monthly',
                             ];
 
 /**
