@@ -126,7 +126,7 @@ class CurrencyInputComponent extends Component {
         onBlur(price);
       }
       return {
-        value: prevState.formattedValue,
+        value: isMobile && localStorage.getItem('unformattedValue') ? localStorage.getItem('unformattedValue') : prevState.formattedValue,
       };
     });
   }
