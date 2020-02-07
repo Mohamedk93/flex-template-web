@@ -122,8 +122,15 @@ export const moneySubUnitAmountAtLeast = (message, minValue, isMobile = false, c
     }
   }
   count = count + 1;
+
   if(flag){
-    return currentAmount >= minValue ? VALID : message;
+    if(currentAmount >= minValue){
+      localStorage.setItem('mobileButton', true);
+      return VALID;
+    }else{
+      localStorage.setItem('mobileButton', false);
+      return message;
+    }
   }else{
     return value instanceof Money && value.amount >= minValue ? VALID : message;
   }

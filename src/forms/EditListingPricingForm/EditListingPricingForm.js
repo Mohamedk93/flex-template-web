@@ -84,9 +84,13 @@ export const EditListingPricingFormComponent = props => (
         }
         const priceInfo = !symbol ? formatMoney(intl, minPrice) : `${formarMinPrice.amount.toFixed(2)} ${symbol}`;
         const count = 0;
+        let isSubmit = true;
         let currentIndex = null;
         if(typeof window !== 'undefined'){
           currentIndex = localStorage.getItem('currentIndex');
+          if(localStorage.getItem('mobileButton') && localStorage.getItem('mobileButton').length > 0){
+            isSubmit = localStorage.getItem('mobileButton');
+          }
         }
         const minPriceRequired = validators.moneySubUnitAmountAtLeast(
           intl.formatMessage(
@@ -128,6 +132,29 @@ export const EditListingPricingFormComponent = props => (
         });
 
         const requiredSelect = required('This field is required');
+
+        const submitButton = isMobile ? (
+          <Button
+          className={css.submitButton}
+          type="submit"
+          inProgress={submitInProgress}
+          disabled={ isSubmit ===  'false' ? true : false}
+          ready={submitReady}
+        >
+          {saveActionMsg}
+        </Button>
+        ) :
+        (
+          <Button
+          className={css.submitButton}
+          type="submit"
+          inProgress={submitInProgress}
+          disabled={submitDisabled}
+          ready={submitReady}
+        >
+          {saveActionMsg}
+        </Button>
+        ) 
 
         const priceTable = workspaces.map(price => {
           const priceLabel = intl.formatMessage({
@@ -204,15 +231,7 @@ export const EditListingPricingFormComponent = props => (
               label={labelText}
               value='quickRent'
             />
-            <Button
-              className={css.submitButton}
-              type="submit"
-              inProgress={submitInProgress}
-              disabled={submitDisabled}
-              ready={submitReady}
-            >
-              {saveActionMsg}
-            </Button>
+            {submitButton}
           </Form>
         );
       }}

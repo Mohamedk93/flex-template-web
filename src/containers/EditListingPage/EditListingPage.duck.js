@@ -631,6 +631,7 @@ export function requestUpdateListing(tab, data) {
       localStorage.removeItem(name);
     })
     localStorage.removeItem('currentIndex');
+    localStorage.removeItem('mobileButton');
   }
 
   if(tab === 'availability'){
