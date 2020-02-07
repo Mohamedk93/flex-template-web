@@ -80,7 +80,7 @@ export const EditListingPricingFormComponent = props => (
             symbol = result.symbol;
           }
         }
-        const priceInfo = !symbol ? formatMoney(intl, minPrice) : `${formarMinPrice.amount.toFixed(2)} ${symbol}`;  
+        const priceInfo = !symbol ? formatMoney(intl, minPrice) : `${formarMinPrice.amount.toFixed(2)} ${symbol}`;
         const minPriceRequired = validators.moneySubUnitAmountAtLeast(
           intl.formatMessage(
             {
@@ -141,7 +141,9 @@ export const EditListingPricingFormComponent = props => (
               </div>
             )
           });
-
+          if(typeof window !== 'undefined'){
+            localStorage.removeItem('unformattedValue');
+          }
           return (
             <div className={css.priceRow} key={price}>
               <div className={css.priceLabel}>

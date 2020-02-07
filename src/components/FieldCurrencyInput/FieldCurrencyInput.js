@@ -108,7 +108,6 @@ class CurrencyInputComponent extends Component {
       tmpPrice = tmpPrice * 100;
       price.amount = tmpPrice;
     }
-    localStorage.removeItem('unformattedValue');
 
     this.props.input.onChange(price);
   }
@@ -216,7 +215,6 @@ class CurrencyInputComponent extends Component {
   render() {
     const { className, currencyConfig, defaultValue, placeholder, intl } = this.props;
     const placeholderText = placeholder || intl.formatNumber(defaultValue, currencyConfig);
-   
     return (
       <input
         className={className}
