@@ -6,7 +6,7 @@ import {intlShape, injectIntl, FormattedMessage} from '../../util/reactIntl';
 import classNames from 'classnames';
 import config from '../../config';
 import {LINE_ITEM_NIGHT, LINE_ITEM_DAY, propTypes} from '../../util/types';
-import { mainMobileArray, setMobileArray } from '../../util/dates';
+import { mainMobileArray, setMobileArray, sortArray } from '../../util/dates';
 
 import * as validators from '../../util/validators';
 import {required} from '../../util/validators';
@@ -129,7 +129,19 @@ export const EditListingPricingFormComponent = props => (
         const capacityPlaceholder = intl.formatMessage({
           id: 'EditListingPricingForm.defaultCurrency',
         });
-        const priceHead = rentalTypes.map(item => {
+        let sortArray = [];
+        if(rentalTypes.indexOf('hourly') !== -1){
+          sortArray.push("hourly");
+        }
+        if(rentalTypes.indexOf('daily') !== -1){
+          sortArray.push("daily");
+        }
+        if(rentalTypes.indexOf('daily') !== -1){
+          sortArray.push("monthly");
+        }
+        
+
+        const priceHead = sortArray.map(item => {
           const rentalLabel = intl.formatMessage({
             id: `EditListingPricingForm.rentalType_${item}`,
           });
@@ -170,7 +182,7 @@ export const EditListingPricingFormComponent = props => (
             id: `EditListingPricingForm.priceLabel_${price}`,
           });
           
-          const priceFields = rentalTypes.map(item => {
+          const priceFields = sortArray.map(item => {
             const fieldId = `price_${price}_${item}`;
             return (
               <div className={css.priceField} key={fieldId}>
