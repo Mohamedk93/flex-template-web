@@ -6,6 +6,8 @@ import {intlShape, injectIntl, FormattedMessage} from '../../util/reactIntl';
 import classNames from 'classnames';
 import config from '../../config';
 import {LINE_ITEM_NIGHT, LINE_ITEM_DAY, propTypes} from '../../util/types';
+import { mainMobileArray, setMobileArray } from '../../util/dates';
+
 import * as validators from '../../util/validators';
 import {required} from '../../util/validators';
 import arrayMutators from 'final-form-arrays';
@@ -41,7 +43,7 @@ export const EditListingPricingFormComponent = props => (
           rentalTypes,
           values,
         } = fieldRenderProps;
-
+        
         const unitType = config.bookingUnitType;
         const isNightly = unitType === LINE_ITEM_NIGHT;
         const isDaily = unitType === LINE_ITEM_DAY;
@@ -84,17 +86,22 @@ export const EditListingPricingFormComponent = props => (
         }
         const priceInfo = !symbol ? formatMoney(intl, minPrice) : `${formarMinPrice.amount.toFixed(2)} ${symbol}`;
         const count = 0;
+        const trueCount= 0;
+        const blockCount = 0;
         let isSubmit = true;
-        let currentIndex = null;
+        let mobileArray = [];
+        let oldMobileArray = []
         if(typeof window !== 'undefined'){
-          currentIndex = localStorage.getItem('currentIndex');
+          if(isMobile){
+            mobileArray = mainMobileArray(props);
+            oldMobileArray = setMobileArray(props);
+          }
           if(localStorage.getItem('mobileButton') && localStorage.getItem('mobileButton').length > 0){
             isSubmit = localStorage.getItem('mobileButton');
           }
         }
         const minPriceRequired = validators.moneySubUnitAmountAtLeast(
           intl.formatMessage(
-
             {
               id: 'EditListingPricingForm.priceTooLow',
             },
@@ -105,7 +112,9 @@ export const EditListingPricingFormComponent = props => (
           config.listingMinimumPriceSubUnits,
           isMobile,
           count,
-          currentIndex,
+          trueCount,
+          mobileArray,
+          oldMobileArray,
         );
         const priceValidators = config.listingMinimumPriceSubUnits
           ? validators.composeValidators(priceRequired, minPriceRequired)

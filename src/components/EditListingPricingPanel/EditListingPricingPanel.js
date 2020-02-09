@@ -8,6 +8,8 @@ import { EditListingPricingForm } from '../../forms';
 import { ensureOwnListing } from '../../util/data';
 import { setValueToMobile, getValueToMobile, getMinPrice } from '../../util/currency';
 import { types as sdkTypes } from '../../util/sdkLoader';
+import { PRICING_LOCAL_NAMES } from '../../util/dates';
+
 import config from '../../config';
 
 
@@ -51,6 +53,13 @@ const EditListingPricingPanel = props => {
   ) : (
     <FormattedMessage id="EditListingPricingPanel.createListingTitle" />
   );
+
+  if(typeof window !== 'undefined'){
+    console.log('This is refresh value')
+    PRICING_LOCAL_NAMES.forEach( name => {
+      localStorage.removeItem(name);
+    })
+  }
 
   const priceCurrencyValid = price instanceof Money ? price.currency === config.currency : true;
 
