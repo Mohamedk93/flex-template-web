@@ -10,6 +10,7 @@ import { Form, Button, FieldTextInput, FieldCheckboxGroup, FieldCheckboxGroupWit
 import config from '../../config';
 import arrayMutators from 'final-form-arrays';
 import CustomCategorySelectFieldMaybe from './CustomCategorySelectFieldMaybe';
+import CustomCurrencySelectFieldMaybe from './CustomCurrencySelectFieldMaybe';
 import css from './EditListingDescriptionForm.css';
 
 const TITLE_MAX_LENGTH = 60;
@@ -48,6 +49,7 @@ const EditListingDescriptionFormComponent = props => (
         fetchErrors,
         values,
       } = fieldRenderProps;
+
       const selectedWorkspaces = values && values.workspaces ? values.workspaces : [];
       const titleMessage = intl.formatMessage({ id: 'EditListingDescriptionForm.title' });
       const titlePlaceholderMessage = intl.formatMessage({
@@ -111,8 +113,8 @@ const EditListingDescriptionFormComponent = props => (
       };
 
       return (
-        <Form 
-          className={classes} 
+        <Form
+          className={classes}
           onSubmit={handleSubmit}
         >
           {errorMessageCreateListingDraft}
@@ -144,6 +146,13 @@ const EditListingDescriptionFormComponent = props => (
             id="category"
             name="category"
             categories={categories}
+            intl={intl}
+          />
+
+          <CustomCurrencySelectFieldMaybe
+            id="currency"
+            name="currency"
+            currencies={config.custom.currencies}
             intl={intl}
           />
 
@@ -185,6 +194,12 @@ EditListingDescriptionFormComponent.propTypes = {
     updateListingError: propTypes.error,
   }),
   categories: arrayOf(
+    shape({
+      key: string.isRequired,
+      label: string.isRequired,
+    })
+  ),
+  currencies: arrayOf(
     shape({
       key: string.isRequired,
       label: string.isRequired,

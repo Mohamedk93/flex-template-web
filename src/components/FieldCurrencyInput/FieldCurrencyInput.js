@@ -6,6 +6,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { intlShape, injectIntl } from '../../util/reactIntl';
+import { PRICING_LOCAL_NAMES } from '../../util/dates';
+
 import { Field } from 'react-final-form';
 import classNames from 'classnames';
 import Decimal from 'decimal.js';
@@ -33,6 +35,9 @@ const allowedInputProps = allProps => {
   const { currencyConfig, defaultValue, intl, input, meta, ...inputProps } = allProps;
   return inputProps;
 };
+const MAX_MOBILE_SCREEN_WIDTH = 768;
+const isMobile = typeof window !== 'undefined' && window.innerWidth < MAX_MOBILE_SCREEN_WIDTH
+
 
 // Convert unformatted value (e.g. 10,00) to Money (or null)
 const getPrice = (unformattedValue, currencyConfig) => {
@@ -41,7 +46,7 @@ const getPrice = (unformattedValue, currencyConfig) => {
     return isEmptyString
       ? null
       : new Money(
-          convertUnitToSubUnit(unformattedValue, unitDivisor(currencyConfig.currency)),
+          convertUnitToSubUnit(unformattedValue, unitDivisor(currencyConfig.currency), false, false),
           currencyConfig.currency
         );
   } catch (e) {
@@ -52,38 +57,28 @@ const getPrice = (unformattedValue, currencyConfig) => {
 class CurrencyInputComponent extends Component {
   constructor(props) {
     super(props);
-    const { currencyConfig, defaultValue, input, intl } = props;
-
+    const { currencyConfig, defaultValue, input, intl, rates, currency } = props;
     const initialValueIsMoney = input.value instanceof Money;
-    if (initialValueIsMoney && input.value.currency !== currencyConfig.currency) {
-      const e = new Error('Value currency different from marketplace currency');
-      log.error(e, 'currency-input-invalid-currency', { currencyConfig, inputValue: input.value });
-      throw e;
-    };
-
+  
+    const result = rates.find(e => e.iso_code == currency);
     const initialValue = initialValueIsMoney ? convertMoneyToNumber(input.value) : defaultValue;
     const hasInitialValue = typeof initialValue === 'number' && !isNaN(initialValue);
-
+    const newInitialValue = result && initialValue ? initialValue.toString() * result.current_rate : '';
     // We need to handle number format - some locales use dots and some commas as decimal separator
     // TODO Figure out if this could be digged from React-Intl directly somehow
-    const testSubUnitFormat = intl.formatNumber('1.1', currencyConfig);
+    const testSubUnitFormat = intl.formatNumber('1.1', currencyConfig.config);
     const usesComma = testSubUnitFormat.indexOf(',') >= 0;
-
     try {
       // whatever is passed as a default value, will be converted to currency string
       // Unformatted value is digits + localized sub unit separator ("9,99")
-      const unformattedValue = hasInitialValue
-        ? truncateToSubUnitPrecision(
-            ensureSeparator(initialValue.toString(), usesComma),
-            unitDivisor(currencyConfig.currency),
-            usesComma
-          )
+      let unformattedValue = hasInitialValue
+        ? newInitialValue ? newInitialValue.toFixed(2) : ''
         : '';
       // Formatted value fully localized currency string ("$1,000.99")
-      const formattedValue = hasInitialValue
+      let formattedValue = hasInitialValue
         ? intl.formatNumber(ensureDotSeparator(unformattedValue), currencyConfig)
         : '';
-
+      formattedValue = result? formattedValue.replace('$', result.symbol) : formattedValue;
       this.state = {
         formattedValue,
         unformattedValue,
@@ -105,9 +100,14 @@ class CurrencyInputComponent extends Component {
     event.preventDefault();
     event.stopPropagation();
     // Update value strings on state
-    const { unformattedValue } = this.updateValues(event);
+    let { unformattedValue, tmpPrice } = this.updateValues(event);
     // Notify parent component about current price change
-    const price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
+    let price = getPrice(ensureDotSeparator(unformattedValue), this.props.currencyConfig);
+    if(tmpPrice && price){
+      tmpPrice = tmpPrice * 100;
+      price.amount = tmpPrice;
+    }
+
     this.props.input.onChange(price);
   }
 
@@ -152,9 +152,11 @@ class CurrencyInputComponent extends Component {
   updateValues(event) {
     try {
       const { currencyConfig, intl } = this.props;
+      const result = this.props.rates.find(e => e.iso_code == this.props.currency);
       const targetValue = event.target.value.trim();
       const isEmptyString = targetValue === '';
       const valueOrZero = isEmptyString ? '0' : targetValue;
+      let tmpPrice = null;
 
       const targetDecimalValue = isEmptyString
         ? null
@@ -172,18 +174,35 @@ class CurrencyInputComponent extends Component {
         unitDivisor(currencyConfig.currency),
         this.state.usesComma
       );
-      const unformattedValue = !isEmptyString ? truncatedValueString : '';
-      const formattedValue = !isEmptyString
+      let unformattedValue = !isEmptyString ? truncatedValueString : '';
+      let formattedValue = !isEmptyString
         ? intl.formatNumber(ensureDotSeparator(truncatedValueString), currencyConfig)
         : '';
-
+      
+      formattedValue = result ? formattedValue.replace('$', result.symbol) : formattedValue; 
       this.setState({
         formattedValue,
         value: unformattedValue,
         unformattedValue,
       });
-
-      return { formattedValue, value: unformattedValue, unformattedValue };
+        
+      if(result){
+        unformattedValue = unformattedValue / result.current_rate;
+        tmpPrice = unformattedValue.toFixed(5);
+        unformattedValue = truncateToSubUnitPrecision(
+          unformattedValue,
+          unitDivisor(currencyConfig.currency),
+          this.state.usesComma
+        );
+      }
+      if(typeof window !== 'undefined'){
+        localStorage.setItem(this.props.input.name, tmpPrice * 100);
+        const index = PRICING_LOCAL_NAMES.findIndex( value => { return value == this.props.input.name } );
+        if(index !== -1){
+          localStorage.setItem('currentIndex', index);
+        }
+      }
+      return { formattedValue, value: unformattedValue, unformattedValue, tmpPrice};
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e);
@@ -241,8 +260,7 @@ CurrencyInputComponent.propTypes = {
 export const CurrencyInput = injectIntl(CurrencyInputComponent);
 
 const FieldCurrencyInputComponent = props => {
-  const { rootClassName, className, id, label, input, meta, ...rest } = props;
-
+  const { rootClassName, className, authorProfile, userInfo, id, label, input, meta, ...rest } = props;
   if (label && !id) {
     throw new Error('id required when a label is given');
   }
@@ -257,8 +275,10 @@ const FieldCurrencyInputComponent = props => {
     [css.inputSuccess]: valid,
     [css.inputError]: hasError,
   });
-
-  const inputProps = { className: inputClasses, id, input, ...rest };
+  const rates = authorProfile.protectedData.rates;
+  const currency = userInfo; 
+  const inputProps = { className: inputClasses, id, input, rates, currency, ...rest };
+  
   const classes = classNames(rootClassName, className);
   return (
     <div className={classes}>

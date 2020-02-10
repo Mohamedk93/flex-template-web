@@ -4,7 +4,10 @@ import { transitionsToRequested } from '../util/transaction';
 import { LISTING_STATE_DRAFT } from '../util/types';
 import * as log from '../util/log';
 import { authInfo } from './Auth.duck';
+import axios from 'axios';
 import { stripeAccountCreateSuccess } from './stripe.duck.js';
+import { locationBounds } from '../util/googleMaps';
+
 
 // ================ Action types ================ //
 
@@ -37,6 +40,7 @@ export const FETCH_CURRENT_USER_HAS_ORDERS_ERROR = 'app/user/FETCH_CURRENT_USER_
 export const SEND_VERIFICATION_EMAIL_REQUEST = 'app/user/SEND_VERIFICATION_EMAIL_REQUEST';
 export const SEND_VERIFICATION_EMAIL_SUCCESS = 'app/user/SEND_VERIFICATION_EMAIL_SUCCESS';
 export const SEND_VERIFICATION_EMAIL_ERROR = 'app/user/SEND_VERIFICATION_EMAIL_ERROR';
+const API_URL = process.env.REACT_APP_API_URL;
 
 // ================ Reducer ================ //
 
@@ -142,7 +146,7 @@ export default function reducer(state = initialState, action = {}) {
 export const hasCurrentUserErrors = state => {
   const { user } = state;
   return (
-    user.currentUserShowError ||
+    //user.currentUserShowError || need to fix fetchCurrentUser method
     user.currentUserHasListingsError ||
     user.currentUserNotificationCountError ||
     user.currentUserHasOrdersError
@@ -305,11 +309,70 @@ export const fetchCurrentUserNotifications = () => (dispatch, getState, sdk) => 
     .catch(e => dispatch(fetchCurrentUserNotificationsError(storableError(e))));
 };
 
+export const updateUserCurrency = (currency = null) => (dispatch, getState, sdk) => {
+  const { isAuthenticated } = getState().Auth;
+  if (!isAuthenticated) {
+    dispatch(currentUserShowSuccess(null));
+    return Promise.resolve({});
+  }
+  if(currency){
+    return sdk.currentUser
+    .updateProfile(
+      { protectedData: { currency } },
+      { expand: true }
+    )
+    .then(response => {
+      const entities = denormalisedResponseEntities(response);
+      if (entities.length !== 1) {
+        throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+      }
+      dispatch(fetchCurrentUserHasListings());
+      dispatch(fetchCurrentUserNotifications());
+      dispatch(authInfo());
+
+      const currentUser = entities[0];
+      log.setUserId(currentUser.id.uuid);
+      dispatch(currentUserShowSuccess(currentUser));  
+      return currentUser;
+    })
+    .catch(e => {
+      throw e;
+    });
+  }
+
+}
+export const GEO_API = 'https://api.ipdata.co?api-key=test'
+
 export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => {
   dispatch(currentUserShowRequest());
   const { isAuthenticated } = getState().Auth;
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && typeof window !== 'undefined') {
+    let lastUpdateCurrency = new Date(localStorage.getItem('lastUpdateCurrency'))
+    lastUpdateCurrency.setDate(lastUpdateCurrency.getDate() + 1);
+    if(lastUpdateCurrency < new Date()){
+      axios.get(`${API_URL}/api/v1/rates`)
+        .then(function (response) {
+          const rates = response.data;
+          localStorage.setItem('rates', JSON.stringify(rates));
+          localStorage.setItem('lastUpdateCurrency', new Date);
+          axios.get(GEO_API)
+          .then( response => {
+            const currentCode = response.data.currency.code
+            const result = rates.find(e => e.iso_code == currentCode);
+            const code = result ? result.iso_code : 'USD'
+            localStorage.setItem('currentCode', code)
+          } )
+          .catch( e => {
+            localStorage.setItem('currentCode', 'USD')
+            }
+          )
+        })
+        .catch(e => {
+          throw e;
+        });
+    }
+
     // Make sure current user is null
     dispatch(currentUserShowSuccess(null));
     return Promise.resolve({});
@@ -340,6 +403,61 @@ export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => 
       return currentUser;
     })
     .then(currentUser => {
+      let lastRateUpdate = new Date(currentUser.attributes.profile.protectedData.lastRateUpdate);
+      lastRateUpdate.setDate(lastRateUpdate.getDate() + 1);
+      let currentDate = new Date();
+      if(lastRateUpdate < currentDate){
+        axios.get(`${API_URL}/api/v1/rates`)
+        .then(function (response) {
+          const rates = response.data;
+          lastRateUpdate = currentDate.toDateString();
+          axios.get(GEO_API)
+          .then( response => {
+            const currentCode = response.data.currency.code
+            const result = rates.find(e => e.iso_code == currentCode);
+            let currency = result && !currentUser.attributes.profile.protectedData.currency ? result.iso_code : currentUser.attributes.profile.protectedData.currency
+            currency = currency ? currency : 'USD'; 
+            return sdk.currentUser
+            .updateProfile(
+              { protectedData: { rates,  lastRateUpdate, currency} },
+              { expand: true }
+            )
+            .then(response => {
+              const entities = denormalisedResponseEntities(response);
+              if (entities.length !== 1) {
+                throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+              }
+
+              const currentUser = entities[0];
+              return currentUser;
+            })
+            .catch(e => {
+              throw e;
+            });
+          } )
+          .catch( e => {
+            const currentCode = 'USD'
+            const result = rates.find(e => e.iso_code == currentCode);
+            const currency = result && !currentUser.attributes.profile.protectedData.currency ? result.iso_code : currentUser.attributes.profile.protectedData.currency
+            return sdk.currentUser
+            .updateProfile(
+              { protectedData: { rates,  lastRateUpdate, currency} },
+              { expand: true }
+            )
+            .then(response => {
+              const entities = denormalisedResponseEntities(response);
+              if (entities.length !== 1) {
+                throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+              }
+
+              const currentUser = entities[0];
+              return currentUser;
+            })
+            
+            }
+          )
+        })
+      }
       dispatch(fetchCurrentUserHasListings());
       dispatch(fetchCurrentUserNotifications());
       if (!currentUser.attributes.emailVerified) {

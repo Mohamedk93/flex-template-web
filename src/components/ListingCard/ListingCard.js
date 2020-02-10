@@ -4,7 +4,8 @@ import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { lazyLoadWithDimensions } from '../../util/contextHelpers';
 import { LINE_ITEM_DAY, LINE_ITEM_NIGHT, propTypes } from '../../util/types';
-import { formatMoney } from '../../util/currency';
+import { formatMoney, listingMinPrice, convertPrice } from '../../util/currency';
+
 import { ensureListing, ensureUser } from '../../util/data';
 import { richText } from '../../util/richText';
 import { createSlug } from '../../util/urlHelpers';
@@ -125,7 +126,7 @@ export const listingCalculateMinPrice = (pubData) => {
 };
 
 export const ListingCardComponent = props => {
-  const { className, rootClassName, intl, listing, renderSizes, setActiveListing, searchPoint, location } = props;
+  const { className, rootClassName, intl, listing, renderSizes, setActiveListing, searchPoint, location, currentUser } = props;
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureListing(listing);
   const id = currentListing.id.uuid;
@@ -135,8 +136,14 @@ export const ListingCardComponent = props => {
   const authorName = author.attributes.profile.displayName;
   const firstImage =
     currentListing.images && currentListing.images.length > 0 ? currentListing.images[0] : null;
+  let { formattedPrice, priceTitle } = priceData(price, intl);
+  let minPrice= null;
+  
+  if(currentListing && currentListing.id){
+     minPrice = listingMinPrice(currentListing);
+  }
 
-  const { formattedPrice, priceTitle } = priceData(price, intl);
+  formattedPrice = convertPrice(currentUser, minPrice, formattedPrice);
 
   const unitType = config.bookingUnitType;
   const isNightly = unitType === LINE_ITEM_NIGHT;
@@ -180,6 +187,7 @@ export const ListingCardComponent = props => {
       {categories[publicData.category]}
     </p>
   ) : null;
+
 
   return (
     <NamedLink className={classes} name="ListingPage" to={{state: {prevLocation: location}}} params={{ id, slug }}>

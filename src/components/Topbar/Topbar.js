@@ -68,6 +68,7 @@ GenericError.propTypes = {
   show: bool.isRequired,
 };
 
+
 class TopbarComponent extends Component {
   constructor(props) {
     super(props);
@@ -166,6 +167,7 @@ class TopbarComponent extends Component {
       sendVerificationEmailError,
       showGenericError,
       showBackButton,
+      onUpdateUserCurrency,
     } = this.props;
 
     const { mobilemenu, mobilesearch, address, origin, bounds } = parse(location.search, {
@@ -178,6 +180,12 @@ class TopbarComponent extends Component {
     const isMobileLayout = viewport.width < MAX_MOBILE_SCREEN_WIDTH;
     const isMobileMenuOpen = isMobileLayout && mobilemenu === 'open';
     const isMobileSearchOpen = isMobileLayout && mobilesearch === 'open';
+    const updateLocalCurrency = value => {
+      if(typeof window !== 'undefined'){
+        localStorage.setItem('currentCode', value);
+        return onUpdateUserCurrency(null);
+      }
+    };
 
     const mobileMenu = (
       <TopbarMobileMenu
@@ -202,7 +210,32 @@ class TopbarComponent extends Component {
           }
         : null,
     };
+    let currency = '';
+    let rates = null;
 
+    if(currentUser){
+      rates = currentUser.attributes.profile.protectedData.rates;
+      currency = currentUser.attributes.profile.protectedData.currency;
+    }else if(typeof window !== 'undefined'){
+      rates = JSON.parse(localStorage.getItem('rates'));
+      currency = localStorage.getItem('currentCode');
+    }
+
+    const selectCurrency = !rates ? null : (
+      <select
+          className={css.currencySelect}
+          onChange={currentUser ? e => onUpdateUserCurrency(e.target.value) : e => updateLocalCurrency(e.target.value)}
+          >
+              <option value={currency}>
+              {currency}
+              </option>
+              {rates.map(c => (
+                <option key={c.iso_code} value={c.iso_code}>
+                  {c.iso_code}
+                </option>
+              ))}
+            </select>
+    );
     const classes = classNames(rootClassName || css.root, className);
 
     return (
@@ -226,6 +259,8 @@ class TopbarComponent extends Component {
           >
             <Logo format="mobile" />
           </NamedLink>
+          {selectCurrency}
+
           <Button
             rootClassName={css.searchMenu}
             onClick={this.handleMobileSearchOpen}
@@ -246,6 +281,7 @@ class TopbarComponent extends Component {
             notificationCount={notificationCount}
             onLogout={this.handleLogout}
             onSearchSubmit={this.handleSubmit}
+            onUpdateUserCurrency={this.props.onUpdateUserCurrency}
             showBackButton={this.state.showBackButton}
           />
         </div>

@@ -1,7 +1,7 @@
 import omit from 'lodash/omit';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import { denormalisedResponseEntities, ensureAvailabilityException } from '../../util/data';
-import { isSameDate, monthIdStringInUTC } from '../../util/dates';
+import { isSameDate, monthIdStringInUTC, PRICING_LOCAL_NAMES } from '../../util/dates';
 import { storableError } from '../../util/errors';
 import { addMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import * as log from '../../util/log';
@@ -626,6 +626,17 @@ export const requestDeleteAvailabilityException = params => (dispatch, getState,
 // the data to the listing, and marks the tab updated so the UI can
 // display the state.
 export function requestUpdateListing(tab, data) {
+  if(tab === "pricing"){
+    PRICING_LOCAL_NAMES.forEach( name => {
+      localStorage.removeItem(name);
+    })
+    localStorage.removeItem('currentIndex');
+    localStorage.removeItem('mobileButton');
+  }
+
+  if(tab === 'availability'){
+    delete data.price;
+  }
   return (dispatch, getState, sdk) => {
     dispatch(updateListing(data));
     const { id } = data;
@@ -671,3 +682,5 @@ export function loadData(params) {
     return dispatch(requestShowListing(payload));
   };
 }
+
+

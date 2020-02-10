@@ -15,11 +15,13 @@ import {
   NamedLink,
   HistoryBackButton,
 } from '../../components';
+
 import { TopbarSearchForm } from '../../forms';
 
 import css from './TopbarDesktop.css';
 
 const TopbarDesktop = props => {
+
   const {
     className,
     currentUser,
@@ -32,6 +34,7 @@ const TopbarDesktop = props => {
     onLogout,
     onSearchSubmit,
     initialSearchFormValues,
+    onUpdateUserCurrency,
     showBackButton,
   } = props;
   const [mounted, setMounted] = useState(false);
@@ -73,6 +76,13 @@ const TopbarDesktop = props => {
     const isAccountSettingsPage =
       page === 'AccountSettingsPage' && ACCOUNT_SETTINGS_PAGES.includes(currentPage);
     return currentPage === page || isAccountSettingsPage ? css.currentPage : null;
+  };
+
+  const updateLocalCurrency = value => {
+    if(typeof window !== 'undefined'){
+      localStorage.setItem('currentCode', value);
+      return onUpdateUserCurrency(null);
+    }
   };
 
   const profileMenu = authenticatedOnClientSide ? (
@@ -133,7 +143,32 @@ const TopbarDesktop = props => {
       </span>
     </NamedLink>
   );
+  let currency = '';
+  let rates = [];
+  if(currentUser){
+    rates = currentUser.attributes.profile.protectedData.rates;
+    currency = currentUser.attributes.profile.protectedData.currency;
+  }else if (typeof window !== 'undefined'){
+    rates = JSON.parse(localStorage.getItem('rates'));
+    currency = localStorage.getItem('currentCode');
+  }
 
+  const selectCurrency = !rates ? null : (
+    <select
+        className={css.currencySelect}
+        onChange={currentUser ? e => onUpdateUserCurrency(e.target.value) : e => updateLocalCurrency(e.target.value)}
+        >
+            <option value={currency}>
+             {currency}
+            </option>
+            {rates.map(c => (
+              <option key={c.iso_code} value={c.iso_code}>
+                {c.iso_code}
+              </option>
+            ))}
+          </select>
+
+  );
   return (
     <nav className={classes}>
       <NamedLink className={css.logoLink} name="LandingPage">
@@ -144,7 +179,10 @@ const TopbarDesktop = props => {
         />
       </NamedLink>
       {search}
+      
       <HistoryBackButton show={showBackButton}/>
+      {selectCurrency}
+            
       <NamedLink className={css.createListingLink} name="NewListingPage">
         <span className={css.createListing}>
           <FormattedMessage id="TopbarDesktop.createListing" />

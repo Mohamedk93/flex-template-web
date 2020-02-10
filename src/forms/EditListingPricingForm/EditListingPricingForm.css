@@ -108,3 +108,25 @@
   font-size: 25px;
   margin: 0 0 30px;
 }
+
+.currencyHolder {
+  margin-bottom: 30px;
+}
+
+.currencyName {
+  font-weight: bold;
+  margin: 0 10px;
+}
+
+
+.hideDiv {
+  display: none;
+}
+
+.customSelect{
+  width: 110px;
+}
+
+.quickRent {
+  width: 160px;
+}

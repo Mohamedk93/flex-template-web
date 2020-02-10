@@ -5,7 +5,7 @@ import { injectIntl, intlShape } from '../../util/reactIntl';
 import classNames from 'classnames';
 import config from '../../config';
 import { propTypes } from '../../util/types';
-import { formatMoney } from '../../util/currency';
+import { formatMoney, listingMinPrice, convertPrice  } from '../../util/currency';
 import { ensureListing } from '../../util/data';
 import { ResponsiveImage } from '../../components';
 
@@ -13,12 +13,22 @@ import css from './SearchMapInfoCard.css';
 
 // ListingCard is the listing info without overlayview or carousel controls
 const ListingCard = props => {
-  const { className, clickHandler, intl, isInCarousel, listing, urlToListing } = props;
+  const { className, clickHandler, intl, isInCarousel, listing, urlToListing, currentUser } = props;
 
   const { title, price } = listing.attributes;
-  const formattedPrice =
+  let formattedPrice =
     price && price.currency === config.currency ? formatMoney(intl, price) : price.currency;
   const firstImage = listing.images && listing.images.length > 0 ? listing.images[0] : null;
+  
+  let minPrice= null;
+  
+  if(listing && listing.id){
+    minPrice = listingMinPrice(listing);
+  }
+    
+  formattedPrice = convertPrice(currentUser, minPrice, formattedPrice);
+  
+
 
   // listing card anchor needs sometimes inherited border radius.
   const classes = classNames(
@@ -92,9 +102,11 @@ class SearchMapInfoCard extends Component {
       listings,
       createURLToListing,
       onListingInfoCardClicked,
+      currentUser
     } = this.props;
     const currentListing = ensureListing(listings[this.state.currentListingIndex]);
     const hasCarousel = listings.length > 1;
+
     const pagination = hasCarousel ? (
       <div className={classNames(css.paginationInfo, css.borderRadiusInheritBottom)}>
         <button
@@ -131,12 +143,15 @@ class SearchMapInfoCard extends Component {
     return (
       <div className={classes}>
         <div className={css.caretShadow} />
+
+
         <ListingCard
           clickHandler={onListingInfoCardClicked}
           urlToListing={createURLToListing(currentListing)}
           listing={currentListing}
           intl={intl}
           isInCarousel={hasCarousel}
+          currentUser={currentUser}
         />
         {pagination}
         <div className={caretClass} />

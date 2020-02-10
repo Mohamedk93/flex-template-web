@@ -40,6 +40,7 @@ class MainPanel extends Component {
       primaryFilters,
       secondaryFilters,
       searchPoint,
+      currentUser,
     } = this.props;
 
     const isSearchFiltersPanelOpen = !!secondaryFilters && this.state.isSearchFiltersPanelOpen;
@@ -132,6 +133,7 @@ class MainPanel extends Component {
               search={searchParamsForPagination}
               setActiveListing={onActivateListing}
               searchPoint={searchPoint}
+              currentUser={this.props.currentUser}
             />
           </div>
         )}

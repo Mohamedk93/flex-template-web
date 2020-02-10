@@ -137,6 +137,7 @@ export class ManageListingsPageComponent extends Component {
                   <ManageListingCard
                     className={css.listingCard}
                     key={l.id.uuid}
+                    currentUser={this.props.currentUser}
                     listing={l}
                     isMenuOpen={!!listingMenuOpen && listingMenuOpen.id.uuid === l.id.uuid}
                     actionsInProgressListingId={openingListing || closingListing}
@@ -210,6 +211,9 @@ const mapStateToProps = state => {
     closingListing,
     closingListingError,
   } = state.ManageListingsPage;
+  const {
+    currentUser
+  } = state.user;
   const listings = getOwnListingsById(state, currentPageResultIds);
   return {
     currentPageResultIds,
@@ -223,6 +227,7 @@ const mapStateToProps = state => {
     openingListingError,
     closingListing,
     closingListingError,
+    currentUser,
   };
 };
 

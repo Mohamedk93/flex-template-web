@@ -1,10 +1,12 @@
 import isEmpty from 'lodash/isEmpty';
+import axios from 'axios';
 import { clearCurrentUser, fetchCurrentUser } from './user.duck';
-import { storableError } from '../util/errors';
+import { storableError } from '../util/errors'
+;
 import * as log from '../util/log';
 
 const authenticated = authInfo => authInfo && authInfo.grantType === 'refresh_token';
-
+const API_URL = process.env.REACT_APP_API_URL;
 // ================ Action types ================ //
 
 export const AUTH_INFO_REQUEST = 'app/Auth/AUTH_INFO_REQUEST';
@@ -125,6 +127,7 @@ export const authInfo = () => (dispatch, getState, sdk) => {
       // store (i.e. cookies), and should not fail in normal
       // circumstances. If it fails, it's due to a programming
       // error. In that case we mark the operation done and dispatch
+
       // `null` success action that marks the user as unauthenticated.
       log.error(e, 'auth-info-failed');
       dispatch(authInfoSuccess(null));
@@ -173,12 +176,14 @@ export const signup = params => (dispatch, getState, sdk) => {
   dispatch(signupRequest());
   const { email, password, firstName, lastName, ...rest } = params;
 
-  const createUserParams = isEmpty(rest)
-    ? { email, password, firstName, lastName }
-    : { email, password, firstName, lastName, protectedData: { ...rest } };
-
-  // We must login the user if signup succeeds since the API doesn't
-  // do that automatically.
+  axios.get(`${API_URL}/api/v1/rates`)
+  .then(function (response) {
+    const rates = response.data;
+    const currency = '';
+    let lastRateUpdate = new Date();
+    lastRateUpdate.setDate(lastRateUpdate.getDate() - 2);
+    lastRateUpdate = lastRateUpdate.toDateString();
+    const createUserParams = { email, password, firstName, lastName, protectedData: { lastRateUpdate, rates, currency, ...rest }};
   return sdk.currentUser
     .create(createUserParams)
     .then(() => dispatch(signupSuccess()))
@@ -190,5 +195,10 @@ export const signup = params => (dispatch, getState, sdk) => {
         firstName: params.firstName,
         lastName: params.lastName,
       });
-    });
+    })
+  })
+  .catch(error => {
+    console.log(error)
+  });
+
 };
