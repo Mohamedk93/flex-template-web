@@ -136,10 +136,9 @@ export const EditListingPricingFormComponent = props => (
         if(rentalTypes.indexOf('daily') !== -1){
           sortArray.push("daily");
         }
-        if(rentalTypes.indexOf('daily') !== -1){
+        if(rentalTypes.indexOf('monthly') !== -1){
           sortArray.push("monthly");
         }
-        
 
         const priceHead = sortArray.map(item => {
           const rentalLabel = intl.formatMessage({

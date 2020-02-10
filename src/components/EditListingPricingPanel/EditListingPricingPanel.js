@@ -54,12 +54,6 @@ const EditListingPricingPanel = props => {
     <FormattedMessage id="EditListingPricingPanel.createListingTitle" />
   );
 
-  if(typeof window !== 'undefined'){
-    console.log('This is refresh value')
-    //PRICING_LOCAL_NAMES.forEach( name => {
-    //  localStorage.removeItem(name);
-    //})
-  }
 
   const priceCurrencyValid = price instanceof Money ? price.currency === config.currency : true;
 
