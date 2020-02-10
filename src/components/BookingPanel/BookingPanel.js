@@ -192,20 +192,23 @@ export class BookingPanel extends Component {
     const showBookingDatesForm = hasListingState && !isClosed;
     const showClosedListingHelpText = listing.id && isClosed;
     let { formattedPrice, priceTitle } = priceData(price, intl);
+    let currency = null;
+    let rates = [];
+    let result = null;
     if(currentUser){
-      let currency = null;
-      let rates = [];
-      if(currentUser.attributes.profile.protectedData.currency){
-        currency = currentUser.attributes.profile.protectedData.currency;
-        rates = currentUser.attributes.profile.protectedData.rates;
-        const result = rates.find(e => e.iso_code == currency);
-        if(result){
-          formattedPrice = formattedPrice.substr(1).replace(/,/g, '');
-          formattedPrice = formattedPrice * result.current_rate
-          formattedPrice = formattedPrice.toFixed(2);
-          formattedPrice = result.symbol.toString() + formattedPrice;
-        }
-      }
+      currency = currentUser.attributes.profile.protectedData.currency;
+      rates = currentUser.attributes.profile.protectedData.rates;
+      result = rates.find(e => e.iso_code == currency);
+    }else if(typeof window !== 'undefined'){
+      rates = JSON.parse(localStorage.getItem('rates'));
+      currency = localStorage.getItem('currentCode');
+      result = !rates ? null : rates.find(e => e.iso_code == currency);
+    }       
+    if(result){
+      formattedPrice = formattedPrice.substr(1).replace(/,/g, '');
+      formattedPrice = formattedPrice * result.current_rate
+      formattedPrice = formattedPrice.toFixed(2);
+      formattedPrice = result.symbol.toString() + formattedPrice;
     }
     const isBook = !!parse(location.search).book;
 
