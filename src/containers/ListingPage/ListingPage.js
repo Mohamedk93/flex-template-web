@@ -16,7 +16,7 @@ import {
   LISTING_PAGE_PARAM_TYPE_EDIT,
   createSlug,
 } from '../../util/urlHelpers';
-import { formatMoney } from '../../util/currency';
+import { formatMoney, listingMinPrice, convertPrice } from '../../util/currency';
 import { createResourceLocatorString, findRouteByRouteName } from '../../util/routes';
 import {
   ensureListing,
@@ -198,11 +198,16 @@ export class ListingPageComponent extends Component {
     const listingId = new UUID(rawParams.id);
     const isPendingApprovalVariant = rawParams.variant === LISTING_PAGE_PENDING_APPROVAL_VARIANT;
     const isDraftVariant = rawParams.variant === LISTING_PAGE_DRAFT_VARIANT;
+    let minPrice = null;
     const currentListing =
       isPendingApprovalVariant || isDraftVariant
         ? ensureOwnListing(getOwnListing(listingId))
         : ensureListing(getListing(listingId));
 
+    if(currentListing && currentListing.id){
+       minPrice = listingMinPrice(currentListing);
+    }
+    
     const listingSlug = rawParams.slug || createSlug(currentListing.attributes.title || '');
     const params = { slug: listingSlug, ...rawParams };
 
@@ -327,7 +332,9 @@ export class ListingPageComponent extends Component {
     // banned or deleted display names for the function
     const authorDisplayName = userDisplayNameAsString(ensuredAuthor, '');
 
-    const { formattedPrice, priceTitle } = priceData(price, intl);
+    let { formattedPrice, priceTitle } = priceData(price, intl);
+    
+    formattedPrice = convertPrice(currentUser, minPrice, formattedPrice);
 
     const handleBookingSubmit = values => {
       const isCurrentlyClosed = currentListing.attributes.state === LISTING_STATE_CLOSED;
@@ -420,6 +427,7 @@ export class ListingPageComponent extends Component {
               <div className={css.contentContainer}>
                 <SectionAvatar user={currentAuthor} params={params} />
                 <div className={css.mainContent}>
+                  
                   <SectionHeading
                     priceTitle={priceTitle}
                     formattedPrice={formattedPrice}
@@ -430,6 +438,7 @@ export class ListingPageComponent extends Component {
                     onContactUser={this.onContactUser}
                     publicData={publicData}
                   />
+                  
                   <SectionDescriptionMaybe description={description} />
                   <SectionFeaturesMaybe options={amenitiesConfig} publicData={publicData} />
                   <SectionRulesMaybe publicData={publicData} />
@@ -456,6 +465,7 @@ export class ListingPageComponent extends Component {
                 <BookingPanel
                   className={css.bookingPanel}
                   listing={currentListing}
+                  currentUser={currentUser}
                   isOwnListing={isOwnListing}
                   unitType={unitType}
                   onSubmit={handleBookingSubmit}

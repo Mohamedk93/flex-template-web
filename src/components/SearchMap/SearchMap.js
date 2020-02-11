@@ -127,9 +127,10 @@ export class SearchMapComponent extends Component {
       mapsConfig,
       activeListingId,
       messages,
+      currentUser,
     } = this.props;
-    const classes = classNames(rootClassName || css.root, className);
 
+    const classes = classNames(rootClassName || css.root, className);
     const listingsWithLocation = originalListings.filter(l => !!l.attributes.geolocation);
     const listings = mapsConfig.fuzzy.enabled
       ? withCoordinatesObfuscated(listingsWithLocation)
@@ -165,6 +166,7 @@ export class SearchMapComponent extends Component {
           listings={listings}
           activeListingId={activeListingId}
           mapComponentRefreshToken={this.state.mapReattachmentCount}
+          currentUser={currentUser}
           createURLToListing={this.createURLToListing}
           onListingClicked={this.onListingClicked}
           onListingInfoCardClicked={this.onListingInfoCardClicked}

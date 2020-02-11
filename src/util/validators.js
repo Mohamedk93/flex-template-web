@@ -1,6 +1,8 @@
 import moment from 'moment';
 import { types as sdkTypes } from './sdkLoader';
 import toPairs from 'lodash/toPairs';
+import { PRICING_LOCAL_NAMES } from './dates';
+
 
 const { LatLng, Money } = sdkTypes;
 
@@ -110,7 +112,34 @@ export const emailFormatValid = message => value => {
   return value && EMAIL_RE.test(value) ? VALID : message;
 };
 
-export const moneySubUnitAmountAtLeast = (message, minValue) => value => {
+export const moneySubUnitAmountAtLeast = (message, minValue, isMobile = false, count = 0, trueCount = 0, mobileArray = [], oldMobileArray = []) => value => {
+  let flag = true;
+  
+  if(isMobile){
+    if(oldMobileArray.indexOf(mobileArray[count]) == -1 || localStorage.getItem(mobileArray[count])){
+      const item = localStorage.getItem(mobileArray[count]);
+      if(item < minValue){
+        flag = false;
+        trueCount -= 1;
+      }else{
+        trueCount += 1;
+      }
+    }
+    count += 1;
+    const positiveCount = (mobileArray.length - oldMobileArray.length) <= trueCount;
+    if(positiveCount && flag){
+      localStorage.setItem('mobileButton', true);
+    }else{
+      localStorage.setItem('mobileButton', false);
+    }
+    if(flag){
+      return VALID;
+    }else{
+      localStorage.setItem('mobileButton', false);
+      return message;
+    }
+  }
+
   return value instanceof Money && value.amount >= minValue ? VALID : message;
 };
 

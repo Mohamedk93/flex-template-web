@@ -6,7 +6,7 @@ import { arrayOf, bool, func, node, oneOfType, shape, string } from 'prop-types'
 import classNames from 'classnames';
 import omit from 'lodash/omit';
 import { propTypes, LISTING_STATE_CLOSED, LINE_ITEM_NIGHT, LINE_ITEM_DAY } from '../../util/types';
-import { formatMoney } from '../../util/currency';
+import { formatMoney, listingCalculateMinPrice } from '../../util/currency';
 import { parse, stringify } from '../../util/urlHelpers';
 import config from '../../config';
 import { ModalInMobile, Button } from '../../components';
@@ -90,6 +90,7 @@ export class BookingPanel extends Component {
       history,
       location,
       intl,
+      currentUser,
     } = this.props;
 
     const publicData = listing.attributes.publicData;
@@ -190,7 +191,25 @@ export class BookingPanel extends Component {
     const isClosed = hasListingState && listing.attributes.state === LISTING_STATE_CLOSED;
     const showBookingDatesForm = hasListingState && !isClosed;
     const showClosedListingHelpText = listing.id && isClosed;
-    const { formattedPrice, priceTitle } = priceData(price, intl);
+    let { formattedPrice, priceTitle } = priceData(price, intl);
+    let currency = null;
+    let rates = [];
+    let result = null;
+    if(currentUser){
+      currency = currentUser.attributes.profile.protectedData.currency;
+      rates = currentUser.attributes.profile.protectedData.rates;
+      result = rates.find(e => e.iso_code == currency);
+    }else if(typeof window !== 'undefined'){
+      rates = JSON.parse(localStorage.getItem('rates'));
+      currency = localStorage.getItem('currentCode');
+      result = !rates ? null : rates.find(e => e.iso_code == currency);
+    }       
+    if(result){
+      formattedPrice = formattedPrice.substr(1).replace(/,/g, '');
+      formattedPrice = formattedPrice * result.current_rate
+      formattedPrice = formattedPrice.toFixed(2);
+      formattedPrice = result.symbol.toString() + formattedPrice;
+    }
     const isBook = !!parse(location.search).book;
 
     const subTitleText = !!subTitle
@@ -203,7 +222,7 @@ export class BookingPanel extends Component {
     const isDaily = unitType === LINE_ITEM_DAY;
 
     const unitTranslationKey = 'BookingPanel.perHour';
-
+    const currentListingType = listingCalculateMinPrice(listing.attributes.publicData).meta.rentalType;
     const classes = classNames(rootClassName || css.root, className);
     const titleClasses = classNames(titleClassName || css.bookingTitle);
     const quickRent =  listing.attributes.publicData.quickRent
@@ -268,6 +287,8 @@ export class BookingPanel extends Component {
       office_rooms: publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 100,
       meeting_rooms: publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 100,
     };
+    
+
 
     return (
       <div className={classes}>
@@ -293,6 +314,7 @@ export class BookingPanel extends Component {
           {showBookingDatesForm ? (
             <BookingDatesForm
               avails={$avails}
+              currentUser={currentUser}
               className={css.bookingForm}
               formId="BookingPanel"
               submitButtonWrapperClassName={css.bookingDatesSubmitButtonWrapper}
@@ -326,7 +348,7 @@ export class BookingPanel extends Component {
               {formattedPrice}
             </div>
             <div className={css.perUnit}>
-              <FormattedMessage id={unitTranslationKey} />
+              {currentListingType} 
             </div>
           </div>
 

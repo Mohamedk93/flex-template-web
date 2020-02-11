@@ -149,12 +149,15 @@ class SearchMapPriceLabelWithOverlay extends Component {
     const currentListing = ensureListing(this.props.listing);
     const nextListing = ensureListing(nextProps.listing);
     const isSameListing = currentListing.id.uuid === nextListing.id.uuid;
+    let cr = true;
+    if(this.props.currentUser && nextProps.currentUser){
+      cr = this.props.currentUser.attributes.profile.protectedData.currency === nextProps.currentUser.attributes.profile.protectedData.currency;
+    }
     const hasSamePrice = currentListing.attributes.price === nextListing.attributes.price;
     const hasSameActiveStatus = this.props.isActive === nextProps.isActive;
     const hasSameRefreshToken =
       this.props.mapComponentRefreshToken === nextProps.mapComponentRefreshToken;
-
-    return !(isSameListing && hasSamePrice && hasSameActiveStatus && hasSameRefreshToken);
+    return !(isSameListing && hasSamePrice && hasSameActiveStatus && hasSameRefreshToken ) || cr;
   }
 
   render() {
@@ -165,6 +168,7 @@ class SearchMapPriceLabelWithOverlay extends Component {
       className,
       listing,
       onListingClicked,
+      currentUser,
       mapComponentRefreshToken,
     } = this.props;
 
@@ -175,6 +179,7 @@ class SearchMapPriceLabelWithOverlay extends Component {
         getPixelPositionOffset={getPixelPositionOffset}
       >
         <SearchMapPriceLabel
+          currentUser={currentUser}
           isActive={isActive}
           className={className}
           listing={listing}
@@ -233,7 +238,8 @@ const priceLabelsInLocations = (
   activeListingId,
   infoCardOpen,
   onListingClicked,
-  mapComponentRefreshToken
+  mapComponentRefreshToken,
+  currentUser
 ) => {
   const listingArraysInLocations = reducedToArray(groupedByCoordinates(listings));
   const priceLabels = listingArraysInLocations.reverse().map(listingArr => {
@@ -254,7 +260,6 @@ const priceLabelsInLocations = (
       // Explicit type change to object literal for Google OverlayViews (geolocation is SDK type)
       const { geolocation } = listing.attributes;
       const latLngLiteral = { lat: geolocation.lat, lng: geolocation.lng };
-
       return (
         <SearchMapPriceLabelWithOverlay
           key={listing.id.uuid}
@@ -265,6 +270,7 @@ const priceLabelsInLocations = (
           listing={listing}
           onListingClicked={onListingClicked}
           mapComponentRefreshToken={mapComponentRefreshToken}
+          currentUser={currentUser}
         />
       );
     }
@@ -294,7 +300,8 @@ const infoCardComponent = (
   infoCardOpen,
   onListingInfoCardClicked,
   createURLToListing,
-  mapComponentRefreshToken
+  mapComponentRefreshToken,
+  currentUser
 ) => {
   const listingsArray = Array.isArray(infoCardOpen) ? infoCardOpen : [infoCardOpen];
 
@@ -320,6 +327,7 @@ const infoCardComponent = (
         listings={listingsArray}
         onListingInfoCardClicked={onListingInfoCardClicked}
         createURLToListing={createURLToListing}
+        currentUser={currentUser}
       />
     </CustomOverlayView>
   );
@@ -342,8 +350,9 @@ const MapWithGoogleMap = withGoogleMap(props => {
     onMapLoad,
     zoom,
     mapComponentRefreshToken,
+    currentUser,
   } = props;
-
+  
   const controlPosition =
     typeof window !== 'undefined' && typeof window.google !== 'undefined'
       ? window.google.maps.ControlPosition.LEFT_TOP
@@ -354,13 +363,15 @@ const MapWithGoogleMap = withGoogleMap(props => {
     activeListingId,
     infoCardOpen,
     onListingClicked,
-    mapComponentRefreshToken
+    mapComponentRefreshToken,
+    currentUser,
   );
   const infoCard = infoCardComponent(
     infoCardOpen,
     onListingInfoCardClicked,
     createURLToListing,
-    mapComponentRefreshToken
+    mapComponentRefreshToken,
+    currentUser,
   );
 
   return (
@@ -464,10 +475,11 @@ class SearchMapWithGoogleMap extends Component {
       }
     }
   }
+  
 
   render() {
-    const { onMapLoad, onMapMoveEnd, ...rest } = this.props;
-    return <MapWithGoogleMap onMapLoad={this.onMapLoad} onIdle={this.onIdle} {...rest} />;
+    const { onMapLoad, onMapMoveEnd, currentUser, ...rest } = this.props;
+    return <MapWithGoogleMap currentUser={currentUser} onMapLoad={this.onMapLoad} onIdle={this.onIdle} {...rest} />;
   }
 }
 

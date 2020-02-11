@@ -42,15 +42,26 @@ const nonCommissionReversalLineItems = transaction => {
 };
 
 const LineItemRefundMaybe = props => {
-  const { transaction, intl } = props;
+  const { transaction, intl, currentUser } = props;
 
   // all non-commission, reversal line items
   const refundLineItems = nonCommissionReversalLineItems(transaction);
 
   const refund = lineItemsTotal(refundLineItems);
 
-  const formattedRefund = refundLineItems.length > 0 ? formatMoney(intl, refund) : null;
+  let formattedRefund = refundLineItems.length > 0 ? formatMoney(intl, refund) : null;
 
+  if(currentUser && currentUser.attributes.profile.protectedData.currency && formattedRefund){
+    let currency = currentUser.attributes.profile.protectedData.currency;
+    let rates = currentUser.attributes.profile.protectedData.rates;
+    const result = rates.find(e => e.iso_code == currency);
+    if(result){
+      formattedRefund = formattedRefund.substr(2).replace(/,/g, '').replace('$', '');
+      formattedRefund = formattedRefund * result.current_rate
+      formattedRefund = formattedRefund.toFixed(2);
+      formattedRefund = '-' + result.symbol.toString() + formattedRefund;
+    }
+  }
   return formattedRefund ? (
     <div className={css.lineItem}>
       <span className={css.itemLabel}>

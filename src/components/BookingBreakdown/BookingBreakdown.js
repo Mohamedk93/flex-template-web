@@ -36,6 +36,8 @@ export const BookingBreakdownComponent = props => {
     intl,
     dateType,
     currentRentalType,
+    currentUser,
+    listing
   } = props;
 
   const isCustomer = userRole === 'customer';
@@ -102,18 +104,20 @@ export const BookingBreakdownComponent = props => {
       {timeBasedLine}
 
       <LineItemCustomPrices
-        transaction={transaction}         
+        transaction={transaction}
+        currentUser={currentUser}         
         intl={intl} 
         unitType={unitType} 
       />
-
+      
       <LineItemSubTotalMaybe
         transaction={transaction}
+        currentUser={currentUser}         
         unitType={unitType}
         userRole={userRole}
         intl={intl}
       />
-      <LineItemRefundMaybe transaction={transaction} unitType={unitType} intl={intl} />
+      <LineItemRefundMaybe transaction={transaction} unitType={unitType} intl={intl} currentUser={currentUser} />
 
       <LineItemCustomerCommissionMaybe
         transaction={transaction}
@@ -125,19 +129,20 @@ export const BookingBreakdownComponent = props => {
         isCustomer={isCustomer}
         intl={intl}
       />
-
       <LineItemProviderCommissionMaybe
         transaction={transaction}
         isProvider={isProvider}
         intl={intl}
+        currentUser={currentUser}
       />
       <LineItemProviderCommissionRefundMaybe
         transaction={transaction}
         isProvider={isProvider}
         intl={intl}
+        currentUser={currentUser}
       />
-
-      <LineItemTotalPrice transaction={transaction} isProvider={isProvider} intl={intl} />
+      
+      <LineItemTotalPrice transaction={transaction} currentUser={currentUser} isProvider={isProvider} intl={intl} listing={listing}/>
 
       {hasCommissionLineItem ? (
           <span className={css.feeInfo}>

@@ -469,17 +469,7 @@ class SearchMapWithMapbox extends Component {
             : null;
 
           // Create component portals for correct marker containers
-          if (isMapReadyForMarkers && m.type === 'price') {
-            return ReactDOM.createPortal(
-              <SearchMapPriceLabel {...m.componentProps} />,
-              portalDOMContainer
-            );
-          } else if (isMapReadyForMarkers && m.type === 'group') {
-            return ReactDOM.createPortal(
-              <SearchMapGroupLabel {...m.componentProps} />,
-              portalDOMContainer
-            );
-          }
+          
           return null;
         })}
         {this.state.mapContainer && this.currentInfoCard

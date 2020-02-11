@@ -37,19 +37,23 @@ const EditListingDescriptionPanel = props => {
     <FormattedMessage id="EditListingDescriptionPanel.createListingTitle" />
   );
 
+  const currency = publicData.currency ? publicData.currency : 'usd';
   const seats_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
   const office_rooms_quantity = publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 1;
   const meeting_rooms_quantity = publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 1;
+
+  console.log(currency)
 
   return (
     <div className={classes}>
       <h1 className={css.title}>{panelTitle}</h1>
       <EditListingDescriptionForm
         className={css.form}
-        initialValues={{ 
-          title, 
-          description, 
-          category: publicData.category, 
+        initialValues={{
+          title,
+          description,
+          currency: publicData.currency,
+          category: publicData.category,
           workspaces: publicData.workspaces,
           seats_quantity,
           office_rooms_quantity,
@@ -57,11 +61,13 @@ const EditListingDescriptionPanel = props => {
         }}
         saveActionMsg={submitButtonText}
         onSubmit={values => {
-          const { 
-            title, 
-            description, 
+          console.log(values)
+          const {
+            title,
+            description,
             category,
-            workspaces, 
+            currency,
+            workspaces,
             seats_quantity,
             office_rooms_quantity,
             meeting_rooms_quantity,
@@ -69,8 +75,9 @@ const EditListingDescriptionPanel = props => {
           const updateValues = {
             title: title.trim(),
             description,
-            publicData: { 
-              category, 
+            publicData: {
+              category,
+              currency,
               workspaces,
               seatsQuantity: seats_quantity ? parseInt(seats_quantity) : 0,
               officeRoomsQuantity: office_rooms_quantity ? parseInt(office_rooms_quantity) : 0,

@@ -75,6 +75,8 @@ const defaultDirectives = {
     '*.tiles.mapbox.com',
     'api.mapbox.com',
     'events.mapbox.com',
+    'https://api.hotdesk.roobykon.net',
+    'https://api.ipdata.co',
 
     // Google Analytics
     'www.google-analytics.com',

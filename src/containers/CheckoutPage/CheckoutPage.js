@@ -879,6 +879,7 @@ export class CheckoutPageComponent extends Component {
           className={css.bookingBreakdown}
           userRole="customer"
           unitType={config.bookingUnitType}
+          currentUser={currentUser}
           transaction={tx}
           booking={txBooking}
           dateType={DATE_TYPE_DATE}

@@ -228,7 +228,6 @@ const getTransitionsToState = getTransitionsToStateFn(stateDescription);
 // This is needed to fetch transactions that need response from provider.
 // I.e. transactions which provider needs to accept or decline
 export const transitionsToRequested = getTransitionsToState(STATE_PREAUTHORIZED);
-console.log(transitionsToRequested)
 
 /**
  * Helper functions to figure out if transaction is in a specific state.

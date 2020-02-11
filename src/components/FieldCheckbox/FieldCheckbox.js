@@ -62,7 +62,7 @@ const FieldCheckboxComponent = props => {
       }
     : {};
 
-  return (
+    return (
     <span className={classes}>
       <Field {...checkboxProps} />
       <label htmlFor={id} className={css.label}>
