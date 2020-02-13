@@ -42,6 +42,7 @@ import * as IconSocialMediaFacebook from './components/IconSocialMediaFacebook/I
 import * as IconSocialMediaInstagram from './components/IconSocialMediaInstagram/IconSocialMediaInstagram.example';
 import * as IconSocialMediaTwitter from './components/IconSocialMediaTwitter/IconSocialMediaTwitter.example';
 import * as IconSpinner from './components/IconSpinner/IconSpinner.example';
+import * as IconSuccess from './components/IconSuccess/IconSuccess.example';
 import * as ImageCarousel from './components/ImageCarousel/ImageCarousel.example';
 import * as KeywordFilter from './components/KeywordFilter/KeywordFilter.example';
 import * as ListingCard from './components/ListingCard/ListingCard.example';
@@ -151,6 +152,7 @@ export {
   IconSocialMediaInstagram,
   IconSocialMediaTwitter,
   IconSpinner,
+  IconSuccess,
   ImageCarousel,
   KeywordFilter,
   ListingCard,
