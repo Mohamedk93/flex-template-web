@@ -61,7 +61,7 @@ export class SearchPageComponent extends Component {
       dateRangeFilterConfig,
       keywordFilterConfig,
     } = this.props;
-    debugger
+
     // Note: "category" and "amenities" filters are not actually filtering anything by default.
     // Currently, if you want to use them, we need to manually configure them to be available
     // for search queries. Read more from extended data document:
@@ -342,7 +342,7 @@ SearchPageComponent.defaultProps = {
   categories: config.custom.categories,
   amenities: config.custom.amenities,
   currencies: config.custom.currencies,
-  quickRents: config.custom.quickRent,
+  quickRents: 'quickRent',
   priceFilterConfig: config.custom.priceFilterConfig,
   dateRangeFilterConfig: config.custom.dateRangeFilterConfig,
   keywordFilterConfig: config.custom.keywordFilterConfig,
@@ -364,7 +364,7 @@ SearchPageComponent.propTypes = {
   categories: array,
   amenities: array,
   currencies: array,
-  quickRents: object,
+  quickRents: string,
   priceFilterConfig: shape({
     min: number.isRequired,
     max: number.isRequired,

@@ -202,6 +202,7 @@ const SearchFiltersComponent = props => {
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
   ) : null;
+  debugger
 
   const currenciesFilterr = 
     <SelectMultipleFilter
