@@ -71,6 +71,8 @@ const SearchFiltersComponent = props => {
     searchInProgress,
     categoryFilter,
     amenitiesFilter,
+    currencies,
+    quickRents,
     priceFilter,
     dateRangeFilter,
     keywordFilter,
@@ -99,11 +101,19 @@ const SearchFiltersComponent = props => {
   const initialAmenities = amenitiesFilter
     ? initialValues(urlQueryParams, amenitiesFilter.paramName)
     : null;
+  
+  const initialCurrencies = currencies
+    ? initialValues(urlQueryParams, currencies.paramName)
+    : null;
+
+  const initialQuickRents = quickRents
+    ? initialValues(urlQueryParams, quickRents.paramName)
+    : null;
 
   const initialCategory = categoryFilter
     ? initialValue(urlQueryParams, categoryFilter.paramName)
     : null;
-
+  
   const initialPriceRange = priceFilter
     ? initialPriceRangeValue(urlQueryParams, priceFilter.paramName)
     : null;
@@ -193,6 +203,33 @@ const SearchFiltersComponent = props => {
     />
   ) : null;
 
+  const currenciesFilterr = 
+    <SelectMultipleFilter
+      id={'SearchFilters.currenciesFilter'}
+      name="currencies"
+      urlParam='pub_currency'
+      label='currencies'
+      onSubmit={handleSelectOptions}
+      options={currencies.config}
+      initialValues={initialCurrencies}
+      showAsPopup
+      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
+    />
+
+
+    const quickRentsFilter = 
+    <SelectMultipleFilter
+      id={'SearchFilters.quickRentsFilter'}
+      name="quickRents"
+      urlParam='pub_quickRents'
+      label='quickRents'
+      onSubmit={handleSelectOptions}
+      options={quickRents.config}
+      initialValues={initialQuickRents}
+      showAsPopup
+      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
+    />
+
   const priceFilterElement = priceFilter ? (
     <PriceFilter
       id="SearchFilters.priceFilter"
@@ -271,6 +308,7 @@ const SearchFiltersComponent = props => {
         {priceFilterElement}
         {dateRangeFilterElement}
         {keywordFilterElement}
+        {currenciesFilterr}
         {toggleSearchFiltersPanelButton}
       </div>
 
