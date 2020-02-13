@@ -5,7 +5,7 @@ import { LISTING_STATE_DRAFT } from '../util/types';
 import * as log from '../util/log';
 import { authInfo } from './Auth.duck';
 import axios from 'axios';
-import { stripeAccountCreateSuccess } from './stripe.duck.js';
+import { stripeAccountCreateSuccess } from './stripeConnectAccount.duck';
 import { locationBounds } from '../util/googleMaps';
 
 
