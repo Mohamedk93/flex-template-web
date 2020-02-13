@@ -86,7 +86,6 @@ class MainPanel extends Component {
           resultsCount={totalItems}
           searchInProgress={searchInProgress}
           searchListingsError={searchListingsError}
-          currencies={currencies}
           quickRents={quickRents}
           onManageDisableScrolling={onManageDisableScrolling}
           {...searchFiltersPanelProps}
@@ -106,6 +105,7 @@ class MainPanel extends Component {
           onCloseModal={onCloseModal}
           filterParamNames={filterParamNames}
           selectedFiltersCount={selectedFiltersCount}
+          quickRents={quickRents}
           {...primaryFilters}
           {...secondaryFilters}
         />

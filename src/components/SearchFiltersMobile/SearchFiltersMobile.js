@@ -200,6 +200,7 @@ class SearchFiltersMobileComponent extends Component {
       dateRangeFilter,
       keywordFilter,
       intl,
+      quickRents,
     } = this.props;
 
     const classes = classNames(rootClassName || css.root, className);
@@ -224,6 +225,11 @@ class SearchFiltersMobileComponent extends Component {
       id: 'SearchFiltersMobile.categoryLabel',
     });
     const initialCategory = categoryFilter ? this.initialValue(categoryFilter.paramName) : null;
+    
+    const quickRentsLabel =  intl.formatMessage({
+      id: 'SearchFilters.quickRentsLabel',
+    });
+    
 
     const categoryFilterElement = categoryFilter ? (
       <SelectSingleFilter
@@ -240,6 +246,7 @@ class SearchFiltersMobileComponent extends Component {
     const amenitiesLabel = intl.formatMessage({ id: 'SearchFiltersMobile.amenitiesLabel' });
 
     const initialAmenities = this.initialValues(amenitiesFilter.paramName);
+    const initialQuickRents = this.initialValues('pub_quickRent');
 
     const amenitiesFilterElement = amenitiesFilter ? (
       <SelectMultipleFilter
@@ -254,6 +261,18 @@ class SearchFiltersMobileComponent extends Component {
       />
     ) : null;
 
+    const quickRentsFilter = 
+      <SelectMultipleFilter
+        id={'SearchFilters.quickRentsFilter'}
+        name="quickRents"
+        urlParam='pub_quickRent'
+        label={quickRentsLabel}
+        onSubmit={this.handleSelectMultiple}
+        liveEdit
+        options={[{key: "quickRent", label: quickRentsLabel}]}
+        initialValues={initialQuickRents}
+      />
+    
     const initialPriceRange = this.initialPriceRangeValue(priceFilter.paramName);
 
     const priceFilterElement = priceFilter ? (
@@ -365,6 +384,7 @@ class SearchFiltersMobileComponent extends Component {
               {categoryFilterElement}
               {amenitiesFilterElement}
               {priceFilterElement}
+              {quickRentsFilter}
               {dateRangeFilterElement}
             </div>
           ) : null}
