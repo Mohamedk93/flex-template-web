@@ -71,7 +71,6 @@ const SearchFiltersComponent = props => {
     searchInProgress,
     categoryFilter,
     amenitiesFilter,
-    currencies,
     quickRents,
     priceFilter,
     dateRangeFilter,
@@ -98,14 +97,14 @@ const SearchFiltersComponent = props => {
     id: 'SearchFilters.keywordLabel',
   });
 
+  const quickRentsLabel =  intl.formatMessage({
+    id: 'SearchFilters.quickRentsLabel',
+  });
+
   const initialAmenities = amenitiesFilter
     ? initialValues(urlQueryParams, amenitiesFilter.paramName)
     : null;
   
-  const initialCurrencies = currencies
-    ? initialValues(urlQueryParams, currencies.paramName)
-    : null;
-
   const initialQuickRents = quickRents
     ? initialValues(urlQueryParams, quickRents.paramName)
     : null;
@@ -202,35 +201,19 @@ const SearchFiltersComponent = props => {
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
   ) : null;
-  debugger
-
-  const currenciesFilterr = 
-    <SelectMultipleFilter
-      id={'SearchFilters.currenciesFilter'}
-      name="currencies"
-      urlParam='pub_currency'
-      label='currencies'
-      onSubmit={handleSelectOptions}
-      options={currencies.config}
-      initialValues={initialCurrencies}
-      showAsPopup
-      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
-    />
-
-
-    const quickRentsFilter = 
+  
+  const quickRentsFilter = 
     <SelectMultipleFilter
       id={'SearchFilters.quickRentsFilter'}
       name="quickRents"
-      urlParam='pub_quickRents'
-      label='quickRents'
+      urlParam='pub_quickRent'
+      label={quickRentsLabel}
       onSubmit={handleSelectOptions}
-      options={quickRents.config}
+      options={[{key: "quickRent", label: quickRentsLabel}]}
       initialValues={initialQuickRents}
       showAsPopup
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
-
   const priceFilterElement = priceFilter ? (
     <PriceFilter
       id="SearchFilters.priceFilter"
@@ -309,7 +292,7 @@ const SearchFiltersComponent = props => {
         {priceFilterElement}
         {dateRangeFilterElement}
         {keywordFilterElement}
-        {currenciesFilterr}
+        {quickRentsFilter}
         {toggleSearchFiltersPanelButton}
       </div>
 

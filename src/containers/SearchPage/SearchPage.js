@@ -55,7 +55,6 @@ export class SearchPageComponent extends Component {
     const {
       categories,
       amenities,
-      currencies,
       quickRents,
       priceFilterConfig,
       dateRangeFilterConfig,
@@ -87,10 +86,6 @@ export class SearchPageComponent extends Component {
       keywordFilter: {
         paramName: 'keywords',
         config: keywordFilterConfig,
-      },
-      currenciesFitler: {
-        paramName: 'pub_currency',
-        config: currencies,
       },
       quickRentsFitler: {
         paramName: 'pub_quickRent',
@@ -247,9 +242,9 @@ export class SearchPageComponent extends Component {
     while (match = regex.exec(locationUrl)) {
       params[match[1]] = match[2];
     }
-    const pub_currency = params['pub_currency']
-    if(pub_currency){
-      validQueryParams['pub_currency'] = pub_currency;
+    const pub_quickRent = params['pub_quickRent']
+    if(pub_quickRent){
+      validQueryParams['pub_quickRent'] = pub_quickRent;
     }
     // Set topbar class based on if a modal is open in
     // a child component
@@ -287,7 +282,6 @@ export class SearchPageComponent extends Component {
             pagination={pagination}
             searchParamsForPagination={parse(location.search)}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
-            currencies={filters.currenciesFitler}
             quickRents={filters.quickRentsFitler}
             primaryFilters={{
               categoryFilter: filters.categoryFilter,
@@ -341,8 +335,7 @@ SearchPageComponent.defaultProps = {
   tab: 'listings',
   categories: config.custom.categories,
   amenities: config.custom.amenities,
-  currencies: config.custom.currencies,
-  quickRents: 'quickRent',
+  quickRents: config.custom.quickRents,
   priceFilterConfig: config.custom.priceFilterConfig,
   dateRangeFilterConfig: config.custom.dateRangeFilterConfig,
   keywordFilterConfig: config.custom.keywordFilterConfig,
@@ -363,8 +356,7 @@ SearchPageComponent.propTypes = {
   tab: oneOf(['filters', 'listings', 'map']).isRequired,
   categories: array,
   amenities: array,
-  currencies: array,
-  quickRents: string,
+  quickRents: object,
   priceFilterConfig: shape({
     min: number.isRequired,
     max: number.isRequired,
