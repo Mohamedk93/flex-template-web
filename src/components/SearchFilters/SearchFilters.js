@@ -101,6 +101,10 @@ const SearchFiltersComponent = props => {
     id: 'SearchFilters.quickRentsLabel',
   });
 
+  const quickRentsLabelTitle =  intl.formatMessage({
+    id: 'SearchFilters.quickRentsLabelTitle',
+  });
+
   const initialAmenities = amenitiesFilter
     ? initialValues(urlQueryParams, amenitiesFilter.paramName)
     : null;
@@ -207,7 +211,7 @@ const SearchFiltersComponent = props => {
       id={'SearchFilters.quickRentsFilter'}
       name="quickRents"
       urlParam='pub_quickRent'
-      label={quickRentsLabel}
+      label={quickRentsLabelTitle}
       onSubmit={handleSelectOptions}
       options={[{key: "quickRent", label: quickRentsLabel}]}
       initialValues={initialQuickRents}

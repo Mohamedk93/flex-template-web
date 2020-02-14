@@ -77,6 +77,10 @@ const generateHourOptions = (date, startTime, endTime) => {
   return options;
 };
 
+export const pad = number =>{
+  return (number < 10) ? '0' + number.toString() : number.toString();
+}  
+
 export const isFullHours = duration => {
   try {
     const durationDecimal = new Decimal(duration);
@@ -109,7 +113,43 @@ const DateHourPicker = props => {
     datePlaceholder,
     focusedInput,
     onFieldBlur,
+    avails,
   } = props;
+  
+  let selectDay = '';
+  let startMinHour = '';
+  let startMinMinute = ''
+  let startMaxHour = '';
+  let startMaxMinute = '';
+  let endMinHour = '';
+  let endMinMinute = '';
+  let endMaxHour = '';
+  let endMaxMinutes = '';
+  if(bookingDate){
+    selectDay = bookingDate.date.toLocaleString('en-us', {weekday:'long'});
+    selectDay = avails.find( weekDay => weekDay.day === selectDay)
+    if(selectDay){
+      let tmp = selectDay.hours.split(' - ');
+      startMinHour = moment(tmp[0], ["h:mm `A"]).format("HH")
+      endMaxHour = startMaxHour = moment(tmp[1], ["h:mm `A"]).format("HH")
+      startMaxHour = parseInt(startMaxHour) - 1;
+      startMaxHour = pad(startMaxHour);
+      startMinMinute = moment(tmp[0], ["h:mm `A"]).format("mm")
+      endMaxMinutes = startMaxMinute = moment(tmp[1], ["h:mm `A"]).format("mm")
+    }
+  }
+
+  if(hourStart && startMinHour){
+    let tmp = hourStart.split(':');
+    tmp[0] = parseInt(tmp[0])
+    if(tmp[1] == '30' && tmp[0] != '23'){
+      endMinMinute = '30'
+    }else if(tmp[0] != '23' && tmp[1] == '30'){
+      endMinMinute = '00'
+    }
+    endMinHour = tmp[0] + 1;
+    endMinHour = pad(endMinHour);
+  }
 
   const bookingDateLabel = intl.formatMessage({ id: 'BookingDatesForm.bookingDateLabel' });
   const requiredMessage = intl.formatMessage({ id: 'BookingDatesForm.requiredDate' });
@@ -196,6 +236,7 @@ const DateHourPicker = props => {
       <div className={classNames(css.hourRow, { [css.hourRowExtraDate]: !!day })}>
         <FieldSelect
           className={css.hourEnd}
+          disabled={!bookingDate ? 'disables' : ''}
           id={`${id}.hourStart`}
           name={`${id}.hourStart`}
           label={hourStartLabel}
@@ -207,9 +248,10 @@ const DateHourPicker = props => {
           <option value="" disabled>
             {hourStartPlaceholder}
           </option>
-          {generateHourOptions(date, { hour: 0, minute: 0 }, { hour: 23, minute: 30 })}
+          {generateHourOptions(date, { hour: startMinHour || 0, minute: parseInt(startMinMinute) || 0 }, { hour: parseInt(startMaxHour) || 23, minute: parseInt(startMaxMinute) ||  0 })}
         </FieldSelect>
         <FieldSelect
+          disabled={!hourStart ? 'disables' : ''}
           className={css.hourEnd}
           id={`${id}.hourEnd`}
           name={`${id}.hourEnd`}
@@ -222,7 +264,7 @@ const DateHourPicker = props => {
           <option value="" disabled>
             {hourEndPlaceholder}
           </option>
-          {generateHourOptions(date, { hour: 0, minute: 30 }, { hour: 24, minute: 0 })}
+          {generateHourOptions(date, { hour: parseInt(endMinHour) || 0, minute: parseInt(endMinMinute) || 0 }, { hour: parseInt(endMaxHour), minute: parseInt(endMaxMinutes) || 0 })}
         </FieldSelect>
       </div>
       {hourStart && hourEnd && errorMessage ? (
