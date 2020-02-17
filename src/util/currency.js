@@ -168,7 +168,7 @@ const f = value => ( (value.toString().includes('.')) ? (value.toString().split(
  export const convertUnitToSubUnit = (value, subUnitDivisor, useComma = false, fixed = true) => {
   const subUnitDivisorAsDecimal = convertDivisorToDecimal(subUnitDivisor);
   if(f(value) !== 2 && fixed){
-    value = value.toFixed(2);
+    value = parseFloat(value).toFixed(2);
   }
   if (!(typeof value === 'string' || typeof value === 'number')) {
     throw new TypeError('Value must be either number or string');

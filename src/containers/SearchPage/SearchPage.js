@@ -271,6 +271,7 @@ export class SearchPageComponent extends Component {
           <MainPanel
             urlQueryParams={validQueryParams}
             listings={listings}
+            currentUser={this.props.currentUser}
             searchInProgress={searchInProgress}
             searchListingsError={searchListingsError}
             searchParamsAreInSync={searchParamsAreInSync}
