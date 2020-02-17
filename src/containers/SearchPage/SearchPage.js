@@ -55,6 +55,7 @@ export class SearchPageComponent extends Component {
     const {
       categories,
       amenities,
+      quickRents,
       priceFilterConfig,
       dateRangeFilterConfig,
       keywordFilterConfig,
@@ -85,6 +86,10 @@ export class SearchPageComponent extends Component {
       keywordFilter: {
         paramName: 'keywords',
         config: keywordFilterConfig,
+      },
+      quickRentsFitler: {
+        paramName: 'pub_quickRent',
+        config: quickRents,
       },
     };
   }
@@ -215,8 +220,9 @@ export class SearchPageComponent extends Component {
     const paramsQueryString = stringify(pickSearchParamsOnly(searchParams, filters));
     const searchParamsAreInSync = urlQueryString === paramsQueryString;
 
-    const validQueryParams = validURLParamsForExtendedData(searchInURL, filters);
-
+    let validQueryParams = validURLParamsForExtendedData(searchInURL, filters);
+   // console.log('validQueryParams ==>', validQueryParams)
+    
     const isWindowDefined = typeof window !== 'undefined';
     const isMobileLayout = isWindowDefined && window.innerWidth < MODAL_BREAKPOINT;
     const shouldShowSearchMap =
@@ -229,7 +235,17 @@ export class SearchPageComponent extends Component {
 
     const { address, bounds, origin } = searchInURL || {};
     const { title, description, schema } = createSearchResultSchema(listings, address, intl);
-
+    //console.log('locationUrl ==>', locationUrl);
+    let regex = /[?&]([^=#]+)=([^&#]*)/g,
+    params = {},
+    match;
+    while (match = regex.exec(locationUrl)) {
+      params[match[1]] = match[2];
+    }
+    const pub_quickRent = params['pub_quickRent']
+    if(pub_quickRent){
+      validQueryParams['pub_quickRent'] = pub_quickRent;
+    }
     // Set topbar class based on if a modal is open in
     // a child component
     const topbarClasses = this.state.isMobileModalOpen
@@ -266,7 +282,7 @@ export class SearchPageComponent extends Component {
             pagination={pagination}
             searchParamsForPagination={parse(location.search)}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
-            searchPoint={searchPoint}
+            quickRents={filters.quickRentsFitler}
             primaryFilters={{
               categoryFilter: filters.categoryFilter,
               amenitiesFilter: filters.amenitiesFilter,
@@ -274,7 +290,6 @@ export class SearchPageComponent extends Component {
               dateRangeFilter: filters.dateRangeFilter,
               keywordFilter: filters.keywordFilter,
             }}
-            currentUser={this.props.currentUser}
           />
           <ModalInMobile
             className={css.mapPanel}
@@ -320,6 +335,7 @@ SearchPageComponent.defaultProps = {
   tab: 'listings',
   categories: config.custom.categories,
   amenities: config.custom.amenities,
+  quickRents: config.custom.quickRents,
   priceFilterConfig: config.custom.priceFilterConfig,
   dateRangeFilterConfig: config.custom.dateRangeFilterConfig,
   keywordFilterConfig: config.custom.keywordFilterConfig,
@@ -340,6 +356,7 @@ SearchPageComponent.propTypes = {
   tab: oneOf(['filters', 'listings', 'map']).isRequired,
   categories: array,
   amenities: array,
+  quickRents: object,
   priceFilterConfig: shape({
     min: number.isRequired,
     max: number.isRequired,

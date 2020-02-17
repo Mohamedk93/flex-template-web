@@ -79,6 +79,8 @@ export const validFilterParams = (params, filters) => {
  */
 export const validURLParamsForExtendedData = (params, filters) => {
   const filterParamNames = Object.values(filters).map(f => f.paramName);
+  //console.log('This is params === >', params)
+  //console.log('This is filtes === >', filters)
   const paramEntries = Object.entries(params);
 
   return paramEntries.reduce((validParams, entry) => {

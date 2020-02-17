@@ -4,4 +4,4 @@ export const Icon = {
   component: IconSuccess,
   props: {},
   group: 'icons',
-};
+};  

@@ -656,6 +656,7 @@ export class BookingDatesFormComponent extends Component {
             dateChoosBox = <DateHourPicker
               id="firstDate"
               name="firstDate"
+              avails={avails}
               {...firstDate}
               intl={intl}
               onDateChange={v => {
