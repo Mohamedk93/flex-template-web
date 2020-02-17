@@ -36,11 +36,12 @@ class ModalMissingInformation extends Component {
   }
 
   componentDidUpdate() {
-    const { currentUser, currentUserHasListings, currentUserHasOrders, location } = this.props;
+    const { currentUser, currentUserHasListings, currentUserHasListingsLocation, currentUserHasOrders, location } = this.props;
     const user = ensureCurrentUser(currentUser);
     this.handleMissingInformationReminder(
       user,
       currentUserHasListings,
+      currentUserHasListingsLocation,
       currentUserHasOrders,
       location
     );
@@ -49,6 +50,7 @@ class ModalMissingInformation extends Component {
   handleMissingInformationReminder(
     currentUser,
     currentUserHasListings,
+    currentUserHasListingsLocation,
     currentUserHasOrders,
     newLocation
   ) {
@@ -80,13 +82,13 @@ class ModalMissingInformation extends Component {
 
       const stripeAccountMissing = !!currentUser.id && !currentUser.attributes.stripeConnected;
       const stripeAccountNeeded = currentUserHasListings && stripeAccountMissing;
-
+      
       // Show reminder
       if (emailVerificationNeeded) {
         this.setState({ showMissingInformationReminder: EMAIL_VERIFICATION });
       } else if (
         // Allow creating listings for users without Stripe account set up (#35817)
-        false && stripeAccountNeeded) {
+        stripeAccountMissing && currentUserHasListingsLocation) {
         this.setState({ showMissingInformationReminder: STRIPE_ACCOUNT });
       }
     }

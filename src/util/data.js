@@ -383,3 +383,33 @@ export const humanizeLineItemCode = code => {
 
   return lowercase.charAt(0).toUpperCase() + lowercase.slice(1);
 };
+
+
+export const COUNTRIES_ARRAY = ['United States',
+                                 'Canada',
+                                 'Austria',
+                                 'Belgium',
+                                 'Czechia',
+                                 'Denmark',
+                                 'Estonia',
+                                 'Finland',
+                                 'France',
+                                 'Germany',
+                                 'Greece',
+                                 'Hungary',
+                                 'Iceland',
+                                 'Italy',
+                                 'Latvia',
+                                 'Liechtenstein',
+                                 'Lithuania',
+                                 'Luxembourg',
+                                 'Malta',
+                                 'Netherlands',
+                                 'Norway',
+                                 'Poland',
+                                 'Portugal',
+                                 'Slovakia',
+                                 'Slovenia',
+                                 'Spain',
+                                 'Sweden',
+                                 'Switzerland']; 

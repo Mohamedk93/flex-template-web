@@ -155,6 +155,7 @@ class TopbarComponent extends Component {
       authInProgress,
       currentUser,
       currentUserHasListings,
+      currentUserHasListingsLocation,
       currentUserHasOrders,
       currentPage,
       notificationCount,
@@ -191,6 +192,7 @@ class TopbarComponent extends Component {
       <TopbarMobileMenu
         isAuthenticated={isAuthenticated}
         currentUserHasListings={currentUserHasListings}
+        currentUserHasListingsLocation={currentUserHasListingsLocation}
         currentUser={currentUser}
         onLogout={this.handleLogout}
         notificationCount={notificationCount}
@@ -273,6 +275,7 @@ class TopbarComponent extends Component {
           <TopbarDesktop
             className={desktopClassName}
             currentUserHasListings={currentUserHasListings}
+            currentUserHasListingsLocation={currentUserHasListingsLocation}
             currentUser={currentUser}
             currentPage={currentPage}
             initialSearchFormValues={initialSearchFormValues}
@@ -316,6 +319,7 @@ class TopbarComponent extends Component {
           containerClassName={css.missingInformationModal}
           currentUser={currentUser}
           currentUserHasListings={currentUserHasListings}
+          currentUserHasListingsLocation={currentUserHasListingsLocation}
           currentUserHasOrders={currentUserHasOrders}
           location={location}
           onManageDisableScrolling={onManageDisableScrolling}
@@ -355,6 +359,7 @@ TopbarComponent.propTypes = {
   authInProgress: bool.isRequired,
   currentUser: propTypes.currentUser,
   currentUserHasListings: bool.isRequired,
+  currentUserHasListingsLocation: bool,
   currentUserHasOrders: bool,
   currentPage: string,
   notificationCount: number,
