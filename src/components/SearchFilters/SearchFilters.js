@@ -71,6 +71,7 @@ const SearchFiltersComponent = props => {
     searchInProgress,
     categoryFilter,
     amenitiesFilter,
+    quickRents,
     priceFilter,
     dateRangeFilter,
     keywordFilter,
@@ -96,14 +97,26 @@ const SearchFiltersComponent = props => {
     id: 'SearchFilters.keywordLabel',
   });
 
+  const quickRentsLabel =  intl.formatMessage({
+    id: 'SearchFilters.quickRentsLabel',
+  });
+
+  const quickRentsLabelTitle =  intl.formatMessage({
+    id: 'SearchFilters.quickRentsLabelTitle',
+  });
+
   const initialAmenities = amenitiesFilter
     ? initialValues(urlQueryParams, amenitiesFilter.paramName)
+    : null;
+  
+  const initialQuickRents = quickRents
+    ? initialValues(urlQueryParams, quickRents.paramName)
     : null;
 
   const initialCategory = categoryFilter
     ? initialValue(urlQueryParams, categoryFilter.paramName)
     : null;
-
+  
   const initialPriceRange = priceFilter
     ? initialPriceRangeValue(urlQueryParams, priceFilter.paramName)
     : null;
@@ -192,7 +205,19 @@ const SearchFiltersComponent = props => {
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
   ) : null;
-
+  
+  const quickRentsFilter = 
+    <SelectMultipleFilter
+      id={'SearchFilters.quickRentsFilter'}
+      name="quickRents"
+      urlParam='pub_quickRent'
+      label={quickRentsLabelTitle}
+      onSubmit={handleSelectOptions}
+      options={[{key: "quickRent", label: quickRentsLabel}]}
+      initialValues={initialQuickRents}
+      showAsPopup
+      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
+    />
   const priceFilterElement = priceFilter ? (
     <PriceFilter
       id="SearchFilters.priceFilter"
@@ -271,6 +296,7 @@ const SearchFiltersComponent = props => {
         {priceFilterElement}
         {dateRangeFilterElement}
         {keywordFilterElement}
+        {quickRentsFilter}
         {toggleSearchFiltersPanelButton}
       </div>
 

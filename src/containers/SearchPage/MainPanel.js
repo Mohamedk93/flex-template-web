@@ -41,6 +41,8 @@ class MainPanel extends Component {
       secondaryFilters,
       searchPoint,
       currentUser,
+      currencies,
+      quickRents,
     } = this.props;
 
     const isSearchFiltersPanelOpen = !!secondaryFilters && this.state.isSearchFiltersPanelOpen;
@@ -84,6 +86,7 @@ class MainPanel extends Component {
           resultsCount={totalItems}
           searchInProgress={searchInProgress}
           searchListingsError={searchListingsError}
+          quickRents={quickRents}
           onManageDisableScrolling={onManageDisableScrolling}
           {...searchFiltersPanelProps}
           {...primaryFilters}
@@ -102,6 +105,7 @@ class MainPanel extends Component {
           onCloseModal={onCloseModal}
           filterParamNames={filterParamNames}
           selectedFiltersCount={selectedFiltersCount}
+          quickRents={quickRents}
           {...primaryFilters}
           {...secondaryFilters}
         />
