@@ -457,7 +457,7 @@
   "ModalMissingInformation.fixEmail": "Whoops, typo in your email? {fixEmailLink}",
   "ModalMissingInformation.fixEmailLinkText": "Fix it.",
   "ModalMissingInformation.gotoPaymentSettings": "Add payment details",
-  "ModalMissingInformation.missingStripeAccountText": "You have listings but your payment details are missing. Your listings cannot be booked until the details are saved.",
+  "ModalMissingInformation.missingStripeAccountText": "You have listings but your payment details are missing. You cannot receive credit card payments from customers until these details are added.",
   "ModalMissingInformation.missingStripeAccountTitle": "Payment details missing",
   "ModalMissingInformation.resendEmail": "Didn't get the email? {resendEmailLink}",
   "ModalMissingInformation.resendEmailLinkText": "Resend it.",
