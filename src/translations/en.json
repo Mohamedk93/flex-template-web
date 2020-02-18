@@ -458,6 +458,7 @@
   "ModalMissingInformation.fixEmailLinkText": "Fix it.",
   "ModalMissingInformation.gotoPaymentSettings": "Add payment details",
   "ModalMissingInformation.missingStripeAccountText": "You have listings but your payment details are missing. You cannot receive credit card payments from customers until these details are added.",
+  "ModalMissingInformation.missingStripeAccountTextSecond": "We should display a different notice You need to upload the required documents to enable card payments.",
   "ModalMissingInformation.missingStripeAccountTitle": "Payment details missing",
   "ModalMissingInformation.resendEmail": "Didn't get the email? {resendEmailLink}",
   "ModalMissingInformation.resendEmailLinkText": "Resend it.",

@@ -6,8 +6,12 @@ import { IconWarning } from '../../components';
 import css from './ModalMissingInformation.css';
 
 const StripeAccountReminder = props => {
-  const { className } = props;
-
+  const { className, stripeDialog } = props;
+  const dialogText = stripeDialog ? (
+    <FormattedMessage id="ModalMissingInformation.missingStripeAccountTextSecond" />
+  ) : (
+    <FormattedMessage id="ModalMissingInformation.missingStripeAccountText" />
+  )
   return (
     <div className={className}>
       <div>
@@ -17,7 +21,7 @@ const StripeAccountReminder = props => {
         <FormattedMessage id="ModalMissingInformation.missingStripeAccountTitle" />
       </p>
       <p className={css.modalMessage}>
-        <FormattedMessage id="ModalMissingInformation.missingStripeAccountText" />
+        {dialogText}
       </p>
       <div className={css.bottomWrapper}>
         <NamedLink className={css.reminderModalLinkButton} name="StripePayoutPage">
