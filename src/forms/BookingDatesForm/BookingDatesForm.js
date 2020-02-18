@@ -576,7 +576,8 @@ export class BookingDatesFormComponent extends Component {
           );
 
           const stripeConnected = (this.props.listing.author.
-            attributes.profile.publicData.stripeEnabled == true);
+            attributes.profile.publicData.stripePayoutsEnabled != undefined && this.props.listing.author.
+            attributes.profile.publicData.stripePayoutsEnabled == true);
 
           const workspacesNames = listing.attributes.publicData.workspaces ? 
             listing.attributes.publicData.workspaces
