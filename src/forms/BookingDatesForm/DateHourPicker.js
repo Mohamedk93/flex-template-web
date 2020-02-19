@@ -132,7 +132,6 @@ const DateHourPicker = props => {
       let tmp = selectDay.hours.split(' - ');
       startMinHour = moment(tmp[0], ["h:mm `A"]).format("HH")
       endMaxHour = startMaxHour = moment(tmp[1], ["h:mm `A"]).format("HH")
-      startMaxHour = parseInt(startMaxHour) - 1;
       startMaxHour = pad(startMaxHour);
       startMinMinute = moment(tmp[0], ["h:mm `A"]).format("mm")
       endMaxMinutes = startMaxMinute = moment(tmp[1], ["h:mm `A"]).format("mm")
