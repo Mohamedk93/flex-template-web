@@ -1,4 +1,4 @@
-import { denormalisedResponseEntities, ensureOwnListing } from '../util/data';
+import { denormalisedResponseEntities, ensureOwnListing, COUNTRIES_ARRAY } from '../util/data';
 import { storableError } from '../util/errors';
 import { transitionsToRequested } from '../util/transaction';
 import { LISTING_STATE_DRAFT } from '../util/types';
@@ -23,6 +23,16 @@ export const FETCH_CURRENT_USER_HAS_LISTINGS_SUCCESS =
   'app/user/FETCH_CURRENT_USER_HAS_LISTINGS_SUCCESS';
 export const FETCH_CURRENT_USER_HAS_LISTINGS_ERROR =
   'app/user/FETCH_CURRENT_USER_HAS_LISTINGS_ERROR';
+
+
+
+export const FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_REQUEST =
+  'app/user/FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_REQUEST';
+export const FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_SUCCESS =
+  'app/user/FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_SUCCESS';
+export const FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_ERROR =
+  'app/user/FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_ERROR';
+
 
 export const FETCH_CURRENT_USER_NOTIFICATIONS_REQUEST =
   'app/user/FETCH_CURRENT_USER_NOTIFICATIONS_REQUEST';
@@ -63,6 +73,8 @@ const initialState = {
   currentUserShowError: null,
   currentUserHasListings: false,
   currentUserHasListingsError: null,
+  currentUserHasListingsLocation: false,
+  currentUserHasListingsLoccationError: null,
   currentUserNotificationCount: 0,
   currentUserNotificationCountError: null,
   currentUserHasOrders: null, // This is not fetched unless unverified emails exist
@@ -90,6 +102,8 @@ export default function reducer(state = initialState, action = {}) {
         currentUserShowError: null,
         currentUserHasListings: false,
         currentUserHasListingsError: null,
+        currentUserHasListingsLocation: false,
+        currentUserHasListingsLoccationError: null,
         currentUserNotificationCount: 0,
         currentUserNotificationCountError: null,
       };
@@ -101,6 +115,13 @@ export default function reducer(state = initialState, action = {}) {
     case FETCH_CURRENT_USER_HAS_LISTINGS_ERROR:
       console.error(payload); // eslint-disable-line
       return { ...state, currentUserHasListingsError: payload };
+
+    case FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_REQUEST:
+      return { ...state, currentUserHasListingsLocationError: null };
+    case FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_SUCCESS:
+      return { ...state, currentUserHasListingsLocation: payload.hasListings };
+    case FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_ERROR:
+      return { ...state, currentUserHasListingsLocationError: payload };
 
     case FETCH_CURRENT_USER_NOTIFICATIONS_REQUEST:
       return { ...state, currentUserNotificationCountError: null };
@@ -189,6 +210,23 @@ const fetchCurrentUserHasListingsError = e => ({
   payload: e,
 });
 
+
+const fetchCurrentUserHasListingsLocationRequest = () => ({
+  type: FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_REQUEST,
+});
+
+export const fetchCurrentUserHasListingsLocationSuccess = hasListings => ({
+  type: FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_SUCCESS,
+  payload: { hasListings },
+});
+
+const fetchCurrentUserHasListingsLocationError = e => ({
+  type: FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_ERROR,
+  error: true,
+  payload: e,
+});
+
+
 const fetchCurrentUserNotificationsRequest = () => ({
   type: FETCH_CURRENT_USER_NOTIFICATIONS_REQUEST,
 });
@@ -237,10 +275,12 @@ export const sendVerificationEmailError = e => ({
 
 export const fetchCurrentUserHasListings = () => (dispatch, getState, sdk) => {
   dispatch(fetchCurrentUserHasListingsRequest());
+  dispatch(fetchCurrentUserHasListingsLocationRequest());
   const { currentUser } = getState().user;
 
   if (!currentUser) {
     dispatch(fetchCurrentUserHasListingsSuccess(false));
+    dispatch(fetchCurrentUserHasListingsLocationSuccess(false));
     return Promise.resolve(null);
   }
 
@@ -248,14 +288,17 @@ export const fetchCurrentUserHasListings = () => (dispatch, getState, sdk) => {
     // Since we are only interested in if the user has
     // listings, we only need at most one result.
     page: 1,
-    per_page: 1,
+    per_page: 100,
   };
 
   return sdk.ownListings
     .query(params)
     .then(response => {
       const hasListings = response.data.data && response.data.data.length > 0;
-
+      if(response.data.data && response.data.data.length > 0){
+        let countries = response.data.data.filter(x => COUNTRIES_ARRAY.includes(x.attributes.publicData.country))
+        countries && countries.length > 0 ? dispatch(fetchCurrentUserHasListingsLocationSuccess(true)) : dispatch(fetchCurrentUserHasListingsLocationSuccess(false));
+      }
       const hasPublishedListings =
         hasListings &&
         ensureOwnListing(response.data.data[0]).attributes.state !== LISTING_STATE_DRAFT;

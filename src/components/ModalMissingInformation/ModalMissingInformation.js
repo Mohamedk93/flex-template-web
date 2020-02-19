@@ -21,6 +21,18 @@ const MISSING_INFORMATION_MODAL_WHITELIST = [
   'StripePayoutPage',
 ];
 
+export const hasStripestripePayoutsEnabled = (currentUser, currentUserHasListingsLocation ) => {
+  if(!currentUser || !currentUser.id){
+    return false;
+  }
+  const stripePayoutsEnabled = currentUser.attributes.profile.publicData.stripePayoutsEnabled !== undefined; 
+  if(stripePayoutsEnabled && currentUser.attributes.stripeConnected && !currentUser.attributes.profile.publicData.stripePayoutsEnabled && currentUserHasListingsLocation){
+    return true;
+  }else{
+    return false;
+  }
+}
+
 const EMAIL_VERIFICATION = 'EMAIL_VERIFICATION';
 const STRIPE_ACCOUNT = 'STRIPE_ACCOUNT';
 
@@ -36,11 +48,12 @@ class ModalMissingInformation extends Component {
   }
 
   componentDidUpdate() {
-    const { currentUser, currentUserHasListings, currentUserHasOrders, location } = this.props;
+    const { currentUser, currentUserHasListings, currentUserHasListingsLocation, currentUserHasOrders, location } = this.props;
     const user = ensureCurrentUser(currentUser);
     this.handleMissingInformationReminder(
       user,
       currentUserHasListings,
+      currentUserHasListingsLocation,
       currentUserHasOrders,
       location
     );
@@ -49,6 +62,7 @@ class ModalMissingInformation extends Component {
   handleMissingInformationReminder(
     currentUser,
     currentUserHasListings,
+    currentUserHasListingsLocation,
     currentUserHasOrders,
     newLocation
   ) {
@@ -80,13 +94,15 @@ class ModalMissingInformation extends Component {
 
       const stripeAccountMissing = !!currentUser.id && !currentUser.attributes.stripeConnected;
       const stripeAccountNeeded = currentUserHasListings && stripeAccountMissing;
-
       // Show reminder
       if (emailVerificationNeeded) {
         this.setState({ showMissingInformationReminder: EMAIL_VERIFICATION });
       } else if (
         // Allow creating listings for users without Stripe account set up (#35817)
-        false && stripeAccountNeeded) {
+        stripeAccountMissing && currentUserHasListingsLocation) {
+        this.setState({ showMissingInformationReminder: STRIPE_ACCOUNT });
+      }
+      else if(hasStripestripePayoutsEnabled(currentUser, currentUserHasListingsLocation)){
         this.setState({ showMissingInformationReminder: STRIPE_ACCOUNT });
       }
     }
@@ -102,10 +118,12 @@ class ModalMissingInformation extends Component {
       sendVerificationEmailError,
       onManageDisableScrolling,
       onResendVerificationEmail,
+      currentUserHasListingsLocation,
     } = this.props;
 
     const user = ensureCurrentUser(currentUser);
     const classes = classNames(rootClassName || css.root, className);
+    const stripeDialog = hasStripestripePayoutsEnabled(currentUser, currentUserHasListingsLocation);
 
     let content = null;
 
@@ -122,7 +140,7 @@ class ModalMissingInformation extends Component {
           />
         );
       } else if (this.state.showMissingInformationReminder === STRIPE_ACCOUNT) {
-        content = <StripeAccountReminder className={classes} />;
+        content = <StripeAccountReminder className={classes} stripeDialog={stripeDialog}/>;
       }
     }
 

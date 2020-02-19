@@ -368,7 +368,7 @@ export class BookingDatesFormComponent extends Component {
           return Object.keys(errors).length ? errors : undefined
         }}
         render={fieldRenderProps => {
-          const {
+          let {
             datePlaceholder,
             form,
             formId,
@@ -392,6 +392,9 @@ export class BookingDatesFormComponent extends Component {
             handleChangeRentalType,
             avails,
           } = fieldRenderProps;
+          if(values.firstDate && values.firstDate.hourStart && values.firstDate.hourStart.length === 6){
+            values.firstDate.hourStart = values.firstDate.hourStart.slice(1);
+          }            
 
           const { firstDate, extraDays = [] } = values;
 
@@ -454,7 +457,7 @@ export class BookingDatesFormComponent extends Component {
   
             startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
             endDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
-
+        
             if(firstDate){
               var hourStart = values.firstDate.hourStart;
               var hourEnd = values.firstDate.hourEnd;
@@ -576,7 +579,8 @@ export class BookingDatesFormComponent extends Component {
           );
 
           const stripeConnected = (this.props.listing.author.
-            attributes.profile.publicData.stripeEnabled == true);
+            attributes.profile.publicData.stripePayoutsEnabled != undefined && this.props.listing.author.
+            attributes.profile.publicData.stripePayoutsEnabled == true);
 
           const workspacesNames = listing.attributes.publicData.workspaces ? 
             listing.attributes.publicData.workspaces

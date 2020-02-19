@@ -3,6 +3,8 @@
 
 import { storableError } from '../util/errors';
 import * as log from '../util/log';
+import { denormalisedResponseEntities } from '../util/data';
+
 
 // ================ Action types ================ //
 
@@ -217,10 +219,30 @@ export const updateStripeAccount = params => (dispatch, getState, sdk) => {
 
 export const fetchStripeAccount = params => (dispatch, getState, sdk) => {
   dispatch(stripeAccountFetchRequest());
-
+  const currentUser = getState().user.currentUser;
   return sdk.stripeAccount
     .fetch()
     .then(response => {
+      if(currentUser && response.data){
+        const payouts_enabled = response.data.data.attributes.stripeAccountData.payouts_enabled
+        if(currentUser.attributes.profile.publicData.stripePayoutsEnabled === undefined || currentUser.attributes.profile.publicData.stripePayoutsEnabled != payouts_enabled){
+          sdk.currentUser
+          .updateProfile(
+            { publicData: { stripePayoutsEnabled: payouts_enabled } },
+          )
+          .then(response => {
+            const entities = denormalisedResponseEntities(response);
+            if (entities.length !== 1) {
+              throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+            }
+            const currentUser = entities[0];
+            return currentUser;
+          })
+          .catch(e => {
+            throw e;
+          });
+        }
+      }
       const stripeAccount = response.data.data;
       dispatch(stripeAccountFetchSuccess(stripeAccount));
       return stripeAccount;
