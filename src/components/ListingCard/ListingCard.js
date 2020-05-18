@@ -237,7 +237,7 @@ export const ListingCardComponent = props => {
             })}
           </div>
           <div className={css.authorInfo}>
-            <FormattedMessage id="ListingCard.locationInfo" values={{city}, {country}} />
+            <FormattedMessage id="ListingCard.locationInfo" values={{locationInfo}} />
           </div>
         </div>
         
