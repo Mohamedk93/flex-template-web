@@ -37,7 +37,7 @@ export class LandingPageComponent extends Component {
   // http://schema.org
   // We are using JSON-LD format
   handleClick (e){
-    if(e.target.innerText == 'Find work spaces'){
+    if(e.target.innerText == 'Find workspaces near me'){
       let options = {
         enableHighAccuracy: true,
         timeout: 5000,
@@ -49,12 +49,12 @@ export class LandingPageComponent extends Component {
 
   componentDidUpdate(prevProps, prevState){
     const {path, canRedirect} = this.state;
-    
+
     if(prevState.path !== path &&  path.length > 0 && canRedirect){
       this.props.history.push(this.state.path);
     }
   }
-  
+
   success(pos) {
     let crd = pos.coords;
     const latlng = {
@@ -65,9 +65,9 @@ export class LandingPageComponent extends Component {
     const path = this.generateSearch(coordindates)
     this.setState({path: path, canRedirect: true});
   }
-  
+
   error(err) {
-    const path = 's?address=Cairo%2C%20Cairo%20Governorate%2C%20Egypt&bounds=79.34942401%2C56.31453229%2C-57.56893982%2C-133.52921771' 
+    const path = 's?address=Cairo%2C%20Cairo%20Governorate%2C%20Egypt&bounds=79.34942401%2C56.31453229%2C-57.56893982%2C-133.52921771'
     this.setState({path: path, canRedirect: true});
     console.warn(`ERROR(${err.code}): ${err.message}`);
   };
@@ -77,7 +77,7 @@ export class LandingPageComponent extends Component {
       return `s?address=&bounds=${coordindates.ne.lat}%2C${coordindates.ne.lng}%2C${coordindates.sw.lat}%2C${coordindates.sw.lng}`
     }
   }
-  
+
   render (){
     const { history, intl, location, scrollingDisabled } = this.props;
     const siteTitle = config.siteTitle;
@@ -116,7 +116,7 @@ export class LandingPageComponent extends Component {
             <ul className={css.sections}>
               <li className={css.section}>
                 <div className={css.sectionContentFirstChild}>
-                  <SectionLocations 
+                  <SectionLocations
                     location={currentLoc}
                   />
                 </div>
