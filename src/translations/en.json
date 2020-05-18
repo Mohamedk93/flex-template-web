@@ -378,7 +378,7 @@
   "LayoutWrapperAccountSettingsSideNav.paymentMethodsTabTitle": "Payment methods",
   "ListingCard.hostedBy": "Hosted by {authorName}.",
   "ListingCard.locationInfo": "{locationInfo}",
-  "ListingCard.description": "{category} • {locationInfo}",
+  "ListingCard.description": "{category} {locationInfo}",
   "ListingCard.perDay": "per day",
   "ListingCard.perNight": "per night",
   "ListingCard.perUnit": "per hour",
