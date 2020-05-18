@@ -186,6 +186,7 @@ export const ListingCardComponent = props => {
     <p className={css.authorInfo}>
       {categories[publicData.category]}
     </p>
+    <span className={css.authorInfo}>•</span>
   ) : null;
 
 
@@ -233,7 +234,7 @@ export const ListingCardComponent = props => {
           
 
           <div className={css.authorInfo}>
-            <FormattedMessage id="ListingCard.description" values={{category, locationInfo}} />
+            <FormattedMessage id="ListingCard.description" values={{category,locationInfo}} />
           </div>
         </div>
         
