@@ -196,13 +196,7 @@ export const ListingCardComponent = props => {
         onMouseEnter={() => setActiveListing(currentListing.id)}
         onMouseLeave={() => setActiveListing(null)}
       >
-        <div className={css.category}>
-          {category}
-        </div>
-     
-        <div className={css.locationInfo}>
-          {locationInfo}
-        </div>
+    
         <div className={css.aspectWrapper}>
           <LazyImage
             rootClassName={css.rootForImage}
@@ -236,6 +230,11 @@ export const ListingCardComponent = props => {
               longWordClass: css.longWord,
             })}
           </div>
+          
+          <div className={css.authorInfo}>
+          {category}
+        </div>
+        <div className={css.authorInfo}>•</div>
           <div className={css.authorInfo}>
             <FormattedMessage id="ListingCard.locationInfo" values={{locationInfo}} />
           </div>
