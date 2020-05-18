@@ -183,7 +183,7 @@ export const ListingCardComponent = props => {
 
   const categories = config.custom.categoriesDefaultName;
   const category = publicData && publicData.category ? (
-    <p className={css.categoryPar}>
+    <p className={css.authorInfo}>
       {categories[publicData.category]}
     </p>
   ) : null;
@@ -231,12 +231,9 @@ export const ListingCardComponent = props => {
             })}
           </div>
           
+
           <div className={css.authorInfo}>
-          {category}
-        </div>
-        <div className={css.authorInfo}>•</div>
-          <div className={css.authorInfo}>
-            <FormattedMessage id="ListingCard.locationInfo" values={{locationInfo}} />
+            <FormattedMessage id="ListingCard.description" values={{category},{locationInfo}} />
           </div>
         </div>
         
