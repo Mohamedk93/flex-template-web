@@ -41,6 +41,7 @@ const priceData = (price, intl) => {
 class ListingImage extends Component {
   render() {
     return <ResponsiveImage {...this.props} />;
+    const {categoriesConfig}= this.props;
   }
 }
 const LazyImage = lazyLoadWithDimensions(ListingImage, { loadAfterInitialRendering: 3000 });
@@ -266,6 +267,7 @@ ListingCardComponent.propTypes = {
   renderSizes: string,
 
   setActiveListing: func,
+  categoriesConfig: array,
 };
 
 export default withRouter(injectIntl(ListingCardComponent));
