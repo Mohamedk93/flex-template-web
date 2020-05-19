@@ -41,7 +41,6 @@ const priceData = (price, intl) => {
 class ListingImage extends Component {
   render() {
     return <ResponsiveImage {...this.props} />;
-    const {categoriesConfig}= this.props;
   }
 }
 const LazyImage = lazyLoadWithDimensions(ListingImage, { loadAfterInitialRendering: 3000 });
@@ -189,10 +188,10 @@ export const ListingCardComponent = props => {
 
   const categories = config.custom.categoriesDefaultName;
   const category = publicData && publicData.category ? (
-     <span>
-     {categoryLabel(categoriesConfig, publicData.category)}
-     <span className={css.authorInfo}>•</span>
-   </span>
+    <p className={css.authorInfo}>
+      {categories[publicData.category]}
+    <p className={css.authorInfo}>•</p>
+    </p>
   ) : null;
 
 
@@ -253,7 +252,6 @@ ListingCardComponent.defaultProps = {
   className: null,
   rootClassName: null,
   renderSizes: null,
-  categoriesConfig: config.custom.categories,
   setActiveListing: () => null,
 };
 
@@ -267,7 +265,6 @@ ListingCardComponent.propTypes = {
   renderSizes: string,
 
   setActiveListing: func,
-  categoriesConfig: array,
 };
 
 export default withRouter(injectIntl(ListingCardComponent));
