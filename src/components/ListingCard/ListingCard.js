@@ -190,7 +190,7 @@ export const ListingCardComponent = props => {
   const category = publicData && publicData.category ? (
     <span className={css.authorInfo}>
       {categories[publicData.category]}
-    <span className={css.authorInfo}>•</span>
+    <span className={css.authorInfo}> • </span>
     </span>
   ) : null;
 
