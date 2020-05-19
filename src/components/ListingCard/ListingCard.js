@@ -188,10 +188,10 @@ export const ListingCardComponent = props => {
 
   const categories = config.custom.categoriesDefaultName;
   const category = publicData && publicData.category ? (
-    <p className={css.authorInfo}>
+    <span className={css.authorInfo}>
       {categories[publicData.category]}
-    <p className={css.authorInfo}>•</p>
-    </p>
+    <span className={css.authorInfo}>•</span>
+    </span>
   ) : null;
 
 
