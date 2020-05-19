@@ -45,6 +45,11 @@ class ListingImage extends Component {
 }
 const LazyImage = lazyLoadWithDimensions(ListingImage, { loadAfterInitialRendering: 3000 });
 
+const categoryLabel = (categories, key) => {
+  const cat = categories.find(c => c.key === key);
+  return cat ? cat.label : key;
+};
+
 export const listingAvailablePricesMeta = [
   {
     type: 'priceSeatsHourly',
@@ -186,7 +191,10 @@ export const ListingCardComponent = props => {
     <p className={css.authorInfo}>
       {categories[publicData.category]}
     </p>
-    <span className={css.authorInfo}>•</span>
+     <span>
+     {categoryLabel(categoriesConfig, publicData.category)}
+     <span className={css.authorInfo}>•</span>
+   </span>
   ) : null;
 
 
