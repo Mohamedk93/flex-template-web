@@ -45,6 +45,11 @@ class ListingImage extends Component {
 }
 const LazyImage = lazyLoadWithDimensions(ListingImage, { loadAfterInitialRendering: 3000 });
 
+const categoryLabel = (categories, key) => {
+  const cat = categories.find(c => c.key === key);
+  return cat ? cat.label : key;
+};
+
 export const listingAvailablePricesMeta = [
   {
     type: 'priceSeatsHourly',
@@ -170,9 +175,9 @@ export const ListingCardComponent = props => {
   const unitTranslationKey = min_price && min_price.meta && min_price.meta.unit || 'ListingCard.perHour';
 
   const locationInfo = city && country ? (
-    <p className={css.locationInfoPar}>
+    <span className={css.authorInfo}>
       {`${city}, ${country}`}
-    </p>
+    </span>
   ) : null;
 
   const distanceInfo = distance ? (
@@ -183,9 +188,10 @@ export const ListingCardComponent = props => {
 
   const categories = config.custom.categoriesDefaultName;
   const category = publicData && publicData.category ? (
-    <p className={css.categoryPar}>
+    <span className={css.authorInfo}>
       {categories[publicData.category]}
-    </p>
+    <span className={css.authorInfo}> • </span>
+    </span>
   ) : null;
 
 
@@ -196,13 +202,7 @@ export const ListingCardComponent = props => {
         onMouseEnter={() => setActiveListing(currentListing.id)}
         onMouseLeave={() => setActiveListing(null)}
       >
-        <div className={css.category}>
-          {category}
-        </div>
-     
-        <div className={css.locationInfo}>
-          {locationInfo}
-        </div>
+    
         <div className={css.aspectWrapper}>
           <LazyImage
             rootClassName={css.rootForImage}
@@ -236,8 +236,10 @@ export const ListingCardComponent = props => {
               longWordClass: css.longWord,
             })}
           </div>
+          
+
           <div className={css.authorInfo}>
-            <FormattedMessage id="ListingCard.hostedBy" values={{ authorName }} />
+            <FormattedMessage id="ListingCard.description" values={{category,locationInfo}} />
           </div>
         </div>
         
