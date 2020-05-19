@@ -175,9 +175,9 @@ export const ListingCardComponent = props => {
   const unitTranslationKey = min_price && min_price.meta && min_price.meta.unit || 'ListingCard.perHour';
 
   const locationInfo = city && country ? (
-    <p className={css.authorInfo}>
+    <span className={css.authorInfo}>
       {`${city}, ${country}`}
-    </p>
+    </span>
   ) : null;
 
   const distanceInfo = distance ? (
