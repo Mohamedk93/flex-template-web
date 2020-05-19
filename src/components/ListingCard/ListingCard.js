@@ -139,6 +139,7 @@ export const ListingCardComponent = props => {
   const slug = createSlug(title);
   const author = ensureUser(listing.author);
   const authorName = author.attributes.profile.displayName;
+  const categoriesConfig= config.custom.categories;
   const firstImage =
     currentListing.images && currentListing.images.length > 0 ? currentListing.images[0] : null;
   let { formattedPrice, priceTitle } = priceData(price, intl);
