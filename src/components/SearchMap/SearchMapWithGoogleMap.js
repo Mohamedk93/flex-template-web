@@ -352,7 +352,7 @@ const MapWithGoogleMap = withGoogleMap(props => {
     mapComponentRefreshToken,
     currentUser,
   } = props;
-  
+
   const controlPosition =
     typeof window !== 'undefined' && typeof window.google !== 'undefined'
       ? window.google.maps.ControlPosition.LEFT_TOP
@@ -475,7 +475,7 @@ class SearchMapWithGoogleMap extends Component {
       }
     }
   }
-  
+
 
   render() {
     const { onMapLoad, onMapMoveEnd, currentUser, ...rest } = this.props;
@@ -488,7 +488,7 @@ SearchMapWithGoogleMap.defaultProps = {
   infoCardOpen: null,
   listings: [],
   activeListingId: null,
-  zoom: 11,
+  zoom: 5,
   reusableMapHiddenHandle: null,
 };
 
