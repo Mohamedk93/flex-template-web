@@ -43,11 +43,11 @@ export const EditListingPricingFormComponent = props => (
           rentalTypes,
           values,
         } = fieldRenderProps;
-        
+
         const unitType = config.bookingUnitType;
         const isNightly = unitType === LINE_ITEM_NIGHT;
         const isDaily = unitType === LINE_ITEM_DAY;
-        const currentUser = props.initialValues.currentUser; 
+        const currentUser = props.initialValues.currentUser;
         const authorProfile = props.initialValues.author ? props.initialValues.author.attributes.profile : '';
         const translationKey = isNightly
           ? 'EditListingPricingForm.pricePerNight'
@@ -174,13 +174,13 @@ export const EditListingPricingFormComponent = props => (
         >
           {saveActionMsg}
         </Button>
-        ) 
+        )
 
         const priceTable = workspaces.map(price => {
           const priceLabel = intl.formatMessage({
             id: `EditListingPricingForm.priceLabel_${price}`,
           });
-          
+
           const priceFields = sortArray.map(item => {
             const fieldId = `price_${price}_${item}`;
             return (
@@ -251,6 +251,9 @@ export const EditListingPricingFormComponent = props => (
               label={labelText}
               value='quickRent'
             />
+            <div className={css.currencyHolder}>
+              <span><FormattedMessage id="EditListingPricingForm.quickrentdescription"/></span>
+            </div>
             {submitButton}
           </Form>
         );
