@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import css from './searchbox.css';
+import css from './SearchBox.css';
 
 export class SearchBox extends Component {
     render () {
