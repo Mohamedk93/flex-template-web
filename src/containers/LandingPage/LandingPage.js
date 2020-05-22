@@ -121,10 +121,6 @@ export class LandingPageComponent extends Component {
                   <SectionLocations
                     location={currentLoc}
                   />
-                </div>
-              </li>
-              <li className={css.section}>
-                <div className={css.sectionContent}>
                   <SearchBox />
                 </div>
               </li>
