@@ -2,12 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import css from './Topbar.css';
+import css from './searchbox.css';
 
-const SearchBox = props => {
-    const { className, rootClassName } = props;
-    const classes = classNames(rootClassName || css.rootSearchBox, className);
-    
+export class SearchBox extends Component {
+    render () {
+        const rootClassName = this.props.rootClassName
+        const className = this.props.className
+        const classes = classNames(rootClassName || css.root, className);
     return (
         
   <div className={css.topBorderWrapper}>
@@ -64,6 +65,7 @@ const SearchBox = props => {
  
     );
 };
+}
 
 SearchBoxComponent.defaultProps = {
     className: null,
@@ -75,4 +77,4 @@ SearchBoxComponent.defaultProps = {
     rootClassName: string,
   };
     
-  export default injectIntl(SearchBox);
+  export default SearchBox;
