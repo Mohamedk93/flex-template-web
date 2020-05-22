@@ -26,8 +26,8 @@ export class SearchBox extends Component {
       </div>
       
       <div className={css.datetime}>
-        <div className={css.container-datetime}>
-          <div className={css.container-date}>
+        <div className={css.containerdatetime}>
+          <div className={css.containerdate}>
             <span className={css.label}>Date</span>
             <input type="text" placeholder="dd-mm-yyyy"></input>
           </div>
@@ -44,7 +44,7 @@ export class SearchBox extends Component {
       
       <div className={css.datetime.last}>
         <div className={css.containerdatetime}>
-          <div className={css.container-date}>
+          <div className={css.containerdate}>
             <span className={css.label}>Date</span>
             <input type="text" placeholder="dd-mm-yyyy"></input>
           </div>
