@@ -5,8 +5,6 @@ import classNames from 'classnames';
 
 import css from './SectionHero.css'; 
 import Button from '../Button/Button';
-import {SearchBox} from '../../components';
-
 
 export class SectionHero extends Component {
   render (){
@@ -18,7 +16,6 @@ export class SectionHero extends Component {
         <div className={css.heroContent}>
           <h1 className={css.heroMainTitle}>
             <FormattedMessage id="SectionHero.title" />
-            <SearchBox />
           </h1>
           <h2 className={css.heroSubTitle}>
             <FormattedMessage id="SectionHero.subTitle" />
