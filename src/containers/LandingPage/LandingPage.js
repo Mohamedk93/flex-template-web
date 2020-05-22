@@ -8,6 +8,7 @@ import { isScrollingDisabled } from '../../ducks/UI.duck';
 import config from '../../config';
 import {
   Page,
+  SearchBox,
   SectionHero,
   SectionHowItWorks,
   SectionLocations,
@@ -113,12 +114,18 @@ export class LandingPageComponent extends Component {
             <div className={css.heroContainer} onClick={((e) => this.handleClick(e))}>
               <SectionHero className={css.hero} history={history} location={location} />
             </div>
+            
             <ul className={css.sections}>
               <li className={css.section}>
                 <div className={css.sectionContentFirstChild}>
                   <SectionLocations
                     location={currentLoc}
                   />
+                </div>
+              </li>
+              <li className={css.section}>
+                <div className={css.sectionContent}>
+                  <SearchBox />
                 </div>
               </li>
               <li className={css.section}>
