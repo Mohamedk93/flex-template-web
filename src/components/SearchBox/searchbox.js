@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { string } from 'prop-types';
 
 import css from './searchbox.css';
 
@@ -16,7 +17,7 @@ export class SearchBox extends Component {
     <div className = {css.searchblock}>
       <span className={css.title}>Search</span>
       <div className={css.area}>
-        <span className={label}>Area</span>
+        <span className={css.label}>Area</span>
         <select id="area-options">
           <option value="option-1">Option 1</option>
           <option value="option-2">Option 2</option>
@@ -24,13 +25,13 @@ export class SearchBox extends Component {
         </select>
       </div>
       
-      <div className={css.date-time}>
-        <div className={css.container-date-time}>
+      <div className={css.datetime}>
+        <div className={css.container-datetime}>
           <div className={css.container-date}>
             <span className={css.label}>Date</span>
             <input type="text" placeholder="dd-mm-yyyy"></input>
           </div>
-          <div className={css.container-time}>
+          <div className={css.containertime}>
             <span className={css.label}>Time</span>
             <select name="" id="">
               <option value="option-1">12:00</option>
@@ -41,13 +42,13 @@ export class SearchBox extends Component {
         </div>
       </div>
       
-      <div className={css.date-time.last}>
-        <div className={css.container-date-time}>
+      <div className={css.datetime.last}>
+        <div className={css.containerdatetime}>
           <div className={css.container-date}>
             <span className={css.label}>Date</span>
             <input type="text" placeholder="dd-mm-yyyy"></input>
           </div>
-          <div className={css.container-time}>
+          <div className={css.containertime}>
             <span className={css.label}>Time</span>
             <select name="" id="">
               <option value="option-1">12:00</option>
@@ -67,12 +68,12 @@ export class SearchBox extends Component {
 };
 }
 
-SearchBoxComponent.defaultProps = {
+SearchBox.defaultProps = {
     className: null,
     rootClassName: null,
   };
   
-  SearchBoxComponent.propTypes = {
+  SearchBox.propTypes = {
     className: string,
     rootClassName: string,
   };
