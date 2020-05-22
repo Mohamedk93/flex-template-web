@@ -53,7 +53,7 @@
     margin-bottom: 12px;
   }
   
-  .searchblock .date-time {
+  .searchblock .datetime {
     margin-bottom: 12px;
   }
   
@@ -83,22 +83,22 @@
     font-size: 16px;
   }
   
-  .searchblock .date-time .container-date-time {
+  .searchblock .datetime .containerdatetime {
     display: flex;
     flex-direction: row;
   }
   
-  .searchblock .date-time .container-date-time .container-date, .container-time {
+  .searchblock .datetime .containerdatetime .containerdate, .containertime {
     display: flex;
     flex-direction: column;
   }
   
-  .searchblock .date-time .container-date-time .container-date {
+  .searchblock .datetime .containerdatetime .containerdate {
     width: 129px;
     margin-right: 12px;
   }
   
-  .searchblock .date-time .container-date-time .container-time {
+  .searchblock .datetime .containerdatetime .containertime {
     width: 81px;
   }
   
