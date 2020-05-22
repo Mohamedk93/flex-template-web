@@ -116,3 +116,18 @@
     width: 260px;
   }
 }
+/* this is for the search box */
+
+.topBorderWrapper {
+  @media (--viewportMedium) {
+    padding-top: 41px;
+  }
+
+  @media (--viewportLarge) {
+    padding-top: 73px;
+
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: var(--matterColorNegative);
+  }
+}
