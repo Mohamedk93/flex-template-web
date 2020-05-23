@@ -81,6 +81,7 @@
 .heroMainTitle {
   @apply --marketplaceHeroTitleFontStyles;
   color: var(--matterColorLight);
+  float: left;
 
   @apply --SectionHero_animation;
   animation-delay: 0.5s;
@@ -121,6 +122,7 @@
 .topBorderWrapper {
   @media (--viewportMedium) {
     padding-top: 41px;
+    float: left;
   }
   @apply --SectionHero_animation;
   animation-delay: 0.5s;
