@@ -15,13 +15,15 @@ export class SectionHero extends Component {
     return (
       <div className={classes}>
         <div className={css.heroContent}>
-          <h1 className={css.heroMainTitle}>
+          <span className={css.heroMainTitle}>
             <FormattedMessage id="SectionHero.title" />
-          </h1>
-          <h2 className={css.heroSubTitle}>
+          </span>
+          <span className={css.topBorderWrapper}>
             <SearchBox />
+          </span>
+          <span className={css.heroSubTitle}>
             <FormattedMessage id="SectionHero.subTitle" />
-          </h2>
+          </span>
           <Button className={css.heroButton}>
             <span className={css.heroText}>
               <FormattedMessage id="SectionHero.browseButton" />
