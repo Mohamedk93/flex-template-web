@@ -102,7 +102,6 @@
 
   @media (--viewportMedium) {
     max-width: var(--SectionHero_desktopTitleMaxWidth);
-    margin: 0 0 63px 0;
   }
 }
 
