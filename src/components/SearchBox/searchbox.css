@@ -39,7 +39,7 @@
     border-radius: 4px;
     padding: 12px;
     box-sizing: border-box;
-    right: 80%;
+    left: 80%;
   }
   
   .searchblock span.title {
