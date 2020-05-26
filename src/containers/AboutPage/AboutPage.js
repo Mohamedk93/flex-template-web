@@ -21,7 +21,6 @@ import {
 } from '../../components';
 
 const renderSocialMediaLinks = intl => {
-  const { rootClassName, className, intl } = props;
   const { siteFacebookPage, siteInstagramPage, siteTwitterHandle } = config;
   const siteTwitterPage = twitterPageURL(siteTwitterHandle);
 
@@ -56,14 +55,13 @@ const renderSocialMediaLinks = intl => {
       <IconSocialMediaTwitter />
     </ExternalLink>
   ) : null;
-
+  return [fbLink, instragramLink, twitterLink, ].filter(v => v != null);
 };
+
 const AboutPage = () => {
-  
- 
-  // prettier-ignore
-  const AboutPage = props => {
-   
+  const { intl } = props;
+  const socialMediaLinks = renderSocialMediaLinks(intl);
+
   return (
     <StaticPage
       title="About Us"
