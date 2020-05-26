@@ -19,8 +19,7 @@ import {
 } from '../../components';
 
 const AboutPage = () => {
-  const { siteFacebookPage, siteInstagramPage, siteTwitterHandle } = config;
-  const siteTwitterPage = twitterPageURL(siteTwitterHandle);
+
 
   const goToFb = intl.formatMessage({ id: 'Footer.goToFacebook' });
   const goToTwitter = intl.formatMessage({ id: 'Footer.goToTwitter' });
