@@ -1,6 +1,7 @@
 import React from 'react';
 import config from '../../config';
 import { string } from 'prop-types';
+import classNames from 'classnames';
 import { twitterPageURL } from '../../util/urlHelpers';
 import { StaticPage, TopbarContainer } from '../../containers';
 import {
