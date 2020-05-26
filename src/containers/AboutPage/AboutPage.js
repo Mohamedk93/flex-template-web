@@ -55,10 +55,7 @@ const AboutPage = () => {
 
   const { siteTwitterHandle, siteFacebookPage } = config;
   const siteTwitterPage = twitterPageURL(siteTwitterHandle);
-  
-  return [fbLink, instragramLink, twitterLink, ].filter(v => v != null);
-};
-  
+   
 
   // prettier-ignore
   return (
@@ -111,7 +108,9 @@ const AboutPage = () => {
                 France: +33636056539
 
                 <strong>Social Media:</strong>
-                
+                <ExternalLink href={siteFacebookPage} />
+                <ExternalLink href={siteInstagramPage} />
+                <ExternalLink href={siteTwitterPage} />
               </p>
 
             </div>
@@ -122,7 +121,9 @@ const AboutPage = () => {
           <Footer />
         </LayoutWrapperFooter>
       </LayoutSingleColumn>
+
     </StaticPage>
+
   );
 };
 
