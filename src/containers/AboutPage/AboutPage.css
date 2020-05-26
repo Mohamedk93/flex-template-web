@@ -58,6 +58,7 @@
 
 .subtitle {
   @apply --marketplaceH3FontStyles;
+  font-weight: bold;
   margin-top: 48px;
   margin-bottom: 24px;
 }
