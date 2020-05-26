@@ -100,22 +100,22 @@ const AboutPage = props => {
                 Hosts can upload their work spaces in a few clicks, and they can be accessed instantly by customers.
               </p>
 
-              <h3 className={css.subtitle}>Contact Us:</h3>
+              <h3 className={css.subtitle}>Contact Info:</h3>
 
               <p>
                 <strong>Customer service hotlines:</strong>
 
-                <strong>Middle East:</strong>
-                Egypt: +201006610069
-                United Arab Emirates: +971544977193
-                Lebanon: +9613255286
+                <strong>Middle East:</strong><br/>
+                Egypt: +201006610069<br/>
+                United Arab Emirates: +971544977193<br/>
+                Lebanon: +9613255286<br/>
+                <br/>
+                <strong>Europe:</strong><br/>
+                United Kingdom: +447935660504<br/>
+                Spain: +34634260940<br/>
+                France: +33636056539<br/>
 
-                <strong>Europe:</strong>
-                United Kingdom: +447935660504
-                Spain: +34634260940
-                France: +33636056539
-
-                <strong>Social Media:</strong>
+                <strong>Social Media:</strong><br/>
                 <div className={css.someLinks}>{socialMediaLinks}</div>
               </p>
 
