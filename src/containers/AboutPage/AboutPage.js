@@ -60,10 +60,12 @@ const renderSocialMediaLinks = intl => {
 };
 
 const AboutPage = props => {
-  const { intl } = props;
+  const { rootClassName, className, intl } = props;
   const socialMediaLinks = renderSocialMediaLinks(intl);
+  const classes = classNames(rootClassName || css.root, className);
 
   return (
+    <div className={classes}>
     <StaticPage
       title="About Us"
       schema={{
@@ -126,6 +128,7 @@ const AboutPage = props => {
       </LayoutSingleColumn>
 
     </StaticPage>
+    </div>
 
   );
 };
