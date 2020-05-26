@@ -103,7 +103,7 @@ const AboutPage = props => {
               <h3 className={css.subtitle}>Contact Info:</h3>
 
               <p>
-                <strong>Customer service hotlines:</strong>
+                <strong>Customer service hotlines:</strong><br/>
 
                 <strong>Middle East:</strong><br/>
                 Egypt: +201006610069<br/>
@@ -114,6 +114,7 @@ const AboutPage = props => {
                 United Kingdom: +447935660504<br/>
                 Spain: +34634260940<br/>
                 France: +33636056539<br/>
+                <br/>
 
                 <strong>Social Media:</strong><br/>
                 <div className={css.someLinks}>{socialMediaLinks}</div>
