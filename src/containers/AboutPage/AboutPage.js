@@ -143,4 +143,4 @@ AboutPage.propTypes = {
   className: string,
   intl: intlShape.isRequired,
 };
-export default AboutPage;
+export default injectIntl(AboutPage);
