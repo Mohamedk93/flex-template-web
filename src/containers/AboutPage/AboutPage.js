@@ -12,10 +12,55 @@ import {
 } from '../../components';
 import css from './AboutPage.css';
 import image from './about-us-1056.jpg';
+import {
+  IconSocialMediaFacebook,
+  IconSocialMediaInstagram,
+  IconSocialMediaTwitter,
+  ExternalLink,
+} from '../../components';
 
 const AboutPage = () => {
+  const { siteFacebookPage, siteInstagramPage, siteTwitterHandle } = config;
+  const siteTwitterPage = twitterPageURL(siteTwitterHandle);
+
+  const goToFb = intl.formatMessage({ id: 'Footer.goToFacebook' });
+  const goToTwitter = intl.formatMessage({ id: 'Footer.goToTwitter' });
+  const goToInsta = intl.formatMessage({ id: 'Footer.goToInstagram' });
+
+  const fbLink = siteFacebookPage ? (
+    <ExternalLink key="linkToFacebook" href={siteFacebookPage} className={css.icon} title={goToFb}>
+      <IconSocialMediaFacebook />
+    </ExternalLink>
+  ) : null;
+
+  const instragramLink = siteInstagramPage ? (
+    <ExternalLink
+      key="linkToInstagram"
+      href={siteInstagramPage}
+      className={css.icon}
+      title={goToInsta}
+    >
+      <IconSocialMediaInstagram />
+    </ExternalLink>
+  ) : null;
+
+  const twitterLink = siteTwitterPage ? (
+    <ExternalLink
+      key="linkToTwitter"
+      href={siteTwitterPage}
+      className={css.icon}
+      title={goToTwitter}
+    >
+      <IconSocialMediaTwitter />
+    </ExternalLink>
+  ) : null;
+
   const { siteTwitterHandle, siteFacebookPage } = config;
   const siteTwitterPage = twitterPageURL(siteTwitterHandle);
+  
+  return [fbLink, instragramLink, twitterLink, ].filter(v => v != null);
+};
+  
 
   // prettier-ignore
   return (
@@ -52,15 +97,23 @@ const AboutPage = () => {
                 Hosts can upload their work spaces in a few clicks, and they can be accessed instantly by customers.
               </p>
 
-              <h3 className={css.subtitle}>Do you have extra work spaces?</h3>
+              <h3 className={css.subtitle}>Contact Us:</h3>
 
               <p>
-                Hotdesk offers you a good way to earn some extra cash! If you're not fully
-                using your work space, why not rent it to other people while it's free? Even if
-                you are using your workspace every morning, why don't you rent it out in the afternoon?
-                You can also checkout our{' '}
-                <ExternalLink href={siteFacebookPage}>Facebook</ExternalLink> and{' '}
-                <ExternalLink href={siteTwitterPage}>Twitter</ExternalLink>.
+                <strong>Customer service hotlines:</strong>
+
+                <strong>Middle East:</strong>
+                Egypt: +201006610069
+                United Arab Emirates: +971544977193
+                Lebanon: +9613255286
+
+                <strong>Europe:</strong>
+                United Kingdom: +447935660504
+                Spain: +34634260940
+                France: +33636056539
+
+                <strong>Social Media:</strong>
+                
               </p>
 
             </div>
