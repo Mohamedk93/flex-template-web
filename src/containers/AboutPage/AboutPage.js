@@ -9,6 +9,8 @@ import {
   LayoutWrapperFooter,
   Footer,
 } from '../../components';
+import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
+
 import css from './AboutPage.css';
 import image from './about-us-1056.jpg';
 import {
@@ -18,8 +20,10 @@ import {
   ExternalLink,
 } from '../../components';
 
-const AboutPage = () => {
-
+const renderSocialMediaLinks = intl => {
+  const { rootClassName, className, intl } = props;
+  const { siteFacebookPage, siteInstagramPage, siteTwitterHandle } = config;
+  const siteTwitterPage = twitterPageURL(siteTwitterHandle);
 
   const goToFb = intl.formatMessage({ id: 'Footer.goToFacebook' });
   const goToTwitter = intl.formatMessage({ id: 'Footer.goToTwitter' });
@@ -53,11 +57,13 @@ const AboutPage = () => {
     </ExternalLink>
   ) : null;
 
-  const { siteTwitterHandle, siteFacebookPage } = config;
-  const siteTwitterPage = twitterPageURL(siteTwitterHandle);
-   
-
+};
+const AboutPage = () => {
+  
+ 
   // prettier-ignore
+  const AboutPage = props => {
+   
   return (
     <StaticPage
       title="About Us"
@@ -108,9 +114,7 @@ const AboutPage = () => {
                 France: +33636056539
 
                 <strong>Social Media:</strong>
-                <ExternalLink href={siteFacebookPage} />
-                <ExternalLink href={siteInstagramPage} />
-                <ExternalLink href={siteTwitterPage} />
+                <div className={css.someLinks}>{socialMediaLinks}</div>
               </p>
 
             </div>
@@ -126,5 +130,14 @@ const AboutPage = () => {
 
   );
 };
+AboutPage.defaultProps = {
+  rootClassName: null,
+  className: null,
+};
 
+AboutPage.propTypes = {
+  rootClassName: string,
+  className: string,
+  intl: intlShape.isRequired,
+};
 export default AboutPage;
