@@ -8,7 +8,6 @@ import {
   LayoutWrapperMain,
   LayoutWrapperFooter,
   Footer,
-  ExternalLink,
 } from '../../components';
 import css from './AboutPage.css';
 import image from './about-us-1056.jpg';
