@@ -1,5 +1,6 @@
 import React from 'react';
 import config from '../../config';
+import { string } from 'prop-types';
 import { twitterPageURL } from '../../util/urlHelpers';
 import { StaticPage, TopbarContainer } from '../../containers';
 import {
@@ -58,7 +59,7 @@ const renderSocialMediaLinks = intl => {
   return [fbLink, instragramLink, twitterLink, ].filter(v => v != null);
 };
 
-const AboutPage = () => {
+const AboutPage = props => {
   const { intl } = props;
   const socialMediaLinks = renderSocialMediaLinks(intl);
 
