@@ -18,9 +18,9 @@ export class SectionHero extends Component {
           <h1 className={css.heroMainTitle}>
             <FormattedMessage id="SectionHero.title" />
           </h1>
-     <span className={css.topBorderWrapper}>
+     
             <SearchBox />
-          </span>
+          
           <h2 className={css.heroSubTitle}>
             <FormattedMessage id="SectionHero.subTitle" />
           </h2>
