@@ -56,7 +56,7 @@ const EditListingDescriptionPanel = props => {
     <br/>
     Benefits and enhanced functions for your workspace:<br/>
     </p>
-<ul>
+<ul className={css.a}>
 <li>Create a digital experience for your customers without spending any development cost</li>
 <li>Enable online booking of your workspace in a few clicksEnable card payments directly to your bank account (select countries only) or receive the amount in cash</li>
 <li>Automated invoicing upon customer booking</li>
