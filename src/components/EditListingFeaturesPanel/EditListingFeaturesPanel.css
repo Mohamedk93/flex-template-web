@@ -38,8 +38,8 @@
   }
 }
 
-.li {
+.ul .li {
   margin-left: 10px;
-  list-style-type: circle !important;
+  list-style-type: disc !important;
   display: list-item !important;
 }
