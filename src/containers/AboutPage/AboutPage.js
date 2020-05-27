@@ -1,6 +1,5 @@
 import React from 'react';
 import config from '../../config';
-import { twitterPageURL } from '../../util/urlHelpers';
 import { StaticPage, TopbarContainer } from '../../containers';
 import {
   LayoutSingleColumn,
@@ -8,16 +7,14 @@ import {
   LayoutWrapperMain,
   LayoutWrapperFooter,
   Footer,
-  ExternalLink,
 } from '../../components';
+import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
+
 import css from './AboutPage.css';
 import image from './about-us-1056.jpg';
 
 const AboutPage = () => {
-  const { siteTwitterHandle, siteFacebookPage } = config;
-  const siteTwitterPage = twitterPageURL(siteTwitterHandle);
 
-  // prettier-ignore
   return (
     <StaticPage
       title="About Us"
@@ -39,7 +36,7 @@ const AboutPage = () => {
 
           <div className={css.contentWrapper}>
             <div className={css.contentSide}>
-              <p>"We envision being the App that enables people to access workspaces globally, and to be the ones who bring out extra unused workspaces to the market." The Co-Founders: Mohamed K. & Ali Shweki</p>
+              <p>"We envision being the App that enables people to access workspaces globally, and to be the ones who bring out extra unused workspaces to the market." The Co-Founders: Mohamed K, Ali Shweki and Mohamed ElSarrag.</p>
             </div>
 
             <div className={css.contentMain}>
@@ -52,15 +49,27 @@ const AboutPage = () => {
                 Hosts can upload their work spaces in a few clicks, and they can be accessed instantly by customers.
               </p>
 
-              <h3 className={css.subtitle}>Do you have extra work spaces?</h3>
-
+              <h3 className={css.subtitle}>Contact Info:</h3>
               <p>
-                Hotdesk offers you a good way to earn some extra cash! If you're not fully
-                using your work space, why not rent it to other people while it's free? Even if
-                you are using your workspace every morning, why don't you rent it out in the afternoon?
-                You can also checkout our{' '}
-                <ExternalLink href={siteFacebookPage}>Facebook</ExternalLink> and{' '}
-                <ExternalLink href={siteTwitterPage}>Twitter</ExternalLink>.
+              <strong>Head Office:</strong> Hotdesk Technologies Middle East HQ Limited<br/>
+              <strong>Registered Address:</strong> Office-8 , Office-9, Level 4, Gate District Precinct Building 05, Dubai International Financial Centre (DIFC), PO Box 507211, Dubai, United Arab Emirates.<br/>
+              <br/>
+              <strong>US Office:</strong> Hotdesk Technologies Middle East HQ Limited<br/>
+              <strong>Registered Address:</strong> 2035 Sunset Lake Road, Suite B-2, Newark, Zip Code 19702, New Castle, Delaware, USA.<br/>
+              <br/>
+              <strong>Customer service hotlines:</strong><br/>
+              <br/>
+              <strong>Middle East:</strong><br/>
+              Egypt: +201006610069<br/>
+              United Arab Emirates: +971544977193<br/>
+              Lebanon: +9613255286<br/>
+              <br/>
+              <strong>Europe:</strong><br/>
+              United Kingdom: +447935660504<br/>
+              Spain: +34634260940<br/>
+              France: +33636056539<br/>
+              <br/>
+              <strong>Email:</strong> admin@hotdesk-app.com<br/>
               </p>
 
             </div>
@@ -71,7 +80,9 @@ const AboutPage = () => {
           <Footer />
         </LayoutWrapperFooter>
       </LayoutSingleColumn>
+
     </StaticPage>
+
   );
 };
 

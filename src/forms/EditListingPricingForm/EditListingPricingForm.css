@@ -128,5 +128,7 @@
 }
 
 .quickRent {
-  width: 160px;
+  width: 260px;
+  font-weight: bold;
+  font-size: 30px;
 }

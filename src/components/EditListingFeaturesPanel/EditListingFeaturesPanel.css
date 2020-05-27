@@ -9,6 +9,22 @@
   padding: 11px 24px 0 24px;
 }
 
+.contentWrapper {
+  display: flex;
+  flex-wrap: wrap;
+
+  @media (--viewportMedium) {
+    flex-wrap: nowrap;
+  }
+}
+.contentMain {
+  width: 90%;
+
+  @media (--viewportMedium) {
+    max-width: 650px;
+  }
+}
+
 .form {
   flex-grow: 1;
 }
