@@ -36,8 +36,21 @@ const EditListingDescriptionPanel = props => {
   ) : (
     <FormattedMessage id="EditListingDescriptionPanel.createListingTitle" />
     );
-<div className={css.contentWrapper}>
-<div className={css.contentMain}>
+
+
+    
+
+  const currency = publicData.currency ? publicData.currency : 'usd';
+  const seats_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
+  const office_rooms_quantity = publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 1;
+  const meeting_rooms_quantity = publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 1;
+
+  console.log(currency)
+
+  return (
+    <div className={classes}>
+      <h1 className={css.title}>{panelTitle}</h1>
+   
     <p>
     Adding your workspace is 100% free, and we only earn a 10% commission on successful transactions.
     <br/>
@@ -53,20 +66,7 @@ Benefits and enhanced functions for your workspace:<br/></p>
 </ul>
 <p> Our fee is either directly netted from the amount you receive for card payments, or you can transfer it to us at the end of each month for cash payments.
  </p>
- </div>
-</div>
-    
-
-  const currency = publicData.currency ? publicData.currency : 'usd';
-  const seats_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
-  const office_rooms_quantity = publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 1;
-  const meeting_rooms_quantity = publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 1;
-
-  console.log(currency)
-
-  return (
-    <div className={classes}>
-      <h1 className={css.title}>{panelTitle}</h1>
+ 
       <EditListingDescriptionForm
         className={css.form}
         initialValues={{
