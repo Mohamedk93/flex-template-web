@@ -95,7 +95,7 @@
   @apply --marketplaceBodyFontStyles;
 
   color: var(--matterColorLight);
-  float: left;
+  margin: 0 0 32px 0;
 
   @apply --SectionHero_animation;
   animation-delay: 0.65s;
