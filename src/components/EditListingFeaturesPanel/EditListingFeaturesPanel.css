@@ -38,7 +38,8 @@
   }
 }
 
-.ul .li {
+.ul.a {
+  list-style-position: outside;
   margin-left: 10px;
   list-style-type: disc !important;
   display: list-item !important;
