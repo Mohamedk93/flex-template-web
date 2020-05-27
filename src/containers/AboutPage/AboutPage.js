@@ -18,7 +18,6 @@ import image from './about-us-1056.jpg';
 const AboutPage = () => {
 
   return (
-    <div className={classes}>
     <StaticPage
       title="About Us"
       schema={{
