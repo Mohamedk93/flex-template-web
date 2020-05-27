@@ -21,3 +21,10 @@
     padding: 1px 0 7px 0;
   }
 }
+
+.li {
+  list-style-position: outside;
+  margin-left: 10px;
+  list-style-type: disc;
+  display: list-item;
+}

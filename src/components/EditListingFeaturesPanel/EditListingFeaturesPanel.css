@@ -37,10 +37,3 @@
     padding: 1px 0 7px 0;
   }
 }
-
-.ul.a {
-  list-style-position: outside;
-  margin-left: 10px;
-  list-style-type: disc !important;
-  display: list-item !important;
-}
