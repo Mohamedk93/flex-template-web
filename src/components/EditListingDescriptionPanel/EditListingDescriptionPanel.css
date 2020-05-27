@@ -27,4 +27,5 @@
   margin-left: 10px;
   list-style-type: disc;
   display: list-item;
+  list-style-position: inside;
 }
