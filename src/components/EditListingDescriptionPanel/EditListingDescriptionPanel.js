@@ -35,7 +35,27 @@ const EditListingDescriptionPanel = props => {
     />
   ) : (
     <FormattedMessage id="EditListingDescriptionPanel.createListingTitle" />
-  );
+    );
+<div className={css.contentWrapper}>
+<div className={css.contentMain}>
+    <p>
+    Adding your workspace is 100% free, and we only earn a 10% commission on successful transactions.
+    <br/>
+Benefits and enhanced functions for your workspace:<br/></p>
+<br/>
+<ul>
+<li>Create a digital experience for your customers without spending any development cost</li>
+<li>Enable online booking of your workspace in a few clicksEnable card payments directly to your bank account (select countries only) or receive the amount in cash</li>
+<li>Automated invoicing upon customer booking</li>
+<li>Booking requests are sent to you for approval before customer confirmation via our App and Website </li>
+<li>You can rent seats, meeting rooms or office rooms </li>
+<li>You can rent your space by the hour, day or month </li>
+</ul>
+<p> Our fee is either directly netted from the amount you receive for card payments, or you can transfer it to us at the end of each month for cash payments.
+ </p>
+ </div>
+</div>
+    
 
   const currency = publicData.currency ? publicData.currency : 'usd';
   const seats_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
