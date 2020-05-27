@@ -1,7 +1,5 @@
 import React from 'react';
 import config from '../../config';
-import { string } from 'prop-types';
-import classNames from 'classnames';
 import { StaticPage, TopbarContainer } from '../../containers';
 import {
   LayoutSingleColumn,
@@ -52,7 +50,6 @@ const AboutPage = () => {
               </p>
 
               <h3 className={css.subtitle}>Contact Info:</h3>
-
               <p>
               <strong>Head Office:</strong> Hotdesk Technologies Middle East HQ Limited<br/>
               <strong>Registered Address:</strong> Office-8 , Office-9, Level 4, Gate District Precinct Building 05, Dubai International Financial Centre (DIFC), PO Box 507211, Dubai, United Arab Emirates.<br/>
@@ -85,7 +82,6 @@ const AboutPage = () => {
       </LayoutSingleColumn>
 
     </StaticPage>
-    </div>
 
   );
 };
