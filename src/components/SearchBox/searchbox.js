@@ -13,7 +13,7 @@ export class SearchBox extends Component {
         
   <div className={css.topBorderWrapper}>
 
-    <div className = {css.searchblock}>
+    <div className = {css.search-block-1}>
       <span className={css.title}>Search</span>
       <div className={css.area}>
         <span className={label}>Area</span>
