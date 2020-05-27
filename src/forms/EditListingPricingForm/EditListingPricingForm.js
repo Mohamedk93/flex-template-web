@@ -252,7 +252,7 @@ export const EditListingPricingFormComponent = props => (
               value='quickRent'
             />
             <div className={css.currencyHolder}>
-              <span><FormattedMessage id="EditListingPricingForm.quickrentdescription"/></span>
+              <br/><span><FormattedMessage id="EditListingPricingForm.quickrentdescription"/></span>
             </div>
             {submitButton}
           </Form>
