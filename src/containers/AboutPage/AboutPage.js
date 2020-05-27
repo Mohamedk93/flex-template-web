@@ -2,7 +2,6 @@ import React from 'react';
 import config from '../../config';
 import { string } from 'prop-types';
 import classNames from 'classnames';
-import { twitterPageURL } from '../../util/urlHelpers';
 import { StaticPage, TopbarContainer } from '../../containers';
 import {
   LayoutSingleColumn,
@@ -15,55 +14,6 @@ import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 
 import css from './AboutPage.css';
 import image from './about-us-1056.jpg';
-import {
-  IconSocialMediaFacebook,
-  IconSocialMediaInstagram,
-  IconSocialMediaTwitter,
-  ExternalLink,
-} from '../../components';
-
-const renderSocialMediaLinks = intl => {
-  const { siteFacebookPage, siteInstagramPage, siteTwitterHandle } = config;
-  const siteTwitterPage = twitterPageURL(siteTwitterHandle);
-
-  const goToFb = intl.formatMessage({ id: 'Footer.goToFacebook' });
-  const goToTwitter = intl.formatMessage({ id: 'Footer.goToTwitter' });
-  const goToInsta = intl.formatMessage({ id: 'Footer.goToInstagram' });
-
-  const fbLink = siteFacebookPage ? (
-    <ExternalLink key="linkToFacebook" href={siteFacebookPage} className={css.icon} title={goToFb}>
-      <IconSocialMediaFacebook />
-    </ExternalLink>
-  ) : null;
-
-  const instragramLink = siteInstagramPage ? (
-    <ExternalLink
-      key="linkToInstagram"
-      href={siteInstagramPage}
-      className={css.icon}
-      title={goToInsta}
-    >
-      <IconSocialMediaInstagram />
-    </ExternalLink>
-  ) : null;
-
-  const twitterLink = siteTwitterPage ? (
-    <ExternalLink
-      key="linkToTwitter"
-      href={siteTwitterPage}
-      className={css.icon}
-      title={goToTwitter}
-    >
-      <IconSocialMediaTwitter />
-    </ExternalLink>
-  ) : null;
-  return [fbLink, instragramLink, twitterLink, ].filter(v => v != null);
-};
-
-const AboutPage = props => {
-  const { rootClassName, className, intl } = props;
-  const socialMediaLinks = renderSocialMediaLinks(intl);
-  const classes = classNames(rootClassName || css.root, className);
 
   return (
     <div className={classes}>
@@ -122,9 +72,6 @@ const AboutPage = props => {
               France: +33636056539<br/>
               <br/>
               <strong>Email:</strong> admin@hotdesk-app.com<br/>
-              <br/>
-              <strong>Social Media:</strong><br/>
-                <div className={css.someLinks}>{socialMediaLinks}</div>
               </p>
 
             </div>
