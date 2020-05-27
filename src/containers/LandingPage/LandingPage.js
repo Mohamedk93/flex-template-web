@@ -111,6 +111,7 @@ export class LandingPageComponent extends Component {
             <TopbarContainer />
           </LayoutWrapperTopbar>
           <LayoutWrapperMain>
+          <SearchBox />
             <div className={css.heroContainer} onClick={((e) => this.handleClick(e))}>
               <SectionHero className={css.hero} history={history} location={location} />
             </div>
