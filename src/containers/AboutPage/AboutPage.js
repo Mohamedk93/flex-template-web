@@ -15,6 +15,8 @@ import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import css from './AboutPage.css';
 import image from './about-us-1056.jpg';
 
+const AboutPage = () => {
+
   return (
     <div className={classes}>
     <StaticPage
@@ -88,14 +90,5 @@ import image from './about-us-1056.jpg';
 
   );
 };
-AboutPage.defaultProps = {
-  rootClassName: null,
-  className: null,
-};
 
-AboutPage.propTypes = {
-  rootClassName: string,
-  className: string,
-  intl: intlShape.isRequired,
-};
-export default injectIntl(AboutPage);
+export default AboutPage;
