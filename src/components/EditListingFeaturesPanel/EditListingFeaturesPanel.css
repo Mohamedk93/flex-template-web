@@ -39,6 +39,7 @@
 }
 
 .li {
-  list-style-type: circle;
-  display: list-item;
+  margin-left: 10px;
+  list-style-type: circle !important;
+  display: list-item !important;
 }
