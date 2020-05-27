@@ -32,7 +32,7 @@
       border-top-color: var(--matterColorNegative);
     }
   }
-  .searchblock {
+  .search-block-1 {
     color: #091F2F;
     background: #e7e7e7;
     width: 246px;
@@ -41,27 +41,27 @@
     box-sizing: border-box;
   }
   
-  .searchblock span.title {
+  .search-block-1 span.title {
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 16px;
   }
   
-  .searchblock .area {
+  .search-block-1 .area {
     display: flex;
     flex-direction: column;
     margin-bottom: 12px;
   }
   
-  .searchblock .date-time {
+  .search-block-1 .date-time {
     margin-bottom: 12px;
   }
   
-  .searchblock span.label {
+  .search-block-1 span.label {
     margin-bottom: 4px;
   }
   
-  .searchblock input, .searchblock select {
+  .search-block-1 input, .search-block-1 select {
     box-shadow: inset 0 3px 0 0 hsla(0,0%,82%,.4);
     border: 1px solid #d2d2d2;
     border-radius: 4px;
@@ -69,40 +69,40 @@
     color: #091F2F;
   }
   
-  .searchblock input:focus, .searchblock select:focus {
+  .search-block-1 input:focus, .search-block-1 select:focus {
     outline-color: #0983F0;
   }
   
-  .searchblock input {
+  .search-block-1 input {
     height: 38px;
     padding: 0 0 0 12px;
   }
   
-  .searchblock select {
+  .search-block-1 select {
     height: 40px;
     font-size: 16px;
   }
   
-  .searchblock .date-time .container-date-time {
+  .search-block-1 .date-time .container-date-time {
     display: flex;
     flex-direction: row;
   }
   
-  .searchblock .date-time .container-date-time .container-date, .container-time {
+  .search-block-1 .date-time .container-date-time .container-date, .container-time {
     display: flex;
     flex-direction: column;
   }
   
-  .searchblock .date-time .container-date-time .container-date {
+  .search-block-1 .date-time .container-date-time .container-date {
     width: 129px;
     margin-right: 12px;
   }
   
-  .searchblock .date-time .container-date-time .container-time {
+  .search-block-1 .date-time .container-date-time .container-time {
     width: 81px;
   }
   
-  .searchblock button.btn.primary {
+  .search-block-1 button.btn.primary {
     background: black;
     color: #e7e7e7;
     width: 100%;
@@ -115,11 +115,11 @@
     transition: background 0.2s ease-in-out;
   }
   
-  .searchblock button.btn.primary:hover {
+  .search-block-1 button.btn.primary:hover {
     background: #036ac5;
   }
   
-  .searchblock button.btn.primary:focus {
+  .search-block-1 button.btn.primary:focus {
     outline: none;
   }
   /* End of styling for the first search block */
