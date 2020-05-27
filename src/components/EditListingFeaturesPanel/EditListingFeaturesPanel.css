@@ -39,5 +39,6 @@
 }
 
 .li {
+  list-style-type: circle;
   display: list-item;
 }
