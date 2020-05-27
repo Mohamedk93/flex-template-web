@@ -87,7 +87,7 @@ const AboutPage = props => {
 
           <div className={css.contentWrapper}>
             <div className={css.contentSide}>
-              <p>"We envision being the App that enables people to access workspaces globally, and to be the ones who bring out extra unused workspaces to the market." The Co-Founders: Mohamed K. & Ali Shweki</p>
+              <p>"We envision being the App that enables people to access workspaces globally, and to be the ones who bring out extra unused workspaces to the market." The Co-Founders: Mohamed K, Ali Shweki and Mohamed ElSarrag.</p>
             </div>
 
             <div className={css.contentMain}>
@@ -103,19 +103,26 @@ const AboutPage = props => {
               <h3 className={css.subtitle}>Contact Info:</h3>
 
               <p>
-                <strong>Customer service hotlines:</strong><br/>
-
-                <strong>Middle East:</strong><br/>
-                Egypt: +201006610069<br/>
-                United Arab Emirates: +971544977193<br/>
-                Lebanon: +9613255286<br/>
-                <br/>
-                <strong>Europe:</strong><br/>
-                United Kingdom: +447935660504<br/>
-                Spain: +34634260940<br/>
-                France: +33636056539<br/>
-                <br/>
-
+              <strong>Head Office:</strong>Hotdesk Technologies Middle East HQ Limited<br/>
+              <strong>Registered Address:</strong>Office-8 , Office-9, Level 4, Gate District Precinct Building 05, Dubai International Financial Centre (DIFC), PO Box 507211, Dubai, United Arab Emirates.<br/>
+              <br/>
+              <strong>US Office:</strong>Hotdesk Technologies Middle East HQ Limited<br/>
+              <strong>Registered Address:</strong>2035 Sunset Lake Road, Suite B-2, Newark, Zip Code 19702, New Castle, Delaware, USA.<br/>
+              <br/>
+              <strong>Email:</strong>admin@hotdesk-app.com<br/>
+              <br/>
+              <strong>Customer service hotlines:</strong><br/>
+              <br/>
+              <strong>Middle East:</strong><br/>
+              Egypt: +201006610069<br/>
+              United Arab Emirates: +971544977193<br/>
+              Lebanon: +9613255286<br/>
+              <br/>
+              <strong>Europe:</strong><br/>
+              United Kingdom: +447935660504<br/>
+              Spain: +34634260940<br/>
+              France: +33636056539<br/>
+              <br/>
                 <strong>Social Media:</strong><br/>
                 <div className={css.someLinks}>{socialMediaLinks}</div>
               </p>
