@@ -52,10 +52,10 @@ const EditListingDescriptionPanel = props => {
       <h1 className={css.title}>{panelTitle}</h1>
    
     <p>
-    Adding your workspace is 100% free, and we only earn a 10% commission on successful transactions.
+    Adding your workspace is 100% free, and we only earn a 10% commission on successful transactions. <br/>
     <br/>
-Benefits and enhanced functions for your workspace:<br/></p>
-<br/>
+    Benefits and enhanced functions for your workspace:<br/>
+    </p>
 <ul>
 <li>Create a digital experience for your customers without spending any development cost</li>
 <li>Enable online booking of your workspace in a few clicksEnable card payments directly to your bank account (select countries only) or receive the amount in cash</li>
