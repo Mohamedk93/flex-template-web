@@ -103,13 +103,11 @@ const AboutPage = props => {
               <h3 className={css.subtitle}>Contact Info:</h3>
 
               <p>
-              <strong>Head Office:</strong>Hotdesk Technologies Middle East HQ Limited<br/>
-              <strong>Registered Address:</strong>Office-8 , Office-9, Level 4, Gate District Precinct Building 05, Dubai International Financial Centre (DIFC), PO Box 507211, Dubai, United Arab Emirates.<br/>
+              <strong>Head Office:</strong> Hotdesk Technologies Middle East HQ Limited<br/>
+              <strong>Registered Address:</strong> Office-8 , Office-9, Level 4, Gate District Precinct Building 05, Dubai International Financial Centre (DIFC), PO Box 507211, Dubai, United Arab Emirates.<br/>
               <br/>
-              <strong>US Office:</strong>Hotdesk Technologies Middle East HQ Limited<br/>
-              <strong>Registered Address:</strong>2035 Sunset Lake Road, Suite B-2, Newark, Zip Code 19702, New Castle, Delaware, USA.<br/>
-              <br/>
-              <strong>Email:</strong>admin@hotdesk-app.com<br/>
+              <strong>US Office:</strong> Hotdesk Technologies Middle East HQ Limited<br/>
+              <strong>Registered Address:</strong> 2035 Sunset Lake Road, Suite B-2, Newark, Zip Code 19702, New Castle, Delaware, USA.<br/>
               <br/>
               <strong>Customer service hotlines:</strong><br/>
               <br/>
@@ -123,7 +121,9 @@ const AboutPage = props => {
               Spain: +34634260940<br/>
               France: +33636056539<br/>
               <br/>
-                <strong>Social Media:</strong><br/>
+              <strong>Email:</strong> admin@hotdesk-app.com<br/>
+              <br/>
+              <strong>Social Media:</strong><br/>
                 <div className={css.someLinks}>{socialMediaLinks}</div>
               </p>
 
