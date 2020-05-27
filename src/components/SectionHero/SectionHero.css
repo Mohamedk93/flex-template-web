@@ -122,12 +122,7 @@
   @media (--viewportMedium) {
     padding-top: 41px;
   }
-  @apply --SectionHero_animation;
-  animation-delay: 0.5s;
 
-  @media (--viewportMedium) {
-    max-width: var(--SectionHero_desktopTitleMaxWidth);
-  }
   @media (--viewportLarge) {
     padding-top: 73px;
 
