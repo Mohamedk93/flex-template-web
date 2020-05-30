@@ -56,6 +56,11 @@ const render = (store, shouldHydrate) => {
     });
 };
 
+Adjust.initSdk({
+  appToken: '8opk8cy924u8',
+  environment: 'sandbox'
+});
+
 const setupAnalyticsHandlers = () => {
   let handlers = [];
 
