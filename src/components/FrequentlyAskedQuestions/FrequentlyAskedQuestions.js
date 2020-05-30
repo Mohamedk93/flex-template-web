@@ -32,6 +32,15 @@ const FrequentlyAskedQuestions = () => {
 });
 
 return (
+    <StaticPage
+    title="FrequentlyAskedQuestions"
+    schema={{
+      '@context': 'http://schema.org',
+      '@type': 'FrequentlyAskedQuestions',
+      description: 'Frequently Asked Questions',
+      name: 'Frequently Asked Questions',
+    }}
+  >
 <ul id="accordion" className={css.accordion}>
   <li>
     <div className={css.link}>
@@ -68,7 +77,7 @@ return (
     </ul>
   </li>
 </ul>
-
+</StaticPage>
 )
 }
 export default FrequentlyAskedQuestions;
