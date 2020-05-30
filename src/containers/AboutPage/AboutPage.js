@@ -54,7 +54,7 @@ const AboutPage = () => {
               <strong>Head Office:</strong> Hotdesk Technologies Middle East HQ Limited<br/>
               <strong>Registered Address:</strong> Office-8 , Office-9, Level 4, Gate District Precinct Building 05, Dubai International Financial Centre (DIFC), PO Box 507211, Dubai, United Arab Emirates.<br/>
               <br/>
-              <strong>US Office:</strong> Hotdesk Technologies Middle East HQ Limited<br/>
+              <strong>US Office:</strong> Hotdesk Inc.<br/>
               <strong>Registered Address:</strong> 2035 Sunset Lake Road, Suite B-2, Newark, Zip Code 19702, New Castle, Delaware, USA.<br/>
               <br/>
               <strong>Customer service hotlines:</strong><br/>
