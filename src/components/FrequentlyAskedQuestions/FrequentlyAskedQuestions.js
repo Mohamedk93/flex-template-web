@@ -1,10 +1,10 @@
 import React from 'react';
 import config from '../../config';
 import { StaticPage, TopbarContainer } from '../../containers';
-import css from './FrequentlyAskedQuestions.css'
+
 const FrequentlyAskedQuestions = () => {
 
-   (function() {
+   $(function() {
 	var Accordion = function(el, multiple) {
 		this.el = el || {};
 		this.multiple = multiple || false;
@@ -16,19 +16,19 @@ const FrequentlyAskedQuestions = () => {
 	}
 
 	Accordion.prototype.dropdown = function(e) {
-		var el = e.data.el;
-			this = (this),
-			next = this.next();
+		var $el = e.data.el;
+			$this = $(this),
+			$next = $this.next();
 
-		next.slideToggle();
-		this.parent().toggleClass('open');
+		$next.slideToggle();
+		$this.parent().toggleClass('open');
 
 		if (!e.data.multiple) {
-			el.find('.submenu').not(next).slideUp().parent().removeClass('open');
+			$el.find('.submenu').not($next).slideUp().parent().removeClass('open');
 		};
 	}	
 
-	var accordion = new Accordion(('#accordion'), false);
+	var accordion = new Accordion($('#accordion'), false);
 });
 
 return (
