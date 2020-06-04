@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import onClickOutside from 'react-onclickoutside';
 import './FrequentlyAskedQuestions.scss';
-import { StaticPage, TopbarContainer } from '../../containers';
+import { StaticPage, TopbarContainer } from '..';
 import {
     LayoutSingleColumn,
     LayoutWrapperTopbar,
