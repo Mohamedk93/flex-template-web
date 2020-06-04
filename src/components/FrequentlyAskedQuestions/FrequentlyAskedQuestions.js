@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
 import onClickOutside from 'react-onclickoutside';
 import './FrequentlyAskedQuestions.scss';
+import { StaticPage, TopbarContainer } from '../../containers';
+import {
+    LayoutSingleColumn,
+    LayoutWrapperTopbar,
+    LayoutWrapperMain,
+    LayoutWrapperFooter,
+    Footer,
+  } from '../../components';
 
-function Dropdown({ title, items, multiSelect = false }) {
+function FrequentlyAskedQuestions({ title, items, multiSelect = false }) {
   const [open, setOpen] = useState(false);
   const [selection, setSelection] = useState([]);
   const toggle = () => setOpen(!open);
-  Dropdown.handleClickOutside = () => setOpen(false);
+  FrequentlyAskedQuestions.handleClickOutside = () => setOpen(false);
 
   function handleOnClick(item) {
     if (!selection.some(current => current.id === item.id)) {
@@ -32,14 +40,29 @@ function Dropdown({ title, items, multiSelect = false }) {
   }
 
   return (
-    <div className="dd-wrapper">
-      <div
+    <StaticPage
+    title="FAQs"
+    schema={{
+      '@context': 'http://schema.org',
+      '@type': 'FAQs',
+      description: 'Frequently asked questions',
+      name: 'Frequently asked questions',
+    }}
+  >
+      <LayoutSingleColumn>
+        <LayoutWrapperTopbar>
+          <TopbarContainer />
+        </LayoutWrapperTopbar>
+
+        <LayoutWrapperMain className={css.staticPageWrapper}>
+         <div className="dd-wrapper">
+        <div
         tabIndex={0}
         className="dd-header"
         role="button"
         onKeyPress={() => toggle(!open)}
         onClick={() => toggle(!open)}
-      >
+           >
         <div className="dd-header__title">
           <p className="dd-header__title--bold">What is Hotdesk?</p>
         </div>
@@ -54,11 +77,19 @@ Our mission is to help artists further their careers by making home studios to t
         </p>
       )}
     </div>
+    </LayoutWrapperMain>
+
+<LayoutWrapperFooter>
+  <Footer />
+</LayoutWrapperFooter>
+</LayoutSingleColumn>
+
+</StaticPage>
   );
 }
 
 const clickOutsideConfig = {
-  handleClickOutside: () => Dropdown.handleClickOutside,
+  handleClickOutside: () => FrequentlyAskedQuestions.handleClickOutside,
 };
 
-export default onClickOutside(Dropdown, clickOutsideConfig);
+export default onClickOutside(FrequentlyAskedQuestions, clickOutsideConfig);
