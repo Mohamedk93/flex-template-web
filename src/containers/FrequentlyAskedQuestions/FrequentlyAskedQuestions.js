@@ -10,7 +10,14 @@ import {
     Footer,
   } from '../../components';
 
-  const FrequentlyAskedQuestions = () => {
+function FrequentlyAskedQuestions({ title, items, multiSelect = false }) {
+  const [open, setOpen] = useState(false);
+  const [selection, setSelection] = useState([]);
+  const toggle = () => setOpen(!open);
+  FrequentlyAskedQuestions.handleClickOutside = () => setOpen(false);
+
+  
+ 
   return (
     <StaticPage
     title="FAQs"
@@ -63,6 +70,5 @@ Our mission is to help artists further their careers by making home studios to t
 const clickOutsideConfig = {
   handleClickOutside: () => FrequentlyAskedQuestions.handleClickOutside,
 };
-
 
 export default onClickOutside(FrequentlyAskedQuestions, clickOutsideConfig);
