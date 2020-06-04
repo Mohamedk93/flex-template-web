@@ -17,7 +17,7 @@ function FrequentlyAskedQuestions() {
     <StaticPage
     title="FAQs"
     schema={{
-      '@context': 'http://schema.org',
+      '@context': 'https://schema.org',
       '@type': 'FAQs',
       description: 'Frequently asked questions',
       name: 'Frequently asked questions',

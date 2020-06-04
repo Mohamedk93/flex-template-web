@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import onClickOutside from 'react-onclickoutside';
-
+import './FrequentlyAskedQuestions.scss';
 
 function Dropdown({ title, items, multiSelect = false }) {
   const [open, setOpen] = useState(false);
@@ -23,7 +23,7 @@ function Dropdown({ title, items, multiSelect = false }) {
           <p className="dd-header__title--bold">{title}</p>
         </div>
         <div className="dd-header__action">
-          <p>{open ? 'Close' : 'Open'}</p>
+          <p>{open ? <i class="arrow up"></i> : <i class="arrow down"></i>}</p>
         </div>
       </div>
       {open && (
