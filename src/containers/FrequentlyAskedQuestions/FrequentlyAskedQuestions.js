@@ -33,8 +33,8 @@ function FrequentlyAskedQuestions({ title, items, multiSelect = false }) {
           <TopbarContainer />
         </LayoutWrapperTopbar>
 
-        <LayoutWrapperMain className="staticPageWrapper">
-         <div className="dd-wrapper">
+        <LayoutWrapperMain className="dd-wrapper">
+      
         <div
         tabIndex={0}
         className="dd-header"
@@ -55,7 +55,7 @@ function FrequentlyAskedQuestions({ title, items, multiSelect = false }) {
 Our mission is to help artists further their careers by making home studios to top-line studios all around the world accessible. We are also dedicated to helping studios share the incredible stories of music that originate in them, generate more bookings, and take their studio business to the world’s most creative and talented artists that search for studios on Studiotime.
         </p>
       )}
-    </div>
+   
     </LayoutWrapperMain>
 
 <LayoutWrapperFooter>
