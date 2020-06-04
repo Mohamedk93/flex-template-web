@@ -1,83 +1,64 @@
-import React from 'react';
-import config from '../../config';
-import { StaticPage, TopbarContainer } from '../../containers';
+import React, { useState } from 'react';
+import onClickOutside from 'react-onclickoutside';
+import './FrequentlyAskedQuestions.scss';
 
-const FrequentlyAskedQuestions = () => {
+function Dropdown({ title, items, multiSelect = false }) {
+  const [open, setOpen] = useState(false);
+  const [selection, setSelection] = useState([]);
+  const toggle = () => setOpen(!open);
+  Dropdown.handleClickOutside = () => setOpen(false);
 
-   $(function() {
-	var Accordion = function(el, multiple) {
-		this.el = el || {};
-		this.multiple = multiple || false;
+  function handleOnClick(item) {
+    if (!selection.some(current => current.id === item.id)) {
+      if (!multiSelect) {
+        setSelection([item]);
+      } else if (multiSelect) {
+        setSelection([...selection, item]);
+      }
+    } else {
+      let selectionAfterRemoval = selection;
+      selectionAfterRemoval = selectionAfterRemoval.filter(
+        current => current.id !== item.id
+      );
+      setSelection([...selectionAfterRemoval]);
+    }
+  }
 
-		// Variables privadas
-		var links = this.el.find('.link');
-		// Evento
-		links.on('click', {el: this.el, multiple: this.multiple}, this.dropdown)
-	}
+  function isItemInSelection(item) {
+    if (selection.some(current => current.id === item.id)) {
+      return true;
+    }
+    return false;
+  }
 
-	Accordion.prototype.dropdown = function(e) {
-		var $el = e.data.el;
-			$this = $(this),
-			$next = $this.next();
-
-		$next.slideToggle();
-		$this.parent().toggleClass('open');
-
-		if (!e.data.multiple) {
-			$el.find('.submenu').not($next).slideUp().parent().removeClass('open');
-		};
-	}	
-
-	var accordion = new Accordion($('#accordion'), false);
-});
-
-return (
-    <StaticPage
-    title="FrequentlyAskedQuestions"
-    schema={{
-      '@context': 'http://schema.org',
-      '@type': 'FrequentlyAskedQuestions',
-      description: 'Frequently Asked Questions',
-      name: 'Frequently Asked Questions',
-    }}
-  >
-<ul id="accordion" className={css.accordion}>
-  <li>
-    <div className={css.link}>
-        <i className={css.fa-database}></i>Web Design<i className={css.fa-chevron-down}></i>
+  return (
+    <div className="dd-wrapper">
+      <div
+        tabIndex={0}
+        className="dd-header"
+        role="button"
+        onKeyPress={() => toggle(!open)}
+        onClick={() => toggle(!open)}
+      >
+        <div className="dd-header__title">
+          <p className="dd-header__title--bold">What is Hotdesk?</p>
         </div>
-    <ul class={css.submenu}>
-      <li><a href="#">Photoshop</a></li>
-      <li><a href="#">HTML</a></li>
-      <li><a href="#">CSS</a></li>
-    </ul>
-  </li>
-  <li>
-    <div className={css.link}><i className={css.fa-code}></i>Coding<i className={css.fa-chevron-down}></i></div>
-    <ul className={css.submenu}>
-      <li><a href="#">Javascript</a></li>
-      <li><a href="#">jQuery</a></li>
-      <li><a href="#">Ruby</a></li>
-    </ul>
-  </li>
-  <li>
-    <div className={css.link}><i className={css.fa-mobile}></i>Devices<i className={css.fa-chevron-down}></i></div>
-    <ul className={css.submenu}>
-      <li><a href="#">Tablet</a></li>
-      <li><a href="#">Mobile</a></li>
-      <li><a href="#">Desktop</a></li>
-    </ul>
-  </li>
-  <li>
-    <div className={css.link}><i className={css.fa-globe}></i>Global<i className={css.fa-chevron-down}></i></div>
-    <ul className={css.submenu}>
-      <li><a href="#">Google</a></li>
-      <li><a href="#">Bing</a></li>
-      <li><a href="#">Yahoo</a></li>
-    </ul>
-  </li>
-</ul>
-</StaticPage>
-)
+        <div className="dd-header__action">
+          <p>{open ? 'Close' : 'Open'}</p>
+        </div>
+      </div>
+      {open && (
+        <p className="text">
+          Studiotime is the largest and most trusted online community to book music studios. We have music studios in 35+ countries on our site. We’re a bootstrap marketplace and have successfully generated thousands of bookings in the past two years since we first started. <br />
+Our mission is to help artists further their careers by making home studios to top-line studios all around the world accessible. We are also dedicated to helping studios share the incredible stories of music that originate in them, generate more bookings, and take their studio business to the world’s most creative and talented artists that search for studios on Studiotime.
+        </p>
+      )}
+    </div>
+  );
 }
-export default FrequentlyAskedQuestions;
+
+const clickOutsideConfig = {
+  handleClickOutside: () => Dropdown.handleClickOutside,
+};
+
+export default onClickOutside(Dropdown, clickOutsideConfig);

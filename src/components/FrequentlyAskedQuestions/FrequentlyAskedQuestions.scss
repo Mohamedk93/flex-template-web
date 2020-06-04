@@ -1,0 +1,74 @@
+
+@import '../../marketplace.css';
+
+
+html {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    -webkit-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+body {
+    margin: 20px 0;
+    padding: 0;
+    line-height:1;
+    font-size: 16px;
+    @apply --marketplaceH1FontStyles;
+    color: var(--marketplaceColor);
+    background-color: #fbfbfb;
+    font-smooth: always;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    max-width: 1140px;
+    width: 100%;
+    margin: auto;
+    padding: 0 20px;
+}
+
+@mixin styling() {
+    background-color:white;
+    border-color: #ccc;
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+} 
+
+.dd-wrapper{
+  display:flex;
+  min-height: 38px;
+  flex-wrap: wrap;
+  .dd-header{
+    @include stylng();
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    width: 100%;
+    padding: 0 20px;
+
+    &_title--bold{
+      font-weight: bold;
+    }
+
+      text {
+      box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+      padding: 0;
+      margin: 0;
+      width: 100%; 
+      margin-top: 20px;
+        @media (--viewportMedium) {
+          max-width: 650px;
+        }
+      }
+
+    }
+    }
+  }
+}
