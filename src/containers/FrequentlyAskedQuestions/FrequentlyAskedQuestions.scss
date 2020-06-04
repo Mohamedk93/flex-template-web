@@ -12,6 +12,17 @@ html {
     box-sizing: inherit;
 }
 
+.pageTitle {
+  text-align: center;
+}
+
+.subtitle {
+  @apply --marketplaceH3FontStyles;
+  font-weight: bold;
+  margin-top: 48px;
+  margin-bottom: 24px;
+}
+
 body {
     margin: 20px 0;
     padding: 0;
@@ -37,7 +48,7 @@ body {
 
 .container {
     max-width: 1140px;
-    width: 100%;
+    width: auto;
     margin: auto;
     padding: 0 20px;
 }
@@ -60,7 +71,7 @@ body {
     display: flex;
     justify-content: space-between;
     cursor: pointer;
-    width: 100%;
+    width: 90%;
     padding: 0 20px;
 
     &_title--bold{
@@ -75,6 +86,7 @@ body {
       margin-top: 20px;
         @media (--viewportMedium) {
           max-width: 650px;
+          font-weight: 800;
         }
       }
 
