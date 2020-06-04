@@ -54,7 +54,7 @@ function FrequentlyAskedQuestions({ title, items, multiSelect = false }) {
           <TopbarContainer />
         </LayoutWrapperTopbar>
 
-        <LayoutWrapperMain className={css.staticPageWrapper}>
+        <LayoutWrapperMain className="staticPageWrapper">
          <div className="dd-wrapper">
         <div
         tabIndex={0}
