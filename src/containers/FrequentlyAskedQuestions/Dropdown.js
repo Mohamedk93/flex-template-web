@@ -19,7 +19,7 @@ function Dropdown({ title, items, multiSelect = false }) {
         onKeyPress={() => toggle(!open)}
         onClick={() => toggle(!open)}
            >
-        <div className="dd-header__title">
+        <div className="dd-header">
           <p className="dd-header__title--bold">{title}</p>
         </div>
         <div className="dd-header__action">
