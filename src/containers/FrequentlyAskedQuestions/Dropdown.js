@@ -23,7 +23,7 @@ function Dropdown({ title, items, multiSelect = false }) {
           <p className="dd-header__title--bold">{title}</p>
         </div>
         <div className="dd-header__action">
-          <p>{open ? <i class="arrow up"></i> : <i class="arrow down"></i>}</p>
+          <p>{open ? <i className="arrow up"></i> : <i className="arrow down"></i>}</p>
         </div>
       </div>
       {open && (
