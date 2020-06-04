@@ -46,7 +46,7 @@ body {
   min-height: 38px;
   flex-wrap: wrap;
   .dd-header{
-    @include stylng();
+    @include styling();
     display: flex;
     justify-content: space-between;
     cursor: pointer;
