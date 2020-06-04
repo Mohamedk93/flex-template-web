@@ -62,6 +62,7 @@ body {
 
   .dd-header {
     @include styling();
+    border-color: black;
     display: flex;
     justify-content: space-between;
     cursor: pointer;
