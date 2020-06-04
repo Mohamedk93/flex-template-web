@@ -10,9 +10,8 @@ import {
     Footer,
   } from '../../components';
 
-function FrequentlyAskedQuestions({ title, items, multiSelect = false }) {
+  const FrequentlyAskedQuestions = () =>  {
   const [open, setOpen] = useState(false);
-  const [selection, setSelection] = useState([]);
   const toggle = () => setOpen(!open);
   FrequentlyAskedQuestions.handleClickOutside = () => setOpen(false);
 
