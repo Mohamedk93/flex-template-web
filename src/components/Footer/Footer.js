@@ -11,6 +11,7 @@ import {
   Logo,
   ExternalLink,
   NamedLink,
+  FrequentlyAskedQuestions
 } from '../../components';
 
 import css from './Footer.css';
@@ -93,7 +94,7 @@ const Footer = props => {
                   </NamedLink>
                 </li>
                 <li className={css.listItem}>
-                  <NamedLink name="FrequentlyAskedQuestions" to={'../FrequentlyAskedQuestions'} className={css.link}>
+                  <NamedLink name="FrequentlyAskedQuestions" href="../FrequentlyAskedQuestions" className={css.link}>
                     <FormattedMessage id="Footer.toFAQPage" />
                   </NamedLink>
                 </li>
