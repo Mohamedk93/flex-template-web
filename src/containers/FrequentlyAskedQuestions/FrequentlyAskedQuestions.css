@@ -64,7 +64,6 @@ body {
   border-style: solid;
   border-width: 1px;
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
-    justify-content: space-between;
     cursor: pointer;
     width: 100%;
     padding: 0 20px;
@@ -79,7 +78,7 @@ body {
 
     
   }
-  button {
+  .button {
 
     justify-content: space-between;
     background-color: white;
@@ -98,8 +97,9 @@ body {
       background-color: #ccc;
     }
   
+    
 
-      text {
+      .text {
       position: relative;
       background-color: white;
       border-color: #4a4a4a;
