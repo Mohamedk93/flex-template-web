@@ -19,19 +19,14 @@ function Dropdown({ title, items, multiSelect = false }) {
         onKeyPress={() => toggle(!open)}
         onClick={() => toggle(!open)}
            >
-        <div className={css.ddheader}>
           <p className={css.ddheader}>{title}</p>
-        </div>
-        <div className={css.ddheader}>
-          <p>{open ? <i></i> : <i></i>}</p>
-        </div>
-      </div>
       {open && (
         <p className={css.text}>
          {items}
         </p>
       )}
 
+</div>
 </div>
   );
 }
