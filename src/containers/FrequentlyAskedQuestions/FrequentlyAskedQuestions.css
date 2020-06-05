@@ -52,7 +52,6 @@ body {
 ============================================ */
 
 .ddwrapper {
-  display: flex;
   min-height: 38px;
   flex-wrap: wrap;
 
