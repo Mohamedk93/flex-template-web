@@ -15,7 +15,7 @@ function Dropdown({ title, items, multiSelect = false }) {
         <div
         tabIndex={0}
         className={css.ddheader}
-        role={button}
+        role={css.button}
         onKeyPress={() => toggle(!open)}
         onClick={() => toggle(!open)}
            >
