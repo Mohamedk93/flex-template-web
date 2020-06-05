@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import onClickOutside from 'react-onclickoutside';
-import './FrequentlyAskedQuestions.scss';
+import './FrequentlyAskedQuestions.css';
 
 function Dropdown({ title, items, multiSelect = false }) {
   const [open, setOpen] = useState(false);
@@ -11,23 +11,23 @@ function Dropdown({ title, items, multiSelect = false }) {
   
  
   return (
-    <div className="dd-wrapper">
+    <div className={css.ddwrapper}>
         <div
         tabIndex={0}
-        className="dd-header"
-        role="button"
+        className={css.ddheader}
+        role={button}
         onKeyPress={() => toggle(!open)}
         onClick={() => toggle(!open)}
            >
-        <div className="dd-header">
-          <p className="dd-header__title--bold">{title}</p>
+        <div className={css.ddheader}>
+          <p className={css.ddheader}>{title}</p>
         </div>
-        <div className="dd-header__action">
-          <p>{open ? <i className="arrow up"></i> : <i className="arrow down"></i>}</p>
+        <div className={css.ddheader}>
+          <p>{open ? <i className={css.arrow.up}></i> : <i class={css.arrow.down}></i>}</p>
         </div>
       </div>
       {open && (
-        <p className="text">
+        <p className={css.text}>
          {items}
         </p>
       )}
