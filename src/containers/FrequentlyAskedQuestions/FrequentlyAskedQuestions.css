@@ -80,7 +80,7 @@ body {
     
   }
   button {
-    display: flex;
+
     justify-content: space-between;
     background-color: white;
     font-size: 16px;
@@ -101,8 +101,11 @@ body {
 
       text {
       position: relative;
-      box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+      background-color: white;
       border-color: #4a4a4a;
+      border-radius: 4px;
+      border-style: solid;
+      border-width: 1px;
       padding: 0;
       margin: 0;
       width: 100%; 
