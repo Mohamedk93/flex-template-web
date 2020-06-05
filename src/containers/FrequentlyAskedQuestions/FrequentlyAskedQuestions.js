@@ -1,5 +1,5 @@
 import React from 'react';
-import './FrequentlyAskedQuestions.css';
+import css from './FrequentlyAskedQuestions.css';
 import Dropdown from './Dropdown';
 import { StaticPage, TopbarContainer } from '..';
 import {
