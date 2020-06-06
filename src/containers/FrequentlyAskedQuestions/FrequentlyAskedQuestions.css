@@ -77,8 +77,9 @@ body {
   }
 
  .arrowrapper {
-  margin-bottom: 50%;
+  margin-bottom: 0%;
   margin-left: 90%; 
+  margin-top: 3%;
 
  } 
 .arrowup {
