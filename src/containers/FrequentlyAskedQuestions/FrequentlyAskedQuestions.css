@@ -80,8 +80,7 @@ body {
     border-width: 0 3px 3px 0;
     display: inline-block;
     padding: 3px;
-    margin-left: 60%;
-    margin-bottom: 10%;
+    right: 3px;
     transform: rotate(-135deg);
     -webkit-transform: rotate(-135deg);
   }
@@ -92,8 +91,6 @@ body {
   display: inline-block;
   padding: 3px;
   right: 3px;
-  margin-left: 60%;
-    margin-bottom: 10%;
   transform: rotate(-135deg);
   -webkit-transform: rotate(-135deg);
   transform: rotate(45deg);
