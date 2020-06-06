@@ -15,6 +15,7 @@ html {
 
 body {
   margin: 0px auto;
+  width: 100%;
   padding: 0;
   line-height: 1;
   font-size: 16px;
@@ -33,7 +34,7 @@ body {
 }
 
 .staticPageWrapper {
-  width: calc(100% - 48px);
+  width: 100%;
   max-width: 1056px;
   margin: 24px auto;
 
