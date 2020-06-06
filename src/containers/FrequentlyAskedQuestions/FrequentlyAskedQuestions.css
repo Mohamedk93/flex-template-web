@@ -87,7 +87,8 @@ body {
     padding: 3px;
     float:right;
     margin: 9px;
-    transform: rotate(-135deg);
+   
+    transition: transform .2s ease-in,-webkit-transform .2s ease-in;
     -webkit-transform: rotate(-135deg);
   }
   
@@ -99,7 +100,7 @@ body {
   float: right;
   margin: 9px;
   transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
+  transition: transform .2s ease-in,-webkit-transform .2s ease-in;
   }
 
   .ddlist {
