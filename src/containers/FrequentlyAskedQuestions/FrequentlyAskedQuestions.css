@@ -65,7 +65,6 @@ body {
     background-color: white;
   border-color: #4a4a4a;
   border-radius: 4px;
-  color:  #4a4a4a;
   border-style: solid;
   border-width: 1px;
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
@@ -75,24 +74,19 @@ body {
 
     
   }
-.arrowup {
-    border: solid  #4a4a4a;
+ .arrow {
+    border: solid black;
     border-width: 0 3px 3px 0;
     display: inline-block;
     padding: 3px;
+  }
+  .up {
     transform: rotate(-135deg);
     -webkit-transform: rotate(-135deg);
   }
-  }
- .arrowdown {
-  border: solid  #4a4a4a;
-  border-width: 0 3px 3px 0;
-  display: inline-block;
-  padding: 3px;
-  transform: rotate(-135deg);
-  -webkit-transform: rotate(-135deg);
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
+ .down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
   }
 
   .ddlist {
