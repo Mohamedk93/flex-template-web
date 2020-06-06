@@ -27,6 +27,7 @@ body {
 }
 
 .pageTitle {
+  font-weight: 500;
   text-align: center;
   margin-top: 0px;
 }
@@ -64,11 +65,12 @@ body {
   }
 .ddheader {
     background-color: white;
-  border-color: #4a4a4a;
+  border-color:  #202020;
   border-radius: 4px;
   border-style: solid;
   border-width: 1px;
-  font-size: 14px;
+  font-size: 16px;
+  color:  #202020;
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
     cursor: pointer;
     width: 100%;
@@ -78,23 +80,23 @@ body {
   }
 
 .arrowup {
-    border: solid  #4a4a4a;
+    border: solid  #202020;
     border-width: 0 2px 2px 0;
     display: inline-block;
     padding: 3px;
     float:right;
-    margin: 11px;
+    margin: 9px;
     transform: rotate(-135deg);
     -webkit-transform: rotate(-135deg);
   }
   
  .arrowdown {
-  border: solid  #4a4a4a;
+  border: solid   #202020;
   border-width: 0 2px 2px 0;
   display: inline-block;
   padding: 3px;
   float: right;
-  margin: 11px;
+  margin: 9px;
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
   }
@@ -141,10 +143,10 @@ body {
       .text {
       position: relative;
       background-color: white;
-      border-color: #4a4a4a;
-      color: #4a4a4a;
-      font-weight: 500;
-      font-size: 14px;
+      border-color: #202020;
+      color:  #202020;;
+      font-weight: normal;
+      font-size: 16px;
       border-radius: 4px;
       border-style: solid;
       border-width: 1px;
