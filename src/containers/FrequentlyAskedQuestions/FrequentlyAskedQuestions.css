@@ -10,6 +10,7 @@ html {
 *, *:before, *:after {
   -webkit-box-sizing: inherit;
           box-sizing: inherit;
+          outline: none;
 }
 
 body {
