@@ -111,10 +111,18 @@ body {
     border-right: 1px solid #ccc;
     outline: none !important; 
   }
-    &:hover, &:focus {
+
+    .button:hover{
       cursor: pointer;
       font-weight: bold;
       background-color: #ccc;
+    }
+    
+    .button:focus {
+      cursor: pointer;
+      font-weight: bold;
+      background-color: #ccc;
+      outline: none !important; s
     }
   
     
