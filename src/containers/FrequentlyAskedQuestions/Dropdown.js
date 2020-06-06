@@ -21,7 +21,7 @@ function Dropdown({ title, items, multiSelect = false }) {
            >
         <div>
           <p className={css.ddheader}>{title}</p>
-         {open ? <p className={css.arrow.up}></p>: <p className={css.arrow.down}></p>}</div>
+         {open ? <p className={css.arrowup}></p>: <p className={css.arrowdown}></p>}</div>
       {open && (
         <p className={css.text}>
          {items}
