@@ -67,6 +67,7 @@ body {
   border-radius: 4px;
   border-style: solid;
   border-width: 1px;
+  font-size: 14px;
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
     cursor: pointer;
     width: 100%;
@@ -81,6 +82,7 @@ body {
     display: inline-block;
     padding: 3px;
     float:right;
+    margin: 11px;
     transform: rotate(-135deg);
     -webkit-transform: rotate(-135deg);
   }
@@ -91,6 +93,7 @@ body {
   display: inline-block;
   padding: 3px;
   float: right;
+  margin: 11px;
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
   }
@@ -138,6 +141,9 @@ body {
       position: relative;
       background-color: white;
       border-color: #4a4a4a;
+      color: #4a4a4a;
+      font-weight: 900;
+      font-size: 14px;
       border-radius: 4px;
       border-style: solid;
       border-width: 1px;
