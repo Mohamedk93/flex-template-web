@@ -83,7 +83,7 @@ body {
     transform: rotate(-135deg);
     -webkit-transform: rotate(-135deg);
   }
-  }
+  
  .arrowdown {
   border: solid  #4a4a4a;
   border-width: 0 3px 3px 0;
