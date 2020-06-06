@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import onClickOutside from 'react-onclickoutside';
 import css from './FrequentlyAskedQuestions.css';
 
+
 function Dropdown({ title, items, multiSelect = false }) {
   const [open, setOpen] = useState(false);
   const [selection, setSelection] = useState([]);
@@ -19,6 +20,7 @@ function Dropdown({ title, items, multiSelect = false }) {
         onClick={() => toggle(!open)}
            >
           <p className={css.ddheader}>{title}</p>
+          <div>{open ? <p className={css.arrow.up}></p>: <p className={css.arrow.down}></p>}</div>
       {open && (
         <p className={css.text}>
          {items}

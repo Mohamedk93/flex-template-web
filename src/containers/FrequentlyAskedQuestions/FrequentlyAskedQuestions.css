@@ -43,27 +43,43 @@ body {
   max-width: 1140px;
   width: 100%;
   margin: auto;
-  
 }
 
 
 
 /* DROPDOWN
 ============================================ */
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+.arrow .up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
 
+.arrow .down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
 .ddwrapper {
+  display: flex;
   min-height: 38px;
   flex-wrap: wrap;
-  @apply  --marketplaceH4FontStyles;
 
   }
   .ddheader {
     background-color: white;
-  border-color: #4a4a4a;
+  border-color: black;
   border-radius: 4px;
   border-style: solid;
   border-width: 1px;
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+   
+    display: flex;
+    justify-content: space-between;
     cursor: pointer;
     width: 100%;
     padding: 0 20px;
@@ -78,8 +94,8 @@ body {
 
     
   }
-  .button {
-
+  button {
+    display: flex;
     justify-content: space-between;
     background-color: white;
     font-size: 16px;
@@ -90,6 +106,7 @@ body {
     text-align: left;
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
+    outline: none;
   }
     &:hover, &:focus {
       cursor: pointer;
@@ -97,20 +114,15 @@ body {
       background-color: #ccc;
     }
   
-    
 
-      .text {
-      position: relative;
-      background-color: white;
-      border-color: #4a4a4a;
-      border-radius: 4px;
-      border-style: solid;
-      border-width: 1px;
-      padding: 0 20px;
+      text {
+      box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+      padding: 0;
       margin: 0;
       width: 100%; 
+      margin-top: 20px;
         @media (--viewportMedium) {
-          max-width: auto;
+          max-width: 650px;
         }
       }
 
