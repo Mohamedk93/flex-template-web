@@ -51,30 +51,16 @@ body {
 /* DROPDOWN
 ============================================ */
 
-.arrow {
-  border: solid black;
-  border-width: 0 3px 3px 0;
-  display: inline-block;
-  padding: 3px;
-}
-.arrow .up {
-  transform: rotate(-135deg);
-  -webkit-transform: rotate(-135deg);
-}
 
-.arrow .down {
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-}
 
 .ddwrapper {
   min-height: 38px;
   flex-wrap: wrap;
   @apply  --marketplaceH4FontStyles;
-  outline: none;
+  outline: none !important; 
 
   }
-  .ddheader {
+.ddheader {
     background-color: white;
   border-color: #4a4a4a;
   border-radius: 4px;
@@ -84,6 +70,23 @@ body {
     cursor: pointer;
     width: 100%;
     padding: 0 20px;
+
+    
+  }
+ .ddheader .arrow {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+  }
+  .ddheader .arrow .up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+  }
+  
+  .ddheader .arrow .down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
   }
 
   .ddlist {
@@ -107,7 +110,7 @@ body {
     text-align: left;
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
-    outline: none;
+    outline: none !important; 
   }
     &:hover, &:focus {
       cursor: pointer;
