@@ -21,7 +21,9 @@ function Dropdown({ title, items, multiSelect = false }) {
            >
           <div className={css.ddheader}>
               {title}
+              <p className={css.arrowrapper}> 
               {open ? <p className={css.arrowup}></p>: <p className={css.arrowdown}></p>}
+              </p>
               </div>
          
       {open && (
