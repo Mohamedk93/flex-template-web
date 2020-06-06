@@ -20,7 +20,7 @@ function Dropdown({ title, items, multiSelect = false }) {
         onClick={() => toggle(!open)}
            >
           <p className={css.ddheader}>{title}</p>
-          <div>{open ? <p className={css.up}></p>: <p className={css.down}></p>}</div>
+          <div>{open ? <p className={css.arrowup}></p>: <p className={css.arrowdown}></p>}</div>
       {open && (
         <p className={css.text}>
          {items}
