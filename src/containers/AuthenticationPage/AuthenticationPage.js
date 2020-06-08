@@ -331,13 +331,4 @@ const AuthenticationPage = compose(
   injectIntl
 )(AuthenticationPageComponent);
 
-mixpanel.init("a3320a98be36c497413cd2912dbbe34f", {
-   loaded: function () {
-             setTimeout(function () {
-               mixpanel.alias(email);
-               mixpanel.identify(email);
-             }, 1);
-          }
-});
-
 export default AuthenticationPage;
