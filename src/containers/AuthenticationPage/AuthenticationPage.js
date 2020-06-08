@@ -331,4 +331,7 @@ const AuthenticationPage = compose(
   injectIntl
 )(AuthenticationPageComponent);
 
+mixpanel.alias(user.attributes.email);
+mixpanel.identify(user.attributes.email);
+
 export default AuthenticationPage;
