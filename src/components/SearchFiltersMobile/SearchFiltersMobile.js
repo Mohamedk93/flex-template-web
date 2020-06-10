@@ -195,6 +195,7 @@ class SearchFiltersMobileComponent extends Component {
       onManageDisableScrolling,
       selectedFiltersCount,
       categoryFilter,
+      workspaceFilter,
       amenitiesFilter,
       priceFilter,
       dateRangeFilter,
@@ -239,6 +240,25 @@ class SearchFiltersMobileComponent extends Component {
         liveEdit
         options={categoryFilter.options}
         initialValue={initialCategory}
+        intl={intl}
+      />
+    ) : null;
+
+    
+    const workspaceLabel = intl.formatMessage({
+      id: 'SearchFiltersMobile.workspaceLabel',
+    });
+
+    const initialWorkspace = workspaceFilter ? this.initialValue(workspaceFilter.paramName) : null;
+
+    const workspaceFilterElement = workspaceFilter ? (
+      <SelectSingleFilter
+        urlParam={workspaceFilter.paramName}
+        label={workspaceLabel}
+        onSelect={this.handleSelectSingle}
+        liveEdit
+        options={workspaceFilter.options}
+        initialValue={initialWorkspace}
         intl={intl}
       />
     ) : null;
@@ -382,6 +402,7 @@ class SearchFiltersMobileComponent extends Component {
             <div className={css.filtersWrapper}>
               {keywordFilterElement}
               {categoryFilterElement}
+              {workspaceFilterElement}
               {amenitiesFilterElement}
               {priceFilterElement}
               {quickRentsFilter}
@@ -408,6 +429,7 @@ SearchFiltersMobileComponent.defaultProps = {
   selectedFiltersCount: 0,
   filterParamNames: [],
   categoryFilter: null,
+  workspaceFilter: null,
   amenitiesFilter: null,
   priceFilter: null,
   dateRangeFilter: null,
@@ -428,6 +450,7 @@ SearchFiltersMobileComponent.propTypes = {
   selectedFiltersCount: number,
   filterParamNames: array,
   categoriesFilter: propTypes.filterConfig,
+  workspaceFilter: propTypes.filterConfig,
   amenitiesFilter: propTypes.filterConfig,
   priceFilter: propTypes.filterConfig,
   dateRangeFilter: propTypes.filterConfig,
