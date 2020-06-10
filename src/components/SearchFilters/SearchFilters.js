@@ -358,7 +358,7 @@ SearchFiltersComponent.defaultProps = {
   resultsCount: null,
   searchingInProgress: false,
   categoryFilter: null,
-  workspaceFilter null,
+  workspaceFilter: null,
   amenitiesFilter: null,
   priceFilter: null,
   dateRangeFilter: null,
