@@ -252,14 +252,15 @@ class SearchFiltersMobileComponent extends Component {
     const initialWorkspace = workspaceFilter ? this.initialValue(workspaceFilter.paramName) : null;
 
     const workspaceFilterElement = workspaceFilter ? (
-      <SelectSingleFilter
+      <SelectMultipleFilter
+      id="SearchFiltersMobile.workspaceFilter"
+        name="workspaces"
         urlParam={workspaceFilter.paramName}
         label={workspaceLabel}
-        onSelect={this.handleSelectSingle}
+        onSelect={this.handleSelectMultiple}
         liveEdit
         options={workspaceFilter.options}
         initialValue={initialWorkspace}
-        intl={intl}
       />
     ) : null;
 
