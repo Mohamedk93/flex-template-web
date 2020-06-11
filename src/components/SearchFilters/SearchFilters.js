@@ -201,12 +201,10 @@ const SearchFiltersComponent = props => {
   ) : null;
 
   const workspaceFilterElement = workspaceFilter ? (
-    <SelectMultipleFilter
-    id={'SearchFilters.workspaceFilter'}
-      name="workspaces"
+    <SelectSingleFilter
       urlParam={workspaceFilter.paramName}
       label={workspaceLabel}
-      onSubmit={handleSelectOptions}
+      onSelect={handleSelectOption}
       showAsPopup
       options={workspaceFilter.options}
       initialValue={initialWorkspace}
