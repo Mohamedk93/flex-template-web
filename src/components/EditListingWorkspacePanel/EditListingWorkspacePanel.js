@@ -38,7 +38,7 @@ const EditListingWorkspacePanel = props => {
   ) : (
     <FormattedMessage id="EditListingWorkspacePanel.createListingTitle" />
   );
-  const workspaceOptions = publicData && publicData.workspaces;
+  const workspaces = publicData && publicData.workspaces;
   const initialValues = { workspaces }
  
 
@@ -62,7 +62,7 @@ const EditListingWorkspacePanel = props => {
         updated={panelUpdated}
         updateError={errors.updateListingError}
         updateInProgress={updateInProgress}
-        workspaceOptions={workspaceOptions}
+        workspaces={workspaces}
       />
     </div>
   );
