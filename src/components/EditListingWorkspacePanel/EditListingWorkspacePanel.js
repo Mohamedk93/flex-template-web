@@ -11,6 +11,8 @@ import config from '../../config.js';
 // as a template.
 import css from './EditListingWorkspacePanel.css';
 
+const FEATURES_NAME = 'workspaces';
+
 const EditListingWorkspacePanel = props => {
   const {
     className,
