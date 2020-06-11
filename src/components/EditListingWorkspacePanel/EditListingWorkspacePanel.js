@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
 import { ensureOwnListing } from '../../util/data.js';
-import { findOptionsForSelectFilter } from '../../util/search.js';
 import { ListingLink } from '../../components';
 import { EditListingWorkspaceForm } from '../../forms';
 import config from '../../config.js';
@@ -37,17 +36,16 @@ const EditListingWorkspacePanel = props => {
   ) : (
     <FormattedMessage id="EditListingWorkspacePanel.createListingTitle" />
   );
-  const workspaceOptions = findOptionsForSelectFilter(
-    'workspaces',
-    config.custom.filters
-  );
+  const workspaceOptions = publicData && publicData.workspaces;
+  const initialValues = { workspaces }
+ 
 
   return (
     <div className={classes}>
       <h1 className={css.title}>{panelTitle}</h1>
       <EditListingWorkspaceForm
         className={css.form}
-        initialValues={{ workspaces: publicData.workspaces }}
+        initialValues={initialValues}
         onSubmit={values => {
           const { workspaces } = values;
           const updateValues = {
