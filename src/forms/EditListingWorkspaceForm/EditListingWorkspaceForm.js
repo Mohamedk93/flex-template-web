@@ -1,77 +1,63 @@
 import React from 'react';
-import { arrayOf, bool, func, shape, string } from 'prop-types';
-import { compose } from 'redux';
-import { Form as FinalForm } from 'react-final-form';
+import { bool, func, shape, string } from 'prop-types';
 import classNames from 'classnames';
-import {
-  intlShape,
-  injectIntl,
-  FormattedMessage,
-} from '../../util/reactIntl';
-import { propTypes } from '../../util/types';
-import { required } from '../../util/validators';
-import { Form, Button, FieldSelect } from '../../components';
+import { Form as FinalForm } from 'react-final-form';
+import arrayMutators from 'final-form-arrays';
+import { FormattedMessage } from '../../util/reactIntl';
 
-// Create this file using EditListingFeaturesForm.css
-// as a template.
+import { propTypes } from '../../util/types';
+import config from '../../config';
+import { Button, FieldCheckboxGroup, Form } from '../../components';
+
 import css from './EditListingWorkspaceForm.css';
 
-export const EditListingWorkspaceFormComponent = props => (
+const EditListingWorkspaceFormComponent = props => (
   <FinalForm
     {...props}
+    mutators={{ ...arrayMutators }}
     render={fieldRenderProps => {
       const {
-        className,
         disabled,
+        rootClassName,
+        className,
+        name,
         handleSubmit,
-        intl,
-        invalid,
         pristine,
         saveActionMsg,
         updated,
-        updateError,
         updateInProgress,
-        workspaceOptions,
+        fetchErrors,
       } = fieldRenderProps;
 
-      const workspacePlaceholder = intl.formatMessage({
-        id: 'EditListingWorkspaceForm.workspacePlaceholder',
-      });
+      const classes = classNames(rootClassName || css.root, className);
+      const submitReady = updated && pristine;
+      const submitInProgress = updateInProgress;
+      const submitDisabled = disabled || submitInProgress;
 
-      const errorMessage = updateError ? (
+      const { updateListingError, showListingsError } = fetchErrors || {};
+      const errorMessage = updateListingError ? (
         <p className={css.error}>
           <FormattedMessage id="EditListingWorkspaceForm.updateFailed" />
         </p>
       ) : null;
 
-      const workspaceRequired = required(
-        intl.formatMessage({
-          id: 'EditListingWorkspaceForm.WorkspaceRequired',
-        })
-      );
-
-      const classes = classNames(css.root, className);
-      const submitReady = updated && pristine;
-      const submitInProgress = updateInProgress;
-      const submitDisabled = invalid || disabled || submitInProgress;
+      const errorMessageShowListing = showListingsError ? (
+        <p className={css.error}>
+          <FormattedMessage id="EditListingWorkspaceForm.showListingFailed" />
+        </p>
+      ) : null;
 
       return (
         <Form className={classes} onSubmit={handleSubmit}>
           {errorMessage}
+          {errorMessageShowListing}
 
-          <FieldSelect
-            className={css.workspace}
-            name="workspaces"
-            id="workspaces"
-            validate={workspaceRequired}
-          >
-            <option value="">{workspacePlaceholder}</option>
-            {workspaceOptions.map(c => (
-              <option key={c.key} value={c.key}>
-                {c.label}
-              </option>
-            ))}
-          </FieldSelect>
+          <FieldCheckboxGroup
+            className={css.workspaces}
+            id={name}
+            name={name}
+            options={config.custom.workspaces}
+          />
 
           <Button
             className={css.submitButton}
@@ -89,23 +75,25 @@ export const EditListingWorkspaceFormComponent = props => (
 );
 
 EditListingWorkspaceFormComponent.defaultProps = {
-  selectedPlace: null,
-  updateError: null,
+  rootClassName: null,
+  className: null,
+  fetchErrors: null,
 };
 
 EditListingWorkspaceFormComponent.propTypes = {
-  intl: intlShape.isRequired,
+  rootClassName: string,
+  className: string,
+  name: string.isRequired,
   onSubmit: func.isRequired,
   saveActionMsg: string.isRequired,
   updated: bool.isRequired,
-  updateError: propTypes.error,
   updateInProgress: bool.isRequired,
-  workspaceOptions: arrayOf(
-    shape({
-      key: string.isRequired,
-      label: string.isRequired,
-    })
-  ).isRequired,
+  fetchErrors: shape({
+    showListingsError: propTypes.error,
+    updateListingError: propTypes.error,
+  }),
 };
 
-export default compose(injectIntl)(EditListingWorkspaceFormComponent);
+const EditListingWorkspaceForm = EditListingWorkspaceFormComponent;
+
+export default EditListingWorkspaceForm;

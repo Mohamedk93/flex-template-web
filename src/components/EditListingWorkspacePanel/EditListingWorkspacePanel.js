@@ -1,22 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
-import { ensureOwnListing } from '../../util/data.js';
-import { ListingLink } from '../../components';
-import { EditListingWorkspaceForm } from '../../forms';
-import config from '../../config.js';
+import { FormattedMessage } from '../../util/reactIntl';
 
-// Create this file using EditListingDescriptionPanel.css
-// as a template.
+import { LISTING_STATE_DRAFT } from '../../util/types';
+import { ensureListing } from '../../util/data';
+import { EditListingWorkspaceForm } from '../../forms';
+import { ListingLink } from '../../components';
+
 import css from './EditListingWorkspacePanel.css';
 
-const FEATURES_NAME = 'workspaces';
+const WORKSPACE_NAME = 'workspaces';
 
 const EditListingWorkspacePanel = props => {
   const {
-    className,
     rootClassName,
+    className,
     listing,
     onSubmit,
     onChange,
@@ -27,10 +26,11 @@ const EditListingWorkspacePanel = props => {
   } = props;
 
   const classes = classNames(rootClassName || css.root, className);
-  const currentListing = ensureOwnListing(listing);
+  const currentListing = ensureListing(listing);
   const { publicData } = currentListing.attributes;
 
-  const panelTitle = currentListing.id ? (
+  const isPublished = currentListing.id && currentListing.attributes.state !== LISTING_STATE_DRAFT;
+  const panelTitle = isPublished ? (
     <FormattedMessage
       id="EditListingWorkspacePanel.title"
       values={{ listingTitle: <ListingLink listing={listing} /> }}
@@ -38,47 +38,46 @@ const EditListingWorkspacePanel = props => {
   ) : (
     <FormattedMessage id="EditListingWorkspacePanel.createListingTitle" />
   );
+
   const workspaces = publicData && publicData.workspaces;
-  const initialValues = { workspaces }
- 
+  const initialValues = { workspaces };
 
   return (
     <div className={classes}>
       <h1 className={css.title}>{panelTitle}</h1>
       <EditListingWorkspaceForm
         className={css.form}
+        name={WORKSPACE_NAME}
         initialValues={initialValues}
         onSubmit={values => {
-          const { workspaces } = values;
-          const updateValues = {
-            publicData: {
-              workspaces,
-            },
+          const { workspaces = [] } = values;
+
+          const updatedValues = {
+            publicData: { workspaces },
           };
-          onSubmit(updateValues);
+          onSubmit(updatedValues);
         }}
         onChange={onChange}
         saveActionMsg={submitButtonText}
         updated={panelUpdated}
-        updateError={errors.updateListingError}
         updateInProgress={updateInProgress}
-        workspaces={workspaces}
+        fetchErrors={errors}
       />
     </div>
   );
 };
 
-const { func, object, string, bool } = PropTypes;
-
 EditListingWorkspacePanel.defaultProps = {
-  className: null,
   rootClassName: null,
+  className: null,
   listing: null,
 };
 
+const { bool, func, object, string } = PropTypes;
+
 EditListingWorkspacePanel.propTypes = {
-  className: string,
   rootClassName: string,
+  className: string,
 
   // We cannot use propTypes.listing since the listing might be a draft.
   listing: object,

@@ -9,6 +9,22 @@
   padding: 11px 24px 0 24px;
 }
 
+.contentWrapper {
+  display: flex;
+  flex-wrap: wrap;
+
+  @media (--viewportMedium) {
+    flex-wrap: nowrap;
+  }
+}
+.contentMain {
+  width: 90%;
+
+  @media (--viewportMedium) {
+    max-width: 650px;
+  }
+}
+
 .form {
   flex-grow: 1;
 }
@@ -20,11 +36,4 @@
     margin-bottom: 38px;
     padding: 1px 0 7px 0;
   }
-}
-
-.li {
-  margin-left: 10px;
-  list-style-type: disc;
-  display: list-item;
-  list-style-position: outside;
 }
