@@ -8,9 +8,9 @@ import {
   injectIntl,
   FormattedMessage,
 } from '../../util/reactIntl';
-import { propTypes } from '../../util/types';
-import { required } from '../../util/validators';
-import { Form, Button, FieldSelect } from '../../components';
+import { propTypes } from '../util/types';
+import { required } from '../util/validators';
+import { Form, Button, FieldSelect } from '../components';
 
 // Create this file using EditListingFeaturesForm.css
 // as a template.
