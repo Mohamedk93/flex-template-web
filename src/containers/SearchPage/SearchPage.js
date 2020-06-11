@@ -54,7 +54,6 @@ export class SearchPageComponent extends Component {
   filters() {
     const {
       categories,
-      workspaces,
       amenities,
       quickRents,
       priceFilterConfig,
@@ -71,10 +70,6 @@ export class SearchPageComponent extends Component {
       categoryFilter: {
         paramName: 'pub_category',
         options: categories,
-      },
-      workspaceFilter: {
-        paramName: 'pub_workspace',
-        options: workspaces,
       },
       amenitiesFilter: {
         paramName: 'pub_amenities',
@@ -291,7 +286,6 @@ export class SearchPageComponent extends Component {
             quickRents={filters.quickRentsFitler}
             primaryFilters={{
               categoryFilter: filters.categoryFilter,
-              workspaceFilter: filters.workspaceFilter,
               amenitiesFilter: filters.amenitiesFilter,
               priceFilter: filters.priceFilter,
               dateRangeFilter: filters.dateRangeFilter,
@@ -341,7 +335,6 @@ SearchPageComponent.defaultProps = {
   searchParams: {},
   tab: 'listings',
   categories: config.custom.categories,
-  workspaces: config.custom.workspaces,
   amenities: config.custom.amenities,
   quickRents: config.custom.quickRents,
   priceFilterConfig: config.custom.priceFilterConfig,
@@ -363,7 +356,6 @@ SearchPageComponent.propTypes = {
   searchParams: object,
   tab: oneOf(['filters', 'listings', 'map']).isRequired,
   categories: array,
-  workspaces:array,
   amenities: array,
   quickRents: object,
   priceFilterConfig: shape({

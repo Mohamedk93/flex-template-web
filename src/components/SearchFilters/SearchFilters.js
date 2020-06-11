@@ -70,7 +70,6 @@ const SearchFiltersComponent = props => {
     resultsCount,
     searchInProgress,
     categoryFilter,
-    workspaceFilter,
     amenitiesFilter,
     quickRents,
     priceFilter,
@@ -88,9 +87,6 @@ const SearchFiltersComponent = props => {
 
   const categoryLabel = intl.formatMessage({
     id: 'SearchFilters.categoryLabel',
-  });
-  const workspaceLabel = intl.formatMessage({
-    id: 'SearchFilters.workspaceLabel',
   });
 
   const amenitiesLabel = intl.formatMessage({
@@ -119,10 +115,6 @@ const SearchFiltersComponent = props => {
 
   const initialCategory = categoryFilter
     ? initialValue(urlQueryParams, categoryFilter.paramName)
-    : null;
-    
-  const initialWorkspace = workspaceFilter
-  ? initialValue(urlQueryParams, workspaceFilter.paramName)
     : null;
   
   const initialPriceRange = priceFilter
@@ -196,18 +188,6 @@ const SearchFiltersComponent = props => {
       showAsPopup
       options={categoryFilter.options}
       initialValue={initialCategory}
-      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
-    />
-  ) : null;
-
-  const workspaceFilterElement = workspaceFilter ? (
-    <SelectSingleFilter
-      urlParam={workspaceFilter.paramName}
-      label={workspaceLabel}
-      onSelect={handleSelectOption}
-      showAsPopup
-      options={workspaceFilter.options}
-      initialValue={initialWorkspace}
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
   ) : null;
@@ -312,7 +292,6 @@ const SearchFiltersComponent = props => {
     <div className={classes}>
       <div className={css.filters}>
         {categoryFilterElement}
-        {workspaceFilterElement}
         {amenitiesFilterElement}
         {priceFilterElement}
         {dateRangeFilterElement}
@@ -358,7 +337,6 @@ SearchFiltersComponent.defaultProps = {
   resultsCount: null,
   searchingInProgress: false,
   categoryFilter: null,
-  workspaceFilter null,
   amenitiesFilter: null,
   priceFilter: null,
   dateRangeFilter: null,
@@ -376,7 +354,6 @@ SearchFiltersComponent.propTypes = {
   searchingInProgress: bool,
   onManageDisableScrolling: func.isRequired,
   categoriesFilter: propTypes.filterConfig,
-  workspaceFilter: propTypes.filterConfig,
   amenitiesFilter: propTypes.filterConfig,
   priceFilter: propTypes.filterConfig,
   dateRangeFilter: propTypes.filterConfig,
