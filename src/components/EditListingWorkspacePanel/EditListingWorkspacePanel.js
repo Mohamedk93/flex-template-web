@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
-import { ensureOwnListing } from '../../util/data';
+import  ensureOwnListing  from '../../util/data';
 import { findOptionsForSelectFilter } from '../../util/search';
 import { ListingLink } from '../../components';
 import { EditListingWorkspaceForm } from '../../forms';
