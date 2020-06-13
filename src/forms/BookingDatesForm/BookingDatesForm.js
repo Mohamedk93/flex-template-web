@@ -630,7 +630,6 @@ export class BookingDatesFormComponent extends Component {
                     </p>
                   )
                 }
-                }
               })}
             </div>
           ) : null;
