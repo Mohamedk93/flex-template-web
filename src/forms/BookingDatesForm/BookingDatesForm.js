@@ -623,7 +623,14 @@ export class BookingDatesFormComponent extends Component {
                 <FormattedMessage id="BookingPanel.availsTitle" />
               </h3>
               {avails.map((item, i) => {
-
+                if(currentRentalType === "hourly") {
+                  return (
+                    <p key={i} className={css.availsItem}>
+                      <span>{item.day}: </span>
+                      <span>{item.hours}</span>
+                    </p>
+                  )
+                } else {
                   return (
                     <p key={i} className={css.availsItem}>
                       <span>{item.day}: </span>
@@ -631,7 +638,7 @@ export class BookingDatesFormComponent extends Component {
                     </p>
                   )
                 }
-              })
+              })}
             </div>
           ) : null;
 
