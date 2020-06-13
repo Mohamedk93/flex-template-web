@@ -209,7 +209,7 @@ const SearchFiltersComponent = props => {
       onSubmit={handleSelectOptions}
       showAsPopup
       options={workspaceFilter.options}
-      initialValue={initialWorkspace}
+      initialValues={initialWorkspace}
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
   ) : null;
