@@ -7,7 +7,7 @@ import { FormattedMessage } from '../../util/reactIntl';
 
 import { propTypes } from '../../util/types';
 import config from '../../config';
-import { Button, FieldCheckboxGroup, Form } from '../../components';
+import { Button, FieldCheckboxGroupWithQuantity, Form } from '../../components';
 
 import css from './EditListingWorkspaceForm.css';
 
@@ -52,7 +52,7 @@ const EditListingWorkspaceFormComponent = props => (
           {errorMessage}
           {errorMessageShowListing}
 
-          <FieldCheckboxGroup
+          <FieldCheckboxGroupWithQuantity
             className={css.workspaces}
             id={name}
             name={name}

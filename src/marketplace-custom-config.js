@@ -31,28 +31,18 @@ export const amenities = [
 
 export const workspaces = [
   {
-    id: 'workspaces',
-    label: 'workspaces',
-    type: 'SelectMultipleFilter',
-    group: 'primary',
-    queryParamNames: ['pub_workspace'],
-    config: {
-      options: [
-        {
-          key: 'seats',
-          label: 'Seats',
-        },
-        {
-          key: 'office_rooms',
-          label: 'Office rooms',
-        },
-        {
-          key: 'meeting_rooms',
-          label: 'Meeting rooms',
-        },
-      ],
-    },
+    key: 'seats',
+    label: 'Seats',
   },
+  {
+    key: 'office_rooms',
+    label: 'Office rooms',
+  },
+  {
+    key: 'meeting_rooms',
+    label: 'Meeting rooms',
+  },
+  s
 ];
 
 export const rentals = [
