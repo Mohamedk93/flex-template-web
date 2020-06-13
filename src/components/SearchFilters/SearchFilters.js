@@ -122,7 +122,7 @@ const SearchFiltersComponent = props => {
     : null;
     
   const initialWorkspace = workspaceFilter
-  ? initialValue(urlQueryParams, workspaceFilter.paramName)
+  ? initialValues(urlQueryParams, workspaceFilter.paramName)
     : null;
   
   const initialPriceRange = priceFilter
