@@ -12,10 +12,10 @@ import { propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
 import config from '../../config';
 import { required, bookingDatesRequired, composeValidators } from '../../util/validators';
-import { 
-  Form, 
-  IconClose, 
-  PrimaryButton, 
+import {
+  Form,
+  IconClose,
+  PrimaryButton,
   InlineTextButton,
   FieldSelect,
   FieldRadioButton,
@@ -141,7 +141,7 @@ const hoursValid = dateHour => {
   return hoursSelected(dateHour) && totalHours > 0 && isFullHours(totalHours);
 };
 
-const isChooseWorkspace = values => {  
+const isChooseWorkspace = values => {
   return (values.workspaces && values.workspaces.length !== 0)
 };
 
@@ -164,9 +164,9 @@ export class BookingDatesFormComponent extends Component {
   // default handleSubmit function.
   handleFormSubmit(values) {
     const { intl } = this.props;
-    const { 
-      firstDate, 
-      extraDays = [], 
+    const {
+      firstDate,
+      extraDays = [],
       paymentMethod,
       workspaces,
       rental_type,
@@ -175,7 +175,7 @@ export class BookingDatesFormComponent extends Component {
     const seats_quantity = values && values.seats_quantity ? parseInt(values.seats_quantity) : 0;
     const office_rooms_quantity = values && values.office_rooms_quantity ? parseInt(values.office_rooms_quantity) : 0;
     const meeting_rooms_quantity = values && values.meeting_rooms_quantity ? parseInt(values.meeting_rooms_quantity) : 0;
-    
+
     let formatMessageLine = null;
 
     let dateHourLines = intl.formatMessage(
@@ -264,7 +264,7 @@ export class BookingDatesFormComponent extends Component {
       values.bookingDates &&
       values.bookingDates.startDate ?
       values.bookingDates.startDate : null;
-  
+
       edtFinal = values &&
         values.bookingDates &&
         values.bookingDates.endDate ?
@@ -272,7 +272,7 @@ export class BookingDatesFormComponent extends Component {
 
       if (sdtFinal && edtFinal) {
         const startDateObj = moment(sdtFinal);
-        const endDateObj = moment(edtFinal);           
+        const endDateObj = moment(edtFinal);
         let duration = moment.duration(endDateObj.diff(startDateObj));
         quantity = duration.asDays();
       };
@@ -284,7 +284,7 @@ export class BookingDatesFormComponent extends Component {
       quantity = monthCount;
       edtFinal = sdtFinal ? moment(sdtFinal).add(monthCount, 'M').subtract(1,'d').toDate() : null;
 
-    }    
+    }
 
     this.props.onSubmit({
       paymentMethod,
@@ -301,7 +301,7 @@ export class BookingDatesFormComponent extends Component {
       message: [
         intl.formatMessage({ id: 'BookingDatesForm.bookingDateMessageFirstLine' }),
         // formatMessageLine(firstDate),
-        "", 
+        "",
         ...dateHourLines,
       ],
       seatsQuantity: seats_quantity,
@@ -364,7 +364,7 @@ export class BookingDatesFormComponent extends Component {
               errors['monthCount'] = 'Number of months must be from 1'
             }
           };
-          
+
           return Object.keys(errors).length ? errors : undefined
         }}
         render={fieldRenderProps => {
@@ -394,7 +394,7 @@ export class BookingDatesFormComponent extends Component {
           } = fieldRenderProps;
           if(values.firstDate && values.firstDate.hourStart && values.firstDate.hourStart.length === 6){
             values.firstDate.hourStart = values.firstDate.hourStart.slice(1);
-          }            
+          }
 
           const { firstDate, extraDays = [] } = values;
 
@@ -441,7 +441,7 @@ export class BookingDatesFormComponent extends Component {
             : null;
 
           // Quantity and StartDate and EndDate calculations
-          // Each quantity depends on rental_type. 
+          // Each quantity depends on rental_type.
           // Quantity can be in hours, days, months.
           let quantity = null;
           let startDate = null;
@@ -454,20 +454,20 @@ export class BookingDatesFormComponent extends Component {
             } catch (e) {
               // No need to react - totalHours is just 0
             }
-  
+
             startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
             endDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
-        
+
             if(firstDate){
               var hourStart = values.firstDate.hourStart;
               var hourEnd = values.firstDate.hourEnd;
-  
+
               if(hourStart){
                 var hourStartHH = parseInt(hourStart.substr(0, 2));
                 var hourStartMM = parseInt(hourStart.substr(3, 4));
                 startDate = moment(startDate).seconds(0).milliseconds(0).minutes(hourStartMM).hours(hourStartHH).toDate()
               }
-  
+
               if(hourEnd){
                 var hourEndtHH = parseInt(hourEnd.substr(0, 2));
                 var hourEndMM = parseInt(hourEnd.substr(3, 4));
@@ -481,7 +481,7 @@ export class BookingDatesFormComponent extends Component {
             values.bookingDates &&
             values.bookingDates.startDate ?
             values.bookingDates.startDate : null;
-        
+
             endDate = values &&
               values.bookingDates &&
               values.bookingDates.endDate ?
@@ -489,11 +489,11 @@ export class BookingDatesFormComponent extends Component {
 
             if (startDate && endDate) {
               const startDateObj = moment(startDate);
-              const endDateObj = moment(endDate);           
+              const endDateObj = moment(endDate);
               let duration = moment.duration(endDateObj.diff(startDateObj));
               quantity = duration.asDays();
             };
-            
+
           } else if (currentRentalType === 'monthly') {
 
             startDate = firstDate && firstDate.bookingDate ? firstDate.bookingDate.date : null;
@@ -509,7 +509,7 @@ export class BookingDatesFormComponent extends Component {
           const bookingData =
             startDate && endDate && quantity
               ? {
-                unitType, 
+                unitType,
                 unitPrice, // no used
 
                 startDate,
@@ -537,7 +537,7 @@ export class BookingDatesFormComponent extends Component {
             </div>
           ) : null;
 
-          
+
           // Definion of messages and texts
           const hoursError = this.state.bookingHoursError ? (
               <span className={css.hoursError}>
@@ -582,14 +582,14 @@ export class BookingDatesFormComponent extends Component {
             attributes.profile.publicData.stripePayoutsEnabled != undefined && this.props.listing.author.
             attributes.profile.publicData.stripePayoutsEnabled == true);
 
-          const workspacesNames = listing.attributes.publicData.workspaces ? 
+          const workspacesNames = listing.attributes.publicData.workspaces ?
             listing.attributes.publicData.workspaces
           : [];
           const workspacesFields = config.custom.workspaces.filter(function(item){
             return workspacesNames.indexOf(item.key) != -1
           });
 
-          const publicDataObj = listing.attributes.publicData ? 
+          const publicDataObj = listing.attributes.publicData ?
             listing.attributes.publicData
           : [];
           const defaultMaxQuantity = {
@@ -623,17 +623,13 @@ export class BookingDatesFormComponent extends Component {
                 <FormattedMessage id="BookingPanel.availsTitle" />
               </h3>
               {avails.map((item, i) => {
-                if(currentRentalType === "hourly") {
                   return (
                     <p key={i} className={css.availsItem}>
                       <span>{item.day}: </span>
                       <span>{item.hours}</span>
                     </p>
                   )
-                } else {
-                  return (
-                    <span key={i} className={css.availsString}>{item.day} </span>
-                  )
+                }
                 }
               })}
             </div>
@@ -774,7 +770,7 @@ export class BookingDatesFormComponent extends Component {
             fbParams[fb.AppEvents.ParameterNames.CURRENCY] = listing.attributes.price.currency;
 
             fb.AppEvents.logEvent(fb.AppEvents.EventNames.INITIATED_CHECKOUT, totalPrice, fbParams);
-          
+
           };
 
           return (
@@ -830,7 +826,7 @@ export class BookingDatesFormComponent extends Component {
                 {stripeConnected ? (<option value="credit card">Credit card</option>) : null}
                 <option value="cash">Cash</option>
               </FieldSelect>
- 
+
               {currentRentalType === 'hourly' ? (
                 <FieldArray
                   name="extraDays"
@@ -952,5 +948,3 @@ const BookingDatesForm = compose(injectIntl)(BookingDatesFormComponent);
 BookingDatesForm.displayName = 'BookingDatesForm';
 
 export default BookingDatesForm;
-
-
