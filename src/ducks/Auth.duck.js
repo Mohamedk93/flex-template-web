@@ -5,7 +5,7 @@ import { storableError } from '../util/errors'
 ;
 import * as log from '../util/log';
 
-const authenticated = authInfo => authInfo && authInfo.grantType === 'refresh_token';
+const authenticated = authInfo => authInfo && authInfo.isAnonymous === false;
 const API_URL = process.env.REACT_APP_API_URL;
 // ================ Action types ================ //
 
