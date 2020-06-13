@@ -42,7 +42,7 @@ export const workspaces = [
     key: 'meeting_rooms',
     label: 'Meeting rooms',
   },
-  s
+  
 ];
 
 export const rentals = [
