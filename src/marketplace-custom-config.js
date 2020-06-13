@@ -31,16 +31,27 @@ export const amenities = [
 
 export const workspaces = [
   {
-    key: 'seats',
-    label: 'Seats',
-  },
-  {
-    key: 'office_rooms',
-    label: 'Office rooms',
-  },
-  {
-    key: 'meeting_rooms',
-    label: 'Meeting rooms',
+    id: 'workspaces',
+    label: 'workspaces',
+    type: 'SelectMultipleFilter',
+    group: 'primary',
+    queryParamNames: ['pub_workspace'],
+    config: {
+      options: [
+        {
+          key: 'seats',
+          label: 'Seats',
+        },
+        {
+          key: 'office_rooms',
+          label: 'Office rooms',
+        },
+        {
+          key: 'meeting_rooms',
+          label: 'Meeting rooms',
+        },
+      ],
+    },
   },
 ];
 
