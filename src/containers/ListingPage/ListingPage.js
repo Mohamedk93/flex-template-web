@@ -47,6 +47,7 @@ import SectionAvatar from './SectionAvatar';
 import SectionHeading from './SectionHeading';
 import SectionDescriptionMaybe from './SectionDescriptionMaybe';
 import SectionWorkspaceMaybe from './SectionWorkspaceMaybe';
+import SectionRentalsMaybe from './SectionRentalsMaybe';
 import SectionFeaturesMaybe from './SectionFeaturesMaybe';
 import SectionReviews from './SectionReviews';
 import SectionHostMaybe from './SectionHostMaybe';
@@ -195,6 +196,7 @@ export class ListingPageComponent extends Component {
       categoriesConfig,
       amenitiesConfig,
       workspaceConfig,
+      rentalsConfig,
     } = this.props;
 
     const listingId = new UUID(rawParams.id);
@@ -444,6 +446,7 @@ export class ListingPageComponent extends Component {
                   <SectionDescriptionMaybe description={description} />
                   <SectionFeaturesMaybe options={amenitiesConfig} publicData={publicData} />
                   <SectionWorkspaceMaybe options={workspaceConfig} publicData={publicData} />
+                  <SectionRentalsMaybe options={rentalsConfig} publicData={publicData} />
                   <SectionRulesMaybe publicData={publicData} />
                   <SectionMapMaybe
                     geolocation={geolocation}
@@ -504,6 +507,7 @@ ListingPageComponent.defaultProps = {
   categoriesConfig: config.custom.categories,
   amenitiesConfig: config.custom.amenities,
   workspaceConfig: config.custom.workspaces,
+  rentalsConfig: config.custom.rentals,
 };
 
 ListingPageComponent.propTypes = {
@@ -546,6 +550,7 @@ ListingPageComponent.propTypes = {
   categoriesConfig: array,
   amenitiesConfig: array,
   workspaceConfig: array,
+  rentalsConfig: array,
 };
 
 const mapStateToProps = state => {

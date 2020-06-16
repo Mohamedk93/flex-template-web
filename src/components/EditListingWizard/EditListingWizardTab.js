@@ -14,6 +14,7 @@ import {
   EditListingDescriptionPanel,
   EditListingFeaturesPanel,
   EditListingWorkspacePanel,
+  EditListingRentalsPanel,
   EditListingLocationPanel,
   EditListingPhotosPanel,
   EditListingPoliciesPanel,
@@ -26,6 +27,7 @@ export const AVAILABILITY = 'availability';
 export const DESCRIPTION = 'description';
 export const FEATURES = 'features';
 export const WORKSPACES = 'workspaces';
+export const RENTALS = 'rentals';
 export const POLICY = 'policy';
 export const LOCATION = 'location';
 export const PRICING = 'pricing';
@@ -36,6 +38,7 @@ export const SUPPORTED_TABS = [
   DESCRIPTION,
   FEATURES,
   WORKSPACES,
+  RENTALS,
   POLICY,
   LOCATION,
   PRICING,
@@ -196,6 +199,20 @@ const EditListingWizardTab = props => {
       return (
         <EditListingWorkspacePanel
           {...panelProps(WORKSPACES)}
+          submitButtonText={intl.formatMessage({ id: submitButtonTranslationKey })}
+          onSubmit={values => {
+            onCompleteEditListingWizardTab(tab, values);
+          }}
+        />
+      );
+    }
+    case RENTALS: {
+      const submitButtonTranslationKey = isNewListingFlow
+        ? 'EditListingWizard.saveNewRentals'
+        : 'EditListingWizard.saveEditRentals';
+      return (
+        <EditListingRentalsPanel
+          {...panelProps(RENTALS)}
           submitButtonText={intl.formatMessage({ id: submitButtonTranslationKey })}
           onSubmit={values => {
             onCompleteEditListingWizardTab(tab, values);

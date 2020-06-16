@@ -72,6 +72,7 @@ const SearchFiltersComponent = props => {
     categoryFilter,
     workspaceFilter,
     amenitiesFilter,
+    rentalsFilter,
     quickRents,
     priceFilter,
     dateRangeFilter,
@@ -96,6 +97,9 @@ const SearchFiltersComponent = props => {
   const amenitiesLabel = intl.formatMessage({
     id: 'SearchFilters.amenitiesLabel',
   });
+  const rentalsLabel = intl.formatMessage({
+    id: 'SearchFilters.rentalsLabel',
+  });
 
   const keywordLabel = intl.formatMessage({
     id: 'SearchFilters.keywordLabel',
@@ -111,6 +115,10 @@ const SearchFiltersComponent = props => {
 
   const initialAmenities = amenitiesFilter
     ? initialValues(urlQueryParams, amenitiesFilter.paramName)
+    : null;
+
+    const initialRentals = rentalsFilter
+    ? initialValues(urlQueryParams, rentalsFilter.paramName)
     : null;
   
   const initialQuickRents = quickRents
@@ -227,7 +235,19 @@ const SearchFiltersComponent = props => {
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
   ) : null;
-  
+  const rentalsFilterElement = rentalsFilter ? (
+    <SelectMultipleFilter
+      id={'SearchFilters.rentalsFilter'}
+      name="rentals"
+      urlParam={rentalsFilter.paramName}
+      label={rentalsLabel}
+      onSubmit={handleSelectOptions}
+      showAsPopup
+      options={rentalsFilter.options}
+      initialValues={initialRentals}
+      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
+    />
+  ) : null;
   const quickRentsFilter = 
     <SelectMultipleFilter
       id={'SearchFilters.quickRentsFilter'}
@@ -316,6 +336,7 @@ const SearchFiltersComponent = props => {
         {categoryFilterElement}
         {workspaceFilterElement}
         {amenitiesFilterElement}
+        {rentalsFilterElement}
         {priceFilterElement}
         {dateRangeFilterElement}
         {keywordFilterElement}
@@ -362,6 +383,7 @@ SearchFiltersComponent.defaultProps = {
   categoryFilter: null,
   workspaceFilter: null,
   amenitiesFilter: null,
+  rentalsFilter: null,
   priceFilter: null,
   dateRangeFilter: null,
   isSearchFiltersPanelOpen: false,
@@ -380,6 +402,7 @@ SearchFiltersComponent.propTypes = {
   categoriesFilter: propTypes.filterConfig,
   workspaceFilter: propTypes.filterConfig,
   amenitiesFilter: propTypes.filterConfig,
+  rentalsFilter: propTypes.filterConfig,
   priceFilter: propTypes.filterConfig,
   dateRangeFilter: propTypes.filterConfig,
   isSearchFiltersPanelOpen: bool,

@@ -22,6 +22,7 @@ import EditListingWizardTab, {
   DESCRIPTION,
   FEATURES,
   WORKSPACES,
+  RENTALS,
   POLICY,
   LOCATION,
   PRICING,
@@ -96,7 +97,9 @@ const tabCompleted = (tab, listing) => {
     case DESCRIPTION:
       return !!(description && title);
     case FEATURES:
-      return !!(publicData && publicData.amenities);
+      return !!(publicData && publicData.amenities);#
+    case RENTALS:
+      return !!(publicData && publicData.rentals);
     case WORKSPACES:
       return !!(publicData && publicData.workspaces);
     case POLICY:

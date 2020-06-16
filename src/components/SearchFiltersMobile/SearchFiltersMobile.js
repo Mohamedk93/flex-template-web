@@ -197,6 +197,7 @@ class SearchFiltersMobileComponent extends Component {
       categoryFilter,
       workspaceFilter,
       amenitiesFilter,
+      rentalsFilter,
       priceFilter,
       dateRangeFilter,
       keywordFilter,
@@ -266,6 +267,7 @@ class SearchFiltersMobileComponent extends Component {
 
     const amenitiesLabel = intl.formatMessage({ id: 'SearchFiltersMobile.amenitiesLabel' });
 
+
     const initialAmenities = this.initialValues(amenitiesFilter.paramName);
     const initialQuickRents = this.initialValues('pub_quickRent');
 
@@ -281,7 +283,20 @@ class SearchFiltersMobileComponent extends Component {
         initialValues={initialAmenities}
       />
     ) : null;
-
+   const rentalsLabel = intl.formatMessage({ id: 'SearchFiltersMobile.rentalsLabel' });
+   const initialRentals = this.initialValues(rentalsFilter.paramName);
+   const rentalsFilterElement = rentalsFilter ? (
+    <SelectMultipleFilter
+      id="SearchFiltersMobile.rentalsFilter"
+      name="rentals"
+      urlParam={rentalsFilter.paramName}
+      label={rentalsLabel}
+      onSubmit={this.handleSelectMultiple}
+      liveEdit
+      options={rentalsFilter.options}
+      initialValues={initialRentals}
+    />
+  ) : null;
     const quickRentsFilter = 
       <SelectMultipleFilter
         id={'SearchFilters.quickRentsFilter'}
@@ -320,8 +335,7 @@ class SearchFiltersMobileComponent extends Component {
           initialValues={initialDateRange}
         />
       ) : null;
-
-    const initialKeyword = this.initialValue(keywordFilter.paramName);
+     const initialKeyword = this.initialValue(keywordFilter.paramName);
     const keywordLabel = intl.formatMessage({
       id: 'SearchFiltersMobile.keywordLabel',
     });
@@ -405,6 +419,7 @@ class SearchFiltersMobileComponent extends Component {
               {categoryFilterElement}
               {workspaceFilterElement}
               {amenitiesFilterElement}
+              {rentalsFilterElement}
               {priceFilterElement}
               {quickRentsFilter}
               {dateRangeFilterElement}
@@ -432,6 +447,7 @@ SearchFiltersMobileComponent.defaultProps = {
   categoryFilter: null,
   workspaceFilter: null,
   amenitiesFilter: null,
+  rentalsFilter: null,
   priceFilter: null,
   dateRangeFilter: null,
 };
@@ -453,6 +469,7 @@ SearchFiltersMobileComponent.propTypes = {
   categoriesFilter: propTypes.filterConfig,
   workspaceFilter: propTypes.filterConfig,
   amenitiesFilter: propTypes.filterConfig,
+  rentalsFilter: propTypes.filterConfig,
   priceFilter: propTypes.filterConfig,
   dateRangeFilter: propTypes.filterConfig,
 
