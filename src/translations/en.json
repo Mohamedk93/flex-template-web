@@ -829,7 +829,7 @@
   "SavedCardDetails.savedPaymentMethodPlaceholderMobile": "…{last4Digits}",
   "SearchFilters.amenitiesLabel": "Amenities",
   "SearchFilters.categoryLabel": "Category",
-  "SearchFilters.workspaceLabel": "Workspace",
+  "SearchFilters.workspaceLabel": "Workspaces",
   "SearchFilters.filtersButtonLabel": "Filters",
   "SearchFilters.foundResults": "{count, number} {count, plural, one {result} other {results}}",
   "SearchFilters.keywordLabel": "Keyword",
