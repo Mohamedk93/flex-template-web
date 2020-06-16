@@ -212,7 +212,7 @@ const SearchFiltersComponent = props => {
     <SelectMultipleFilter
     id={'SearchFilters.workspaceFilter'}
       name="workspaces"
-      urlParam='pub_workspaces'
+      urlParam={workspaceFilter.paramName}
       label={workspaceLabel}
       onSubmit={handleSelectOptions}
       showAsPopup
@@ -239,7 +239,7 @@ const SearchFiltersComponent = props => {
     <SelectMultipleFilter
       id={'SearchFilters.rentalsFilter'}
       name="rentals"
-      urlParam='pub_rentals'
+      urlParam={rentalsFilter.paramName}
       label={rentalsLabel}
       onSubmit={handleSelectOptions}
       showAsPopup
