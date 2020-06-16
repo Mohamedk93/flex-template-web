@@ -12,7 +12,7 @@ import css from './EditListingRentalsPanel.css';
 
 const RENTALS_NAME = 'rentals';
 
-const EditListinRentalsPanel = props => {
+const EditListingRentalsPanel = props => {
   const {
     rootClassName,
     className,
