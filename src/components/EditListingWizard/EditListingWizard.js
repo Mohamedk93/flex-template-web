@@ -97,7 +97,7 @@ const tabCompleted = (tab, listing) => {
     case DESCRIPTION:
       return !!(description && title);
     case FEATURES:
-      return !!(publicData && publicData.amenities);#
+      return !!(publicData && publicData.amenities);
     case RENTALS:
       return !!(publicData && publicData.rentals);
     case WORKSPACES:
