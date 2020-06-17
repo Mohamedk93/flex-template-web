@@ -6,6 +6,7 @@ import {
   LayoutWrapperTopbar,
   LayoutWrapperMain,
   LayoutWrapperFooter,
+  HistoryBackButton,
   Footer,
 } from '../../components';
 import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
@@ -27,7 +28,9 @@ const AboutPage = () => {
     >
       <LayoutSingleColumn>
         <LayoutWrapperTopbar>
-          <TopbarContainer />
+          <TopbarContainer >
+            <HistoryBackButton />
+            </TopbarContainer>
         </LayoutWrapperTopbar>
 
         <LayoutWrapperMain className={css.staticPageWrapper}>
