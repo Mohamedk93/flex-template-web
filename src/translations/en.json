@@ -1011,6 +1011,7 @@
   "TermsOfServicePage.tosTabTitle": "Terms of Service",
   "Topbar.genericError": "Oh no, something went wrong. Please check your network connection and try again.",
   "Topbar.logoIcon": "Go to homepage",
+  "Topbar.backButton": "Previous page",
   "Topbar.menuIcon": "Open menu",
   "Topbar.mobileSearchHelp": "Tip: You can also search by zip code, for example \"11885\" or city district – \"San Francisco\".",
   "Topbar.searchIcon": "Open search",
