@@ -17,7 +17,7 @@ import {
   LayoutWrapperFooter,
   Footer,
 } from '../../components';
-import { TopbarContainer } from '../../containers';
+import { TopbarLandingContainer } from '../../containers';
 import { locationBounds } from '../../util/googleMaps';
 import facebookImage from '../../assets/HotdeskFacebook1200.jpg';
 import twitterImage from '../../assets/HotdeskTwitter600.jpg';
@@ -107,7 +107,7 @@ export class LandingPageComponent extends Component {
       >
         <LayoutSingleColumn>
           <LayoutWrapperTopbar>
-            <TopbarContainer />
+            <TopbarLandingContainer />
           </LayoutWrapperTopbar>
           <LayoutWrapperMain>
             <div className={css.heroContainer} onClick={((e) => this.handleClick(e))}>
