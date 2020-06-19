@@ -252,15 +252,14 @@ class TopbarComponent extends Component {
               <MenuIcon className={css.menuIcon} />
               {notificationDot}
             </Button>
-            <Button
+            <HistoryBackButton
               rootClassName={css.listingButton}
               show={showBackButton}
               title={intl.formatMessage({ id: 'Topbar.backButton' })}
             >
-              <HistoryBackButton/>
               {notificationDot}
-            </Button>
-           
+            </HistoryBackButton>
+
           </div>
           <NamedLink
             className={css.home}
