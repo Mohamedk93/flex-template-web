@@ -23,7 +23,8 @@ import { TopbarSearchForm } from '../../forms';
 
 import MenuIcon from './MenuIcon';
 import SearchIcon from './SearchIcon';
-import css from './Topbar.css';
+import css from './TopbarLanding.css';
+
 
 const MAX_MOBILE_SCREEN_WIDTH = 768;
 
@@ -380,11 +381,11 @@ TopbarComponent.propTypes = {
   intl: intlShape.isRequired,
 };
 
-const Topbar = compose(
+const TopbarLanding = compose(
   withViewport,
   injectIntl
 )(TopbarComponent);
 
-Topbar.displayName = 'Topbar';
+TopbarLanding.displayName = 'Topbar';
 
-export default Topbar;
+export default TopbarLanding;
