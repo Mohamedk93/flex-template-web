@@ -140,4 +140,4 @@ const TopbarContainer = compose(
   )
 )(TopbarContainerComponent);
 
-export default TopbarContainer;
+export default TopbarLandingContainer;
