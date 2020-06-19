@@ -21,8 +21,8 @@ import {
 } from '../../components';
 import { TopbarSearchForm } from '../../forms';
 
-import MenuIcon from './MenuIcon';
-import SearchIcon from './SearchIcon';
+import MenuIcon from '../Topbar/MenuIcon';
+import SearchIcon from '../Topbar/SearchIcon';
 import css from './TopbarLanding.css';
 
 
