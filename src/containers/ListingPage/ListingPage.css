@@ -421,6 +421,29 @@
   }
 }
 
+.sectionWorkspace {
+  padding: 0 24px;
+  margin-bottom: 32px;
+
+  @media (--viewportMedium) {
+    padding: 0;
+    margin-bottom: 52px;
+  }
+}
+
+
+.workspaceTitle {
+  /* Font */
+  @apply --marketplaceH3FontStyles;
+  color: var(--matterColorAnti);
+
+  margin-top: 0;
+  margin-bottom: 16px;
+  @media (--viewportMedium) {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+}
 .featuresTitle {
   /* Font */
   @apply --marketplaceH3FontStyles;

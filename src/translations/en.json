@@ -397,6 +397,8 @@
   "ListingPage.errorLoadingListingMessage": "Could not load listing. Please try again.",
   "ListingPage.errorLoadingListingTitle": "Error in loading listing",
   "ListingPage.featuresTitle": "Amenities",
+  "ListingPage.workspaceTitle": "Available workspaces",
+  "ListingPage.rentalsTitle": "Booking plans",
   "ListingPage.finishListing": "Finish listing",
   "ListingPage.hostedBy": "Hosted by {name}",
   "ListingPage.loadingListingMessage": "Loading listing…",

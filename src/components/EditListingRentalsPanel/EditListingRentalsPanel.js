@@ -24,6 +24,7 @@ const EditListingRentalsPanel = props => {
     updateInProgress,
     errors,
   } = props;
+  
 
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureListing(listing);
