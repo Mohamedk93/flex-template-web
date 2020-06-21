@@ -212,11 +212,11 @@ const SearchFiltersComponent = props => {
     <SelectMultipleFilter
     id={'SearchFilters.workspaceFilter'}
       name="workspaces"
-      urlParam={workspaceFilter.paramName}
+      urlParam='pub_workspace'
       label={workspaceLabel}
       onSubmit={handleSelectOptions}
       showAsPopup
-      options={workspaceFilter.options}
+      options={[{key: "workspaces", label: workspaceLabel}]}
       initialValues={initialWorkspace}
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
