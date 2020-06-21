@@ -10,7 +10,7 @@ const SectionRentalsMaybe = props => {
     return null;
   }
 
-  const selectedOptions = publicData && publicData.rentals ? publicData.rentals : [];
+  const selectedOptions = publicData && publicData.rentalTypes ? publicData.rentalTypes : [];
   return (
     <div className={css.sectionRentals}>
       <h2 className={css.rentalsTitle}>
