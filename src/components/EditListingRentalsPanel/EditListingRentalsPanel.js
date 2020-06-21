@@ -24,7 +24,7 @@ const EditListingRentalsPanel = props => {
     updateInProgress,
     errors,
   } = props;
-  
+
 
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureListing(listing);
@@ -40,7 +40,7 @@ const EditListingRentalsPanel = props => {
     <FormattedMessage id="EditListingRentalsPanel.createListingTitle" />
   );
 
-  const rentals = publicData && publicData.rentals;
+  const rentals = publicData && publicData.rentalTypes;
   const initialValues = { rentals};
 
   return (
