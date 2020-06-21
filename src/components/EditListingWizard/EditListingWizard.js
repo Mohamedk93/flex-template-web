@@ -41,6 +41,7 @@ export const TABS = [
   DESCRIPTION,
   FEATURES,
   WORKSPACES,
+  RENTALS,
   POLICY,
   LOCATION,
   ...availabilityMaybe,
@@ -61,6 +62,8 @@ const tabLabel = (intl, tab) => {
     key = 'EditListingWizard.tabLabelWorkspaces';
   }  else if (tab === POLICY) {
     key = 'EditListingWizard.tabLabelPolicy';
+  } else if (tab === RENTALS) {
+    key = 'EditListingWizard.tabLabelRentals';
   } else if (tab === LOCATION) {
     key = 'EditListingWizard.tabLabelLocation';
   } else if (tab === PRICING) {

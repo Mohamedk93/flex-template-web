@@ -10,7 +10,7 @@ import { listingCalculateMinPrice } from '../../components/ListingCard/ListingCa
 
 import css from './EditListingAvailabilityPanel.css';
 
-const AVAILABILITY_NAME = 'rentals';
+const AVAILABILITY_NAME = 'days';
 
 const EditListingAvailabilityPanel = props => {
   const {
