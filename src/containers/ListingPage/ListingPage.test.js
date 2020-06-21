@@ -79,7 +79,6 @@ describe('ListingPage', () => {
       categoriesConfig,
       amenitiesConfig,
       workspaceConfig,
-      rentalsConfig,
     };
 
     const tree = renderShallow(<ListingPageComponent {...props} />);
