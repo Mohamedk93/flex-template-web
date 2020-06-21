@@ -10,7 +10,7 @@ import { listingCalculateMinPrice } from '../../components/ListingCard/ListingCa
 
 import css from './EditListingAvailabilityPanel.css';
 
-const AVAILABILITY_NAME = 'days';
+const AVAILABILITY_NAME = 'rentals';
 
 const EditListingAvailabilityPanel = props => {
   const {
@@ -82,7 +82,7 @@ const EditListingAvailabilityPanel = props => {
         initialValues={{
           weekdays: initialWeekdays,
           availabilityPlan,
-          rental_types: publicData.rentalTypes,
+          rentals: publicData.rentals,
 
           mon_startTime: initialStartTimes.mon,
           tue_startTime: initialStartTimes.tue,
@@ -115,7 +115,7 @@ const EditListingAvailabilityPanel = props => {
             }
           });
 
-          const rentalTypes = values.rental_types ? values.rental_types : [];
+          const rentalTypes = values.rentals ? values.rentals : [];
           const rentalTypesBefore = publicData.rentalTypes ? publicData.rentalTypes : [];
 
           const publicDataDiff = {
