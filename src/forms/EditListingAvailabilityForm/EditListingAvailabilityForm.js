@@ -76,8 +76,8 @@ export class EditListingAvailabilityFormComponent extends Component {
                 <label className={css.availLabel}>{rentalLabel}</label>
                 <FieldCheckboxGroup
                   className={css.rentalTypesList}
-                  id={"rental_types"}
-                  name={"rental_types"}
+                  id={"rentals"}
+                  name={"rentals"}
                   options={config.custom.rentals}
                   validate={requiredFieldArrayCheckbox(rentalTypesRequiredMessage)}
                 />

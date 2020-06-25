@@ -76,6 +76,7 @@ export class SearchPageComponent extends Component {
       workspaceFilter: {
         paramName: 'pub_workspace',
         options: workspaces,
+        config: workspaces,
       },
       amenitiesFilter: {
         paramName: 'pub_amenities',
@@ -84,6 +85,7 @@ export class SearchPageComponent extends Component {
       rentalsFilter: {
         paramName: 'pub_rentals',
         options: rentals,
+        config: workspaces,
       },
       priceFilter: {
         paramName: 'price',
