@@ -58,7 +58,8 @@ const render = (store, shouldHydrate) => {
 
 const setupAnalyticsHandlers = () => {
   let handlers = [];
-
+  var mixpanel = require('mixpanel-browser');
+  mixpanel.init(process.env.REACT_APP_MIXPANNEL_TOKEN);
   // Log analytics page views and events in dev mode
   if (config.dev) {
     handlers.push(new LoggingAnalyticsHandler());

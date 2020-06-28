@@ -1,0 +1,5 @@
+FROM node:10.16.1
+
+WORKDIR /var/www
+
+EXPOSE 4000

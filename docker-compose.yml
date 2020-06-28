@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  hotdesk:
+    image: hotdesk
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hotdesk
+    volumes:
+      - .:/var/www
+    env_file:
+      - .env
+    ports:
+      - "4000:4000"
+    networks: ['stack']
+    command: yarn run dev
+
+networks:
+  stack:
+    driver: bridge

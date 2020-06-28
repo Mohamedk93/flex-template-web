@@ -48,7 +48,7 @@ const initialState = {
   signupError: null,
   signupInProgress: false,
 };
-
+const mixpanel = require('mixpanel-browser');
 export default function reducer(state = initialState, action = {}) {
   const { type, payload } = action;
   switch (type) {
@@ -146,6 +146,20 @@ export const login = (username, password) => (dispatch, getState, sdk) => {
     .login({ username, password })
     .then(() => dispatch(loginSuccess()))
     .then(() => dispatch(fetchCurrentUser()))
+    .then(() => sdk.currentUser.show()).then((user) => {
+      var data = user.data.data;
+      mixpanel.identify(data.attributes.email);
+      mixpanel.people.set({
+        "$email":  data.attributes.email,
+        "USER_ID": data.id.uuid,
+        "first_name": data.attributes.profile.firstName,
+        "created":data.attributes.createdAt,
+        "last_name": data.attributes.profile.lastName,
+        "verified":data.attributes.emailVerified,
+        "banned" : data.attributes.banned
+      });
+      mixpanel.track("login");
+    })
     .catch(e => dispatch(loginError(storableError(e))));
 };
 
@@ -154,6 +168,12 @@ export const logout = () => (dispatch, getState, sdk) => {
     return Promise.reject(new Error('Login or logout already in progress'));
   }
   dispatch(logoutRequest());
+  sdk.currentUser.show().then((user) => {
+    var data = user.data.data;
+    mixpanel.identify(data.attributes.email);
+    mixpanel.track("logout");
+  });
+
 
   // Note that the thunk does not reject when the logout fails, it
   // just dispatches the logout error action.
@@ -162,6 +182,8 @@ export const logout = () => (dispatch, getState, sdk) => {
     .then(() => {
       // The order of the dispatched actions
       dispatch(logoutSuccess());
+
+      //mixpanel.track("logout", {"$email": sdk.currentUser.email});
       dispatch(clearCurrentUser());
       log.clearUserId();
       dispatch(userLogout());
