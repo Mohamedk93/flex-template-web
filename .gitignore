@@ -15,4 +15,5 @@ build
 npm-debug.log
 yarn-error.log
 yarn.lock
-/yarn.lock
+.idea
+.env-old
