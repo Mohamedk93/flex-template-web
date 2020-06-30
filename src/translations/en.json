@@ -830,7 +830,7 @@
   "SavedCardDetails.savedPaymentMethodPlaceholderDesktop": "•••• •••• •••• {last4Digits}",
   "SavedCardDetails.savedPaymentMethodPlaceholderMobile": "…{last4Digits}",
   "SearchFilters.amenitiesLabel": "Amenities",
-  "SearchFilters.rentalsLabel": "Rentals",
+  "SearchFilters.rentalsLabel": "Booking Plans",
   "SearchFilters.categoryLabel": "Category",
   "SearchFilters.workspaceLabel": "Workspaces",
   "SearchFilters.filtersButtonLabel": "Filters",
