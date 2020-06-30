@@ -83,7 +83,7 @@ export class SearchPageComponent extends Component {
         options: amenities,
       },
       rentalsFilter: {
-        paramName: 'pub_rentals',
+        paramName: 'pub_rentalTypes',
         options: rentals,
         config: workspaces,
       },
