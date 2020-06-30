@@ -108,7 +108,7 @@
 .heroButton {
   @apply --marketplaceButtonStyles;
   @apply --SectionHero_animation;
-
+  background-color: #2ecc71 !important;
   animation-delay: 0.8s;
 
   @media (--viewportMedium) {
