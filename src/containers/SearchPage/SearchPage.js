@@ -74,7 +74,7 @@ export class SearchPageComponent extends Component {
         options: categories,
       },
       workspaceFilter: {
-        paramName: 'pub_workspace',
+        paramName: 'pub_workspaces',
         options: workspaces,
         config: workspaces,
       },
@@ -189,7 +189,7 @@ export class SearchPageComponent extends Component {
     JSON.parse('{"' + locationUrl.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
     : null;
     const searchPoint = null; // TO DO
-    
+
     // Var1: get coords from google api
     // if(locationParams.address) {
     //   const requestUrl = `https://maps.google.com/maps/api/geocode/json?address=${locationParams.address}&key=${config.maps.googleMapsAPIKey}`
@@ -208,7 +208,7 @@ export class SearchPageComponent extends Component {
     //     southwest: {lat: parseFloat(boundsArray[2]), lng: parseFloat(boundsArray[3])},
     //     northeast: {lat: parseFloat(boundsArray[0]), lng: parseFloat(boundsArray[1])}
     //   };
-    //   if ((bounds.southwest.lng - bounds.northeast.lng > 180) || 
+    //   if ((bounds.southwest.lng - bounds.northeast.lng > 180) ||
     //       (bounds.northeast.lng - bounds.southwest.lng > 180)) {
     //     bounds.southwest.lng += 360;
     //     bounds.southwest.lng %= 360;
@@ -234,7 +234,7 @@ export class SearchPageComponent extends Component {
 
     let validQueryParams = validURLParamsForExtendedData(searchInURL, filters);
    // console.log('validQueryParams ==>', validQueryParams)
-    
+
     const isWindowDefined = typeof window !== 'undefined';
     const isMobileLayout = isWindowDefined && window.innerWidth < MODAL_BREAKPOINT;
     const shouldShowSearchMap =
