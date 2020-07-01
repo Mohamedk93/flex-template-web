@@ -2,7 +2,7 @@ import isEmpty from 'lodash/isEmpty';
 import axios from 'axios';
 import { clearCurrentUser, fetchCurrentUser } from './user.duck';
 import { storableError } from '../util/errors'
-;
+  ;
 import * as log from '../util/log';
 
 const authenticated = authInfo => authInfo && authInfo.grantType === 'refresh_token';
@@ -48,7 +48,7 @@ const initialState = {
   signupError: null,
   signupInProgress: false,
 };
-
+const mixpanel = require('mixpanel-browser');
 export default function reducer(state = initialState, action = {}) {
   const { type, payload } = action;
   switch (type) {
@@ -146,6 +146,20 @@ export const login = (username, password) => (dispatch, getState, sdk) => {
     .login({ username, password })
     .then(() => dispatch(loginSuccess()))
     .then(() => dispatch(fetchCurrentUser()))
+    .then(() => sdk.currentUser.show()).then((user) => {
+      var data = user.data.data;
+      mixpanel.identify(data.attributes.email);
+      mixpanel.people.set({
+        "$email":  data.attributes.email,
+        "USER_ID": data.id.uuid,
+        "first_name": data.attributes.profile.firstName,
+        "created":data.attributes.createdAt,
+        "last_name": data.attributes.profile.lastName,
+        "verified":data.attributes.emailVerified,
+        "banned" : data.attributes.banned
+      });
+      mixpanel.track("login");
+    })
     .catch(e => dispatch(loginError(storableError(e))));
 };
 
@@ -154,6 +168,12 @@ export const logout = () => (dispatch, getState, sdk) => {
     return Promise.reject(new Error('Login or logout already in progress'));
   }
   dispatch(logoutRequest());
+  sdk.currentUser.show().then((user) => {
+    var data = user.data.data;
+    mixpanel.identify(data.attributes.email);
+    mixpanel.track("logout");
+  });
+
 
   // Note that the thunk does not reject when the logout fails, it
   // just dispatches the logout error action.
@@ -162,6 +182,8 @@ export const logout = () => (dispatch, getState, sdk) => {
     .then(() => {
       // The order of the dispatched actions
       dispatch(logoutSuccess());
+
+      //mixpanel.track("logout", {"$email": sdk.currentUser.email});
       dispatch(clearCurrentUser());
       log.clearUserId();
       dispatch(userLogout());
@@ -177,28 +199,28 @@ export const signup = params => (dispatch, getState, sdk) => {
   const { email, password, firstName, lastName, ...rest } = params;
 
   axios.get(`${API_URL}/api/v1/rates`)
-  .then(function (response) {
-    const rates = response.data;
-    const currency = '';
-    let lastRateUpdate = new Date();
-    lastRateUpdate.setDate(lastRateUpdate.getDate() - 2);
-    lastRateUpdate = lastRateUpdate.toDateString();
-    const createUserParams = { email, password, firstName, lastName, protectedData: { lastRateUpdate, rates, currency, ...rest }};
-  return sdk.currentUser
-    .create(createUserParams)
-    .then(() => dispatch(signupSuccess()))
-    .then(() => dispatch(login(email, password)))
-    .catch(e => {
-      dispatch(signupError(storableError(e)));
-      log.error(e, 'signup-failed', {
-        email: params.email,
-        firstName: params.firstName,
-        lastName: params.lastName,
-      });
+    .then(function (response) {
+      const rates = response.data;
+      const currency = '';
+      let lastRateUpdate = new Date();
+      lastRateUpdate.setDate(lastRateUpdate.getDate() - 2);
+      lastRateUpdate = lastRateUpdate.toDateString();
+      const createUserParams = { email, password, firstName, lastName, protectedData: { lastRateUpdate, rates, currency, ...rest }};
+      return sdk.currentUser
+        .create(createUserParams)
+        .then(() => dispatch(signupSuccess()))
+        .then(() => dispatch(login(email, password)))
+        .catch(e => {
+          dispatch(signupError(storableError(e)));
+          log.error(e, 'signup-failed', {
+            email: params.email,
+            firstName: params.firstName,
+            lastName: params.lastName,
+          });
+        })
     })
-  })
-  .catch(error => {
-    console.log(error)
-  });
+    .catch(error => {
+      console.log(error)
+    });
 
 };
