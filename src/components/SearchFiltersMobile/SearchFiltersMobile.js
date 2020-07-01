@@ -227,11 +227,11 @@ class SearchFiltersMobileComponent extends Component {
       id: 'SearchFiltersMobile.categoryLabel',
     });
     const initialCategory = categoryFilter ? this.initialValue(categoryFilter.paramName) : null;
-    
+
     const quickRentsLabel =  intl.formatMessage({
       id: 'SearchFilters.quickRentsLabel',
     });
-    
+
 
     const categoryFilterElement = categoryFilter ? (
       <SelectSingleFilter
@@ -245,20 +245,16 @@ class SearchFiltersMobileComponent extends Component {
       />
     ) : null;
 
-    
-    const workspaceLabel = intl.formatMessage({
-      id: 'SearchFiltersMobile.workspaceLabel',
-    });
 
-    const initialWorkspace = workspaceFilter ? this.initialValues(workspaceFilter.paramName) : null;
-
+    const workspaceLabel = intl.formatMessage({ id: 'SearchFiltersMobile.workspaceLabel' });
+    const initialWorkspace = this.initialValues(workspaceFilter.paramName);
     const workspaceFilterElement = workspaceFilter ? (
       <SelectMultipleFilter
       id="SearchFiltersMobile.workspaceFilter"
         name="workspaces"
         urlParam={workspaceFilter.paramName}
         label={workspaceLabel}
-        onSelect={this.handleSelectMultiple}
+        onSubmit={this.handleSelectMultiple}
         liveEdit
         options={workspaceFilter.options}
         initialValues={initialWorkspace}
@@ -297,7 +293,7 @@ class SearchFiltersMobileComponent extends Component {
       initialValues={initialRentals}
     />
   ) : null;
-    const quickRentsFilter = 
+    const quickRentsFilter =
       <SelectMultipleFilter
         id={'SearchFilters.quickRentsFilter'}
         name="quickRents"
@@ -308,7 +304,7 @@ class SearchFiltersMobileComponent extends Component {
         options={[{key: "quickRent", label: quickRentsLabel}]}
         initialValues={initialQuickRents}
       />
-    
+
     const initialPriceRange = this.initialPriceRangeValue(priceFilter.paramName);
 
     const priceFilterElement = priceFilter ? (
@@ -360,7 +356,7 @@ class SearchFiltersMobileComponent extends Component {
         <FormattedMessage id="SearchPage.createListing" />
       </NamedLink>
     );
-    
+
     const monetizeEmptySpace = (
       <NamedLink className={css.createListingLink} name="NewListingPage">
         <FormattedMessage id="SearchPage.createListingMonetize" />
