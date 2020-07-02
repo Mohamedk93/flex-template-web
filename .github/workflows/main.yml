@@ -1,0 +1,23 @@
+name: Unity Android/iOS Build
+on:
+  push:
+    branches:
+      - feat/github_actions
+  pull_request:
+    branches:
+      - feat/github_actions
+
+env:
+  STAGING_USER: ${{ secrets.STAGING_USER }}
+  STAGING_HOST: ${{ secrets.STAGING_HOST }}
+  STAGING_PWD: ${{ secrets.STAGING_PWD }}
+  STAGING_PORT: ${{ secrets.STAGING_PWD }}
+
+jobs:
+  deploy_stage:
+    name: Deploy Staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy stage
+          run: |
+            apt-get install sshpass && sshpass -p $STAGING_PWD ssh -o StrictHostKeyChecking=no $STAGING_USER@$STAGING_HOST:$STAGING_PWD && cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/ && git pull && yarn install && yarn run build
