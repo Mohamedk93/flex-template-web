@@ -1,4 +1,4 @@
-name: Unity Android/iOS Build
+name: Deploy Staging
 on:
   push:
     branches:
@@ -19,4 +19,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - run: apt-get update && install sshpass
+      - run: apt-get update && install sshpass -y
