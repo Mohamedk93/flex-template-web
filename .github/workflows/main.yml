@@ -23,7 +23,7 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install sshpass -y
       - run: sshpass -p $STAGING_PWD ssh -o StrictHostKeyChecking=no $STAGING_USER@$STAGING_HOST -p $STAGING_PORT 'cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/ && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
       - uses: 8398a7/action-slack@v3
-          with:
-            status: ${{ job.status }}
-            fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
 
