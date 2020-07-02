@@ -18,11 +18,11 @@ jobs:
     name: Deploy Staging
     runs-on: ubuntu-latest
     steps:
-      - name: deploy stage
-          run: |
-            apt-get install sshpass
-            sshpass -p $STAGING_PWD ssh -o StrictHostKeyChecking=no $STAGING_USER@$STAGING_HOST:$STAGING_PWD
-            cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/
-            git pull
-            yarn install
-            yarn run build
+      - uses: actions/checkout@v1
+      - run: |
+        apt-get install sshpass
+        sshpass -p $STAGING_PWD ssh -o StrictHostKeyChecking=no $STAGING_USER@$STAGING_HOST:$STAGING_PWD
+        cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/
+        git pull
+        yarn install
+        yarn run build
