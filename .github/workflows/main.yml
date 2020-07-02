@@ -2,16 +2,16 @@ name: Deployment
 on:
   push:
     branches:
-      - feat/github_actions
+      - staging
   pull_request:
     branches:
-      - feat/github_actions
+      - staging
 
 env:
   STAGING_USER: ${{ secrets.STAGING_USER }}
   STAGING_HOST: ${{ secrets.STAGING_HOST }}
   STAGING_PWD: ${{ secrets.STAGING_PWD }}
-  STAGING_PORT: ${{ secrets.STAGING_PWD }}
+  STAGING_PORT: ${{ secrets.STAGING_PORT }}
 
 jobs:
   deploy_stage:
@@ -20,4 +20,4 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - run: sudo apt-get update && sudo apt-get install sshpass -y
-      - run: sshpass -p $STAGING_PWD ssh -o StrictHostKeyChecking=no $STAGING_USER@$STAGING_HOST -p 9922 'cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/ && git pull && yarn install && yarn run build'
+      - run: sshpass -p $STAGING_PWD ssh -o StrictHostKeyChecking=no $STAGING_USER@$STAGING_HOST -p $STAGING_PORT 'cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/ && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
