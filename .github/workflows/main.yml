@@ -12,6 +12,7 @@ env:
   STAGING_HOST: ${{ secrets.STAGING_HOST }}
   STAGING_PWD: ${{ secrets.STAGING_PWD }}
   STAGING_PORT: ${{ secrets.STAGING_PORT }}
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
 jobs:
   deploy_stage:
@@ -21,3 +22,9 @@ jobs:
       - uses: actions/checkout@v1
       - run: sudo apt-get update && sudo apt-get install sshpass -y
       - run: sshpass -p $STAGING_PWD ssh -o StrictHostKeyChecking=no $STAGING_USER@$STAGING_HOST -p $STAGING_PORT 'cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/ && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
+      - uses: rtCamp/action-slack-notify@v2.0.2
+        env:
+          SLACK_MESSAGE: 'Staging Server Deployed'
+          SLACK_TITLE: Runner succeeded
+          SLACK_USERNAME: mhamzawey
+
