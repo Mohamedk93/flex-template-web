@@ -36,28 +36,120 @@
     overflow: visible;
     background-color: #FFFFFF;
   }
-  .searchblock span.title {
-    font-size: 24px;
+  .searchblock p.title {
     font-weight: 700;
-    margin-bottom: 16px;
+    margin-bottom: 0px;
+    width: 277px;
+    height: 35px;
+    overflow: visible;
+    font-family: "Open Sans", sans-serif;
+    color: #000000;
+    font-size: 29px;
+    letter-spacing: 0px;
+    line-height: 1.2;
+    font-style: normal;
   }
+
+  .searchblock span.subtitle {
+    width: 353px;
+    height: 17px;
+    overflow: visible;
+    font-family: "Open Sans", sans-serif;
+    color: #000000;
+    font-size: 14px;
+    letter-spacing: 0px;
+    line-height: 1.2;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .searchblock .hotdeskbutton {
+  display:inline-block;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 108px;
+  height: 59px;
+  overflow: hidden;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 0.1px solid rgba(34, 34, 34, 0.21);
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
+  margin-right: 13.5px
+}
+
+.searchblock .meetingroombutton {
+  display:inline-block;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 108px;
+  height: 59px;
+  overflow: hidden;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 0.1px solid rgba(34, 34, 34, 0.21);
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
+  margin-right: 13.5px
+}
+
+.searchblock .privateofficebutton {
+  display:inline-block;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 108px;
+  height: 59px;
+  overflow: hidden;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 0.1px solid rgba(34, 34, 34, 0.21);
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
+  margin-right: 0px
+}
+
+
   .searchblock .area {
     display: flex;
     flex-direction: column;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     box-sizing: border-box;
     width: 354px;
-    height: 57px;
+    height: 47px;
     overflow: visible;
     background-color: #FFFFFF;
     border: 1px solid #DBDBDB;
   }
+
+  .searchblock .bookingplan {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 354px;
+    height: 47px;
+    overflow: visible;
+    background-color: #ffffff;
+    border: 1px solid #dbdbdb;
+    margin-bottom: 14px
+
+  }
+
+  .searchblock .startdate {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 354px;
+    height: 47px;
+    overflow: visible;
+    background-color: #ffffff;
+    border: 1px solid #dbdbdb;
+    margin-bottom: 14px
+
+  }
+
+
   .searchblock .datetime {
     margin-bottom: 12px;
   }
   .searchblock span.label {
-    margin-bottom: 4px;
-    width: 236px;
+    width: 300px;
     height: 17px;
     overflow: visible;
     font-family: "Open Sans", sans-serif;
@@ -69,6 +161,21 @@
     font-style: normal;
     text-align: left;
   }
+
+  .searchblock span.buttonlabel {
+      width: 300px;
+      height: 17px;
+      overflow: visible;
+      font-family: "Open Sans", sans-serif;
+      color: rgba(0, 0, 0, 0.5);
+      font-size: 14px;
+      letter-spacing: 0px;
+      line-height: 1.2;
+      font-weight: 700;
+      text-align: center;
+      vertical-align: middle;
+    }
+
   .searchblock input, .searchblock select {
     box-shadow: inset 0 3px 0 0 hsla(0,0%,82%,.4);
     border: 1px solid #D2D2D2;

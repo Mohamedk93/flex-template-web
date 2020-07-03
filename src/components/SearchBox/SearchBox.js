@@ -12,47 +12,35 @@ export class SearchBox extends Component {
     return (
   <div className={css.topBorderWrapper}>
     <div className = {css.searchblock}>
-      <span className={css.title}>Search</span>
+      <p className={css.title}>Search Workspaces</p>
+      <span className={css.subtitle}>Book coworking spaces and shared offices worldwide.</span>
+           <p></p>
+
+           <div className={css.hotdeskbutton}>
+             <span className={css.buttonlabel}>Hotdesk</span>
+           </div>
+
+           <div className={css.meetingroombutton}>
+             <span className={css.buttonlabel}>Hotdesk</span>
+           </div>
+
+           <div className={css.privateofficebutton}>
+             <span className={css.buttonlabel}>Hotdesk</span>
+           </div>
+
       <div className={css.area}>
+        <span className={css.label}>Where do you want to work?</span>
+      </div>
+      <p></p>
+
+      <div className={css.bookingplan}>
         <span className={css.label}>How long? (hourly, daily or monthly)</span>
-        <select id="area-options">
-          <option value="option-1">Hourly</option>
-          <option value="option-2">Daily</option>
-          <option value="option-3">Monthly</option>
-        </select>
       </div>
-      <div className={css.datetime}>
-        <div className={css.containerdatetime}>
-          <div className={css.containerdate}>
-            <span className={css.label}>Date</span>
-            <input type="text" placeholder="dd-mm-yyyy"></input>
-          </div>
-          <div className={css.containertime}>
-            <span className={css.label}>Time</span>
-            <select name="" id="">
-              <option value="option-1">12:00</option>
-              <option value="option-2">12:30</option>
-              <option value="option-3">14:00</option>
-            </select>
-          </div>
-        </div>
+
+      <div className={css.startdate}>
+        <span className={css.label}>When would you like to work?</span>
       </div>
-      <div className={css.datetime.last}>
-        <div className={css.containerdatetime}>
-          <div className={css.containerdate}>
-            <span className={css.label}>Date</span>
-            <input type="text" placeholder="dd-mm-yyyy"></input>
-          </div>
-          <div className={css.containertime}>
-            <span className={css.label}>Time</span>
-            <select name="" id="">
-              <option value="option-1">12:00</option>
-              <option value="option-2">12:30</option>
-              <option value="option-3">14:00</option>
-            </select>
-          </div>
-        </div>
-      </div>
+
       <button className={css.btn.primary}>Search</button>
     </div>
   </div>
