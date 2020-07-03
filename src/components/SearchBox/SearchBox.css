@@ -1,0 +1,212 @@
+@import '../../marketplace.css';
+.root {
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: var(--matterColorNegative);
+  width: 100%;
+  padding: 24px 24px 42px 24px;
+  background-color: var(--matterColorBright);
+  @media (--viewportMedium) {
+    padding: 0 24px 33px 24px;
+  }
+  @media (--viewportLarge) {
+    padding: 0 0 81px 0;
+    border-top: none;
+  }
+}
+.topBorderWrapper {
+    @media (--viewportMedium) {
+      padding-top: 41px;
+    }
+    @media (--viewportLarge) {
+      padding-top: 73px;
+      border-top-style: solid;
+      border-top-width: 1px;
+      border-top-color: var(--matterColorNegative);
+    }
+  }
+  .searchblock {
+    color: #091F2F;
+    border-radius: 4px;
+    padding: 12px;
+    box-sizing: border-box;
+    left: 80%;
+    width: 375px;
+    height: 495px;
+    overflow: visible;
+    background-color: #FFFFFF;
+  }
+  .searchblock span.title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .searchblock .area {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    width: 354px;
+    height: 57px;
+    overflow: visible;
+    background-color: #FFFFFF;
+    border: 1px solid #DBDBDB;
+  }
+  .searchblock .datetime {
+    margin-bottom: 12px;
+  }
+  .searchblock span.label {
+    margin-bottom: 4px;
+    width: 236px;
+    height: 17px;
+    overflow: visible;
+    font-family: "Open Sans", sans-serif;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+    letter-spacing: 0px;
+    line-height: 1.2;
+    font-weight: 400;
+    font-style: normal;
+    text-align: left;
+  }
+  .searchblock input, .searchblock select {
+    box-shadow: inset 0 3px 0 0 hsla(0,0%,82%,.4);
+    border: 1px solid #D2D2D2;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #091F2F;
+  }
+  .searchblock input:focus, .searchblock select:focus {
+    outline-color: #0983F0;
+  }
+  .searchblock input {
+    height: 38px;
+    padding: 0 0 0 12px;
+  }
+  .searchblock select {
+    height: 40px;
+    font-size: 16px;
+  }
+  .searchblock .datetime .container-datetime {
+    display: flex;
+    flex-direction: row;
+  }
+  .searchblock .datetime .container-datetime .container-date, .container-time {
+    display: flex;
+    flex-direction: column;
+  }
+  .searchblock .datetime .container-datetime .container-date {
+    width: 129px;
+    margin-right: 12px;
+  }
+  .searchblock .datetime .container-datetime .container-time {
+    width: 81px;
+  }
+  .searchblock button.btn.primary {
+    background: black;
+    color: #E7E7E7;
+    width: 100%;
+    -webkit-appearance: none;
+    border: none;
+    font-size: 20px;
+    padding: 8px 0;
+    box-shadow: inset 0 -2px 0 0 rgba(0,0,0,.2);
+    border-radius: 4px;
+    transition: background 0.2s ease-in-out;
+  }
+  .searchblock button.btn.primary:hover {
+    background: #036AC5;
+  }
+  .searchblock button.btn.primary:focus {
+    outline: none;
+  }
+  /* End of styling for the first search block */
+  /* DROPDOWN
+  ============================================ */
+  .ddwrapper {
+    min-height: 38px;
+    flex-wrap: wrap;
+    @apply  --marketplaceH4FontStyles;
+    outline: none !important;
+    }
+  .ddheader {
+      background-color: white;
+    border-color:  #202020;
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    font-size: 16px;
+    color:  #202020;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+      cursor: pointer;
+      width: 100%;
+      padding: 0 20px;
+    }
+  .arrowup {
+      border: solid  #202020;
+      border-width: 0 2px 2px 0;
+      display: inline-block;
+      padding: 3px;
+      float:right;
+      margin: 9px;
+      transition: transform .2s ease-in,-webkit-transform .2s ease-in;
+      -webkit-transform: rotate(-135deg);
+    }
+   .arrowdown {
+    border: solid   #202020;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+    float: right;
+    margin: 9px;
+    transform: rotate(45deg);
+    transition: transform .2s ease-in,-webkit-transform .2s ease-in;
+    }
+    .ddlist {
+      box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .button {
+      justify-content: space-between;
+      background-color: white;
+      font-size: 16px;
+      padding: 15px 20px 15px 20px;
+      border: 0;
+      border-bottom: 1px solid #ccc;
+      width: 100%;
+      text-align: left;
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+      outline: none !important;
+    }
+      .button:hover{
+        cursor: pointer;
+        font-weight: bold;
+        background-color: #ccc;
+      }
+      .button:focus {
+        cursor: pointer;
+        font-weight: bold;
+        background-color: #ccc;
+        outline: none !important;
+      }
+        .text {
+        position: relative;
+        background-color: white;
+        border-color: #202020;
+        color:  #202020;;
+        font-weight: normal;
+        font-size: 16px;
+        border-radius: 4px;
+        border-style: solid;
+        border-width: 1px;
+        padding: 0 20px;
+        margin: 0;
+        width: 100%;
+          @media (--viewportMedium) {
+            max-width: auto;
+          }
+        }

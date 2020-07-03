@@ -8,6 +8,7 @@ import { isScrollingDisabled } from '../../ducks/UI.duck';
 import config from '../../config';
 import {
   Page,
+  SearchBox,
   SectionHero,
   SectionHowItWorks,
   SectionLocations,

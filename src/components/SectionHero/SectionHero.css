@@ -45,7 +45,7 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  
+
   /* Text positioning is done with paddings */
 }
 
@@ -81,7 +81,7 @@
 .heroMainTitle {
   @apply --marketplaceHeroTitleFontStyles;
   color: var(--matterColorLight);
-
+  float: left;
   @apply --SectionHero_animation;
   animation-delay: 0.5s;
 
@@ -94,7 +94,7 @@
   @apply --marketplaceBodyFontStyles;
 
   color: var(--matterColorLight);
-  margin: 0 0 32px 0;
+  float: left;
 
   @apply --SectionHero_animation;
   animation-delay: 0.65s;
@@ -114,5 +114,28 @@
   @media (--viewportMedium) {
     display: block;
     width: 260px;
+  }
+}
+/* this is for the search box */
+
+.topBorderWrapper {
+  @media (--viewportMedium) {
+    padding-top: 41px;
+    float: left;
+  }
+
+  @apply --SectionHero_animation;
+  animation-delay: 0.5s;
+
+  @media (--viewportMedium) {
+  max-width: var(--SectionHero_desktopTitleMaxWidth);
+  }
+
+  @media (--viewportLarge) {
+    padding-top: 73px;
+
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: var(--matterColorNegative);
   }
 }
