@@ -38,7 +38,7 @@ export class LandingPageComponent extends Component {
   // http://schema.org
   // We are using JSON-LD format
   handleClick (e){
-    if(e.target.innerText == 'Find workspaces near me'){
+    if(e.target.innerText == 'Search'){
       let options = {
         enableHighAccuracy: true,
         timeout: 5000,

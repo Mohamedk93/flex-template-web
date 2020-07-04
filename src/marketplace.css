@@ -217,6 +217,58 @@
       min-height: 65px;
     }
   }
+
+  --marketplaceButtonStyles2 {
+    @apply --marketplaceButtonFontStyles;
+
+    /* Dimensions */
+    display: block;
+    width: 100%;
+    max-height: 47px;
+    min-height: 47px;
+    margin: 0;
+
+    /* Padding is only for <a> elements where button styles are applied,
+		buttons elements should have zero padding */
+    padding: 20px 0 0 0;
+
+    /* Borders */
+    border: none;
+    border-radius: var(--borderRadius);
+
+    /* Colors */
+    background-color: var(--marketplaceColor);
+    color: var(--matterColorLight);
+
+    /* Text */
+    text-align: center;
+    text-decoration: none;
+
+    /* Effects */
+    transition: all var(--transitionStyleButton);
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      outline: none;
+      background-color: var(--marketplaceColorDark);
+      text-decoration: none;
+      box-shadow: var(--boxShadowButton);
+    }
+    &:disabled {
+      background-color: var(--matterColorNegative);
+      color: var(--matterColorLight);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    @media (--viewportMedium) {
+      min-height: 47px;
+    }
+  }
+
+
+
   --marketplaceButtonStylesPrimary {
     @apply --marketplaceButtonStyles;
 

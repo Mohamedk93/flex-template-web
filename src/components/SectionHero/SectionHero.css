@@ -139,3 +139,18 @@
     border-top-color: var(--matterColorNegative);
   }
 }
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
+.gridItem {
+  font-size: 30px;
+  margin-top: 10.8%;
+
+}
+
+.gridItem2 {
+
+}
