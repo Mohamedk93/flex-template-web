@@ -32,7 +32,7 @@
     box-sizing: border-box;
     left: 80%;
     width: 375px;
-    height: 495px;
+    height: 450px;
     overflow: visible;
     background-color: #FFFFFF;
   }
@@ -42,7 +42,7 @@
     width: 277px;
     height: 35px;
     overflow: visible;
-    font-family: "Open Sans", sans-serif;
+    font-family: 'sofiapro', Helvetica, Arial, sans-serif;
     color: #000000;
     font-size: 29px;
     letter-spacing: 0px;
@@ -54,7 +54,7 @@
     width: 353px;
     height: 17px;
     overflow: visible;
-    font-family: "Open Sans", sans-serif;
+    font-family: 'sofiapro', Helvetica, Arial, sans-serif;
     color: #000000;
     font-size: 14px;
     letter-spacing: 0px;
@@ -64,62 +64,93 @@
   }
 
   .searchblock .hotdeskbutton {
-  display:inline-block;
-  flex-direction: column;
-  box-sizing: border-box;
-  width: 108px;
-  height: 59px;
-  overflow: hidden;
-  background-color: #ffffff;
-  border-radius: 10px;
-  border: 0.1px solid rgba(34, 34, 34, 0.21);
-  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
-  margin-right: 13.5px
+
+    /* Dimensions */
+    display: inline-block;
+    width: 108px;
+    height: 47px;
+    margin-right: 13.5px;
+    box-sizing: border-box;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 0.1px solid rgba(34, 34, 34, 0.21);
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    margin-bottom: 15px;
+
+    transition: all var(--transitionStyleButton);
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      outline: none;
+      background-color: #2ecc72;
+      box-shadow: var(--boxShadowButton);
+      transform: scale(1.07);
+    }
+    &:disabled {
+      background-color: var(--matterColorNegative);
+      color: var(--matterColorLight);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
 }
 
 .searchblock .meetingroombutton {
-  display:inline-block;
-  flex-direction: column;
-  box-sizing: border-box;
+  display: inline-block;
   width: 108px;
-  height: 59px;
+  height: 47px;
+  margin-right: 13.5px;
+  box-sizing: border-box;
+  flex-direction: column;
   overflow: hidden;
   background-color: #ffffff;
   border-radius: 10px;
   border: 0.1px solid rgba(34, 34, 34, 0.21);
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
-  margin-right: 13.5px
+  text-align: center;
+  margin-bottom: 15px;
 }
 
 .searchblock .privateofficebutton {
-  display:inline-block;
-  flex-direction: column;
-  box-sizing: border-box;
+  display: inline-block;
   width: 108px;
-  height: 59px;
+  height: 47px;
+  box-sizing: border-box;
+  flex-direction: column;
   overflow: hidden;
   background-color: #ffffff;
   border-radius: 10px;
   border: 0.1px solid rgba(34, 34, 34, 0.21);
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
-  margin-right: 0px
+  text-align: center;
+  margin-bottom: 15px;
 }
 
 
   .searchblock .area {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 14px;
-    box-sizing: border-box;
+    display: block;
     width: 354px;
     height: 47px;
-    overflow: visible;
+    box-sizing: border-box;
+    flex-direction: column;
+    overflow: hidden;
     background-color: #FFFFFF;
     border: 1px solid #DBDBDB;
+    text-align: left;
+    margin-bottom: 14px;
+    padding-left: 0px;
+    padding-top: 11.75px;
   }
+
+  .search {
+  color: white;
+}
 
   .searchblock .bookingplan {
-    display: flex;
+    display: block;
     flex-direction: column;
     box-sizing: border-box;
     width: 354px;
@@ -127,12 +158,18 @@
     overflow: visible;
     background-color: #ffffff;
     border: 1px solid #dbdbdb;
-    margin-bottom: 14px
-
+    margin-bottom: 14px;
+    padding-left: 0px;
+    padding-top: 11.75px;
   }
 
+  .time {
+  border-color: black;
+  color: transparent;
+}
+
   .searchblock .startdate {
-    display: flex;
+    display: block;
     flex-direction: column;
     box-sizing: border-box;
     width: 354px;
@@ -140,8 +177,9 @@
     overflow: visible;
     background-color: #ffffff;
     border: 1px solid #dbdbdb;
-    margin-bottom: 14px
-
+    margin-bottom: 14px;
+    padding-left: 0px;
+    padding-top: 11.75px;
   }
 
 
@@ -152,28 +190,48 @@
     width: 300px;
     height: 17px;
     overflow: visible;
-    font-family: "Open Sans", sans-serif;
+    font-family: 'sofiapro', Helvetica, Arial, sans-serif;
     color: rgba(0, 0, 0, 0.5);
     font-size: 14px;
     letter-spacing: 0px;
     line-height: 1.2;
     font-weight: 400;
     font-style: normal;
-    text-align: left;
+    vertical-align: middle;
   }
 
   .searchblock span.buttonlabel {
       width: 300px;
       height: 17px;
       overflow: visible;
-      font-family: "Open Sans", sans-serif;
-      color: rgba(0, 0, 0, 0.5);
+      font-family: 'sofiapro', Helvetica, Arial, sans-serif;
+      color: black;
       font-size: 14px;
       letter-spacing: 0px;
-      line-height: 1.2;
-      font-weight: 700;
+      line-height: 42px;
+      font-weight: var(--fontWeightSemiBold);
       text-align: center;
-      vertical-align: middle;
+      text-indent: 50%;
+    }
+
+    .heroButton {
+      @apply --marketplaceButtonStyles;
+      @apply --SectionHero_animation;
+      background-color: #2ecc71 !important;
+      animation-delay: 0.8s;
+
+      @media (--viewportMedium) {
+        display: block;
+        width: 100%;
+      }
+    }
+
+    .heroText {
+      position: relative;
+      float: left;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
   .searchblock input, .searchblock select {

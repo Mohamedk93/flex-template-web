@@ -18,17 +18,10 @@ export class SectionHero extends Component {
           <h1 className={css.heroMainTitle}>
             <FormattedMessage id="SectionHero.title" />
           </h1>
-          <span className={css.topBorderWrapper}>
-            <SearchBox />
-          </span>
+          <span className={css.topBorderWrapper}><SearchBox /></span>
           <h2 className={css.heroSubTitle}>
             <FormattedMessage id="SectionHero.subTitle" />
           </h2>
-          <Button className={css.heroButton}>
-            <span className={css.heroText}>
-              <FormattedMessage id="SectionHero.browseButton" />
-            </span>
-          </Button>
         </div>
       </div>
     );
