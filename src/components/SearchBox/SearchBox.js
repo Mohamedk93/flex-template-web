@@ -127,16 +127,12 @@ export class SearchBox extends Component {
              <span className={css.buttonlabel}>Private Office</span>
            </div>
 
-      <div className={css.area}>
+      <div>
       <TopbarSearchForm
         onSubmit={this.handleSubmit}
         initialValues={initialSearchFormValues}
         isMobile
       />
-
-
-        <span className={css.search}><svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 24 24" fill="transparent" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
-        <span className={css.label}>Where do you want to work?</span>
       </div>
 
       <div className={css.bookingplan}>
