@@ -184,7 +184,7 @@
   .searchblock .area {
     display: block;
     width: 354px;
-    height: 47px;
+    height: 500px;
     box-sizing: border-box;
     flex-direction: column;
     overflow: hidden;

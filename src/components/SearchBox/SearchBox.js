@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { string } from 'prop-types';
 import css from './SearchBox.css';
 import Dropdown from './SearchBox';
-import { FormattedMessage } from '../../util/reactIntl';
+import { FormattedMessage, intlShape, injectIntl  } from '../../util/reactIntl';
 import Button from '../Button/Button';
 import { TopbarSearchForm } from '../../forms';
 import config from '../../config';
@@ -31,6 +31,28 @@ const redirectToURLWithoutModalState = (props, modalStateParam) => {
   const stringified = stringify(queryParams);
   const searchString = stringified ? `?${stringified}` : '';
   history.push(`${pathname}${searchString}`, state);
+};
+
+const GenericError = props => {
+  const { show } = props;
+  const classes = classNames(css.genericError, {
+    [css.genericErrorVisible]: show,
+  });
+  return (
+    <div className={classes}>
+      <div className={css.genericErrorContent}>
+        <p className={css.genericErrorText}>
+          <FormattedMessage id="Topbar.genericError" />
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const { bool } = PropTypes;
+
+GenericError.propTypes = {
+  show: bool.isRequired,
 };
 
 export class SearchBox extends Component {
@@ -111,6 +133,8 @@ export class SearchBox extends Component {
         initialValues={initialSearchFormValues}
         isMobile
       />
+
+
         <span className={css.search}><svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 24 24" fill="transparent" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         <span className={css.label}>Where do you want to work?</span>
       </div>
@@ -138,7 +162,7 @@ export class SearchBox extends Component {
 }
 
 
-
+const { func, number, shape } = PropTypes;
 
 SearchBox.defaultProps = {
     className: null,
@@ -147,5 +171,21 @@ SearchBox.defaultProps = {
 SearchBox.propTypes = {
     className: string,
     rootClassName: string,
+    history: shape({
+      push: func.isRequired,
+    }).isRequired,
+    location: shape({
+      search: string.isRequired,
+    }).isRequired,
+
+    // from withViewport
+    viewport: shape({
+      width: number.isRequired,
+      height: number.isRequired,
+    }).isRequired,
+
+    // from injectIntl
+    intl: intlShape.isRequired,
+
   };
   export default SearchBox;
