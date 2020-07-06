@@ -6,11 +6,86 @@ import css from './SearchBox.css';
 import Dropdown from './SearchBox';
 import { FormattedMessage } from '../../util/reactIntl';
 import Button from '../Button/Button';
+import { TopbarSearchForm } from '../../forms';
+import config from '../../config';
+import { createResourceLocatorString, pathByRouteName } from '../../util/routes';
+import pickBy from 'lodash/pickBy';
+import { parse, stringify } from '../../util/urlHelpers';
+import routeConfiguration from '../../routeConfiguration';
+
+const MAX_MOBILE_SCREEN_WIDTH = 768;
+
+const redirectToURLWithModalState = (props, modalStateParam) => {
+  const { history, location } = props;
+  const { pathname, search, state } = location;
+  const searchString = `?${stringify({ [modalStateParam]: 'open', ...parse(search) })}`;
+  history.push(`${pathname}${searchString}`, state);
+};
+
+const redirectToURLWithoutModalState = (props, modalStateParam) => {
+  const { history, location } = props;
+  const { pathname, search, state } = location;
+  const queryParams = pickBy(parse(search), (v, k) => {
+    return k !== modalStateParam;
+  });
+  const stringified = stringify(queryParams);
+  const searchString = stringified ? `?${stringified}` : '';
+  history.push(`${pathname}${searchString}`, state);
+};
+
 export class SearchBox extends Component {
+
+  constructor(props) {
+    super(props);
+    this.handleMobileSearchOpen = this.handleMobileSearchOpen.bind(this);
+    this.handleMobileSearchClose = this.handleMobileSearchClose.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+    handleMobileSearchOpen() {
+      redirectToURLWithModalState(this.props, 'mobilesearch');
+    }
+
+    handleMobileSearchClose() {
+      redirectToURLWithoutModalState(this.props, 'mobilesearch');
+    }
+
+    handleSubmit(values) {
+      const { currentSearchParams } = this.props;
+      const { search, selectedPlace } = values.location;
+      const { history } = this.props;
+      const { origin, bounds } = selectedPlace;
+      const originMaybe = config.sortSearchByDistance ? { origin } : {};
+      const searchParams = {
+        ...currentSearchParams,
+        ...originMaybe,
+        address: search,
+        bounds,
+      };
+      history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
+    }
+
     render () {
         const rootClassName = this.props.rootClassName
         const className = this.props.className
         const classes = classNames(rootClassName || css.root, className);
+        const location = this.props
+        const { mobilemenu, mobilesearch, address, origin, bounds } = parse(location.search, {
+          latlng: ['origin'],
+          latlngBounds: ['bounds'],
+        });
+
+        const locationFieldsPresent = config.sortSearchByDistance
+          ? address && origin && bounds
+          : address && bounds;
+        const initialSearchFormValues = {
+          location: locationFieldsPresent
+            ? {
+                search: address,
+                selectedPlace: { address, origin, bounds },
+              }
+            : null,
+        };
     return (
   <div className={css.topBorderWrapper}>
     <div className = {css.searchblock}>
@@ -31,6 +106,11 @@ export class SearchBox extends Component {
            </div>
 
       <div className={css.area}>
+      <TopbarSearchForm
+        onSubmit={this.handleSubmit}
+        initialValues={initialSearchFormValues}
+        isMobile
+      />
         <span className={css.search}><svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 24 24" fill="transparent" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         <span className={css.label}>Where do you want to work?</span>
       </div>
@@ -56,6 +136,10 @@ export class SearchBox extends Component {
     );
 };
 }
+
+
+
+
 SearchBox.defaultProps = {
     className: null,
     rootClassName: null,
