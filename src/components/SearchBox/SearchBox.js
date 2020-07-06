@@ -6,7 +6,7 @@ import css from './SearchBox.css';
 import Dropdown from './SearchBox';
 import { FormattedMessage, intlShape, injectIntl  } from '../../util/reactIntl';
 import Button from '../Button/Button';
-import { TopbarSearchForm } from '../../forms';
+import { SearchForm } from '../../forms';
 import config from '../../config';
 import { createResourceLocatorString, pathByRouteName } from '../../util/routes';
 import pickBy from 'lodash/pickBy';
@@ -128,7 +128,8 @@ export class SearchBox extends Component {
            </div>
 
       <div>
-      <TopbarSearchForm
+
+      <SearchForm
         onSubmit={this.handleSubmit}
         initialValues={initialSearchFormValues}
         isMobile
@@ -166,6 +167,7 @@ SearchBox.defaultProps = {
   };
 SearchBox.propTypes = {
     className: string,
+    onSubmit: func.isRequired,
     rootClassName: string,
     history: shape({
       push: func.isRequired,

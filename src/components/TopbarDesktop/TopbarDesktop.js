@@ -179,10 +179,10 @@ const TopbarDesktop = props => {
         />
       </NamedLink>
       {search}
-      
+
       <HistoryBackButton show={showBackButton}/>
       {selectCurrency}
-            
+
       <NamedLink className={css.createListingLink} name="NewListingPage">
         <span className={css.createListing}>
           <FormattedMessage id="TopbarDesktop.createListing" />

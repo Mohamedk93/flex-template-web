@@ -1039,6 +1039,7 @@
   "TopbarMobileMenu.unauthorizedGreeting": "Hello there,{lineBreak}would you like to {signupOrLogin}?",
   "TopbarMobileMenu.yourListingsLink": "Your listings",
   "TopbarSearchForm.placeholder": "Search work spaces…",
+  "SearchForm.placeholder": "Where do you want to work?",
   "TopbarSearchForm.searchHelp": "Tip: You can also search by zip code, for example \"11885\" or city district \"San Francisco\".",
   "TransactionPage.deletedListing": "deleted listing",
   "TransactionPage.fetchOrderFailed": "Fetching order data failed.",

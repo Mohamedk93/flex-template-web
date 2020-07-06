@@ -184,7 +184,7 @@
   .searchblock .area {
     display: block;
     width: 354px;
-    height: 500px;
+    height: 47px;
     box-sizing: border-box;
     flex-direction: column;
     overflow: hidden;
@@ -208,7 +208,7 @@
     height: 47px;
     overflow: visible;
     background-color: #ffffff;
-    border: 1px solid #dbdbdb;
+    border: 0px solid #dbdbdb;
     margin-bottom: 14px;
     padding-left: 0px;
     padding-top: 11.75px;
@@ -227,7 +227,7 @@
     height: 47px;
     overflow: visible;
     background-color: #ffffff;
-    border: 1px solid #dbdbdb;
+    border: 0px solid #dbdbdb;
     margin-bottom: 14px;
     padding-left: 0px;
     padding-top: 11.75px;
@@ -287,11 +287,17 @@
     }
 
   .searchblock input, .searchblock select {
-    font-size: 16px;
-    color: #091F2F;
+    font-family: 'sofiapro', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.5);
+    letter-spacing: 0px;
+    line-height: 1.2;
+    font-weight: 400;
+    font-style: normal;
+    vertical-align: middle;
     display: block;
     width: 354px;
-    height: 500px;
+    height: 47px;
     box-sizing: border-box;
     flex-direction: column;
     overflow: hidden;
@@ -301,13 +307,23 @@
     margin-bottom: 14px;
     padding-left: 0px;
     padding-top: 11.75px;
+
   }
   .searchblock input:focus, .searchblock select:focus {
     outline-color: #0983F0;
   }
   .searchblock input {
-    height: 38px;
-    padding: 0 0 0 12px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 354px;
+    height: 47px;
+    overflow: visible;
+    background-color: #ffffff;
+    border: 0px solid #dbdbdb;
+    margin-bottom: 14px;
+    padding-left: 0px;
+    padding-top: 11.75px;
   }
   .searchblock select {
     height: 40px;

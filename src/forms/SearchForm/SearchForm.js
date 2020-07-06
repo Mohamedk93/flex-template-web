@@ -5,11 +5,11 @@ import { intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { Form, LocationAutocompleteInput } from '../../components';
 
-import css from './TopbarSearchForm.css';
+import css from './SearchForm.css';
 
 const identity = v => v;
 
-class TopbarSearchFormComponent extends Component {
+class SearchFormComponent extends Component {
   constructor(props) {
     super(props);
     this.onChange = this.onChange.bind(this);
@@ -65,14 +65,13 @@ class TopbarSearchFormComponent extends Component {
                     <LocationAutocompleteInput
                       className={isMobile ? css.mobileInputRoot : desktopInputRootClass}
                       iconClassName={isMobile ? css.mobileIcon : css.desktopIcon}
-                      inputClassName={isMobile ? css.mobileInput : css.desktopInput}
                       predictionsClassName={
                         isMobile ? css.mobilePredictions : css.desktopPredictions
                       }
                       predictionsAttributionClassName={
                         isMobile ? css.mobilePredictionsAttribution : null
                       }
-                      placeholder={intl.formatMessage({ id: 'TopbarSearchForm.placeholder' })}
+                      placeholder={intl.formatMessage({ id: 'SearchForm.placeholder' })}
                       closeOnBlur={!isMobile}
                       inputRef={node => {
                         this.searchInput = node;
@@ -93,14 +92,14 @@ class TopbarSearchFormComponent extends Component {
 
 const { func, string, bool } = PropTypes;
 
-TopbarSearchFormComponent.defaultProps = {
+SearchFormComponent.defaultProps = {
   rootClassName: null,
   className: null,
   desktopInputRoot: null,
   isMobile: false,
 };
 
-TopbarSearchFormComponent.propTypes = {
+SearchFormComponent.propTypes = {
   rootClassName: string,
   className: string,
   desktopInputRoot: string,
@@ -111,6 +110,6 @@ TopbarSearchFormComponent.propTypes = {
   intl: intlShape.isRequired,
 };
 
-const TopbarSearchForm = injectIntl(TopbarSearchFormComponent);
+const SearchForm = injectIntl(SearchFormComponent);
 
-export default TopbarSearchForm;
+export default SearchForm;
