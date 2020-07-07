@@ -62,6 +62,7 @@ export class SearchBox extends Component {
     this.handleMobileSearchOpen = this.handleMobileSearchOpen.bind(this);
     this.handleMobileSearchClose = this.handleMobileSearchClose.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.filterWorkspace = this.filterWorkspace.bind(this);
   }
 
     handleMobileSearchOpen() {
@@ -87,6 +88,21 @@ export class SearchBox extends Component {
       history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
     }
 
+    filterWorkspace(){
+      const { workspacetype } = this;
+        if(workspacetype == 'Hotdesk') {
+          workspacetype = 'seats';
+          }
+        else if(workspacetype == 'Meeting Room') {
+          workspacetype = 'Meeting Room';
+        }
+        else if(workspacetype == 'Office Room') {
+          workspacetype = 'Office Room';
+        }
+        return `&pub_workspaces=${workspacetype}`;
+      }
+
+
     render () {
         const rootClassName = this.props.rootClassName
         const className = this.props.className
@@ -109,14 +125,13 @@ export class SearchBox extends Component {
             : null,
         };
     return (
-  <div className={css.topBorderWrapper}>
     <div className = {css.searchblock}>
       <p className={css.title}>Search Workspaces</p>
       <span className={css.subtitle}>Book coworking spaces and shared offices worldwide.</span>
            <p></p>
 
            <div className={css.hotdeskbutton}>
-             <span className={css.buttonlabel}>Hotdesk</span>
+             <span className={css.buttonlabel} onClick={this.filterWorkspace}>Hotdesk</span>
            </div>
 
            <div className={css.meetingroombutton}>
@@ -153,7 +168,6 @@ export class SearchBox extends Component {
       </button>
 
     </div>
-  </div>
     );
 };
 }
