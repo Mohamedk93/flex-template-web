@@ -8,10 +8,12 @@ import { FormattedMessage, intlShape, injectIntl  } from '../../util/reactIntl';
 import Button from '../Button/Button';
 import { SearchForm } from '../../forms';
 import config from '../../config';
+import { locationBounds } from '../../util/googleMaps';
 import { createResourceLocatorString, pathByRouteName } from '../../util/routes';
 import pickBy from 'lodash/pickBy';
 import { parse, stringify } from '../../util/urlHelpers';
 import routeConfiguration from '../../routeConfiguration';
+
 
 const MAX_MOBILE_SCREEN_WIDTH = 768;
 
@@ -49,6 +51,8 @@ const GenericError = props => {
   );
 };
 
+var selectedWorkspace = '';
+
 const { bool } = PropTypes;
 
 GenericError.propTypes = {
@@ -63,7 +67,10 @@ export class SearchBox extends Component {
     this.handleMobileSearchClose = this.handleMobileSearchClose.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.filterWorkspace = this.filterWorkspace.bind(this);
+    this.success = this.success.bind(this);
+    this.error = this.error.bind(this);
   }
+  
 
     handleMobileSearchOpen() {
       redirectToURLWithModalState(this.props, 'mobilesearch');
@@ -88,8 +95,8 @@ export class SearchBox extends Component {
       history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
     }
 
-    filterWorkspace(){
-      const { workspacetype } = this;
+  
+    filterWorkspace(workspacetype) {
         if(workspacetype == 'Hotdesk') {
           workspacetype = 'seats';
           }
@@ -100,8 +107,45 @@ export class SearchBox extends Component {
           workspacetype = 'Office Room';
         }
         return `&pub_workspaces=${workspacetype}`;
+    }
+    handleClick (e){
+      if(e.target.innerText == 'Search'){
+        let options = {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        };
+        navigator.geolocation.getCurrentPosition(this.success, this.error, options)
       }
+    }
+  
+    success(pos) {
+      let crd = pos.coords;
+      const latlng = {
+        lat: crd.latitude,
+        lng: crd.longitude
+      }
+      const coordindates = locationBounds(latlng, config.maps.search.currentLocationBoundsDistance)
+      const path = this.generateSearch(coordindates)
+      this.setState({path: path, canRedirect: true});
+    }
+  
+    error(err) {
+      const path = 's?address=Cairo%2C%20Cairo%20Governorate%2C%20Egypt&bounds=79.34942401%2C56.31453229%2C-57.56893982%2C-133.52921771'
+      this.setState({path: path, canRedirect: true});
+      console.warn(`ERROR(${err.code}): ${err.message}`);
+    };
+  
+    generateSearch(coordindates){
+      if(Object.keys(coordindates).length !== 0){
+        return `s?address=&bounds=${coordindates.ne.lat}%2C${coordindates.ne.lng}%2C${coordindates.sw.lat}%2C${coordindates.sw.lng}${this.filterWorkspace(selectedWorkspace)}`;
+      };
+    };
 
+    workspaceType(workspace){
+      selectedWorkspace= workspace;
+    }
+  
 
     render () {
         const rootClassName = this.props.rootClassName
@@ -131,7 +175,7 @@ export class SearchBox extends Component {
            <p></p>
 
            <div className={css.hotdeskbutton}>
-             <span className={css.buttonlabel} onClick={this.filterWorkspace}>Hotdesk</span>
+             <span className={css.buttonlabel} onClick={this.workspaceType('Hotdesk')}>Hotdesk</span>
            </div>
 
            <div className={css.meetingroombutton}>
@@ -152,16 +196,16 @@ export class SearchBox extends Component {
       </div>
 
       <div className={css.bookingplan}>
-      <span className={css.time}><svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 24 24" fill="transparent" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
+      <span className={css.time}><svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 24 24" fill="transparent" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
         <span className={css.label}>How long? (hourly, daily or monthly)</span>
       </div>
 
       <div className={css.startdate}>
-      <span className={css.search}><svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>
+      <span className={css.search}><svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>
         <span className={css.label}>When would you like to work?</span>
       </div>
 
-      <button className={css.heroButton}>
+      <button className={css.heroButton}  onClick={((e) => this.handleClick(e))}>
         <span className={css.heroText}>
           <FormattedMessage id="SectionHero.browseButton" />
         </span>
@@ -200,4 +244,5 @@ SearchBox.propTypes = {
     intl: intlShape.isRequired,
 
   };
-  export default SearchBox;
+ 
+  export default SearchBox ;

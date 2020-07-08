@@ -8,7 +8,6 @@ import { isScrollingDisabled } from '../../ducks/UI.duck';
 import config from '../../config';
 import {
   Page,
-  SearchBox,
   SectionHero,
   SectionHowItWorks,
   SectionLocations,
@@ -18,11 +17,14 @@ import {
   LayoutWrapperFooter,
   Footer,
 } from '../../components';
+import { filterWorkspace, SearchBox } from '../../components';
 import { TopbarContainer } from '../../containers';
 import { locationBounds } from '../../util/googleMaps';
 import facebookImage from '../../assets/HotdeskFacebook1200.jpg';
 import twitterImage from '../../assets/HotdeskTwitter600.jpg';
 import css from './LandingPage.css';
+
+
 
 export class LandingPageComponent extends Component {
   constructor(props) {
@@ -55,6 +57,7 @@ export class LandingPageComponent extends Component {
       this.props.history.push(this.state.path);
     }
   }
+
 
   success(pos) {
     let crd = pos.coords;
@@ -168,5 +171,6 @@ const LandingPage = compose(
   connect(mapStateToProps),
   injectIntl
 )(LandingPageComponent);
+
 
 export default LandingPage;
