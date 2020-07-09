@@ -28,23 +28,33 @@ body {
 }
 
 .pageTitle {
-  font-weight: 500;
-  font-size: 24px;
   text-align: left;
-  margin-top: 0px;
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: -.5px;
+  margin-top: 12px;
+  margin-bottom: 24px;
+  margin-left: 24px;
+  margin-right: 24px;
+  font-family: 'sofiapro', Helvetica, Arial, sans-serif;
 }
 
 .pagesubTitle {
-  font-weight: 300;
-  font-size: 20px;
   text-align: left;
-  margin-top: 0px;
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: -.5px;
+  margin-top: 12px;
+  margin-bottom: 24px;
+  margin-left: 24px;
+  margin-right: 24px;
+  font-family: 'sofiapro', Helvetica, Arial, sans-serif;
 }
 
 .staticPageWrapper {
   width: 100%;
   max-width: 1056px;
-  margin: 24px auto;
+  margin: 12px auto;
 
   @media (--viewportMedium) {
     width: 100%;
@@ -66,31 +76,30 @@ body {
 
 
 .ddwrapper {
-  min-height: 38px;
+  min-height: 12px;
   flex-wrap: wrap;
-  @apply  --marketplaceH4FontStyles;
-  outline: none !important;
+  background-repeat: no-repeat;
+  box-sizing: inherit;
 
   }
 .ddheader {
-    background-color: white;
-  border-color:  #202020;
-  border-radius: 4px;
-  border-style: solid;
-  border-width: 1px;
-  font-size: 16px;
-  color:  #202020;
-  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
-    cursor: pointer;
-    width: 100%;
-    padding: 0 20px;
-
+  background-color: white;
+  border: 1px solid #b2b2b2;
+  font-size: 18px;
+  font-weight: 400;
+  color:  #4a4a4a;
+  cursor: pointer;
+  width: 90%;
+  padding: 11px 48px 11px 24px;
+  margin-left: 24px;
+  margin-right: 24px;
+  font-family: 'sofiapro', Helvetica, Arial, sans-serif;
 
   }
 
 .arrowup {
-    border: solid  #202020;
-    border-width: 0 2px 2px 0;
+    border: solid  #4a4a4a;
+    border-width: 0 1px 1px 0;
     display: inline-block;
     padding: 3px;
     float:right;
@@ -103,7 +112,7 @@ body {
  .arrowdown {
   border: solid   #202020;
   border-width: 0 2px 2px 0;
-  display: inline-block;
+  display: block;
   padding: 3px;
   float: right;
   margin: 9px;
@@ -151,17 +160,15 @@ body {
 
 
       .text {
+      font-family: 'sofiapro', Helvetica, Arial, sans-serif;
+      text-align: justify;
+      padding: 11px 48px 11px 24px;
+      color:  #4a4a4a;
+      font-size: 18px;
+      font-weight: 400;
       position: relative;
       background-color: white;
-      border-color: #202020;
-      color:  #202020;;
-      font-weight: normal;
-      font-size: 16px;
-      border-radius: 4px;
-      border-style: solid;
-      border-width: 1px;
-      padding: 0 20px;
-      margin: 0;
+      border: 1px solid #b2b2b2;
       width: 100%;
         @media (--viewportMedium) {
           max-width: auto;
