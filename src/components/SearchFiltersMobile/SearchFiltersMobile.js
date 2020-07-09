@@ -195,7 +195,9 @@ class SearchFiltersMobileComponent extends Component {
       onManageDisableScrolling,
       selectedFiltersCount,
       categoryFilter,
+      workspaceFilter,
       amenitiesFilter,
+      rentalsFilter,
       priceFilter,
       dateRangeFilter,
       keywordFilter,
@@ -225,11 +227,11 @@ class SearchFiltersMobileComponent extends Component {
       id: 'SearchFiltersMobile.categoryLabel',
     });
     const initialCategory = categoryFilter ? this.initialValue(categoryFilter.paramName) : null;
-    
+
     const quickRentsLabel =  intl.formatMessage({
       id: 'SearchFilters.quickRentsLabel',
     });
-    
+
 
     const categoryFilterElement = categoryFilter ? (
       <SelectSingleFilter
@@ -243,7 +245,24 @@ class SearchFiltersMobileComponent extends Component {
       />
     ) : null;
 
+
+    const workspaceLabel = intl.formatMessage({ id: 'SearchFiltersMobile.workspaceLabel' });
+    const initialWorkspace = this.initialValues(workspaceFilter.paramName);
+    const workspaceFilterElement = workspaceFilter ? (
+      <SelectMultipleFilter
+      id="SearchFiltersMobile.workspaceFilter"
+        name="workspaces"
+        urlParam={workspaceFilter.paramName}
+        label={workspaceLabel}
+        onSubmit={this.handleSelectMultiple}
+        liveEdit
+        options={workspaceFilter.options}
+        initialValues={initialWorkspace}
+      />
+    ) : null;
+
     const amenitiesLabel = intl.formatMessage({ id: 'SearchFiltersMobile.amenitiesLabel' });
+
 
     const initialAmenities = this.initialValues(amenitiesFilter.paramName);
     const initialQuickRents = this.initialValues('pub_quickRent');
@@ -260,8 +279,21 @@ class SearchFiltersMobileComponent extends Component {
         initialValues={initialAmenities}
       />
     ) : null;
-
-    const quickRentsFilter = 
+   const rentalsLabel = intl.formatMessage({ id: 'SearchFiltersMobile.rentalsLabel' });
+   const initialRentals = this.initialValues(rentalsFilter.paramName);
+   const rentalsFilterElement = rentalsFilter ? (
+    <SelectMultipleFilter
+      id="SearchFiltersMobile.rentalsFilter"
+      name="rentals"
+      urlParam={rentalsFilter.paramName}
+      label={rentalsLabel}
+      onSubmit={this.handleSelectMultiple}
+      liveEdit
+      options={rentalsFilter.options}
+      initialValues={initialRentals}
+    />
+  ) : null;
+    const quickRentsFilter =
       <SelectMultipleFilter
         id={'SearchFilters.quickRentsFilter'}
         name="quickRents"
@@ -272,7 +304,7 @@ class SearchFiltersMobileComponent extends Component {
         options={[{key: "quickRent", label: quickRentsLabel}]}
         initialValues={initialQuickRents}
       />
-    
+
     const initialPriceRange = this.initialPriceRangeValue(priceFilter.paramName);
 
     const priceFilterElement = priceFilter ? (
@@ -299,8 +331,7 @@ class SearchFiltersMobileComponent extends Component {
           initialValues={initialDateRange}
         />
       ) : null;
-
-    const initialKeyword = this.initialValue(keywordFilter.paramName);
+     const initialKeyword = this.initialValue(keywordFilter.paramName);
     const keywordLabel = intl.formatMessage({
       id: 'SearchFiltersMobile.keywordLabel',
     });
@@ -325,7 +356,7 @@ class SearchFiltersMobileComponent extends Component {
         <FormattedMessage id="SearchPage.createListing" />
       </NamedLink>
     );
-    
+
     const monetizeEmptySpace = (
       <NamedLink className={css.createListingLink} name="NewListingPage">
         <FormattedMessage id="SearchPage.createListingMonetize" />
@@ -382,7 +413,9 @@ class SearchFiltersMobileComponent extends Component {
             <div className={css.filtersWrapper}>
               {keywordFilterElement}
               {categoryFilterElement}
+              {workspaceFilterElement}
               {amenitiesFilterElement}
+              {rentalsFilterElement}
               {priceFilterElement}
               {quickRentsFilter}
               {dateRangeFilterElement}
@@ -408,7 +441,9 @@ SearchFiltersMobileComponent.defaultProps = {
   selectedFiltersCount: 0,
   filterParamNames: [],
   categoryFilter: null,
+  workspaceFilter: null,
   amenitiesFilter: null,
+  rentalsFilter: null,
   priceFilter: null,
   dateRangeFilter: null,
 };
@@ -428,7 +463,9 @@ SearchFiltersMobileComponent.propTypes = {
   selectedFiltersCount: number,
   filterParamNames: array,
   categoriesFilter: propTypes.filterConfig,
+  workspaceFilter: propTypes.filterConfig,
   amenitiesFilter: propTypes.filterConfig,
+  rentalsFilter: propTypes.filterConfig,
   priceFilter: propTypes.filterConfig,
   dateRangeFilter: propTypes.filterConfig,
 

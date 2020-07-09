@@ -54,7 +54,9 @@ export class SearchPageComponent extends Component {
   filters() {
     const {
       categories,
+      workspaces,
       amenities,
+      rentals,
       quickRents,
       priceFilterConfig,
       dateRangeFilterConfig,
@@ -71,9 +73,19 @@ export class SearchPageComponent extends Component {
         paramName: 'pub_category',
         options: categories,
       },
+      workspaceFilter: {
+        paramName: 'pub_workspaces',
+        options: workspaces,
+        config: workspaces,
+      },
       amenitiesFilter: {
         paramName: 'pub_amenities',
         options: amenities,
+      },
+      rentalsFilter: {
+        paramName: 'pub_rentalTypes',
+        options: rentals,
+        config: workspaces,
       },
       priceFilter: {
         paramName: 'price',
@@ -177,7 +189,7 @@ export class SearchPageComponent extends Component {
     JSON.parse('{"' + locationUrl.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
     : null;
     const searchPoint = null; // TO DO
-    
+
     // Var1: get coords from google api
     // if(locationParams.address) {
     //   const requestUrl = `https://maps.google.com/maps/api/geocode/json?address=${locationParams.address}&key=${config.maps.googleMapsAPIKey}`
@@ -196,7 +208,7 @@ export class SearchPageComponent extends Component {
     //     southwest: {lat: parseFloat(boundsArray[2]), lng: parseFloat(boundsArray[3])},
     //     northeast: {lat: parseFloat(boundsArray[0]), lng: parseFloat(boundsArray[1])}
     //   };
-    //   if ((bounds.southwest.lng - bounds.northeast.lng > 180) || 
+    //   if ((bounds.southwest.lng - bounds.northeast.lng > 180) ||
     //       (bounds.northeast.lng - bounds.southwest.lng > 180)) {
     //     bounds.southwest.lng += 360;
     //     bounds.southwest.lng %= 360;
@@ -222,7 +234,7 @@ export class SearchPageComponent extends Component {
 
     let validQueryParams = validURLParamsForExtendedData(searchInURL, filters);
    // console.log('validQueryParams ==>', validQueryParams)
-    
+
     const isWindowDefined = typeof window !== 'undefined';
     const isMobileLayout = isWindowDefined && window.innerWidth < MODAL_BREAKPOINT;
     const shouldShowSearchMap =
@@ -286,7 +298,9 @@ export class SearchPageComponent extends Component {
             quickRents={filters.quickRentsFitler}
             primaryFilters={{
               categoryFilter: filters.categoryFilter,
+              workspaceFilter: filters.workspaceFilter,
               amenitiesFilter: filters.amenitiesFilter,
+              rentalsFilter: filters.rentalsFilter,
               priceFilter: filters.priceFilter,
               dateRangeFilter: filters.dateRangeFilter,
               keywordFilter: filters.keywordFilter,
@@ -335,7 +349,9 @@ SearchPageComponent.defaultProps = {
   searchParams: {},
   tab: 'listings',
   categories: config.custom.categories,
+  workspaces: config.custom.workspaces,
   amenities: config.custom.amenities,
+  rentals: config.custom.rentals,
   quickRents: config.custom.quickRents,
   priceFilterConfig: config.custom.priceFilterConfig,
   dateRangeFilterConfig: config.custom.dateRangeFilterConfig,
@@ -356,7 +372,9 @@ SearchPageComponent.propTypes = {
   searchParams: object,
   tab: oneOf(['filters', 'listings', 'map']).isRequired,
   categories: array,
+  workspaces:array,
   amenities: array,
+  rentals: array,
   quickRents: object,
   priceFilterConfig: shape({
     min: number.isRequired,

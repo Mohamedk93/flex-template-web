@@ -31,7 +31,7 @@ const { UUID } = sdkTypes;
 const noop = () => null;
 
 const categoriesConfig = [{ key: 'cat1', label: 'Cat 1' }, { key: 'cat2', label: 'Cat 2' }];
-
+const workspaceConfig = [{ key: 'workspace1', label: 'Worskapce 1' }, { key: 'workspace2', label: 'Workspace 2' }];
 const amenitiesConfig = [
   { key: 'feat1', label: 'Feat 1' },
   { key: 'feat2', label: 'Feat 2' },
@@ -78,6 +78,7 @@ describe('ListingPage', () => {
       onSendEnquiry: noop,
       categoriesConfig,
       amenitiesConfig,
+      workspaceConfig,
     };
 
     const tree = renderShallow(<ListingPageComponent {...props} />);
