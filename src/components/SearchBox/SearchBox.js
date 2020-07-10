@@ -137,9 +137,9 @@ export class SearchBox extends Component {
     };
   
     generateSearch(coordindates){
-      if(Object.keys(coordindates).length !== 0){
+     
         return `s?address=&bounds=${coordindates.ne.lat}%2C${coordindates.ne.lng}%2C${coordindates.sw.lat}%2C${coordindates.sw.lng}${this.filterWorkspace(selectedWorkspace)}`;
-      };
+
     };
 
     workspaceType(workspace){
