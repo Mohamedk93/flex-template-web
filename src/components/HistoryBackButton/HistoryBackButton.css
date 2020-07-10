@@ -26,12 +26,17 @@
   transition: ease-in-out 0.1s;
   cursor: pointer;
   flex-shrink: 0;
-}
-  .backButtonContainer .hover,
-  .backButtonContainer .focus {
+
+  &:hover,
+  &:focus {
     color: #000000;
     transition: ease-in-out 0.1s;
-    @media (--viewportMedium) {
-        border-bottom: 4px solid #000000;
-      }
   }
+
+  @media (--viewportMedium) {
+    &:hover,
+    &:focus {
+      border-bottom: 4px solid #000000;
+    }
+  }
+}
