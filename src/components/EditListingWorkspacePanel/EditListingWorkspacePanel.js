@@ -39,7 +39,7 @@ const EditListingWorkspacePanel = props => {
     <FormattedMessage id="EditListingWorkspacePanel.createListingTitle" />
   );
 
-  const workspaces = publicData && publicData.workspaces;
+  const workspaces = publicData && publicData.workspaces ? publicData.workspaces : [];;
   const initialValues = { workspaces };
 
   return (
