@@ -11,6 +11,8 @@ import * as log from './util/log';
 import { canonicalRoutePath } from './util/routes';
 import routeConfiguration from './routeConfiguration';
 
+const mixpanel = require('mixpanel-browser');
+
 const { arrayOf, bool, object, func, shape, string } = PropTypes;
 
 const canShowComponent = props => {
@@ -29,6 +31,12 @@ const callLoadData = props => {
     dispatch(loadData(match.params, location.search))
       .then(() => {
         // eslint-disable-next-line no-console
+        if(Object.keys(match.params).length !== 0) {
+          mixpanel.track(match.params.slug + "_listing", {
+            id: match.params.id,
+            slug: match.params.slug
+          });
+        }
         console.log(`loadData success for ${name} route`);
       })
       .catch(e => {

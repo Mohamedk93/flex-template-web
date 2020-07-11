@@ -133,7 +133,7 @@ const initiateOrderError = e => ({
  const confirmPaymentSuccess = orderId => ({
    type: CONFIRM_PAYMENT_SUCCESS,
    payload: orderId,
- })
+ });
  const confirmPaymentError = e => ({
    type: CONFIRM_PAYMENT_ERROR,
    error: true,
@@ -165,6 +165,7 @@ export const stripeCustomerError = e => ({
 
 export const initiateOrder = (orderParams, transactionId, processAlias, rentalType) => (dispatch, getState, sdk) => {
   dispatch(initiateOrderRequest());
+  console.log("HEREE");
 
   let transition;
   if(processAlias === config.cashBookingProcessAlias) {
@@ -184,7 +185,7 @@ export const initiateOrder = (orderParams, transactionId, processAlias, rentalTy
       transition = TRANSITION_REQUEST_PAYMENT_MONTHLY;
     }
   };
-  
+
   const bodyParams = transactionId
     ? {
         id: transactionId,

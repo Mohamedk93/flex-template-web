@@ -156,7 +156,9 @@ export const login = (username, password) => (dispatch, getState, sdk) => {
         "created":data.attributes.createdAt,
         "last_name": data.attributes.profile.lastName,
         "verified":data.attributes.emailVerified,
-        "banned" : data.attributes.banned
+        "banned" : data.attributes.banned,
+        "currency" : data.attributes.profile.protectedData.currency
+
       });
       mixpanel.track("login");
     })
