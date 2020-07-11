@@ -76,6 +76,7 @@ const categoryLabel = (categories, key) => {
   const cat = categories.find(c => c.key === key);
   return cat ? cat.label : key;
 };
+const mixpanel = require('mixpanel-browser');
 
 export class ListingPageComponent extends Component {
   constructor(props) {
@@ -164,6 +165,8 @@ export class ListingPageComponent extends Component {
       .then(txId => {
         this.setState({ enquiryModalOpen: false });
 
+        mixpanel.track("submit_enquiry_button", {values: values});
+
         // Redirect to OrderDetailsPage
         history.push(
           createResourceLocatorString('OrderDetailsPage', routes, { id: txId.uuid }, {})
@@ -211,7 +214,7 @@ export class ListingPageComponent extends Component {
     if(currentListing && currentListing.id){
        minPrice = listingMinPrice(currentListing);
     }
-    
+
     const listingSlug = rawParams.slug || createSlug(currentListing.attributes.title || '');
     const params = { slug: listingSlug, ...rawParams };
 
@@ -337,7 +340,7 @@ export class ListingPageComponent extends Component {
     const authorDisplayName = userDisplayNameAsString(ensuredAuthor, '');
 
     let { formattedPrice, priceTitle } = priceData(price, intl);
-    
+
     formattedPrice = convertPrice(currentUser, minPrice, formattedPrice);
 
     const handleBookingSubmit = values => {
@@ -431,7 +434,7 @@ export class ListingPageComponent extends Component {
               <div className={css.contentContainer}>
                 <SectionAvatar user={currentAuthor} params={params} />
                 <div className={css.mainContent}>
-                  
+
                   <SectionHeading
                     priceTitle={priceTitle}
                     formattedPrice={formattedPrice}
@@ -442,7 +445,7 @@ export class ListingPageComponent extends Component {
                     onContactUser={this.onContactUser}
                     publicData={publicData}
                   />
-                  
+
                   <SectionDescriptionMaybe description={description} />
                   <SectionFeaturesMaybe options={amenitiesConfig} publicData={publicData} />
                   <SectionWorkspaceMaybe options={workspaceConfig} publicData={publicData} />
@@ -566,7 +569,7 @@ const mapStateToProps = state => {
     enquiryModalOpenForListingId,
   } = state.ListingPage;
   const { currentUser } = state.user;
-  
+
   const getListing = id => {
     const ref = { id, type: 'listing' };
     const listings = getMarketplaceEntities(state, [ref]);

@@ -27,6 +27,8 @@ import SearchIcon from './SearchIcon';
 import css from './Topbar.css';
 
 const MAX_MOBILE_SCREEN_WIDTH = 768;
+const mixpanel = require('mixpanel-browser');
+
 
 const redirectToURLWithModalState = (props, modalStateParam) => {
   const { history, location } = props;
@@ -112,6 +114,8 @@ class TopbarComponent extends Component {
       address: search,
       bounds,
     };
+
+    mixpanel.track("handle_search_submit");
     history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
   }
 
@@ -133,7 +137,7 @@ class TopbarComponent extends Component {
   }
 
 
-  
+
   componentDidMount() {
     const matchListing = '/l';
 
@@ -252,7 +256,7 @@ class TopbarComponent extends Component {
               <MenuIcon className={css.menuIcon} />
               {notificationDot}
             </Button>
-              
+
                <HistoryBackButton rootClassName={css.listingButton} show={this.state.showBackButton}/>
 
           </div>
