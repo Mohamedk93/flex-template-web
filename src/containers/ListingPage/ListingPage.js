@@ -166,7 +166,18 @@ export class ListingPageComponent extends Component {
     onSendEnquiry(listingId, message.trim())
       .then(txId => {
         this.setState({ enquiryModalOpen: false });
-        mixpanel.track("submit_enquiry_button", {data:JSON.stringify(values)});
+        mixpanel.track("submit_enquiry_button", {
+          payment_method: values.paymentMethod,
+          workspaces: values.workspaces,
+          start_date_time: values.bookingDatesWithTimes.dateHourStart,
+          end_date_time : values.bookingDatesWithTimes.dateHourEnd,
+          meeting_room_fee: values.meetingRoomsFee,
+          meeting_room_quantity: values.meetingRoomsQuantity,
+          rental_type: values.rentalType,
+          seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
+          hours: values.hours,
+          raw_data: JSON.stringify(values)
+        });
 
         // Redirect to OrderDetailsPage
         history.push(
