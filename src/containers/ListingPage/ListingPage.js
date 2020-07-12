@@ -101,9 +101,18 @@ export class ListingPageComponent extends Component {
       callSetInitialValues,
       onInitializeCardPaymentData,
     } = this.props;
-    console.log("here");
-    console.log(values);
-    mixpanel.track("pre_book_button", {data:JSON.stringify(values)});
+    mixpanel.track("pre_book_button", {
+      payment_method: values.paymentMethod,
+      workspaces: values.workspaces,
+      start_date_time: values.bookingDatesWithTimes.dateHourStart,
+      end_date_time : values.bookingDatesWithTimes.dateHourEnd,
+      meeting_room_fee: values.meetingRoomsFee,
+      meeting_room_quantity: values.meetingRoomsQuantity,
+      rental_type: values.rentalType,
+      seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
+      hours: values.hours,
+      raw_data: JSON.stringify(values)
+    });
     const listingId = new UUID(params.id);
     const listing = getListing(listingId);
 
