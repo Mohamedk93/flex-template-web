@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - staging
-      - feat/mixpanel
 
 env:
   STAGING_USER: ${{ secrets.STAGING_USER }}

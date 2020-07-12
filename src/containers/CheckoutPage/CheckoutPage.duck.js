@@ -212,8 +212,8 @@ export const initiateOrder = (orderParams, transactionId, processAlias, rentalTy
       dispatch(initiateOrderSuccess(order));
       dispatch(fetchCurrentUserHasOrdersSuccess(true));
       var booking_details = {
-        start: order.booking.end,
-          end: order.booking.attributes.start,
+          start: order.booking.attributes.start.toString(),
+          end: order.booking.attributes.end.toString(),
           seats: order.booking.attributes.seats,
           state: order.booking.attributes.state,
           type: order.booking.type,
@@ -221,7 +221,7 @@ export const initiateOrder = (orderParams, transactionId, processAlias, rentalTy
       console.log(booking_details);
       var provider_details = {
         banned: order.provider.attributes.banned,
-          created_at: order.provider.attributes.createdAt,
+          created_at: order.provider.attributes.createdAt.toString(),
           deleted: order.provider.attributes.deleted,
           abbreviated_name: order.provider.attributes.profile.abbreviatedName,
           display_name: order.provider.attributes.profile.displayName
@@ -282,8 +282,8 @@ export const confirmPayment = orderParams => (dispatch, getState, sdk) => {
       const order = response.data.data;
       dispatch(confirmPaymentSuccess(order.id));
       var booking_details = {
-        start: order.booking.end,
-        end: order.booking.attributes.start,
+        start: order.booking.attributes.start.toString(),
+        end: order.booking.attributes.end.toString(),
         seats: order.booking.attributes.seats,
         state: order.booking.attributes.state,
         type: order.booking.type,
