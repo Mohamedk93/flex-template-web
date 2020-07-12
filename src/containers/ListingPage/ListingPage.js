@@ -165,7 +165,7 @@ export class ListingPageComponent extends Component {
       .then(txId => {
         this.setState({ enquiryModalOpen: false });
 
-        mixpanel.track("submit_enquiry_button", {values: values});
+        mixpanel.track("submit_enquiry_button");
 
         // Redirect to OrderDetailsPage
         history.push(

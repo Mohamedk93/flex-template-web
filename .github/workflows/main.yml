@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - staging
+      - feat/mixpanel
 
 env:
   STAGING_USER: ${{ secrets.STAGING_USER }}
