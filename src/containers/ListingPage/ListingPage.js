@@ -165,7 +165,7 @@ export class ListingPageComponent extends Component {
     onSendEnquiry(listingId, message.trim())
       .then(txId => {
         this.setState({ enquiryModalOpen: false });
-        console.log("there");
+        console.log(values);
         mixpanel.track("submit_enquiry_button");
 
         // Redirect to OrderDetailsPage
