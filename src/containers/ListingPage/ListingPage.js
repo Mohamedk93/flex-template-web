@@ -101,7 +101,8 @@ export class ListingPageComponent extends Component {
       callSetInitialValues,
       onInitializeCardPaymentData,
     } = this.props;
-
+    console.log("here");
+    mixpanel.track("pre_book_button");
     const listingId = new UUID(params.id);
     const listing = getListing(listingId);
 
@@ -164,7 +165,7 @@ export class ListingPageComponent extends Component {
     onSendEnquiry(listingId, message.trim())
       .then(txId => {
         this.setState({ enquiryModalOpen: false });
-
+        console.log("there");
         mixpanel.track("submit_enquiry_button");
 
         // Redirect to OrderDetailsPage
