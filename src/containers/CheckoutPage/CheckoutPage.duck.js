@@ -165,7 +165,6 @@ export const stripeCustomerError = e => ({
 
 export const initiateOrder = (orderParams, transactionId, processAlias, rentalType) => (dispatch, getState, sdk) => {
   dispatch(initiateOrderRequest());
-  console.log("HEREE");
 
   let transition;
   if(processAlias === config.cashBookingProcessAlias) {
@@ -210,6 +209,8 @@ export const initiateOrder = (orderParams, transactionId, processAlias, rentalTy
       const order = entities[0];
       dispatch(initiateOrderSuccess(order));
       dispatch(fetchCurrentUserHasOrdersSuccess(true));
+      console.log("heeere");
+      console.log(order);
       return order;
     })
     .catch(e => {
