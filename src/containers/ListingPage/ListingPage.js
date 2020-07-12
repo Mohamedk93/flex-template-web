@@ -104,7 +104,8 @@ export class ListingPageComponent extends Component {
     mixpanel.track("pre_book_button", {
       payment_method: values.paymentMethod,
       workspaces: values.workspaces,
-      booking_dates: JSON.stringify(values.bookingDates),
+      start_date: values.bookingDates.startDate,
+      end_date: values.bookingDates.endDate,
       meeting_room_fee: values.meetingRoomsFee,
       meeting_room_quantity: values.meetingRoomsQuantity,
       rental_type: values.rentalType,
@@ -177,7 +178,8 @@ export class ListingPageComponent extends Component {
         mixpanel.track("submit_enquiry_button", {
           payment_method: values.paymentMethod,
           workspaces: values.workspaces,
-          booking_dates: JSON.stringify(values.bookingDates),
+          start_date: values.bookingDates.startDate,
+          end_date: values.bookingDates.endDate,
           meeting_room_fee: values.meetingRoomsFee,
           meeting_room_quantity: values.meetingRoomsQuantity,
           rental_type: values.rentalType,
