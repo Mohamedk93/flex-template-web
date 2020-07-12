@@ -178,8 +178,8 @@ export class ListingPageComponent extends Component {
         mixpanel.track("submit_enquiry_button", {
           payment_method: values.paymentMethod,
           workspaces: values.workspaces,
-          start_date_time: values.bookingDatesWithTimes.dateHourStart,
-          end_date_time : values.bookingDatesWithTimes.dateHourEnd,
+          start_date_time: values.bookingDates.dateHourStart.toString(),
+          end_date_time : values.bookingDates.dateHourEnd.toString(),
           meeting_room_fee: values.meetingRoomsFee,
           meeting_room_quantity: values.meetingRoomsQuantity,
           rental_type: values.rentalType,
