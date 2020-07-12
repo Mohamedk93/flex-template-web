@@ -10,10 +10,10 @@ import classNames from 'classnames';
 import config from '../../config';
 import routeConfiguration from '../../routeConfiguration';
 import { pathByRouteName, findRouteByRouteName } from '../../util/routes';
-import { 
-  propTypes, 
-  LINE_ITEM_NIGHT, 
-  LINE_ITEM_DAY, 
+import {
+  propTypes,
+  LINE_ITEM_NIGHT,
+  LINE_ITEM_DAY,
   DATE_TYPE_DATE,
   LINE_ITEM_SEATS_FEE,
   LINE_ITEM_OFFICE_ROOMS_FEE,
@@ -216,13 +216,13 @@ export class CheckoutPageComponent extends Component {
       const bookingStartForAPI = dateFromLocalToAPI(bookingStart);
       const bookingEndForAPI = dateFromLocalToAPI(bookingEnd);
 
-      const { 
+      const {
         hours,
-        seatsFee, 
+        seatsFee,
         officeRoomsFee,
         meetingRoomsFee,
         seatsQuantity,
-        officeRoomsQuantity, 
+        officeRoomsQuantity,
         meetingRoomsQuantity,
         rentalType,
       } = pageData.bookingData;
@@ -236,7 +236,7 @@ export class CheckoutPageComponent extends Component {
         officeRoomsFee,
         meetingRoomsFee,
         seatsQuantity,
-        officeRoomsQuantity, 
+        officeRoomsQuantity,
         meetingRoomsQuantity,
         preliminaryParams: true,
         rentalType,
@@ -262,22 +262,22 @@ export class CheckoutPageComponent extends Component {
   }
 
   customPricingParams(params) {
-    const { 
+    const {
       listingId,
-      bookingStart, 
-      bookingEnd, 
+      bookingStart,
+      bookingEnd,
       hours,
       seatsFee,
       officeRoomsFee,
       meetingRoomsFee,
       seatsQuantity,
-      officeRoomsQuantity, 
+      officeRoomsQuantity,
       meetingRoomsQuantity,
       preliminaryParams,
-      ...rest 
+      ...rest
     } = params;
 
-    let seatsFeePriceTotal, 
+    let seatsFeePriceTotal,
         officeRoomsFeePriceTotal,
         meetingRoomsFeePriceTotal;
     if(preliminaryParams) {
@@ -298,21 +298,21 @@ export class CheckoutPageComponent extends Component {
         ? new Money(new Decimal(seatsFeePrice)
           .mul(hoursDecimal)
           .mul(100)
-          .toNumber(), 
+          .toNumber(),
           seatsFee.currency)
         : 0;
       officeRoomsFeePriceTotal = officeRoomsFeePrice
         ? new Money(new Decimal(officeRoomsFeePrice)
           .mul(hoursDecimal)
           .mul(100)
-          .toNumber(), 
+          .toNumber(),
           officeRoomsFee.currency)
         : 0;
       meetingRoomsFeePriceTotal = meetingRoomsFeePrice
         ? new Money(new Decimal(meetingRoomsFeePrice)
           .mul(hoursDecimal)
           .mul(100)
-          .toNumber(), 
+          .toNumber(),
           meetingRoomsFee.currency)
         : 0;
     } else {
@@ -322,7 +322,7 @@ export class CheckoutPageComponent extends Component {
     }
 
     const unitType = config.bookingUnitType; // TO DO need delete
-  
+
     const seatsFeeLineItem = seatsFee
       ? {
           code: LINE_ITEM_SEATS_FEE,
@@ -349,7 +349,7 @@ export class CheckoutPageComponent extends Component {
         }
       : null;
     const meetingRoomsFeeLineItemMaybe = meetingRoomsFeeLineItem ? [meetingRoomsFeeLineItem] : [];
-  
+
     return {
       listingId,
       bookingStart,
@@ -403,7 +403,7 @@ export class CheckoutPageComponent extends Component {
     const meetingRoomsFee = meetingRoomsFeeLineItem
       ? meetingRoomsFeeLineItem.unitPrice
       : null;
-    
+
     const requestParams = this.customPricingParams({
       listingId: this.state.pageData.listing.id,
       bookingStart: speculatedTransaction.booking.attributes.start,
@@ -413,7 +413,7 @@ export class CheckoutPageComponent extends Component {
       seatsFee,
       officeRoomsFee,
       meetingRoomsFee,
-      seatsQuantity, 
+      seatsQuantity,
       officeRoomsQuantity,
       meetingRoomsQuantity,
     });
@@ -613,7 +613,7 @@ export class CheckoutPageComponent extends Component {
     // Note: optionalPaymentParams contains Stripe paymentMethod,
     // but that can also be passed on Step 2
     // stripe.handleCardPayment(stripe, { payment_method: stripePaymentMethodId })
-    const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity } = bookingData;    
+    const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity } = bookingData;
 
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
       item => item.code === LINE_ITEM_SEATS_FEE
@@ -633,7 +633,7 @@ export class CheckoutPageComponent extends Component {
     const meetingRoomsFee = meetingRoomsFeeLineItem
       ? meetingRoomsFeeLineItem.unitPrice
       : null;
-   
+
     const optionalPaymentParams =
       selectedPaymentFlow === USE_SAVED_CARD && hasDefaultPaymentMethod
         ? { paymentMethod: stripePaymentMethodId }
@@ -650,7 +650,7 @@ export class CheckoutPageComponent extends Component {
       seatsFee,
       officeRoomsFee,
       meetingRoomsFee,
-      seatsQuantity, 
+      seatsQuantity,
       officeRoomsQuantity,
       meetingRoomsQuantity,
       ...optionalPaymentParams,
@@ -658,7 +658,7 @@ export class CheckoutPageComponent extends Component {
 
     return handlePaymentIntentCreation(orderParams);
   }
-  
+
   handleSubmit(values) {
     if (this.state.submitting) {
       return;

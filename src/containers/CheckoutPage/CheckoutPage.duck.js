@@ -51,6 +51,8 @@ const initialState = {
   confirmPaymentError: null,
   stripeCustomerFetched: false,
 };
+const mixpanel = require('mixpanel-browser');
+
 
 export default function checkoutPageReducer(state = initialState, action = {}) {
   const { type, payload } = action;
@@ -209,8 +211,30 @@ export const initiateOrder = (orderParams, transactionId, processAlias, rentalTy
       const order = entities[0];
       dispatch(initiateOrderSuccess(order));
       dispatch(fetchCurrentUserHasOrdersSuccess(true));
-      console.log("heeere");
-      console.log(order);
+      var booking_details = {
+        start: order.booking.end,
+          end: order.booking.attributes.start,
+          seats: order.booking.attributes.seats,
+          state: order.booking.attributes.state,
+          type: order.booking.type,
+      };
+      console.log(booking_details);
+      var provider_details = {
+        banned: order.provider.attributes.banned,
+          created_at: order.provider.attributes.createdAt,
+          deleted: order.provider.attributes.deleted,
+          abbreviated_name: order.provider.attributes.profile.abbreviatedName,
+          display_name: order.provider.attributes.profile.displayName
+      };
+      console.log(provider_details);
+      console.log(order.type);
+      console.log(order.id);
+      mixpanel.track("create_booking", {
+        order_id: order.id,
+        booking_details:booking_details,
+        provider_details: provider_details,
+        type: order.type
+      });
       return order;
     })
     .catch(e => {
@@ -257,6 +281,26 @@ export const confirmPayment = orderParams => (dispatch, getState, sdk) => {
     .then(response => {
       const order = response.data.data;
       dispatch(confirmPaymentSuccess(order.id));
+      var booking_details = {
+        start: order.booking.end,
+        end: order.booking.attributes.start,
+        seats: order.booking.attributes.seats,
+        state: order.booking.attributes.state,
+        type: order.booking.type,
+      };
+      var provider_details = {
+        banned: order.provider.attributes.banned,
+        created_at: order.provider.attributes.createdAt,
+        deleted: order.provider.attributes.deleted,
+        abbreviated_name: order.provider.attributes.profile.abbreviatedName,
+        display_name: order.provider.attributes.profile.displayName
+      };
+      mixpanel.track("confirm_booking", {
+        order_id: order.id,
+        booking_details:booking_details,
+        provider_details: provider_details,
+        type: order.type
+      });
       return order;
     })
     .catch(e => {
