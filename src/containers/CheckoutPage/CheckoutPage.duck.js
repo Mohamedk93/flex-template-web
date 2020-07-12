@@ -218,7 +218,6 @@ export const initiateOrder = (orderParams, transactionId, processAlias, rentalTy
           state: order.booking.attributes.state,
           type: order.booking.type,
       };
-      console.log(booking_details);
       var provider_details = {
         banned: order.provider.attributes.banned,
           created_at: order.provider.attributes.createdAt.toString(),
@@ -226,10 +225,7 @@ export const initiateOrder = (orderParams, transactionId, processAlias, rentalTy
           abbreviated_name: order.provider.attributes.profile.abbreviatedName,
           display_name: order.provider.attributes.profile.displayName
       };
-      console.log(provider_details);
-      console.log(order.type);
-      console.log(order.id);
-      mixpanel.track("create_booking", {
+      mixpanel.track("cash_booking", {
         order_id: order.id,
         booking_details:booking_details,
         provider_details: provider_details,
@@ -295,7 +291,7 @@ export const confirmPayment = orderParams => (dispatch, getState, sdk) => {
         abbreviated_name: order.provider.attributes.profile.abbreviatedName,
         display_name: order.provider.attributes.profile.displayName
       };
-      mixpanel.track("confirm_booking", {
+      mixpanel.track("credit_card_booking", {
         order_id: order.id,
         booking_details:booking_details,
         provider_details: provider_details,
