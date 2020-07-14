@@ -32,10 +32,7 @@ const callLoadData = props => {
       .then(() => {
         // eslint-disable-next-line no-console
         if(Object.keys(match.params).length !== 0) {
-          mixpanel.track(match.params.slug + "_listing", {
-            id: match.params.id,
-            slug: match.params.slug
-          });
+          mixpanel.track("listing_page");
         }
         console.log(`loadData success for ${name} route`);
       })
