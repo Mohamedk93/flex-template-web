@@ -37,6 +37,7 @@ const callLoadData = props => {
             id: match.params.id,
             slug: match.params.slug});
         }
+        console.log(`loadData success for ${name} route`);
       })
       .catch(e => {
         log.error(e, 'load-data-failed', { routeName: name });
