@@ -32,12 +32,18 @@ const callLoadData = props => {
       .then(() => {
         // eslint-disable-next-line no-console
         if(Object.keys(match.params).length !== 0) {
+<<<<<<< Updated upstream
           mixpanel.track(match.params.slug + "_listing", {
             id: match.params.id,
             slug: match.params.slug
           });
+=======
+          mixpanel.track("listing_page", {
+            route_name: `${name}`,
+            id: match.params.id,
+            slug: match.params.slug});
+>>>>>>> Stashed changes
         }
-        console.log(`loadData success for ${name} route`);
       })
       .catch(e => {
         log.error(e, 'load-data-failed', { routeName: name });
