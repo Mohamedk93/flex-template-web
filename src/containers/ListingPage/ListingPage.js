@@ -81,6 +81,7 @@ const mixpanel = require('mixpanel-browser');
 export class ListingPageComponent extends Component {
   constructor(props) {
     super(props);
+    mixpanel.init(process.env.REACT_APP_MIXPANNEL_TOKEN);
     const { enquiryModalOpenForListingId, params } = props;
     this.state = {
       pageClassNames: [],
@@ -101,6 +102,8 @@ export class ListingPageComponent extends Component {
       callSetInitialValues,
       onInitializeCardPaymentData,
     } = this.props;
+    console.log(values.bookingDates.startDate.toString());
+    console.log(values.bookingDates.endDate.toString());
     mixpanel.track("pre_book_button", {
       payment_method: values.paymentMethod,
       workspaces: values.workspaces,
