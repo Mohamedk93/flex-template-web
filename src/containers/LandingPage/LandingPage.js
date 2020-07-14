@@ -23,6 +23,8 @@ import facebookImage from '../../assets/HotdeskFacebook1200.jpg';
 import twitterImage from '../../assets/HotdeskTwitter600.jpg';
 import css from './LandingPage.css';
 
+const mixpanel = require('mixpanel-browser');
+
 export class LandingPageComponent extends Component {
   constructor(props) {
     super(props)
@@ -74,8 +76,15 @@ export class LandingPageComponent extends Component {
 
   generateSearch(coordindates){
     if(Object.keys(coordindates).length !== 0){
+      mixpanel.track("search_button_landing_page", {
+        coordinates_ne_lat: coordindates.ne.lat,
+        coordinates_ne_lng: coordindates.ne.lng,
+        coordinates_sw_lat: coordindates.sw.lat,
+        coordinates_sw_lng: coordindates.sw.lng
+      });
       return `s?address=&bounds=${coordindates.ne.lat}%2C${coordindates.ne.lng}%2C${coordindates.sw.lat}%2C${coordindates.sw.lng}`
     }
+    mixpanel.track("search_button_landing_page");
   }
 
   render (){

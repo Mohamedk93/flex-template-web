@@ -33,10 +33,12 @@ import css from './SearchPage.css';
 const RESULT_PAGE_SIZE = 24;
 const MODAL_BREAKPOINT = 768; // Search is in modal on mobile layout
 const SEARCH_WITH_MAP_DEBOUNCE = 300; // Little bit of debounce before search is initiated.
+const mixpanel = require('mixpanel-browser');
 
 export class SearchPageComponent extends Component {
   constructor(props) {
     super(props);
+    mixpanel.track("search_page");
 
     this.state = {
       isSearchMapOpenOnMobile: props.tab === 'map',
