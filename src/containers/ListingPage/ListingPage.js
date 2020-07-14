@@ -81,6 +81,7 @@ const mixpanel = require('mixpanel-browser');
 export class ListingPageComponent extends Component {
   constructor(props) {
     super(props);
+    mixpanel.init(process.env.REACT_APP_MIXPANNEL_TOKEN);
     const { enquiryModalOpenForListingId, params } = props;
     this.state = {
       pageClassNames: [],

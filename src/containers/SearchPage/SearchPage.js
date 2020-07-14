@@ -38,6 +38,7 @@ const mixpanel = require('mixpanel-browser');
 export class SearchPageComponent extends Component {
   constructor(props) {
     super(props);
+    mixpanel.init(process.env.REACT_APP_MIXPANNEL_TOKEN);
     mixpanel.track("search_page");
 
     this.state = {
