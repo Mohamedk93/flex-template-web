@@ -18,15 +18,23 @@ jobs:
   deploy_stage:
     name: Deploy
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/feat/github_actions'
     steps:
       - uses: actions/checkout@v2
-
-      - name: Deploy Staging
-        if: github.ref == 'refs/heads/feat/github_actions'
-        run: |
-        sudo apt-get update && sudo apt-get install sshpass -y
-        sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT 'cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/ && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
-
+      - run: sudo apt-get update && sudo apt-get install sshpass -y
+      - run: sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT 'cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/ && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+  deploy_production:
+    name: Deploy
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/feat/production'
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt-get update && sudo apt-get install sshpass -y
+      - run: sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT 'cd cd /home/sharetribe/web/hotdesk-app.com/public_html/ && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
       - uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
