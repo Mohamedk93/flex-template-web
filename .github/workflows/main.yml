@@ -3,12 +3,15 @@ on:
   push:
     branches:
       - staging
+      - feat/github_actions
 
 env:
-  STAGING_USER: ${{ secrets.STAGING_USER }}
-  STAGING_HOST: ${{ secrets.STAGING_HOST }}
-  STAGING_PWD: ${{ secrets.STAGING_PWD }}
-  STAGING_PORT: ${{ secrets.STAGING_PORT }}
+  USER: ${{ secrets.USER }}
+  HOST: ${{ secrets.HOST }}
+  PWD: ${{ secrets.PWD }}
+  PORT: ${{ secrets.PORT }}
+  STAGING_DESTINATION: ${{ secrets.STAGING_DESTINATION }}
+  PRODUCTION_DESTINATION: ${{ secrets.PRODUCTION_DESTINATION }}
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
 jobs:
@@ -18,7 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - run: sudo apt-get update && sudo apt-get install sshpass -y
-      - run: sshpass -p $STAGING_PWD ssh -o StrictHostKeyChecking=no $STAGING_USER@$STAGING_HOST -p $STAGING_PORT 'cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/ && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
+      if: github.ref == 'refs/heads/feat/github_actions'
+        - run: sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT 'cd $STAGING_DESTINATION && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
       - uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
