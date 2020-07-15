@@ -23,10 +23,10 @@ jobs:
 
       - name: Deploy Staging
         if: github.ref == 'refs/heads/feat/github_actions'
-        run: sudo apt-get update && sudo apt-get install sshpass -y && sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT 'cd $STAGING_DESTINATION && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
+        run: sudo apt-get update && sudo apt-get install sshpass -y && sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT "cd $STAGING_DESTINATION && git pull && yarn install && yarn run build && pm2 restart all && pm2 save"
       - name: Deploy Production
         if: github.ref == 'refs/heads/feat/production'
-        run: sudo apt-get update && sudo apt-get install sshpass -y && sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT 'cd $PRODUCTION_DESTINATION && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
+        run: sudo apt-get update && sudo apt-get install sshpass -y && sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT "cd $PRODUCTION_DESTINATION && git pull && yarn install && yarn run build && pm2 restart all && pm2 save"
 
       - uses: 8398a7/action-slack@v3
         with:
