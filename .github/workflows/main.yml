@@ -23,9 +23,8 @@ jobs:
 
       - name: Deploy Staging
         if: github.ref == 'refs/heads/feat/github_actions'
-        run: |
-        sudo apt-get update && sudo apt-get install sshpass -y
-        sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT "cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/ && git pull && yarn install && yarn run build && pm2 restart all && pm2 save"
+        - run: sudo apt-get update && sudo apt-get install sshpass -y
+        - run: sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT "cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/ && git pull && yarn install && yarn run build && pm2 restart all && pm2 save"
 
       - uses: 8398a7/action-slack@v3
         with:
