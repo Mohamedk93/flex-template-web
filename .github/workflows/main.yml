@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - staging
+      - feat/github_actions
 
 env:
   USER: ${{ secrets.USER }}
