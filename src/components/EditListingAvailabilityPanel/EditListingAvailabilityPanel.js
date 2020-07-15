@@ -34,13 +34,13 @@ const EditListingAvailabilityPanel = props => {
     type: 'availability-plan/time',
     timezone: usersTimeZone,
     entries: [
-      {dayOfWeek: 'mon', seats: 1, startTime: '00:00', endTime: '23:00',},
-      {dayOfWeek: 'tue', seats: 1, startTime: '00:00', endTime: '23:00',},
-      {dayOfWeek: 'wed', seats: 1, startTime: '00:00', endTime: '23:00',},
-      {dayOfWeek: 'thu', seats: 1, startTime: '00:00', endTime: '23:00',},
-      {dayOfWeek: 'fri', seats: 1, startTime: '00:00', endTime: '23:00',},
-      {dayOfWeek: 'sat', seats: 1, startTime: '00:00', endTime: '23:00',},
-      {dayOfWeek: 'sun', seats: 1, startTime: '00:00', endTime: '23:00',},
+      {dayOfWeek: 'mon', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'tue', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'wed', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'thu', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'fri', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'sat', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'sun', seats: 1, startTime: '09:00', endTime: '22:00',},
     ],
   };
   const availabilityPlan = currentListing.attributes.availabilityPlan || defaultAvailabilityPlan;
@@ -48,12 +48,12 @@ const EditListingAvailabilityPanel = props => {
 
   let initialStartTimes = {};
   availabilityPlan.entries.forEach(function(day) {
-    initialStartTimes[day.dayOfWeek] = day.startTime 
+    initialStartTimes[day.dayOfWeek] = day.startTime
   });
 
   let initialEndTimes = {};
   availabilityPlan.entries.forEach(function(day) {
-    initialEndTimes[day.dayOfWeek] = day.endTime 
+    initialEndTimes[day.dayOfWeek] = day.endTime
   });
 
   let initialWeekdays = [];
@@ -103,7 +103,7 @@ const EditListingAvailabilityPanel = props => {
         availabilityPlan={availabilityPlan}
         onSubmit={(values) => {
           const usersTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          
+
           const updatedValues = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map(function (day) {
             return {
               dayOfWeek: day,
@@ -133,7 +133,7 @@ const EditListingAvailabilityPanel = props => {
               return rentalTypes.indexOf(el) !== -1;
             })
           );
-          
+
           let newPrice = null;
 
           if (shouldRecalculatePrice) {
