@@ -16,13 +16,18 @@ env:
 
 jobs:
   deploy_stage:
-    name: Deploy Staging
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - run: sudo apt-get update && sudo apt-get install sshpass -y
-      if: github.ref == 'refs/heads/feat/github_actions'
-        - run: sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT 'cd $STAGING_DESTINATION && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
+
+      - name: Deploy Staging
+        if: github.ref == 'refs/heads/feat/github_actions'
+        run: sudo apt-get update && sudo apt-get install sshpass -y && sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT 'cd $STAGING_DESTINATION && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
+      - name: Deploy Production
+        if: github.ref == 'refs/heads/feat/production'
+        run: sudo apt-get update && sudo apt-get install sshpass -y && sshpass -p $PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT 'cd $PRODUCTION_DESTINATION && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
+
       - uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
