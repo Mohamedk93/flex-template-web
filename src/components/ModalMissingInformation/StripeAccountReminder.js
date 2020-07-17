@@ -17,11 +17,11 @@ const StripeAccountReminder = props => {
       <div>
         <IconWarning/>
       </div>
-      <p className={css.modalTitle}>
+      <p className={css.modalTitle2}>
         <FormattedMessage id="ModalMissingInformation.missingStripeAccountTitle" />
       </p>
-      <p className={css.modalMessage}>
-        {dialogText}
+      <p className={css.modalMessage2}>
+        <FormattedMessage id="ModalMissingInformation.missingStripeAccountText" />
       </p>
       <div className={css.bottomWrapper}>
         <NamedLink className={css.reminderModalLinkButton} name="StripePayoutPage">
