@@ -36,6 +36,7 @@
 
 .twoColumnWQ {
   display: flex;
+  margin-left: 5px;
   justify-content: space-between;
   font-size: 16px;
   font-weight: 600;
