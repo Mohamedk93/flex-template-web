@@ -79,7 +79,7 @@ const generateHourOptions = (date, startTime, endTime) => {
 
 export const pad = number =>{
   return (number < 10) ? '0' + number.toString() : number.toString();
-}  
+}
 
 export const isFullHours = duration => {
   try {
@@ -115,7 +115,7 @@ const DateHourPicker = props => {
     onFieldBlur,
     avails,
   } = props;
-  
+
   let selectDay = '';
   let startMinHour = '';
   let startMinMinute = ''
@@ -236,7 +236,6 @@ const DateHourPicker = props => {
       <div className={classNames(css.hourRow, { [css.hourRowExtraDate]: !!day })}>
         <FieldSelect
           className={css.hourEnd}
-          disabled={!bookingDate ? 'disables' : ''}
           id={`${id}.hourStart`}
           name={`${id}.hourStart`}
           label={hourStartLabel}
@@ -251,7 +250,6 @@ const DateHourPicker = props => {
           {generateHourOptions(date, { hour: startMinHour || 0, minute: parseInt(startMinMinute) || 0 }, { hour: parseInt(startMaxHour) || 23, minute: parseInt(startMaxMinute) ||  0 })}
         </FieldSelect>
         <FieldSelect
-          disabled={!hourStart ? 'disables' : ''}
           className={css.hourEnd}
           id={`${id}.hourEnd`}
           name={`${id}.hourEnd`}
@@ -309,5 +307,3 @@ DateHourPicker.propTypes = {
 };
 
 export default DateHourPicker;
-
-

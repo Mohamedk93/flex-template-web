@@ -98,7 +98,7 @@
 .root {
   -ms-flex-negative: 0;
   flex-shrink: 0;
-  margin-bottom: 15px;
+  margin-bottom: 24px;
 
   /* Ensure that calendar dropdown gets some stacking context relative to other form items below */
   z-index: 1;
@@ -174,4 +174,3 @@
     margin: 6px 0 10px 0;
   }
 }
-

@@ -9,9 +9,24 @@
   @apply --marketplaceModalTitleStyles;
 }
 
+.modalTitle2 {
+  @apply --marketplaceModalTitleStyles;
+  text-align: center !important;
+  margin-top: 2px;
+}
+
 /* Paragraph for the Modal */
 .modalMessage {
   @apply --marketplaceModalParagraphStyles;
+}
+
+.modalMessage {
+  @apply --marketplaceModalParagraphStyles;
+}
+
+.modalMessage2 {
+  @apply --marketplaceModalParagraphStyles;
+  text-align: center !important;
 }
 
 /* Make the email pop */

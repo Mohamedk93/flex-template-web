@@ -39,7 +39,7 @@ const CashPaymentFormComponent = props => (
           <div className={submitButtonWrapperClassName}>
             <PrimaryButton type="submit" inProgress={submitInProgress} disabled={submitDisabled}>
               {quickRent !== undefined && quickRent.length > 0 ? <IconLightning className={css.iconLightning} /> : ''}
-              <FormattedMessage id="EnquiryForm.submitButtonText" />
+              <FormattedMessage id="Confirm booking" />
             </PrimaryButton>
           </div>
         </Form>
