@@ -793,8 +793,6 @@ export class CheckoutPageComponent extends Component {
     } = this.props;
 
     const rentalType = bookingData && bookingData.rentalType ? bookingData.rentalType : null;
-    console.log("----------------");
-    console.log(bookingData);
 
     // Since the listing data is already given from the ListingPage
     // and stored to handle refreshes, it might not have the possible
@@ -810,6 +808,7 @@ export class CheckoutPageComponent extends Component {
 
     const { listing, bookingDates, transaction } = this.state.pageData;
     const existingTransaction = ensureTransaction(transaction);
+    existingTransaction.attributes.promo = bookingData.promo;
     const speculatedTransaction = ensureTransaction(speculatedTransactionMaybe, {}, null);
     const currentListing = ensureListing(listing);
     const currentAuthor = ensureUser(currentListing.author);
