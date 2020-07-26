@@ -110,7 +110,7 @@ export class ListingPageComponent extends Component {
       meeting_room_fee: values.meetingRoomsFee,
       meeting_room_quantity: values.meetingRoomsQuantity,
       rental_type: values.rentalType,
-      seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
+      //seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
       hours: values.hours,
       raw_data: JSON.stringify(values)
     });
@@ -184,7 +184,7 @@ export class ListingPageComponent extends Component {
           meeting_room_fee: values.meetingRoomsFee,
           meeting_room_quantity: values.meetingRoomsQuantity,
           rental_type: values.rentalType,
-          seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
+          //seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
           hours: values.hours,
           raw_data: JSON.stringify(values)
         });
