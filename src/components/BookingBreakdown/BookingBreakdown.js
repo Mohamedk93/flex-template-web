@@ -38,7 +38,6 @@ export const BookingBreakdownComponent = props => {
     currentRentalType,
     currentUser,
     listing,
-    promo
   } = props;
 
   const isCustomer = userRole === 'customer';
@@ -113,7 +112,6 @@ export const BookingBreakdownComponent = props => {
       <LineItemCustomPromo
         transaction={transaction}
         currentUser={currentUser}
-        promo = {promo}
         intl={intl}
         unitType={unitType}
       />
@@ -152,7 +150,7 @@ export const BookingBreakdownComponent = props => {
         currentUser={currentUser}
       />
 
-      <LineItemTotalPrice transaction={transaction} currentUser={currentUser} isProvider={isProvider} intl={intl} listing={listing} promo={promo}/>
+      <LineItemTotalPrice transaction={transaction} currentUser={currentUser} isProvider={isProvider} intl={intl} listing={listing}/>
 
       {hasCommissionLineItem ? (
           <span className={css.feeInfo}>
