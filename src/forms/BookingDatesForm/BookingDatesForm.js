@@ -798,6 +798,8 @@ export class BookingDatesFormComponent extends Component {
           return (
             <Form
               onSubmit={e => {
+                console.log("--------");
+                console.log(e);
                 faceBookTrackerSend();
                 googleTagTrackerSend();
                 if (currentRentalType === 'daily') {

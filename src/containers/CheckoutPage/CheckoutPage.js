@@ -808,6 +808,7 @@ export class CheckoutPageComponent extends Component {
 
     const { listing, bookingDates, transaction } = this.state.pageData;
     const existingTransaction = ensureTransaction(transaction);
+    console.log(transaction.attributes.promo);
     const speculatedTransaction = ensureTransaction(speculatedTransactionMaybe, {}, null);
     const currentListing = ensureListing(listing);
     const currentAuthor = ensureUser(currentListing.author);
