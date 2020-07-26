@@ -28,6 +28,8 @@ const LineItemUnitPrice = props => {
   const totalPrice = isProvider
     ? transaction.attributes.payoutTotal
     : transaction.attributes.payinTotal;
+  console.log("--------");
+  console.log(totalPrice);
   let formattedTotalPrice = formatMoney(intl, totalPrice);
   let currency = null;
   let rates = [];
