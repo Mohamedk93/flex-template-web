@@ -808,7 +808,6 @@ export class CheckoutPageComponent extends Component {
 
     const { listing, bookingDates, transaction } = this.state.pageData;
     const existingTransaction = ensureTransaction(transaction);
-    existingTransaction.attributes.promo = bookingData.promo;
     const speculatedTransaction = ensureTransaction(speculatedTransactionMaybe, {}, null);
     const currentListing = ensureListing(listing);
     const currentAuthor = ensureUser(currentListing.author);
@@ -882,6 +881,7 @@ export class CheckoutPageComponent extends Component {
           unitType={config.bookingUnitType}
           currentUser={currentUser}
           transaction={tx}
+          promo={bookingData.promo}
           booking={txBooking}
           dateType={DATE_TYPE_DATE}
           currentRentalType={rentalType}

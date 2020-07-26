@@ -8,8 +8,7 @@ import { propTypes } from '../../util/types';
 import css from './BookingBreakdown.css';
 
 const LineItemUnitPrice = props => {
-  const { transaction, isProvider, intl, currentUser } = props;
-  let promo = transaction.attributes.promo;
+  const { transaction, isProvider, intl, currentUser, promo } = props;
 
   let providerTotalMessageId = 'BookingBreakdown.providerTotalDefault';
   if (txIsDelivered(transaction)) {

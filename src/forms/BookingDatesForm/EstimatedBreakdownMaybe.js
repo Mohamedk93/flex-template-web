@@ -56,7 +56,7 @@ const estimatedTotalPrice = (
   seatsQuantity,
   officeRoomsQuantity,
   meetingRoomsQuantity,
-  ) => {
+) => {
 
   const seatsFeePrice = seatsFee
     ? convertMoneyToNumber(seatsFee)
@@ -76,20 +76,20 @@ const estimatedTotalPrice = (
   if(seatsFeePrice) {
     const seatsFeePriceTotal = new Decimal(seatsFeePrice).mul(seatsQuantityCalc)
     numericTotalPrice = new Decimal(numericTotalPrice)
-    .plus(seatsFeePriceTotal)
-    .toNumber();
+      .plus(seatsFeePriceTotal)
+      .toNumber();
   };
   if(officeRoomsFeePrice) {
     const officeRoomsFeePriceTotal = new Decimal(officeRoomsFeePrice).mul(officeRoomsQuantityCalc)
     numericTotalPrice = new Decimal(numericTotalPrice)
-    .plus(officeRoomsFeePriceTotal)
-    .toNumber();
+      .plus(officeRoomsFeePriceTotal)
+      .toNumber();
   };
   if(meetingRoomsFeePrice) {
     const meetingRoomsFeePriceTotal = new Decimal(meetingRoomsFeePrice).mul(meetingRoomsQuantityCalc)
     numericTotalPrice = new Decimal(numericTotalPrice)
-    .plus(meetingRoomsFeePriceTotal)
-    .toNumber();
+      .plus(meetingRoomsFeePriceTotal)
+      .toNumber();
   };
   numericTotalPrice = new Decimal(numericTotalPrice).times(unitCount).toNumber();
 
@@ -103,7 +103,6 @@ const estimatedTotalPrice = (
 // out), we must estimate the booking breakdown. This function creates
 // an estimated transaction object for that use case.
 const estimatedTransaction = (
-  promo,
   unitType,
   bookingStart,
   bookingEnd,
@@ -115,7 +114,7 @@ const estimatedTransaction = (
   seatsQuantity,
   officeRoomsQuantity,
   meetingRoomsQuantity,
-  ) => {
+) => {
 
   const now = new Date();
   const isNightly = unitType === LINE_ITEM_NIGHT;
@@ -124,8 +123,8 @@ const estimatedTransaction = (
   const unitCount = isNightly
     ? nightsBetween(bookingStart, bookingEnd)
     : isDaily
-    ? daysBetween(bookingStart, bookingEnd)
-    : quantity;
+      ? daysBetween(bookingStart, bookingEnd)
+      : quantity;
 
   const totalPrice = estimatedTotalPrice(
     unitPrice,
@@ -197,7 +196,6 @@ const estimatedTransaction = (
     id: new UUID('estimated-transaction'),
     type: 'transaction',
     attributes: {
-      promo: promo,
       createdAt: now,
       lastTransitionedAt: now,
       lastTransition: TRANSITION_REQUEST_PAYMENT,
@@ -237,7 +235,6 @@ const estimatedTransaction = (
 
 const EstimatedBreakdownMaybe = props => {
   const {
-    promo,
     unitType,
     unitPrice,
     startDate,
@@ -250,7 +247,8 @@ const EstimatedBreakdownMaybe = props => {
     officeRoomsQuantity,
     meetingRoomsQuantity,
     currentRentalType,
-    listing
+    listing,
+    promo
   } = props.bookingData;
   const { currentUser } = props;
   const isUnits = unitType === LINE_ITEM_UNITS;
@@ -261,7 +259,6 @@ const EstimatedBreakdownMaybe = props => {
   }
 
   const tx = estimatedTransaction(
-    promo,
     unitType,
     startDate,
     endDate,

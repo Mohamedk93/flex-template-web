@@ -36,8 +36,7 @@ const converter = (item, currentUser) => {
 };
 
 const LineItemCustomPromo = props => {
-  const { transaction, intl, currentUser } = props;
-  let promo = transaction.attributes.promo;
+  const { transaction, intl, currentUser, promo } = props;
 
   const mainLineItems = transaction.attributes.lineItems.filter((item) => {
     return item.code === LINE_ITEM_SEATS_FEE || item.code === LINE_ITEM_OFFICE_ROOMS_FEE || item.code === LINE_ITEM_MEETING_ROOMS_FEE
