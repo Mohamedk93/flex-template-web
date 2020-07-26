@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bool, string } from 'prop-types';
 import { compose } from 'redux';
-import { Form as FinalForm } from 'react-final-form';
+import { Form as FinalForm, Field } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import { FieldArray } from 'react-final-form-arrays';
 import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
@@ -12,6 +12,7 @@ import { propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
 import config from '../../config';
 import { required, bookingDatesRequired, composeValidators } from '../../util/validators';
+
 import {
   Form,
   IconClose,
@@ -20,7 +21,8 @@ import {
   FieldSelect,
   FieldRadioButton,
   FieldDateRangeInput,
-  FieldCheckboxGroupWithQuantity } from '../../components';
+  FieldCheckboxGroupWithQuantity, ModalInMobile
+} from '../../components';
 import { formatMoney } from '../../util/currency';
 import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
 import DateMonthPicker from './DateMonthPicker';
@@ -68,7 +70,7 @@ const converter = (item, currentUser) => {
     item = result.symbol.toString() + item;
   }
   return item;
-}
+};
 
 const rangeEndDate = dateHour => {
   if (!dateHour) {
@@ -150,10 +152,22 @@ const identity = v => v;
 export class BookingDatesFormComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { focusedInput: null, bookingHoursError: false };
+    this.state = { focusedInput: null, bookingHoursError: false, isPromo: false };
+    this.promo = null;
+    this.promos = {
+      promo20:{
+        type:"percentage",
+        value: 20
+      },
+      hamza50:{
+        type:"percentage",
+        value: 50
+      }
+    };
     this.handleFieldBlur = this.handleFieldBlur.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
+
 
   handleFieldBlur() {
     this.setState({ focusedInput: null });
@@ -308,6 +322,7 @@ export class BookingDatesFormComponent extends Component {
       officeRoomsQuantity: office_rooms_quantity,
       meetingRoomsQuantity: meeting_rooms_quantity,
       rentalType: rental_type,
+      promo: this.promo
     });
 
   }
@@ -519,7 +534,7 @@ export class BookingDatesFormComponent extends Component {
                 seatsFee: selectedSeatsFee,
                 officeRoomsFee: selectedOfficeRoomsFee,
                 meetingRoomsFee: selectedMeetingRoomsFee,
-
+                promo: this.promo,
                 seatsQuantity: selectedSeatsQuantity,
                 officeRoomsQuantity: selectedOfficeRoomsQuantity,
                 meetingRoomsQuantity: selectedMeetingRoomsQuantity,
@@ -826,7 +841,29 @@ export class BookingDatesFormComponent extends Component {
                 selectedWorkspaces={selectedWorkspaces}
                 defaultMaxQuantity={defaultMaxQuantity}
                 fees={fees}
-              />
+                />
+              <Field>
+                {props => (
+                  <div>
+                    <input
+                      placeholder={intl.formatMessage({id:"BookingDatesForm.promo_placeholder"})}
+                      onChange={(event)=>{
+                        this.setState({isPromo: true});
+                        if(event.target.value in this.promos){
+                          this.promo = this.promos[event.target.value];
+
+                        }else{
+                          this.promo = null;
+                          this.setState({isPromo: false});
+                        }
+                      }}
+                    />
+                  </div>
+                )}
+              </Field>
+
+
+
 
               <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={requiredSelect}>
                 <option value="">Select payment</option>

@@ -11,10 +11,10 @@ import {
   LINE_ITEM_CUSTOMER_COMMISSION,
   LINE_ITEM_PROVIDER_COMMISSION,
 } from '../../util/types';
-
 import LineItemBookingHours from './LineItemBookingHours';
 import LineItemBookingDays from './LineItemBookingDays';
 import LineItemCustomPrices from './LineItemCustomPrices';
+import LineItemCustomPromo from "./LineItemCustomPromo";
 import LineItemSubTotalMaybe from './LineItemSubTotalMaybe';
 import LineItemCustomerCommissionMaybe from './LineItemCustomerCommissionMaybe';
 import LineItemCustomerCommissionRefundMaybe from './LineItemCustomerCommissionRefundMaybe';
@@ -37,7 +37,8 @@ export const BookingBreakdownComponent = props => {
     dateType,
     currentRentalType,
     currentUser,
-    listing
+    listing,
+    promo
   } = props;
 
   const isCustomer = userRole === 'customer';
@@ -49,6 +50,7 @@ export const BookingBreakdownComponent = props => {
   }) : false;
 
   const classes = classNames(rootClassName || css.root, className);
+
 
   /**
    * BookingBreakdown contains different line items:
@@ -100,19 +102,27 @@ export const BookingBreakdownComponent = props => {
 
   return (
     <div className={classes}>
-
       {timeBasedLine}
 
       <LineItemCustomPrices
         transaction={transaction}
-        currentUser={currentUser}         
-        intl={intl} 
-        unitType={unitType} 
+        currentUser={currentUser}
+        intl={intl}
+        unitType={unitType}
       />
-      
+      <LineItemCustomPromo
+        transaction={transaction}
+        currentUser={currentUser}
+        promo = {promo}
+        intl={intl}
+        unitType={unitType}
+      />
+
+
+
       <LineItemSubTotalMaybe
         transaction={transaction}
-        currentUser={currentUser}         
+        currentUser={currentUser}
         unitType={unitType}
         userRole={userRole}
         intl={intl}
@@ -141,8 +151,8 @@ export const BookingBreakdownComponent = props => {
         intl={intl}
         currentUser={currentUser}
       />
-      
-      <LineItemTotalPrice transaction={transaction} currentUser={currentUser} isProvider={isProvider} intl={intl} listing={listing}/>
+
+      <LineItemTotalPrice transaction={transaction} currentUser={currentUser} isProvider={isProvider} intl={intl} listing={listing} promo={promo}/>
 
       {hasCommissionLineItem ? (
           <span className={css.feeInfo}>
