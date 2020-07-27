@@ -10,8 +10,6 @@ import css from './TransactionPanel.css';
 const BreakdownMaybe = props => {
   const { className, rootClassName, breakdownClassName, transaction, transactionRole, currentUser } = props;
   const loaded = transaction && transaction.id && transaction.booking && transaction.booking.id;
-  console.log(transaction);
-  console.log(transaction.attributes.promo);
 
   const classes = classNames(rootClassName || css.breakdownMaybe, className);
   const breakdownClasses = classNames(breakdownClassName || css.breakdown);

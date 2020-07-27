@@ -80,7 +80,8 @@ export const TransactionPageComponent = props => {
     callSetInitialValues,
     onInitializeCardPaymentData,
   } = props;
-
+  console.log(transaction);
+  console.log(transaction.attributes.promo);
   const currentTransaction = ensureTransaction(transaction);
   const currentListing = ensureListing(currentTransaction.listing);
   const isProviderRole = transactionRole === PROVIDER;
