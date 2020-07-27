@@ -22,7 +22,6 @@ const BreakdownMaybe = props => {
         userRole={transactionRole}
         unitType={config.bookingUnitType}
         transaction={transaction}
-        promo={transaction.attributes.promo}
         booking={transaction.booking}
         dateType={DATE_TYPE_DATE}
       />
