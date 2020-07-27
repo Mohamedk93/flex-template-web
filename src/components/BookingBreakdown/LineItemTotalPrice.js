@@ -25,9 +25,13 @@ const LineItemUnitPrice = props => {
     <FormattedMessage id="BookingBreakdown.total" />
   );
 
-  const totalPrice = isProvider
+  let totalPrice = isProvider
     ? transaction.attributes.payoutTotal
     : transaction.attributes.payinTotal;
+  if(promo) {
+    let discount = totalPrice * (promo.value / 100);
+    totalPrice = totalPrice - discount;
+  }
   console.log("--------");
   console.log(totalPrice);
   let formattedTotalPrice = formatMoney(intl, totalPrice);
@@ -47,15 +51,6 @@ const LineItemUnitPrice = props => {
   if(result){
     formattedTotalPrice = formattedTotalPrice.substr(1).replace(/,/g, '');
     formattedTotalPrice = formattedTotalPrice * result.current_rate;
-    if(promo){
-      let discount =  formattedTotalPrice * (promo.value/100);
-      formattedTotalPrice = formattedTotalPrice -  discount;
-      if(isProvider){
-        transaction.attributes.payoutTotal = formattedTotalPrice
-      }else{
-        transaction.attributes.payinTotal = formattedTotalPrice
-      }
-    }
     formattedTotalPrice = formattedTotalPrice.toFixed(2);
     formattedTotalPrice = result.symbol.toString() + formattedTotalPrice;
 
