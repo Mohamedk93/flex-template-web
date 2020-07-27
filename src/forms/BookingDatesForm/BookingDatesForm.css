@@ -113,6 +113,15 @@
   }
 }
 
+.fieldInput{
+  margin: auto;
+  width: 90%;
+  padding: 5px;
+  @media (--viewportMedium) {
+    width: 100%;
+  }
+}
+
 .availsBox {
   margin: 10px 0;
   padding: 0 24px;
