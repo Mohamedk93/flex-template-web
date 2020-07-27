@@ -155,11 +155,15 @@ export class BookingDatesFormComponent extends Component {
     this.state = { focusedInput: null, bookingHoursError: false, isPromo: false };
     this.promo = null;
     this.promos = {
-      promo20:{
+      try100:{
         type:"percentage",
-        value: 20
+        value: 100
       },
-      hamza50:{
+      garage100:{
+        type:"percentage",
+        value: 100
+      },
+      first50:{
         type:"percentage",
         value: 50
       }
@@ -842,25 +846,20 @@ export class BookingDatesFormComponent extends Component {
                 defaultMaxQuantity={defaultMaxQuantity}
                 fees={fees}
                 />
-              <Field>
-                {props => (
-                  <div>
-                    <input
-                      placeholder={intl.formatMessage({id:"BookingDatesForm.promo_placeholder"})}
-                      onChange={(event)=>{
-                        this.setState({isPromo: true});
-                        if(event.target.value in this.promos){
-                          this.promo = this.promos[event.target.value];
 
-                        }else{
-                          this.promo = null;
-                          this.setState({isPromo: false});
-                        }
-                      }}
-                    />
-                  </div>
-                )}
-              </Field>
+                <input
+                  className={css.fieldInput}
+                  placeholder={intl.formatMessage({id:"BookingDatesForm.promo_placeholder"})}
+                  onChange={(event)=>{
+                    this.setState({isPromo: true});
+                    if(event.target.value.toLowerCase() in this.promos){
+                      this.promo = this.promos[event.target.value.toLowerCase()];
+                    }else{
+                      this.promo = null;
+                      this.setState({isPromo: false});
+                    }
+                  }}
+                />
 
 
 
