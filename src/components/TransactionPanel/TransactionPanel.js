@@ -285,13 +285,13 @@ export class TransactionPanelComponent extends Component {
           showAddress: isCustomer,
         };
       } else if(false) {
-        return { 
+        return {
           headingState: HEADING_ACCEPTED,
           showDetailCardHeadings: isCustomer,
           showAddress: isCustomer,
         };
       } else {
-        return { 
+        return {
           // headingState: 'unknown' // Update: TO DO
           headingState: HEADING_ACCEPTED,
           showDetailCardHeadings: isCustomer,

@@ -103,6 +103,7 @@ const estimatedTotalPrice = (
 // out), we must estimate the booking breakdown. This function creates
 // an estimated transaction object for that use case.
 const estimatedTransaction = (
+  promo,
   unitType,
   bookingStart,
   bookingEnd,
@@ -196,6 +197,7 @@ const estimatedTransaction = (
     id: new UUID('estimated-transaction'),
     type: 'transaction',
     attributes: {
+      promo: promo,
       createdAt: now,
       lastTransitionedAt: now,
       lastTransition: TRANSITION_REQUEST_PAYMENT,
@@ -235,6 +237,7 @@ const estimatedTransaction = (
 
 const EstimatedBreakdownMaybe = props => {
   const {
+    promo,
     unitType,
     unitPrice,
     startDate,
@@ -247,8 +250,7 @@ const EstimatedBreakdownMaybe = props => {
     officeRoomsQuantity,
     meetingRoomsQuantity,
     currentRentalType,
-    listing,
-    promo
+    listing
   } = props.bookingData;
   const { currentUser } = props;
   const isUnits = unitType === LINE_ITEM_UNITS;
@@ -259,6 +261,7 @@ const EstimatedBreakdownMaybe = props => {
   }
 
   const tx = estimatedTransaction(
+    promo,
     unitType,
     startDate,
     endDate,
