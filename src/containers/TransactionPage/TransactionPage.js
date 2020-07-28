@@ -248,6 +248,8 @@ export const TransactionPageComponent = props => {
     loadingOrFailedFetching
   );
 
+  console.log("[Tanawy is debuging from Transaction Page js] this.props", this.props);
+
   return (
     <Page
       title={intl.formatMessage({ id: 'TransactionPage.title' }, { title: listingTitle })}

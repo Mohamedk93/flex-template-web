@@ -119,6 +119,7 @@ export class CheckoutPageComponent extends Component {
       showBackButton: false,
     };
     this.stripe = null;
+    console.log("[TANAWY IS TESTING FROM CHECKOUTPAGE CONSTRUCTOR] PROPS", props);
 
     this.onStripeInitialized = this.onStripeInitialized.bind(this);
     this.loadInitialData = this.loadInitialData.bind(this);
@@ -216,6 +217,7 @@ export class CheckoutPageComponent extends Component {
       const bookingStartForAPI = dateFromLocalToAPI(bookingStart);
       const bookingEndForAPI = dateFromLocalToAPI(bookingEnd);
 
+      // TODO: add a mean to extract promotion fees and line items from bookingData down here
       const {
         hours,
         seatsFee,
@@ -227,6 +229,7 @@ export class CheckoutPageComponent extends Component {
         rentalType,
       } = pageData.bookingData;
 
+      // TODO: Discount fees should be added here as well once defined
       const preliminaryParams = {
         listingId,
         bookingStart,
@@ -614,6 +617,8 @@ export class CheckoutPageComponent extends Component {
     // but that can also be passed on Step 2
     // stripe.handleCardPayment(stripe, { payment_method: stripePaymentMethodId })
     const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity } = bookingData;
+
+    console.log("[Tanawy is testing from checkoutpage in the container] bookingData", bookingData);
 
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
       item => item.code === LINE_ITEM_SEATS_FEE
