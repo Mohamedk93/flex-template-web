@@ -138,6 +138,10 @@ const estimatedTransaction = (
     meetingRoomsQuantity,
   );
 
+  const totalDiscount = totalPrice * (-1 * (promo.value || 0)/100);
+
+  const totalPriceDiscounted = totalPrice - totalDiscount;
+
   // bookingStart: "Fri Mar 30 2018 12:00:00 GMT-1100 (SST)" aka "Fri Mar 30 2018 23:00:00 GMT+0000 (UTC)"
   // Server normalizes night/day bookings to start from 00:00 UTC aka "Thu Mar 29 2018 13:00:00 GMT-1100 (SST)"
   // The result is: local timestamp.subtract(12h).add(timezoneoffset) (in eg. -23 h)
@@ -193,6 +197,19 @@ const estimatedTransaction = (
     ? [meetingRoomsFeeLineItem]
     : [];
 
+  const couponDiscountLineItem = {
+    code: LINE_ITEM_COUPON_DISCOUNT,
+    includeFor: ['customer', 'provider'],
+    unitPrice: totalDiscount,
+    quantity: new Decimal(1),
+    lineTotal: totalDiscount,
+    reversal: false,
+  };
+
+  const couponDiscountLineItemMaybe = promo
+  ? [couponDiscountLineItem]
+  : [];
+
   return {
     id: new UUID('estimated-transaction'),
     type: 'transaction',
@@ -201,18 +218,19 @@ const estimatedTransaction = (
       createdAt: now,
       lastTransitionedAt: now,
       lastTransition: TRANSITION_REQUEST_PAYMENT,
-      payinTotal: totalPrice,
-      payoutTotal: totalPrice,
+      payinTotal: totalPriceDiscounted,
+      payoutTotal: totalPriceDiscounted,
       lineItems: [
         ...seatsFeeLineItemMaybe,
         ...officeRoomsFeeLineItemMaybe,
         ...meetingRoomsFeeLineItemMaybe,
+        ...couponDiscountLineItemMaybe,
         {
           code: unitType,
           includeFor: ['customer', 'provider'],
           unitPrice: unitPrice,
           quantity: new Decimal(unitCount),
-          lineTotal: totalPrice,
+          lineTotal: totalPriceDiscounted,
           reversal: false,
         },
       ],
