@@ -29,10 +29,12 @@ const LineItemUnitPrice = props => {
     ? transaction.attributes.payoutTotal
     : transaction.attributes.payinTotal;
 
-  if(promo){
-    let discount =  totalPrice.amount  * (promo.value/100);
-    totalPrice.amount = totalPrice.amount -  discount;
-  }
+  // if(promo && totalPrice){
+
+  //   let discount =  totalPrice.amount  * (promo.value/100);
+  //   console.log("[this is tanawy debugging from LineItemTotalPrice] ", totalPrice);
+  //   totalPrice.amount = totalPrice.amount -  discount;
+  // }
 
   let formattedTotalPrice = formatMoney(intl, totalPrice);
   let currency = null;

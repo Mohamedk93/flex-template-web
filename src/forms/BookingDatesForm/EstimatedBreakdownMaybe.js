@@ -39,6 +39,7 @@ import {
   LINE_ITEM_SEATS_FEE,
   LINE_ITEM_OFFICE_ROOMS_FEE,
   LINE_ITEM_MEETING_ROOMS_FEE,
+  LINE_ITEM_COUPON_DISCOUNT,
 } from '../../util/types';
 import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit } from '../../util/currency';
 import { BookingBreakdown } from '../../components';
@@ -93,6 +94,7 @@ const estimatedTotalPrice = (
   };
   numericTotalPrice = new Decimal(numericTotalPrice).times(unitCount).toNumber();
 
+
   return new Money(
     convertUnitToSubUnit(numericTotalPrice, unitDivisor(unitPrice.currency)),
     unitPrice.currency
@@ -137,10 +139,24 @@ const estimatedTransaction = (
     officeRoomsQuantity,
     meetingRoomsQuantity,
   );
+  let totalPriceInNumber = convertMoneyToNumber(totalPrice);
+  let numericTotalDiscount = new Decimal( totalPriceInNumber * (-1 * ((promo|| {}).value || 0)/100));
+  let numerictotalPriceDiscounted = new Decimal(totalPriceInNumber).plus(numericTotalDiscount).times(100);
+  numericTotalDiscount = numericTotalDiscount.times(100);
 
-  const totalDiscount = totalPrice * (-1 * (promo.value || 0)/100);
+  // this line is made to create a copy of the money Class without
+  // creating an accumulation side effect to total price
+  // totalPriceDiscounted = totalPrice;
+  // totalDiscount = totalPriceDiscounted;
+  let totalDiscount = new Money( numericTotalDiscount , unitPrice.currency);
+  let totalPriceDiscounted = new Money(numerictotalPriceDiscounted, unitPrice.currency);
+  console.log("[TANAWY IS TESTING from EstimatedBreakdownMaybe]", totalPriceDiscounted);
+// if(totalDiscount && promo){
+//   totalDiscount.amount = totalDiscount.amount * (-1 * (promo.value || 0)/100);
 
-  const totalPriceDiscounted = totalPrice - totalDiscount;
+//   totalPriceDiscounted = totalPrice - totalDiscount;
+// }
+  
 
   // bookingStart: "Fri Mar 30 2018 12:00:00 GMT-1100 (SST)" aka "Fri Mar 30 2018 23:00:00 GMT+0000 (UTC)"
   // Server normalizes night/day bookings to start from 00:00 UTC aka "Thu Mar 29 2018 13:00:00 GMT-1100 (SST)"

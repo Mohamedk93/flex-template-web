@@ -51,6 +51,7 @@
   "BookingBreakdown.providerTotalDelivered": "Du hast verdient",
   "BookingBreakdown.quantity": "{quantity, number} {quantity, plural, one {Person} other {Personen}}",
   "BookingBreakdown.promo": "Rabatt {promo, number} %",
+  "BookingBreakdown.quantity_coupon-discount": "Rabatt x {quantity} x {price}",
   "BookingBreakdown.quantityUnit": "Anzahl von Personen",
   "BookingBreakdown.refund": "Erstattung",
   "BookingBreakdown.refundCustomerFee": "Saunatime Gebühr Erstattung",

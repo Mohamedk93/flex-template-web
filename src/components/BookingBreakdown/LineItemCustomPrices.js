@@ -4,7 +4,8 @@ import {
   LINE_ITEM_SEATS_FEE,
   LINE_ITEM_OFFICE_ROOMS_FEE,
   LINE_ITEM_MEETING_ROOMS_FEE,
-  propTypes
+  propTypes,
+  LINE_ITEM_COUPON_DISCOUNT
 } from '../../util/types';
 import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit, formatMoney } from '../../util/currency';
 import Decimal from 'decimal.js';
@@ -39,7 +40,7 @@ const LineItemCustomPrices = props => {
   const { transaction, unitType, intl, currentUser } = props;
   
   const mainLineItems = transaction.attributes.lineItems.filter((item) => {
-    return item.code === LINE_ITEM_SEATS_FEE || item.code === LINE_ITEM_OFFICE_ROOMS_FEE || item.code === LINE_ITEM_MEETING_ROOMS_FEE
+    return item.code === LINE_ITEM_SEATS_FEE || item.code === LINE_ITEM_OFFICE_ROOMS_FEE || item.code === LINE_ITEM_MEETING_ROOMS_FEE || item.code === LINE_ITEM_COUPON_DISCOUNT
   });
 
   const guid = () =>
@@ -48,6 +49,7 @@ const LineItemCustomPrices = props => {
       .substr(2, 9)}`;
 
   return mainLineItems ? mainLineItems.map((item) => {
+    console.log("[Tanawy is debugging here in LineItemCustomPrices.js]", item);
     const key = item.code.split('/')[1];
     const quantity = item.quantity;
     const currency = item.unitPrice.currency;

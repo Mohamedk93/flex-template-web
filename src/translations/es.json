@@ -51,6 +51,7 @@
   "BookingBreakdown.providerTotalDelivered": "Has ganado",
   "BookingBreakdown.quantity": "{quantity, number} {quantity, plural, one {persona} other {personas}}",
   "BookingBreakdown.promo": "Descuento {promo, number} %",
+  "BookingBreakdown.quantity_coupon-discount": "Descuento x {quantity} x {price}",
   "BookingBreakdown.quantityUnit": "Número de personas",
   "BookingBreakdown.refund": "Devolución",
   "BookingBreakdown.refundCustomerFee": "Devuelve la comisión de Saunatime",
