@@ -248,7 +248,7 @@ export const TransactionPageComponent = props => {
     loadingOrFailedFetching
   );
 
-  console.log("[Tanawy is debuging from Transaction Page js] this.props", this.props);
+  console.log("[Tanawy is debuging from Transaction Page js] this.props", props);
 
   return (
     <Page

@@ -340,6 +340,7 @@ export class CheckoutPageComponent extends Component {
       couponDiscountPriceTotal = couponDiscount ? couponDiscount : 0;
     }
 
+    console.log("[TANAWY IS TESTING FROM CHECKOUTPAGE custompricing method] PROPS", this.props);
     console.log("[Tanawy is debugging from checkoutPage custompricing method] params", params);
     console.log("[Tanawy is debugging from checkoutPage custompricing method] couponDiscountPriceTotal", couponDiscountPriceTotal);
 

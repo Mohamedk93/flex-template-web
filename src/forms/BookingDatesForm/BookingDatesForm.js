@@ -419,6 +419,7 @@ export class BookingDatesFormComponent extends Component {
 
           const requiredSelect = required('This field is required');
 
+          console.log("Tanawy is testing from bookingdatesform render prop function] checking props", fieldRenderProps);
           // Selected fee
           let selectedSeatsFee =
           values &&
@@ -458,6 +459,11 @@ export class BookingDatesFormComponent extends Component {
           values.meeting_rooms_quantity
             ? values.meeting_rooms_quantity
             : null;
+
+          const selectedCouponDiscount = this.promo? (seatsFee || officeRoomsFee || meetingRoomsFee)
+          : null;
+
+          const selectedCouponDiscountQuantity = this.promo? 1: null;
 
           // Quantity and StartDate and EndDate calculations
           // Each quantity depends on rental_type.
@@ -525,6 +531,7 @@ export class BookingDatesFormComponent extends Component {
           // This is the place to collect breakdown estimation data. See the
           // EstimatedBreakdownMaybe component to change the calculations
           // for customised payment processes.
+          const couponDiscountQuantity = this.promo? 1:0;
           const bookingData =
             startDate && endDate && quantity
               ? {
@@ -538,10 +545,13 @@ export class BookingDatesFormComponent extends Component {
                 seatsFee: selectedSeatsFee,
                 officeRoomsFee: selectedOfficeRoomsFee,
                 meetingRoomsFee: selectedMeetingRoomsFee,
+                couponDiscount: selectedCouponDiscount,
+
                 promo: this.promo,
                 seatsQuantity: selectedSeatsQuantity,
                 officeRoomsQuantity: selectedOfficeRoomsQuantity,
                 meetingRoomsQuantity: selectedMeetingRoomsQuantity,
+                couponDiscountQuantity: selectedCouponDiscountQuantity,
 
                 currentRentalType,
               }
