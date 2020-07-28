@@ -217,7 +217,7 @@ const estimatedTransaction = (
     code: LINE_ITEM_COUPON_DISCOUNT,
     includeFor: ['customer', 'provider'],
     unitPrice: totalDiscount,
-    quantity: new Decimal(1),
+    quantity: new Decimal(-1),
     lineTotal: totalDiscount,
     reversal: false,
   };

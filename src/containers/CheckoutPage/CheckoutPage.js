@@ -18,6 +18,7 @@ import {
   LINE_ITEM_SEATS_FEE,
   LINE_ITEM_OFFICE_ROOMS_FEE,
   LINE_ITEM_MEETING_ROOMS_FEE,
+  LINE_ITEM_COUPON_DISCOUNT,
 } from '../../util/types';
 import {
   ensureListing,
@@ -223,6 +224,8 @@ export class CheckoutPageComponent extends Component {
         seatsFee,
         officeRoomsFee,
         meetingRoomsFee,
+        couponDiscount,
+        couponDiscountQuantity,
         seatsQuantity,
         officeRoomsQuantity,
         meetingRoomsQuantity,
@@ -238,6 +241,8 @@ export class CheckoutPageComponent extends Component {
         seatsFee,
         officeRoomsFee,
         meetingRoomsFee,
+        couponDiscount,
+        couponDiscountQuantity,
         seatsQuantity,
         officeRoomsQuantity,
         meetingRoomsQuantity,
@@ -263,7 +268,8 @@ export class CheckoutPageComponent extends Component {
 
     this.setState({ pageData: pageData || {}, dataLoaded: true });
   }
-
+// TODO : check who calls this function and make sure to pass promo to it
+// for this todo i already added couponDiscount with the full value parsed from the line items
   customPricingParams(params) {
     const {
       listingId,
@@ -274,6 +280,7 @@ export class CheckoutPageComponent extends Component {
       officeRoomsFee,
       meetingRoomsFee,
       seatsQuantity,
+      couponDiscount,
       officeRoomsQuantity,
       meetingRoomsQuantity,
       preliminaryParams,
@@ -282,7 +289,8 @@ export class CheckoutPageComponent extends Component {
 
     let seatsFeePriceTotal,
         officeRoomsFeePriceTotal,
-        meetingRoomsFeePriceTotal;
+        meetingRoomsFeePriceTotal,
+        couponDiscountPriceTotal;
     if(preliminaryParams) {
       const seatsFeePrice = seatsFee
         ? convertMoneyToNumber(seatsFee)
@@ -292,6 +300,9 @@ export class CheckoutPageComponent extends Component {
         : 0;
       const meetingRoomsFeePrice = meetingRoomsFee
         ? convertMoneyToNumber(meetingRoomsFee)
+        : 0;
+      const couponDiscountPrice = couponDiscount
+        ? convertMoneyToNumber(couponDiscount)
         : 0;
       const hoursDecimal = hours
         ? new Decimal(hours)
@@ -318,11 +329,19 @@ export class CheckoutPageComponent extends Component {
           .toNumber(),
           meetingRoomsFee.currency)
         : 0;
+
+      couponDiscountPriceTotal = couponDiscount
+      ? new Money( new Decimal(couponDiscountPrice), couponDiscount.currency)
+      :0;
     } else {
       seatsFeePriceTotal = seatsFee ? seatsFee : 0;
       officeRoomsFeePriceTotal = officeRoomsFee ? officeRoomsFee : 0;
       meetingRoomsFeePriceTotal = meetingRoomsFee ? meetingRoomsFee : 0;
+      couponDiscountPriceTotal = couponDiscount ? couponDiscount : 0;
     }
+
+    console.log("[Tanawy is debugging from checkoutPage custompricing method] params", params);
+    console.log("[Tanawy is debugging from checkoutPage custompricing method] couponDiscountPriceTotal", couponDiscountPriceTotal);
 
     const unitType = config.bookingUnitType; // TO DO need delete
 
@@ -353,6 +372,16 @@ export class CheckoutPageComponent extends Component {
       : null;
     const meetingRoomsFeeLineItemMaybe = meetingRoomsFeeLineItem ? [meetingRoomsFeeLineItem] : [];
 
+    const couponDiscountLineItem = couponDiscount
+    ? {
+      code : LINE_ITEM_COUPON_DISCOUNT,
+      unitPrice: couponDiscountPriceTotal,
+      quantity: new Decimal(-1),
+    }
+    : null;
+
+    const couponDiscountLineItemMaybe = couponDiscountLineItem ? [couponDiscountLineItem] : [];
+
     return {
       listingId,
       bookingStart,
@@ -361,6 +390,7 @@ export class CheckoutPageComponent extends Component {
         ...seatsFeeLineItemMaybe,
         ...officeRoomsFeeLineItemMaybe,
         ...meetingRoomsFeeLineItemMaybe,
+        ...couponDiscountLineItemMaybe,
         // TO DO: Need delete from backend
         {
           code: unitType,
@@ -407,6 +437,14 @@ export class CheckoutPageComponent extends Component {
       ? meetingRoomsFeeLineItem.unitPrice
       : null;
 
+    const couponDiscountLineItem = speculatedTransaction.attributes.lineItems.find(
+      item =>  item.code === LINE_ITEM_COUPON_DISCOUNT
+    );
+
+    const couponDiscount = couponDiscountLineItem
+    ? couponDiscountLineItem.unitPrice
+    : null;
+
     const requestParams = this.customPricingParams({
       listingId: this.state.pageData.listing.id,
       bookingStart: speculatedTransaction.booking.attributes.start,
@@ -416,6 +454,7 @@ export class CheckoutPageComponent extends Component {
       seatsFee,
       officeRoomsFee,
       meetingRoomsFee,
+      couponDiscount,
       seatsQuantity,
       officeRoomsQuantity,
       meetingRoomsQuantity,
@@ -618,7 +657,7 @@ export class CheckoutPageComponent extends Component {
     // stripe.handleCardPayment(stripe, { payment_method: stripePaymentMethodId })
     const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity } = bookingData;
 
-    console.log("[Tanawy is testing from checkoutpage in the container] bookingData", bookingData);
+    console.log("[Tanawy is testing from checkoutpage in the container from handlePaymentIntent method] bookingData", bookingData);
 
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
       item => item.code === LINE_ITEM_SEATS_FEE
@@ -639,6 +678,14 @@ export class CheckoutPageComponent extends Component {
       ? meetingRoomsFeeLineItem.unitPrice
       : null;
 
+      const couponDiscountLineItem = speculatedTransaction.attributes.lineItems.find(
+        item =>  item.code === LINE_ITEM_COUPON_DISCOUNT
+      );
+  
+      const couponDiscount = couponDiscountLineItem
+      ? couponDiscountLineItem.unitPrice
+      : null;
+
     const optionalPaymentParams =
       selectedPaymentFlow === USE_SAVED_CARD && hasDefaultPaymentMethod
         ? { paymentMethod: stripePaymentMethodId }
@@ -655,6 +702,7 @@ export class CheckoutPageComponent extends Component {
       seatsFee,
       officeRoomsFee,
       meetingRoomsFee,
+      couponDiscount,
       seatsQuantity,
       officeRoomsQuantity,
       meetingRoomsQuantity,
