@@ -344,6 +344,27 @@ export class CheckoutPageComponent extends Component {
     console.log("[Tanawy is debugging from checkoutPage custompricing method] params", params);
     console.log("[Tanawy is debugging from checkoutPage custompricing method] couponDiscountPriceTotal", couponDiscountPriceTotal);
 
+// if i reached here and couponDiscountPriceTotal is 0 and promos exist fix pricing
+let isPromoExist = this.props.bookingData && this.props.bookingData.promo;
+if(couponDiscountPriceTotal === 0 && isPromoExist){
+  let tempPromo = this.props.bookingData.promo;
+  let discountCurrency = (seatsFee)? seatsFee.currency 
+  : (officeRoomsFee)? officeRoomsFee.currency 
+  :  (meetingRoomsFee)? meetingRoomsFee.currency : null;
+  if(discountCurrency){
+    couponDiscount = new Money( new Decimal(seatsFeePriceTotal)
+    .plus(officeRoomsFeePriceTotal)
+    .plus(meetingRoomsFeePriceTotal)
+    .mul((tempPromo.value || 0)/100)
+    , discountCurrency);
+
+    
+    couponDiscountPriceTotal = couponDiscount ? couponDiscount : 0;
+
+
+  }
+}
+
     const unitType = config.bookingUnitType; // TO DO need delete
 
     const seatsFeeLineItem = seatsFee
