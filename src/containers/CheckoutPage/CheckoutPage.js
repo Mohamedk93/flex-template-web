@@ -358,6 +358,19 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
     .mul((tempPromo.value || 0)/100)
     , discountCurrency);
 
+    window.TanawysTestingTemp = {
+      tempCouponDiscount,
+      seatsFeePriceTotal,
+      seatsQuantity,
+      officeRoomsFeePriceTotal,
+      officeRoomsQuantity,
+      meetingRoomsFeePriceTotal,
+      meetingRoomsQuantity,
+      tempPromo,
+      discountCurrency,
+      Money,
+      Decimal,
+    };
     
     couponDiscountPriceTotal = tempCouponDiscount ? tempCouponDiscount : 0;
 
