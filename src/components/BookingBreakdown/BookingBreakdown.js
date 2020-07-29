@@ -110,13 +110,13 @@ export const BookingBreakdownComponent = props => {
         intl={intl}
         unitType={unitType}
       />
-      <LineItemCustomPromo
+      {/* <LineItemCustomPromo
         transaction={transaction}
         currentUser={currentUser}
         promo={promo}
         intl={intl}
         unitType={unitType}
-      />
+      /> */}
 
 
 
