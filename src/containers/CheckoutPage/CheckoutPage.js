@@ -352,9 +352,9 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
   : (officeRoomsFee)? officeRoomsFee.currency 
   :  (meetingRoomsFee)? meetingRoomsFee.currency : null;
   if(discountCurrency){
-    let tempCouponDiscount = new Money( new Decimal((seatsFeePriceTotal.amount || 0))
-    .plus((officeRoomsFeePriceTotal.amount || 0))
-    .plus((meetingRoomsFeePriceTotal.amount || 0))
+    let tempCouponDiscount = new Money( new Decimal((seatsFeePriceTotal.amount || 0) *(seatsQuantity || 0))
+    .plus((officeRoomsFeePriceTotal.amount || 0) *(officeRoomsQuantity || 0))
+    .plus((meetingRoomsFeePriceTotal.amount || 0) *(meetingRoomsQuantity || 0))
     .mul((tempPromo.value || 0)/100)
     , discountCurrency);
 
