@@ -440,6 +440,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
 
     const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity, rentalType } = bookingData;
 
+    console.log("Tanawy is debugging from checkoutPage handleCashSubmit method] this.props", this.props);
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
       item => item.code === LINE_ITEM_SEATS_FEE
     );
