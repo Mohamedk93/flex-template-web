@@ -352,14 +352,14 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
   : (officeRoomsFee)? officeRoomsFee.currency 
   :  (meetingRoomsFee)? meetingRoomsFee.currency : null;
   if(discountCurrency){
-    couponDiscount = new Money( new Decimal(seatsFeePriceTotal)
+    let tempCouponDiscount = new Money( new Decimal(seatsFeePriceTotal)
     .plus(officeRoomsFeePriceTotal)
     .plus(meetingRoomsFeePriceTotal)
     .mul((tempPromo.value || 0)/100)
     , discountCurrency);
 
     
-    couponDiscountPriceTotal = couponDiscount ? couponDiscount : 0;
+    couponDiscountPriceTotal = tempCouponDiscount ? tempCouponDiscount : 0;
 
 
   }
@@ -394,7 +394,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
       : null;
     const meetingRoomsFeeLineItemMaybe = meetingRoomsFeeLineItem ? [meetingRoomsFeeLineItem] : [];
 
-    const couponDiscountLineItem = couponDiscount
+    const couponDiscountLineItem = isPromoExist
     ? {
       code : LINE_ITEM_COUPON_DISCOUNT,
       unitPrice: couponDiscountPriceTotal,
@@ -403,6 +403,8 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
     : null;
 
     const couponDiscountLineItemMaybe = couponDiscountLineItem ? [couponDiscountLineItem] : [];
+
+    console.log("Tanawy is debugging from checkoutPage customPricingParams method end] couponDiscountLineItem", couponDiscountLineItem);
 
     return {
       listingId,
@@ -440,7 +442,6 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
 
     const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity, rentalType } = bookingData;
 
-    console.log("Tanawy is debugging from checkoutPage handleCashSubmit method] this.props", this.props);
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
       item => item.code === LINE_ITEM_SEATS_FEE
     );
