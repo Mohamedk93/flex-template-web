@@ -56,7 +56,7 @@
   "BookingBreakdown.providerTotalDelivered": "You made",
   "BookingBreakdown.quantity": "{quantity, number} {quantity, plural, one {person} other {persons}}",
   "BookingBreakdown.promo": "Discount {promo, number} % x {quantity} x {price}",
-  "BookingBreakdown.quantity_coupon-discount": "Discount x {quantity} x {price}",
+  "BookingBreakdown.quantity_coupon-discount": "Discount {price}",
   "BookingBreakdown.quantity_seats-fee": "Seats x {quantity} x {price}",
   "BookingBreakdown.quantity_office-rooms-fee": "Office rooms x {quantity} x {price}",
   "BookingBreakdown.quantity_meeting-rooms-fee": "Meeting rooms x {quantity} x {price}",
