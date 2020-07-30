@@ -102,8 +102,6 @@ export class ListingPageComponent extends Component {
       callSetInitialValues,
       onInitializeCardPaymentData,
     } = this.props;
-    console.log(values.bookingDates.startDate.toString());
-    console.log(values.bookingDates.endDate.toString());
     mixpanel.track("pre_book_button", {
       payment_method: values.paymentMethod,
       workspaces: values.workspaces,
@@ -112,6 +110,7 @@ export class ListingPageComponent extends Component {
       meeting_room_fee: values.meetingRoomsFee,
       meeting_room_quantity: values.meetingRoomsQuantity,
       rental_type: values.rentalType,
+      //seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
       hours: values.hours,
       raw_data: JSON.stringify(values)
     });
@@ -185,6 +184,7 @@ export class ListingPageComponent extends Component {
           meeting_room_fee: values.meetingRoomsFee,
           meeting_room_quantity: values.meetingRoomsQuantity,
           rental_type: values.rentalType,
+          //seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
           hours: values.hours,
           raw_data: JSON.stringify(values)
         });
@@ -234,7 +234,7 @@ export class ListingPageComponent extends Component {
         : ensureListing(getListing(listingId));
 
     if(currentListing && currentListing.id){
-       minPrice = listingMinPrice(currentListing);
+      minPrice = listingMinPrice(currentListing);
     }
 
     const listingSlug = rawParams.slug || createSlug(currentListing.attributes.title || '');

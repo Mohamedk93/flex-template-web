@@ -18,6 +18,7 @@ import {
   LINE_ITEM_SEATS_FEE,
   LINE_ITEM_OFFICE_ROOMS_FEE,
   LINE_ITEM_MEETING_ROOMS_FEE,
+  LINE_ITEM_COUPON_DISCOUNT,
 } from '../../util/types';
 import {
   ensureListing,
@@ -119,6 +120,7 @@ export class CheckoutPageComponent extends Component {
       showBackButton: false,
     };
     this.stripe = null;
+    console.log("[TANAWY IS TESTING FROM CHECKOUTPAGE CONSTRUCTOR] PROPS", props);
 
     this.onStripeInitialized = this.onStripeInitialized.bind(this);
     this.loadInitialData = this.loadInitialData.bind(this);
@@ -216,17 +218,21 @@ export class CheckoutPageComponent extends Component {
       const bookingStartForAPI = dateFromLocalToAPI(bookingStart);
       const bookingEndForAPI = dateFromLocalToAPI(bookingEnd);
 
+      // TODO: add a mean to extract promotion fees and line items from bookingData down here
       const {
         hours,
         seatsFee,
         officeRoomsFee,
         meetingRoomsFee,
+        couponDiscount,
+        couponDiscountQuantity,
         seatsQuantity,
         officeRoomsQuantity,
         meetingRoomsQuantity,
         rentalType,
       } = pageData.bookingData;
 
+      // TODO: Discount fees should be added here as well once defined
       const preliminaryParams = {
         listingId,
         bookingStart,
@@ -235,6 +241,8 @@ export class CheckoutPageComponent extends Component {
         seatsFee,
         officeRoomsFee,
         meetingRoomsFee,
+        couponDiscount,
+        couponDiscountQuantity,
         seatsQuantity,
         officeRoomsQuantity,
         meetingRoomsQuantity,
@@ -260,7 +268,8 @@ export class CheckoutPageComponent extends Component {
 
     this.setState({ pageData: pageData || {}, dataLoaded: true });
   }
-
+// TODO : check who calls this function and make sure to pass promo to it
+// for this todo i already added couponDiscount with the full value parsed from the line items
   customPricingParams(params) {
     const {
       listingId,
@@ -271,6 +280,7 @@ export class CheckoutPageComponent extends Component {
       officeRoomsFee,
       meetingRoomsFee,
       seatsQuantity,
+      couponDiscount,
       officeRoomsQuantity,
       meetingRoomsQuantity,
       preliminaryParams,
@@ -279,7 +289,8 @@ export class CheckoutPageComponent extends Component {
 
     let seatsFeePriceTotal,
         officeRoomsFeePriceTotal,
-        meetingRoomsFeePriceTotal;
+        meetingRoomsFeePriceTotal,
+        couponDiscountPriceTotal;
     if(preliminaryParams) {
       const seatsFeePrice = seatsFee
         ? convertMoneyToNumber(seatsFee)
@@ -289,6 +300,9 @@ export class CheckoutPageComponent extends Component {
         : 0;
       const meetingRoomsFeePrice = meetingRoomsFee
         ? convertMoneyToNumber(meetingRoomsFee)
+        : 0;
+      const couponDiscountPrice = couponDiscount
+        ? convertMoneyToNumber(couponDiscount)
         : 0;
       const hoursDecimal = hours
         ? new Decimal(hours)
@@ -315,11 +329,54 @@ export class CheckoutPageComponent extends Component {
           .toNumber(),
           meetingRoomsFee.currency)
         : 0;
+
+      couponDiscountPriceTotal = couponDiscount
+      ? new Money( new Decimal(couponDiscountPrice), couponDiscount.currency)
+      :0;
     } else {
       seatsFeePriceTotal = seatsFee ? seatsFee : 0;
       officeRoomsFeePriceTotal = officeRoomsFee ? officeRoomsFee : 0;
       meetingRoomsFeePriceTotal = meetingRoomsFee ? meetingRoomsFee : 0;
+      couponDiscountPriceTotal = couponDiscount ? couponDiscount : 0;
     }
+
+    console.log("[TANAWY IS TESTING FROM CHECKOUTPAGE custompricing method] PROPS", this.props);
+    console.log("[Tanawy is debugging from checkoutPage custompricing method] params", params);
+    console.log("[Tanawy is debugging from checkoutPage custompricing method] couponDiscountPriceTotal", couponDiscountPriceTotal);
+
+// if i reached here and couponDiscountPriceTotal is 0 and promos exist fix pricing
+let isPromoExist = this.props.bookingData && this.props.bookingData.promo;
+if(couponDiscountPriceTotal === 0 && isPromoExist){
+  let tempPromo = this.props.bookingData.promo;
+  let discountCurrency = (seatsFee)? seatsFee.currency 
+  : (officeRoomsFee)? officeRoomsFee.currency 
+  :  (meetingRoomsFee)? meetingRoomsFee.currency : null;
+  if(discountCurrency){
+    let tempCouponDiscount = new Money( new Decimal((seatsFeePriceTotal.amount || 0) *(seatsQuantity || 0))
+    .plus((officeRoomsFeePriceTotal.amount || 0) *(officeRoomsQuantity || 0))
+    .plus((meetingRoomsFeePriceTotal.amount || 0) *(meetingRoomsQuantity || 0))
+    .mul((tempPromo.value || 0)/100)
+    , discountCurrency);
+
+    window.TanawysTestingTemp = {
+      tempCouponDiscount,
+      seatsFeePriceTotal,
+      seatsQuantity,
+      officeRoomsFeePriceTotal,
+      officeRoomsQuantity,
+      meetingRoomsFeePriceTotal,
+      meetingRoomsQuantity,
+      tempPromo,
+      discountCurrency,
+      Money,
+      Decimal,
+    };
+    
+    couponDiscountPriceTotal = tempCouponDiscount ? tempCouponDiscount : 0;
+
+
+  }
+}
 
     const unitType = config.bookingUnitType; // TO DO need delete
 
@@ -350,6 +407,18 @@ export class CheckoutPageComponent extends Component {
       : null;
     const meetingRoomsFeeLineItemMaybe = meetingRoomsFeeLineItem ? [meetingRoomsFeeLineItem] : [];
 
+    const couponDiscountLineItem = isPromoExist
+    ? {
+      code : LINE_ITEM_COUPON_DISCOUNT,
+      unitPrice: couponDiscountPriceTotal,
+      quantity: new Decimal(-1),
+    }
+    : null;
+
+    const couponDiscountLineItemMaybe = couponDiscountLineItem ? [couponDiscountLineItem] : [];
+
+    console.log("Tanawy is debugging from checkoutPage customPricingParams method end] couponDiscountLineItem", couponDiscountLineItem);
+
     return {
       listingId,
       bookingStart,
@@ -358,6 +427,7 @@ export class CheckoutPageComponent extends Component {
         ...seatsFeeLineItemMaybe,
         ...officeRoomsFeeLineItemMaybe,
         ...meetingRoomsFeeLineItemMaybe,
+        ...couponDiscountLineItemMaybe,
         // TO DO: Need delete from backend
         {
           code: unitType,
@@ -404,6 +474,14 @@ export class CheckoutPageComponent extends Component {
       ? meetingRoomsFeeLineItem.unitPrice
       : null;
 
+    const couponDiscountLineItem = speculatedTransaction.attributes.lineItems.find(
+      item =>  item.code === LINE_ITEM_COUPON_DISCOUNT
+    );
+
+    const couponDiscount = couponDiscountLineItem
+    ? couponDiscountLineItem.unitPrice
+    : null;
+
     const requestParams = this.customPricingParams({
       listingId: this.state.pageData.listing.id,
       bookingStart: speculatedTransaction.booking.attributes.start,
@@ -413,6 +491,7 @@ export class CheckoutPageComponent extends Component {
       seatsFee,
       officeRoomsFee,
       meetingRoomsFee,
+      couponDiscount,
       seatsQuantity,
       officeRoomsQuantity,
       meetingRoomsQuantity,
@@ -615,6 +694,8 @@ export class CheckoutPageComponent extends Component {
     // stripe.handleCardPayment(stripe, { payment_method: stripePaymentMethodId })
     const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity } = bookingData;
 
+    console.log("[Tanawy is testing from checkoutpage in the container from handlePaymentIntent method] bookingData", bookingData);
+
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
       item => item.code === LINE_ITEM_SEATS_FEE
     );
@@ -634,6 +715,14 @@ export class CheckoutPageComponent extends Component {
       ? meetingRoomsFeeLineItem.unitPrice
       : null;
 
+      const couponDiscountLineItem = speculatedTransaction.attributes.lineItems.find(
+        item =>  item.code === LINE_ITEM_COUPON_DISCOUNT
+      );
+  
+      const couponDiscount = couponDiscountLineItem
+      ? couponDiscountLineItem.unitPrice
+      : null;
+
     const optionalPaymentParams =
       selectedPaymentFlow === USE_SAVED_CARD && hasDefaultPaymentMethod
         ? { paymentMethod: stripePaymentMethodId }
@@ -650,6 +739,7 @@ export class CheckoutPageComponent extends Component {
       seatsFee,
       officeRoomsFee,
       meetingRoomsFee,
+      couponDiscount,
       seatsQuantity,
       officeRoomsQuantity,
       meetingRoomsQuantity,
@@ -881,6 +971,7 @@ export class CheckoutPageComponent extends Component {
           unitType={config.bookingUnitType}
           currentUser={currentUser}
           transaction={tx}
+          promo={bookingData.promo}
           booking={txBooking}
           dateType={DATE_TYPE_DATE}
           currentRentalType={rentalType}
@@ -1213,7 +1304,6 @@ CheckoutPageComponent.propTypes = {
   onRetrievePaymentIntent: func.isRequired,
   onSavePaymentMethod: func.isRequired,
   onSendMessage: func.isRequired,
-  initiateOrderError: propTypes.error,
   confirmPaymentError: propTypes.error,
   // handleCardPaymentError comes from Stripe so that's why we can't expect it to be in a specific form
   handleCardPaymentError: oneOfType([propTypes.error, object]),

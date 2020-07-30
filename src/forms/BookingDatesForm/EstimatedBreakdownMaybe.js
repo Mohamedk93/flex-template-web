@@ -31,14 +31,15 @@ import Decimal from 'decimal.js';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import { dateFromLocalToAPI, nightsBetween, daysBetween } from '../../util/dates';
 import { TRANSITION_REQUEST_PAYMENT, TX_TRANSITION_ACTOR_CUSTOMER } from '../../util/transaction';
-import { 
-  LINE_ITEM_DAY, 
-  LINE_ITEM_NIGHT, 
+import {
+  LINE_ITEM_DAY,
+  LINE_ITEM_NIGHT,
   LINE_ITEM_UNITS,
   DATE_TYPE_DATE,
   LINE_ITEM_SEATS_FEE,
   LINE_ITEM_OFFICE_ROOMS_FEE,
   LINE_ITEM_MEETING_ROOMS_FEE,
+  LINE_ITEM_COUPON_DISCOUNT,
 } from '../../util/types';
 import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit } from '../../util/currency';
 import { BookingBreakdown } from '../../components';
@@ -48,15 +49,15 @@ import css from './BookingDatesForm.css';
 const { Money, UUID } = sdkTypes;
 
 const estimatedTotalPrice = (
-  unitPrice, 
-  unitCount, 
-  seatsFee, 
-  officeRoomsFee, 
+  unitPrice,
+  unitCount,
+  seatsFee,
+  officeRoomsFee,
   meetingRoomsFee,
-  seatsQuantity, 
+  seatsQuantity,
   officeRoomsQuantity,
   meetingRoomsQuantity,
-  ) => {
+) => {
 
   const seatsFeePrice = seatsFee
     ? convertMoneyToNumber(seatsFee)
@@ -71,27 +72,28 @@ const estimatedTotalPrice = (
   const seatsQuantityCalc = seatsQuantity ? new Decimal(seatsQuantity) : 0;
   const officeRoomsQuantityCalc =officeRoomsQuantity ? new Decimal(officeRoomsQuantity) : 0;
   const meetingRoomsQuantityCalc = meetingRoomsQuantity ? new Decimal(meetingRoomsQuantity) : 0;
-    
+
   let numericTotalPrice = 0;
   if(seatsFeePrice) {
     const seatsFeePriceTotal = new Decimal(seatsFeePrice).mul(seatsQuantityCalc)
     numericTotalPrice = new Decimal(numericTotalPrice)
-    .plus(seatsFeePriceTotal)
-    .toNumber();
+      .plus(seatsFeePriceTotal)
+      .toNumber();
   };
   if(officeRoomsFeePrice) {
     const officeRoomsFeePriceTotal = new Decimal(officeRoomsFeePrice).mul(officeRoomsQuantityCalc)
     numericTotalPrice = new Decimal(numericTotalPrice)
-    .plus(officeRoomsFeePriceTotal)
-    .toNumber();
+      .plus(officeRoomsFeePriceTotal)
+      .toNumber();
   };
   if(meetingRoomsFeePrice) {
     const meetingRoomsFeePriceTotal = new Decimal(meetingRoomsFeePrice).mul(meetingRoomsQuantityCalc)
     numericTotalPrice = new Decimal(numericTotalPrice)
-    .plus(meetingRoomsFeePriceTotal)
-    .toNumber();
+      .plus(meetingRoomsFeePriceTotal)
+      .toNumber();
   };
   numericTotalPrice = new Decimal(numericTotalPrice).times(unitCount).toNumber();
+
 
   return new Money(
     convertUnitToSubUnit(numericTotalPrice, unitDivisor(unitPrice.currency)),
@@ -103,18 +105,19 @@ const estimatedTotalPrice = (
 // out), we must estimate the booking breakdown. This function creates
 // an estimated transaction object for that use case.
 const estimatedTransaction = (
-  unitType, 
-  bookingStart, 
-  bookingEnd, 
+  promo,
+  unitType,
+  bookingStart,
+  bookingEnd,
   unitPrice,
-  quantity, 
-  seatsFee, 
-  officeRoomsFee, 
+  quantity,
+  seatsFee,
+  officeRoomsFee,
   meetingRoomsFee,
-  seatsQuantity, 
+  seatsQuantity,
   officeRoomsQuantity,
   meetingRoomsQuantity,
-  ) => {
+) => {
 
   const now = new Date();
   const isNightly = unitType === LINE_ITEM_NIGHT;
@@ -123,19 +126,37 @@ const estimatedTransaction = (
   const unitCount = isNightly
     ? nightsBetween(bookingStart, bookingEnd)
     : isDaily
-    ? daysBetween(bookingStart, bookingEnd)
-    : quantity;
+      ? daysBetween(bookingStart, bookingEnd)
+      : quantity;
 
   const totalPrice = estimatedTotalPrice(
-    unitPrice, 
-    unitCount, 
-    seatsFee, 
-    officeRoomsFee, 
+    unitPrice,
+    unitCount,
+    seatsFee,
+    officeRoomsFee,
     meetingRoomsFee,
-    seatsQuantity, 
+    seatsQuantity,
     officeRoomsQuantity,
     meetingRoomsQuantity,
   );
+  let totalPriceInNumber = convertMoneyToNumber(totalPrice);
+  let numericTotalDiscount = new Decimal( totalPriceInNumber * (-1 * ((promo|| {}).value || 0)/100));
+  let numerictotalPriceDiscounted = new Decimal(totalPriceInNumber).plus(numericTotalDiscount).times(100);
+  numericTotalDiscount = numericTotalDiscount.times(100);
+
+  // this line is made to create a copy of the money Class without
+  // creating an accumulation side effect to total price
+  // totalPriceDiscounted = totalPrice;
+  // totalDiscount = totalPriceDiscounted;
+  let totalDiscount = new Money( numericTotalDiscount , unitPrice.currency);
+  let totalPriceDiscounted = new Money(numerictotalPriceDiscounted, unitPrice.currency);
+  console.log("[TANAWY IS TESTING from EstimatedBreakdownMaybe]", totalPriceDiscounted);
+// if(totalDiscount && promo){
+//   totalDiscount.amount = totalDiscount.amount * (-1 * (promo.value || 0)/100);
+
+//   totalPriceDiscounted = totalPrice - totalDiscount;
+// }
+  
 
   // bookingStart: "Fri Mar 30 2018 12:00:00 GMT-1100 (SST)" aka "Fri Mar 30 2018 23:00:00 GMT+0000 (UTC)"
   // Server normalizes night/day bookings to start from 00:00 UTC aka "Thu Mar 29 2018 13:00:00 GMT-1100 (SST)"
@@ -161,7 +182,7 @@ const estimatedTransaction = (
     lineTotal: seatsFee,
     reversal: false,
   };
-  
+
   const seatsFeeLineItemMaybe = seatsFee
     ? [seatsFeeLineItem]
     : [];
@@ -174,7 +195,7 @@ const estimatedTransaction = (
     lineTotal: officeRoomsFee,
     reversal: false,
   };
- 
+
   const officeRoomsFeeLineItemMaybe = officeRoomsFee
     ? [officeRoomsFeeLineItem]
     : [];
@@ -187,30 +208,45 @@ const estimatedTransaction = (
     lineTotal: meetingRoomsFee,
     reversal: false,
   };
-  
+
   const meetingRoomsFeeLineItemMaybe = meetingRoomsFee
     ? [meetingRoomsFeeLineItem]
     : [];
+
+  const couponDiscountLineItem = {
+    code: LINE_ITEM_COUPON_DISCOUNT,
+    includeFor: ['customer', 'provider'],
+    unitPrice: totalDiscount,
+    quantity: new Decimal(-1),
+    lineTotal: totalDiscount,
+    reversal: false,
+  };
+
+  const couponDiscountLineItemMaybe = promo
+  ? [couponDiscountLineItem]
+  : [];
 
   return {
     id: new UUID('estimated-transaction'),
     type: 'transaction',
     attributes: {
+      promo: promo,
       createdAt: now,
       lastTransitionedAt: now,
       lastTransition: TRANSITION_REQUEST_PAYMENT,
-      payinTotal: totalPrice,
-      payoutTotal: totalPrice,
+      payinTotal: totalPriceDiscounted,
+      payoutTotal: totalPriceDiscounted,
       lineItems: [
         ...seatsFeeLineItemMaybe,
         ...officeRoomsFeeLineItemMaybe,
         ...meetingRoomsFeeLineItemMaybe,
+        ...couponDiscountLineItemMaybe,
         {
           code: unitType,
           includeFor: ['customer', 'provider'],
           unitPrice: unitPrice,
           quantity: new Decimal(unitCount),
-          lineTotal: totalPrice,
+          lineTotal: totalPriceDiscounted,
           reversal: false,
         },
       ],
@@ -234,20 +270,21 @@ const estimatedTransaction = (
 };
 
 const EstimatedBreakdownMaybe = props => {
-  const { 
-    unitType, 
-    unitPrice, 
-    startDate, 
-    endDate, 
-    quantity, 
-    seatsFee, 
+  const {
+    promo,
+    unitType,
+    unitPrice,
+    startDate,
+    endDate,
+    quantity,
+    seatsFee,
     officeRoomsFee,
     meetingRoomsFee,
-    seatsQuantity, 
+    seatsQuantity,
     officeRoomsQuantity,
     meetingRoomsQuantity,
     currentRentalType,
-    listing,
+    listing
   } = props.bookingData;
   const { currentUser } = props;
   const isUnits = unitType === LINE_ITEM_UNITS;
@@ -258,15 +295,16 @@ const EstimatedBreakdownMaybe = props => {
   }
 
   const tx = estimatedTransaction(
-    unitType, 
-    startDate, 
-    endDate, 
-    unitPrice, 
-    quantity, 
-    seatsFee, 
-    officeRoomsFee, 
+    promo,
+    unitType,
+    startDate,
+    endDate,
+    unitPrice,
+    quantity,
+    seatsFee,
+    officeRoomsFee,
     meetingRoomsFee,
-    seatsQuantity, 
+    seatsQuantity,
     officeRoomsQuantity,
     meetingRoomsQuantity,
   );
@@ -282,6 +320,7 @@ const EstimatedBreakdownMaybe = props => {
       dateType={DATE_TYPE_DATE}
       currentRentalType={currentRentalType}
       listing={listing}
+      promo={promo}
     />
   );
 };
