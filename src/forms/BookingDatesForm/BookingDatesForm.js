@@ -167,7 +167,7 @@ export class BookingDatesFormComponent extends Component {
         type:"percentage",
         value: 50
       },
-      car70:{
+      cara70:{
         type:"percentage",
         value: 70
       },
