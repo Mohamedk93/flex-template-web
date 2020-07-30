@@ -166,6 +166,22 @@ export class BookingDatesFormComponent extends Component {
       first50:{
         type:"percentage",
         value: 50
+      },
+      car70:{
+        type:"percentage",
+        value: 70
+      },
+      wahid70:{
+        type:"percentage",
+        value: 70
+      },
+      claudio70:{
+        type:"percentage",
+        value: 70
+      },
+      bcn60:{
+        type:"percentage",
+        value: 60
       }
     };
     this.handleFieldBlur = this.handleFieldBlur.bind(this);
