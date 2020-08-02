@@ -12,6 +12,7 @@ import { createResourceLocatorString, pathByRouteName } from '../../util/routes'
 import { propTypes } from '../../util/types';
 import {
   Button,
+  LimitedAccessBanner,
   Logo,
   Modal,
   ModalMissingInformation,
@@ -156,6 +157,7 @@ class TopbarComponent extends Component {
       mobileRootClassName,
       mobileClassName,
       isAuthenticated,
+      authScopes,
       authInProgress,
       currentUser,
       currentUserHasListings,
@@ -246,6 +248,13 @@ class TopbarComponent extends Component {
 
     return (
       <div className={classes}>
+      <LimitedAccessBanner
+      isAuthenticated={isAuthenticated}
+      authScopes={authScopes}
+      currentUser={currentUser}
+      onLogout={this.handleLogout}
+      currentPage={currentPage}
+      />
         <div className={classNames(mobileRootClassName || css.container, mobileClassName)}>
           <div className={css.menuHolder}>
             <Button
@@ -351,9 +360,10 @@ TopbarComponent.defaultProps = {
   currentUserHasOrders: null,
   currentPage: null,
   sendVerificationEmailError: null,
+  authScopes: [],
 };
 
-const { func, number, shape, string } = PropTypes;
+const { array, func, number, shape, string } = PropTypes;
 
 TopbarComponent.propTypes = {
   className: string,
@@ -362,6 +372,7 @@ TopbarComponent.propTypes = {
   mobileRootClassName: string,
   mobileClassName: string,
   isAuthenticated: bool.isRequired,
+  authScopes: array,
   authInProgress: bool.isRequired,
   currentUser: propTypes.currentUser,
   currentUserHasListings: bool.isRequired,
