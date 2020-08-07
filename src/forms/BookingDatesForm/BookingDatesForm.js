@@ -182,6 +182,30 @@ export class BookingDatesFormComponent extends Component {
       bcn60:{
         type:"percentage",
         value: 60
+      },
+      bellucci50:{
+        type:"percentage",
+        value: 50
+      },
+      monday50:{
+        type:"percentage",
+        value: 50
+      },
+      idea50:{
+        type:"percentage",
+        value: 50
+      },
+      coworkingdays30:{
+        type:"percentage",
+        value: 30
+      },
+      spaceup50:{
+        type:"percentage",
+        value: 50
+      },
+      get25:{
+        type:"percentage",
+        value: 25
       }
     };
     this.handleFieldBlur = this.handleFieldBlur.bind(this);
