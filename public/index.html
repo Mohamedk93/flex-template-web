@@ -30,6 +30,32 @@
 
   <!-- End Hotjar -->
 
+  <!-- App Cues -->
+
+  <script src="//fast.appcues.com/79109.js"></script>
+  <Router onUpdate={()=>window.Appcues.page()}/>
+
+/*
+* React Router v4 and above
+*/
+
+// In the `componentDidUpdate` of the component wrapping your entire app
+// usually called <App />
+
+function componentDidUpdate(prevProps) {
+  // NOTE: in order to have access to this information, you will need
+  // to wrap this component in the `withRouter` HOC
+
+  const { location: { pathname } } = this.props;
+  const previousLocation = prevProps.location.pathname;
+
+  if (pathname !== previousLocation) {
+    window.Appcues.page();
+  }
+}
+
+<!-- App Cues -->
+
   <!-- Intercom Chat -->
   <script>
     window.intercomSettings = {
