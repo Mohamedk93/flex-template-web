@@ -360,9 +360,8 @@ export class BookingPanel extends Component {
               rootClassName={css.bookButton}
               onClick={() => openBookModal(isOwnListing, isClosed, history, location)}
             >
-              {quickRent !== undefined && quickRent.length > 0 ? <IconLightning className={css.iconLightning} /> : ''}
               <FormattedMessage id=
-                {quickRent !== undefined && quickRent.length > 0 ? "BookingDatesForm.quickRent" : "BookingPanel.ctaButtonMessage"} />
+                {quickRent !== undefined && quickRent.length > 0 ? "See availability" : "See availability"} />
             </Button>
           ) : (
             <div className={css.closedListingButton}>
