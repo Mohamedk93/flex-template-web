@@ -26,7 +26,7 @@ export class SectionHero extends Component {
                     </h2>
                   </div>
                   <div className={css.gridItem2}>
-                    <span><SearchBox /></span>
+                    <span><SearchBox history={this.props.history}/></span>
                   </div>
                     </div>
 
