@@ -21,8 +21,6 @@ import EditListingWizardTab, {
   AVAILABILITY,
   DESCRIPTION,
   FEATURES,
-  WORKSPACES,
-  RENTALS,
   POLICY,
   LOCATION,
   PRICING,
@@ -40,8 +38,6 @@ const availabilityMaybe = config.enableAvailability ? [AVAILABILITY] : [];
 export const TABS = [
   DESCRIPTION,
   FEATURES,
-  WORKSPACES,
-  RENTALS,
   POLICY,
   LOCATION,
   ...availabilityMaybe,
@@ -58,12 +54,8 @@ const tabLabel = (intl, tab) => {
     key = 'EditListingWizard.tabLabelDescription';
   } else if (tab === FEATURES) {
     key = 'EditListingWizard.tabLabelFeatures';
-  } else if (tab === WORKSPACES) {
-    key = 'EditListingWizard.tabLabelWorkspaces';
   }  else if (tab === POLICY) {
     key = 'EditListingWizard.tabLabelPolicy';
-  } else if (tab === RENTALS) {
-    key = 'EditListingWizard.tabLabelRentals';
   } else if (tab === LOCATION) {
     key = 'EditListingWizard.tabLabelLocation';
   } else if (tab === PRICING) {
@@ -101,10 +93,6 @@ const tabCompleted = (tab, listing) => {
       return !!(description && title);
     case FEATURES:
       return !!(publicData && publicData.amenities);
-    case RENTALS:
-      return !!(publicData && publicData.rentalTypes);
-    case WORKSPACES:
-      return !!(publicData && publicData.workspaces);
     case POLICY:
       return !!(publicData && typeof publicData.rules !== 'undefined');
     case LOCATION:

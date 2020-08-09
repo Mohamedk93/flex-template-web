@@ -4,8 +4,7 @@ import {
   LINE_ITEM_SEATS_FEE,
   LINE_ITEM_OFFICE_ROOMS_FEE,
   LINE_ITEM_MEETING_ROOMS_FEE,
-  propTypes,
-  LINE_ITEM_COUPON_DISCOUNT
+  propTypes
 } from '../../util/types';
 import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit, formatMoney } from '../../util/currency';
 import Decimal from 'decimal.js';
@@ -34,29 +33,29 @@ const converter = (item, currentUser) => {
     item = result.symbol.toString() + item;
   }
   return item;
-}
+};
 
-const LineItemCustomPrices = props => {
-  const { transaction, unitType, intl, currentUser } = props;
-  
+const LineItemCustomPromo = props => {
+  const { transaction, intl, currentUser, promo } = props;
+
   const mainLineItems = transaction.attributes.lineItems.filter((item) => {
-    return item.code === LINE_ITEM_SEATS_FEE || item.code === LINE_ITEM_OFFICE_ROOMS_FEE || item.code === LINE_ITEM_MEETING_ROOMS_FEE || item.code === LINE_ITEM_COUPON_DISCOUNT
+    return item.code === LINE_ITEM_SEATS_FEE || item.code === LINE_ITEM_OFFICE_ROOMS_FEE || item.code === LINE_ITEM_MEETING_ROOMS_FEE
   });
+
 
   const guid = () =>
     `_${Math.random()
       .toString(36)
       .substr(2, 9)}`;
 
-  return mainLineItems ? mainLineItems.map((item) => {
-    console.log("[Tanawy is debugging here in LineItemCustomPrices.js]", item);
-    const key = item.code.split('/')[1];
+  return promo ? mainLineItems.map((item) => {
     const quantity = item.quantity;
     const currency = item.unitPrice.currency;
-    const fiexed = false;
+
     const numericTotalPrice = new Decimal(convertMoneyToNumber(item.unitPrice))
-      .mul(quantity)
+      .mul(quantity).mul(promo.value/100)
       .toNumber();
+
     let totalPrice = new Money(
       convertUnitToSubUnit(numericTotalPrice, unitDivisor(currency)),
       currency
@@ -65,11 +64,11 @@ const LineItemCustomPrices = props => {
     let formattedTotalPrice = converter(formatMoney(intl, totalPrice), currentUser);
 
     let formattedUnitPrice = converter(formatMoney(intl, item.unitPrice), currentUser);
-    
+
     return (
       <div className={css.lineItem} key={guid()}>
         <span className={css.itemLabel}>
-          <FormattedMessage id={`BookingBreakdown.quantity_${key}`} values={{quantity: quantity.toFixed(), price: formattedUnitPrice}} />
+          <FormattedMessage id={"BookingBreakdown.promo"} values={{promo: promo.value, quantity: quantity.toFixed(), price: formattedUnitPrice}} />
         </span>
         <span className={css.itemValue}>
           {formattedTotalPrice}
@@ -79,9 +78,9 @@ const LineItemCustomPrices = props => {
   }) : null;
 };
 
-LineItemCustomPrices.propTypes = {
+LineItemCustomPromo.propTypes = {
   transaction: propTypes.transaction.isRequired,
   unitType: propTypes.bookingUnitType.isRequired,
 };
 
-export default LineItemCustomPrices;
+export default LineItemCustomPromo;

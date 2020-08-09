@@ -80,7 +80,6 @@ export const TransactionPageComponent = props => {
     callSetInitialValues,
     onInitializeCardPaymentData,
   } = props;
-
   const currentTransaction = ensureTransaction(transaction);
   const currentListing = ensureListing(currentTransaction.listing);
   const isProviderRole = transactionRole === PROVIDER;
@@ -248,6 +247,8 @@ export const TransactionPageComponent = props => {
   ) : (
     loadingOrFailedFetching
   );
+
+  console.log("[Tanawy is debuging from Transaction Page js] this.props", props);
 
   return (
     <Page

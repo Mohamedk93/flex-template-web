@@ -32,7 +32,7 @@ export const amenities = [
 export const workspaces = [
   {
     key: 'seats',
-    label: 'Seats',
+    label: 'Hotdesks',
   },
   {
     key: 'office_rooms',
@@ -42,7 +42,7 @@ export const workspaces = [
     key: 'meeting_rooms',
     label: 'Meeting rooms',
   },
-  
+
 ];
 
 export const rentals = [

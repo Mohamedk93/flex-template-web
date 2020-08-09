@@ -76,10 +76,12 @@ const categoryLabel = (categories, key) => {
   const cat = categories.find(c => c.key === key);
   return cat ? cat.label : key;
 };
+const mixpanel = require('mixpanel-browser');
 
 export class ListingPageComponent extends Component {
   constructor(props) {
     super(props);
+    mixpanel.init(process.env.REACT_APP_MIXPANNEL_TOKEN);
     const { enquiryModalOpenForListingId, params } = props;
     this.state = {
       pageClassNames: [],
@@ -100,7 +102,18 @@ export class ListingPageComponent extends Component {
       callSetInitialValues,
       onInitializeCardPaymentData,
     } = this.props;
-
+    mixpanel.track("pre_book_button", {
+      payment_method: values.paymentMethod,
+      workspaces: values.workspaces,
+      start_date: values.bookingDates.startDate.toString(),
+      end_date: values.bookingDates.endDate.toString(),
+      meeting_room_fee: values.meetingRoomsFee,
+      meeting_room_quantity: values.meetingRoomsQuantity,
+      rental_type: values.rentalType,
+      //seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
+      hours: values.hours,
+      raw_data: JSON.stringify(values)
+    });
     const listingId = new UUID(params.id);
     const listing = getListing(listingId);
 
@@ -163,6 +176,18 @@ export class ListingPageComponent extends Component {
     onSendEnquiry(listingId, message.trim())
       .then(txId => {
         this.setState({ enquiryModalOpen: false });
+        mixpanel.track("submit_enquiry_button", {
+          payment_method: values.paymentMethod,
+          workspaces: values.workspaces,
+          start_date: values.bookingDates.startDate.toString(),
+          end_date: values.bookingDates.endDate.toString(),
+          meeting_room_fee: values.meetingRoomsFee,
+          meeting_room_quantity: values.meetingRoomsQuantity,
+          rental_type: values.rentalType,
+          //seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
+          hours: values.hours,
+          raw_data: JSON.stringify(values)
+        });
 
         // Redirect to OrderDetailsPage
         history.push(
@@ -211,7 +236,7 @@ export class ListingPageComponent extends Component {
     if(currentListing && currentListing.id){
        minPrice = listingMinPrice(currentListing);
     }
-    
+
     const listingSlug = rawParams.slug || createSlug(currentListing.attributes.title || '');
     const params = { slug: listingSlug, ...rawParams };
 
@@ -337,7 +362,7 @@ export class ListingPageComponent extends Component {
     const authorDisplayName = userDisplayNameAsString(ensuredAuthor, '');
 
     let { formattedPrice, priceTitle } = priceData(price, intl);
-    
+
     formattedPrice = convertPrice(currentUser, minPrice, formattedPrice);
 
     const handleBookingSubmit = values => {
@@ -431,7 +456,7 @@ export class ListingPageComponent extends Component {
               <div className={css.contentContainer}>
                 <SectionAvatar user={currentAuthor} params={params} />
                 <div className={css.mainContent}>
-                  
+
                   <SectionHeading
                     priceTitle={priceTitle}
                     formattedPrice={formattedPrice}
@@ -442,7 +467,7 @@ export class ListingPageComponent extends Component {
                     onContactUser={this.onContactUser}
                     publicData={publicData}
                   />
-                  
+
                   <SectionDescriptionMaybe description={description} />
                   <SectionFeaturesMaybe options={amenitiesConfig} publicData={publicData} />
                   <SectionWorkspaceMaybe options={workspaceConfig} publicData={publicData} />
@@ -566,7 +591,7 @@ const mapStateToProps = state => {
     enquiryModalOpenForListingId,
   } = state.ListingPage;
   const { currentUser } = state.user;
-  
+
   const getListing = id => {
     const ref = { id, type: 'listing' };
     const listings = getMarketplaceEntities(state, [ref]);

@@ -100,12 +100,12 @@ export const listingAvailablePricesMeta = [
 
 export const listingCalculateMinPrice = (pubData) => {
   let min_price_meta = listingAvailablePricesMeta.filter((priceItem) => {
-    
+
     if (!pubData[priceItem.type] || !pubData.rentalTypes) {
       return false;
     }
 
-    if (pubData.rentalTypes.indexOf(priceItem.rentalType) !== -1 && 
+    if (pubData.rentalTypes.indexOf(priceItem.rentalType) !== -1 &&
       Number(pubData[priceItem.type].amount) > 0) {
       return true
     } else {
@@ -143,7 +143,7 @@ export const ListingCardComponent = props => {
     currentListing.images && currentListing.images.length > 0 ? currentListing.images[0] : null;
   let { formattedPrice, priceTitle } = priceData(price, intl);
   let minPrice= null;
-  
+
   if(currentListing && currentListing.id){
      minPrice = listingMinPrice(currentListing);
   }
@@ -202,7 +202,7 @@ export const ListingCardComponent = props => {
         onMouseEnter={() => setActiveListing(currentListing.id)}
         onMouseLeave={() => setActiveListing(null)}
       >
-    
+
         <div className={css.aspectWrapper}>
           <LazyImage
             rootClassName={css.rootForImage}
@@ -212,13 +212,13 @@ export const ListingCardComponent = props => {
             sizes={renderSizes}
           />
         </div>
-        {quickRent !== undefined && quickRent.length > 0 ? 
+        {quickRent !== undefined && quickRent.length > 0 ?
           <div className={css.quickRent}>
             <div>
               <FormattedMessage id="SearchPage.quickBooking" />
             </div>
           </div> : ' '}
-        
+
       </div>
       <div className={css.info}>
         <div className={css.price}>
@@ -236,13 +236,13 @@ export const ListingCardComponent = props => {
               longWordClass: css.longWord,
             })}
           </div>
-          
+
 
           <div className={css.authorInfo}>
             <FormattedMessage id="ListingCard.description" values={{category,locationInfo}} />
           </div>
         </div>
-        
+
       </div>
     </NamedLink>
   );

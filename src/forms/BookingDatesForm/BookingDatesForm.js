@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bool, string } from 'prop-types';
 import { compose } from 'redux';
-import { Form as FinalForm } from 'react-final-form';
+import { Form as FinalForm, Field } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import { FieldArray } from 'react-final-form-arrays';
 import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
@@ -12,6 +12,7 @@ import { propTypes } from '../../util/types';
 import * as validators from '../../util/validators';
 import config from '../../config';
 import { required, bookingDatesRequired, composeValidators } from '../../util/validators';
+
 import {
   Form,
   IconClose,
@@ -20,7 +21,8 @@ import {
   FieldSelect,
   FieldRadioButton,
   FieldDateRangeInput,
-  FieldCheckboxGroupWithQuantity } from '../../components';
+  FieldCheckboxGroupWithQuantity, ModalInMobile
+} from '../../components';
 import { formatMoney } from '../../util/currency';
 import DateHourPicker, { getHours, isFullHours } from './DateHourPicker';
 import DateMonthPicker from './DateMonthPicker';
@@ -68,7 +70,7 @@ const converter = (item, currentUser) => {
     item = result.symbol.toString() + item;
   }
   return item;
-}
+};
 
 const rangeEndDate = dateHour => {
   if (!dateHour) {
@@ -150,10 +152,66 @@ const identity = v => v;
 export class BookingDatesFormComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { focusedInput: null, bookingHoursError: false };
+    this.state = { focusedInput: null, bookingHoursError: false, isPromo: false };
+    this.promo = null;
+    this.promos = {
+      try100:{
+        type:"percentage",
+        value: 100
+      },
+      garage100:{
+        type:"percentage",
+        value: 100
+      },
+      first50:{
+        type:"percentage",
+        value: 50
+      },
+      cara70:{
+        type:"percentage",
+        value: 70
+      },
+      wahid70:{
+        type:"percentage",
+        value: 70
+      },
+      claudio70:{
+        type:"percentage",
+        value: 70
+      },
+      bcn60:{
+        type:"percentage",
+        value: 60
+      },
+      bellucci50:{
+        type:"percentage",
+        value: 50
+      },
+      monday50:{
+        type:"percentage",
+        value: 50
+      },
+      idea50:{
+        type:"percentage",
+        value: 50
+      },
+      coworkingdays30:{
+        type:"percentage",
+        value: 30
+      },
+      spaceup50:{
+        type:"percentage",
+        value: 50
+      },
+      get25:{
+        type:"percentage",
+        value: 25
+      }
+    };
     this.handleFieldBlur = this.handleFieldBlur.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
+
 
   handleFieldBlur() {
     this.setState({ focusedInput: null });
@@ -308,6 +366,7 @@ export class BookingDatesFormComponent extends Component {
       officeRoomsQuantity: office_rooms_quantity,
       meetingRoomsQuantity: meeting_rooms_quantity,
       rentalType: rental_type,
+      promo: this.promo
     });
 
   }
@@ -400,6 +459,7 @@ export class BookingDatesFormComponent extends Component {
 
           const requiredSelect = required('This field is required');
 
+          console.log("Tanawy is testing from bookingdatesform render prop function] checking props", fieldRenderProps);
           // Selected fee
           let selectedSeatsFee =
           values &&
@@ -439,6 +499,11 @@ export class BookingDatesFormComponent extends Component {
           values.meeting_rooms_quantity
             ? values.meeting_rooms_quantity
             : null;
+
+          const selectedCouponDiscount = this.promo? (seatsFee || officeRoomsFee || meetingRoomsFee)
+          : null;
+
+          const selectedCouponDiscountQuantity = this.promo? 1: null;
 
           // Quantity and StartDate and EndDate calculations
           // Each quantity depends on rental_type.
@@ -506,6 +571,7 @@ export class BookingDatesFormComponent extends Component {
           // This is the place to collect breakdown estimation data. See the
           // EstimatedBreakdownMaybe component to change the calculations
           // for customised payment processes.
+          const couponDiscountQuantity = this.promo? 1:0;
           const bookingData =
             startDate && endDate && quantity
               ? {
@@ -519,10 +585,13 @@ export class BookingDatesFormComponent extends Component {
                 seatsFee: selectedSeatsFee,
                 officeRoomsFee: selectedOfficeRoomsFee,
                 meetingRoomsFee: selectedMeetingRoomsFee,
+                couponDiscount: selectedCouponDiscount,
 
+                promo: this.promo,
                 seatsQuantity: selectedSeatsQuantity,
                 officeRoomsQuantity: selectedOfficeRoomsQuantity,
                 meetingRoomsQuantity: selectedMeetingRoomsQuantity,
+                couponDiscountQuantity: selectedCouponDiscountQuantity,
 
                 currentRentalType,
               }
@@ -826,7 +895,24 @@ export class BookingDatesFormComponent extends Component {
                 selectedWorkspaces={selectedWorkspaces}
                 defaultMaxQuantity={defaultMaxQuantity}
                 fees={fees}
-              />
+                />
+
+                <input
+                  className={css.fieldInput}
+                  placeholder={intl.formatMessage({id:"BookingDatesForm.promo_placeholder"})}
+                  onChange={(event)=>{
+                    this.setState({isPromo: true});
+                    if(event.target.value.toLowerCase() in this.promos){
+                      this.promo = this.promos[event.target.value.toLowerCase()];
+                    }else{
+                      this.promo = null;
+                      this.setState({isPromo: false});
+                    }
+                  }}
+                />
+
+
+
 
               <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={requiredSelect}>
                 <option value="">Select payment</option>

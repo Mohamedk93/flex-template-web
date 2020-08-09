@@ -31,8 +31,8 @@ function FrequentlyAskedQuestions() {
         <LayoutWrapperMain className={css.staticPageWrapper}>
 
     <div className={css.container}>
-      <h1 className={css.pageTitle}>Frequently asked questions</h1>
-      <h1 className={css.pagesubTitle}>Questions for users that want to book workspaces:</h1>
+      <h1 className={css.pageTitle}>Frequently Asked Questions</h1>
+      <h1 className={css.pagesubTitle}>General Questions</h1>
       <Dropdown title="What is Hotdesk?" items="Hotdesk is the online platform for workspaces. We enable users to book coworking spaces and shared offices worldwide - in 3 clicks. We also enable owners of coworking spaces and shared offices to add their workspaces to be rented by users and make extra income." />
 
       <Dropdown title="How does Hotdesk work?" items="Users can easily search and flick through our listings and send a booking request in 3 clicks, after having the option of comparing prices, checking images and knowing the amenities offered by the workspace and send a booking request for an hourly, daily or monthly rate. Users can make a search based on their location, such as checking the nearest workspace or in another country." />
@@ -43,7 +43,7 @@ function FrequentlyAskedQuestions() {
 
       <Dropdown title="Do I pay extra fees to Hotdesk for booking a workspace?" items="No, not at all. Your payment is exactly what you would pay to regularly book the workspace itself. We do not charge extra fees to our customers, as we make our income directly from the Hosts." />
 
-      <h1 className={css.pagesubTitle}>Questions for coworking spaces and shared offices owners that want to become Hosts</h1>
+      <h1 className={css.pagesubTitle}>Questions for Hosts</h1>
 
       <Dropdown title="How do I add my space? How long does it take?" items="Adding your coworking space or shared offices usually takes 3 - 5 minutes. All you have to do is go to the + Add your workspace section in the main menu, and follow the required steps. You provide information such as the name and location of the workspace, available workspace types and booking plans, amenities and photos - then you're good to go!" />
 

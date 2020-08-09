@@ -331,6 +331,8 @@ export const LINE_ITEM_DAY = 'line-item/day';
 export const LINE_ITEM_UNITS = 'line-item/units';
 export const LINE_ITEM_CUSTOMER_COMMISSION = 'line-item/customer-commission';
 export const LINE_ITEM_PROVIDER_COMMISSION = 'line-item/provider-commission';
+export const LINE_ITEM_COUPON_DISCOUNT   =  'line-item/coupon-discount';
+
 
 export const LINE_ITEM_SEATS_FEE = 'line-item/seats-fee';
 export const LINE_ITEM_OFFICE_ROOMS_FEE = 'line-item/office-rooms-fee';
@@ -342,6 +344,7 @@ export const LINE_ITEMS = [
   LINE_ITEM_UNITS,
   LINE_ITEM_CUSTOMER_COMMISSION,
   LINE_ITEM_PROVIDER_COMMISSION,
+  LINE_ITEM_COUPON_DISCOUNT
 ];
 
 propTypes.bookingUnitType = oneOf([LINE_ITEM_NIGHT, LINE_ITEM_DAY, LINE_ITEM_UNITS]);

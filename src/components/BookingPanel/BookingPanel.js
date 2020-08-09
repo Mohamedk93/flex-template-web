@@ -54,22 +54,23 @@ const closeBookModal = (history, location) => {
 };
 
 export class BookingPanel extends Component {
+
   constructor(props) {
     super(props);
-
     const rentalTypes = this.props.listing.attributes.publicData.rentalTypes ?
       this.props.listing.attributes.publicData.rentalTypes : [];
 
-    this.state = { 
+    this.state = {
       rentalType: rentalTypes[0],
     };
 
     this.handleChangeRentalType = this.handleChangeRentalType.bind(this);
   }
 
+
   handleChangeRentalType(e) {
     const rentalType = e.target.value;
-    this.setState({ rentalType })
+    this.setState({rentalType })
   }
 
   render() {
@@ -96,7 +97,7 @@ export class BookingPanel extends Component {
     const publicData = listing.attributes.publicData;
 
     const currentRentalType = this.state.rentalType;
-    
+
     // Prices calculation
 
     let seatsFeeData;
@@ -146,7 +147,7 @@ export class BookingPanel extends Component {
       meetingRoomsAmount && meetingRoomsCurrency
         ? new Money(meetingRoomsAmount, meetingRoomsCurrency)
         : null;
-        
+
     const rentalTypes = publicData.rentalTypes;
     // Sorter
     // const sortRentalType = {
@@ -203,10 +204,10 @@ export class BookingPanel extends Component {
       rates = JSON.parse(localStorage.getItem('rates'));
       currency = localStorage.getItem('currentCode');
       result = !rates ? null : rates.find(e => e.iso_code == currency);
-    }       
+    }
     if(result){
       formattedPrice = formattedPrice.substr(1).replace(/,/g, '');
-      formattedPrice = formattedPrice * result.current_rate
+      formattedPrice = formattedPrice * result.current_rate;
       formattedPrice = formattedPrice.toFixed(2);
       formattedPrice = result.symbol.toString() + formattedPrice;
     }
@@ -226,7 +227,7 @@ export class BookingPanel extends Component {
     const classes = classNames(rootClassName || css.root, className);
     const titleClasses = classNames(titleClassName || css.bookingTitle);
     const quickRent =  listing.attributes.publicData.quickRent
-    
+
     const shortDayCodes = {
       "mon": 1,
       "tue": 2,
@@ -252,7 +253,7 @@ export class BookingPanel extends Component {
         }
       });
     } else if (timeSlots) {
-      let $days = [];  
+      let $days = [];
       timeSlots.forEach(function(item) {
         let $day = moment(item.attributes.start).format("dddd");
         if($days.indexOf($day) === -1) {
@@ -287,7 +288,7 @@ export class BookingPanel extends Component {
       office_rooms: publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 100,
       meeting_rooms: publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 100,
     };
-    
+
 
 
     return (
@@ -332,7 +333,7 @@ export class BookingPanel extends Component {
               rentalTypes={rentalTypes}
               handleChangeRentalType={this.handleChangeRentalType}
               currentRentalType={currentRentalType}
-              initialValues={{ 
+              initialValues={{
                 seats_quantity: 1,
                 office_rooms_quantity: 1,
                 meeting_rooms_quantity: 1,
@@ -341,14 +342,16 @@ export class BookingPanel extends Component {
               }}
             />
           ) : null}
+
         </ModalInMobile>
+
         <div className={css.openBookingForm}>
           <div className={css.priceContainer}>
             <div className={css.priceValue} title={priceTitle}>
               {formattedPrice}
             </div>
             <div className={css.perUnit}>
-              {currentListingType} 
+              {currentListingType}
             </div>
           </div>
 
@@ -357,9 +360,8 @@ export class BookingPanel extends Component {
               rootClassName={css.bookButton}
               onClick={() => openBookModal(isOwnListing, isClosed, history, location)}
             >
-              {quickRent !== undefined && quickRent.length > 0 ? <IconLightning className={css.iconLightning} /> : ''}
               <FormattedMessage id=
-                {quickRent !== undefined && quickRent.length > 0 ? "BookingDatesForm.quickRent" : "BookingPanel.ctaButtonMessage"} />
+                {quickRent !== undefined && quickRent.length > 0 ? "See availability" : "See availability"} />
             </Button>
           ) : (
             <div className={css.closedListingButton}>

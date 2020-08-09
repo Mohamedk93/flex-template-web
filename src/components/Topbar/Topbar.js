@@ -12,6 +12,7 @@ import { createResourceLocatorString, pathByRouteName } from '../../util/routes'
 import { propTypes } from '../../util/types';
 import {
   Button,
+  LimitedAccessBanner,
   Logo,
   Modal,
   ModalMissingInformation,
@@ -27,6 +28,8 @@ import SearchIcon from './SearchIcon';
 import css from './Topbar.css';
 
 const MAX_MOBILE_SCREEN_WIDTH = 768;
+const mixpanel = require('mixpanel-browser');
+
 
 const redirectToURLWithModalState = (props, modalStateParam) => {
   const { history, location } = props;
@@ -112,6 +115,8 @@ class TopbarComponent extends Component {
       address: search,
       bounds,
     };
+
+    mixpanel.track("handle_search_submit");
     history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
   }
 
@@ -133,7 +138,7 @@ class TopbarComponent extends Component {
   }
 
 
-  
+
   componentDidMount() {
     const matchListing = '/l';
 
@@ -152,6 +157,7 @@ class TopbarComponent extends Component {
       mobileRootClassName,
       mobileClassName,
       isAuthenticated,
+      authScopes,
       authInProgress,
       currentUser,
       currentUserHasListings,
@@ -242,6 +248,13 @@ class TopbarComponent extends Component {
 
     return (
       <div className={classes}>
+      <LimitedAccessBanner
+      isAuthenticated={isAuthenticated}
+      authScopes={authScopes}
+      currentUser={currentUser}
+      onLogout={this.handleLogout}
+      currentPage={currentPage}
+      />
         <div className={classNames(mobileRootClassName || css.container, mobileClassName)}>
           <div className={css.menuHolder}>
             <Button
@@ -252,7 +265,7 @@ class TopbarComponent extends Component {
               <MenuIcon className={css.menuIcon} />
               {notificationDot}
             </Button>
-              
+
                <HistoryBackButton rootClassName={css.listingButton} show={this.state.showBackButton}/>
 
           </div>
@@ -347,9 +360,10 @@ TopbarComponent.defaultProps = {
   currentUserHasOrders: null,
   currentPage: null,
   sendVerificationEmailError: null,
+  authScopes: [],
 };
 
-const { func, number, shape, string } = PropTypes;
+const { array, func, number, shape, string } = PropTypes;
 
 TopbarComponent.propTypes = {
   className: string,
@@ -358,6 +372,7 @@ TopbarComponent.propTypes = {
   mobileRootClassName: string,
   mobileClassName: string,
   isAuthenticated: bool.isRequired,
+  authScopes: array,
   authInProgress: bool.isRequired,
   currentUser: propTypes.currentUser,
   currentUserHasListings: bool.isRequired,

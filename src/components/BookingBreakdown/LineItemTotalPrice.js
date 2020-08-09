@@ -8,7 +8,7 @@ import { propTypes } from '../../util/types';
 import css from './BookingBreakdown.css';
 
 const LineItemUnitPrice = props => {
-  const { transaction, isProvider, intl, currentUser } = props;
+  const { transaction, isProvider, intl, currentUser, promo } = props;
 
   let providerTotalMessageId = 'BookingBreakdown.providerTotalDefault';
   if (txIsDelivered(transaction)) {
@@ -25,15 +25,22 @@ const LineItemUnitPrice = props => {
     <FormattedMessage id="BookingBreakdown.total" />
   );
 
-  const totalPrice = isProvider
+  let totalPrice = isProvider
     ? transaction.attributes.payoutTotal
     : transaction.attributes.payinTotal;
+
+  // if(promo && totalPrice){
+
+  //   let discount =  totalPrice.amount  * (promo.value/100);
+  //   console.log("[this is tanawy debugging from LineItemTotalPrice] ", totalPrice);
+  //   totalPrice.amount = totalPrice.amount -  discount;
+  // }
+
   let formattedTotalPrice = formatMoney(intl, totalPrice);
-  
   let currency = null;
   let rates = [];
   let result = null;
-  
+
   if(currentUser && currentUser.attributes.profile.protectedData.currency){
     currency = currentUser.attributes.profile.protectedData.currency;
     rates = currentUser.attributes.profile.protectedData.rates;
@@ -45,9 +52,10 @@ const LineItemUnitPrice = props => {
   }
   if(result){
     formattedTotalPrice = formattedTotalPrice.substr(1).replace(/,/g, '');
-    formattedTotalPrice = formattedTotalPrice * result.current_rate
+    formattedTotalPrice = formattedTotalPrice * result.current_rate;
     formattedTotalPrice = formattedTotalPrice.toFixed(2);
     formattedTotalPrice = result.symbol.toString() + formattedTotalPrice;
+
   }
   return (
     <>
