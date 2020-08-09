@@ -101,7 +101,7 @@ if (typeof window !== 'undefined') {
   const analyticsHandlers = setupAnalyticsHandlers();
   const store = configureStore(initialState, sdk, analyticsHandlers);
 
-  // APPCUES INITIALIZATION 
+  // APPCUES INITIALIZATION  
   
           (function(){
             window.Appcues.page();
