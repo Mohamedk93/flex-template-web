@@ -40,6 +40,7 @@ export class LandingPageComponent extends Component {
   // http://schema.org
   // We are using JSON-LD format
   handleClick (e){
+    console.log("[Tanawy says] hello a click handle has been called",e);
     if(e.target.innerText == 'Search'){
       let options = {
         enableHighAccuracy: true,
@@ -114,7 +115,9 @@ export class LandingPageComponent extends Component {
             <TopbarContainer />
           </LayoutWrapperTopbar>
           <LayoutWrapperMain>
-            <div className={css.heroContainer} onClick={((e) => this.handleClick(e))}>
+            {/* <div className={css.heroContainer} onClick={((e) => this.handleClick(e))}> */}
+            <div className={css.heroContainer} >
+
               <SectionHero className={css.hero} history={history} location={location} />
             </div>
             <ul className={css.sections}>
