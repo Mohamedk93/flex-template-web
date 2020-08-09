@@ -78,6 +78,7 @@ if (typeof window !== 'undefined') {
   // set up logger with Sentry DSN client key and environment
   log.setup();
 
+
   const baseUrl = config.sdk.baseUrl ? { baseUrl: config.sdk.baseUrl } : {};
 
   // eslint-disable-next-line no-underscore-dangle
@@ -99,6 +100,12 @@ if (typeof window !== 'undefined') {
   });
   const analyticsHandlers = setupAnalyticsHandlers();
   const store = configureStore(initialState, sdk, analyticsHandlers);
+
+  // APPCUES INITIALIZATION
+  
+          (function(){
+            window.Appcues.page();
+            window.Appcues.anonymous();})();
 
   // pass facebook client ID
   localStorage.setItem('REACT_APP_FB_APP_ID', process.env.REACT_APP_FB_APP_ID);

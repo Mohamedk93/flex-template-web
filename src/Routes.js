@@ -80,18 +80,45 @@ const handleLocationChanged = (dispatch, location) => {
 };
 
 class RouteComponentRenderer extends Component {
-  componentDidMount() {
+  componentDidMount(prevProps) {
     // Calling loadData on initial rendering (on client side).
     callLoadData(this.props);
     handleLocationChanged(this.props.dispatch, this.props.location);
+    // console.log("tanawy is debugging other parameters on routes component did mount", this.props);
+
+    // APPCUES INITIALIZATION CODE
+    console.log("tanawy is debugging the component did update function", prevProps);
+    console.log("tanawy is debugging other parameters on routes component did update", this.props);
+    const { location: { pathname } } = this.props;
+    const previousLocation = (prevProps||{location:{}}).location.pathname;
+
+    // if(previousLocation){
+
+      
+      if (pathname !== previousLocation) {
+        window.Appcues.page();
+
+      }
+    // }
+
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     // Calling loadData after initial rendering (on client side).
     // This makes it possible to use loadData as default client side data loading technique.
     // However it is better to fetch data before location change to avoid "Loading data" state.
     callLoadData(this.props);
     handleLocationChanged(this.props.dispatch, this.props.location);
+
+    // APPCUES INITIALIZATION CODE
+    console.log("tanawy is debugging the component did update function", prevProps);
+    console.log("tanawy is debugging other parameters on routes component did update", this.props);
+    const { location: { pathname } } = this.props;
+    const previousLocation = prevProps.location.pathname;
+
+    if (pathname !== previousLocation) {
+      window.Appcues.page();
+    }
   }
 
   render() {
@@ -102,7 +129,7 @@ class RouteComponentRenderer extends Component {
       staticContext.unauthorized = true;
     }
     return canShow ? (
-      <RouteComponent params={match.params} location={location} />
+      <RouteComponent  params={match.params} location={location} />
     ) : (
       <NamedRedirect
         name={authPage}
