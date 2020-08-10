@@ -914,7 +914,7 @@ export class BookingDatesFormComponent extends Component {
 
 
 
-              <FieldSelect className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={requiredSelect}>
+              <FieldSelect initialValue={stripeConnected?"credit card":undefined} className={css.paymentMethod} id="paymentMethod" name="paymentMethod" label="Choose payment method" validate={requiredSelect}>
                 <option value="">Select payment</option>
                 {stripeConnected ? (<option value="credit card">Credit card</option>) : null}
                 <option value="cash">Cash</option>
