@@ -104,8 +104,12 @@ if (typeof window !== 'undefined') {
   // APPCUES INITIALIZATION  
   
           (function(){
-            window.Appcues.page();
-            window.Appcues.anonymous();})();
+            if(window.Appcues){
+
+              window.Appcues.page();
+              window.Appcues.anonymous();
+            }
+            })();
 
   // pass facebook client ID
   localStorage.setItem('REACT_APP_FB_APP_ID', process.env.REACT_APP_FB_APP_ID);
