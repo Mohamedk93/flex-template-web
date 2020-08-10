@@ -960,7 +960,8 @@ export class BookingDatesFormComponent extends Component {
                             </li>
                           );
                         })}
-                        { hoursValid(values) && isChooseWorkspace(values) ? (
+                        {/* disabling additional day button below */}
+                        { false && hoursValid(values) && isChooseWorkspace(values) ? (
                             <li>
                               <InlineTextButton
                                 className={css.addDayButton}
