@@ -454,6 +454,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
     // The way to pass it to checkout page is through pageData.bookingData
 
     const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity, rentalType } = bookingData;
+    console.log("Tanawy is debugging from cash submit in checkout page", this.props);
 
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
       item => item.code === LINE_ITEM_SEATS_FEE
@@ -496,6 +497,8 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
       officeRoomsQuantity,
       meetingRoomsQuantity,
     });
+
+    console.log("Tanawy is debugging from cash submit in checkout page before send order request", this.requestParams);
 
     const processAlias = config.cashBookingProcessAlias;
     sendOrderRequest(requestParams, initialMessage, processAlias, rentalType)
