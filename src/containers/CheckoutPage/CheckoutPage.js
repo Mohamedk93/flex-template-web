@@ -499,6 +499,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
     ? couponDiscountLineItem.unitPrice
     : null;
 
+    
     const requestParams = this.customPricingParams({
       listingId: this.state.pageData.listing.id,
       bookingStart: speculatedTransaction.booking.attributes.start,
@@ -541,6 +542,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
         }
       })
       .catch(() => {
+        console.log("Tanawy is debugging reached a catch in checkout page when sending order with same date");
         this.setState({ submitting: false });
       });
   }
