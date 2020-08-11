@@ -220,7 +220,7 @@ export class CheckoutPageComponent extends Component {
 
       // TODO: add a mean to extract promotion fees and line items from bookingData down here
       const {
-        // hours,
+        hours,
         seatsFee,
         officeRoomsFee,
         meetingRoomsFee,
@@ -232,9 +232,9 @@ export class CheckoutPageComponent extends Component {
         rentalType,
       } = pageData.bookingData;
 
-      if(rentalType ==="daily"){
-        const hours = pageData.booking
-      }
+      // if(rentalType ==="daily"){
+      //   const hours = pageData.booking
+      // }
 
       // TODO: Discount fees should be added here as well once defined
       const preliminaryParams = {
@@ -464,11 +464,12 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
     bookingData.bookingStart && 
     bookingData.bookingEnd && 
     bookingData.bookingEnd === bookingData.bookingStart;
+    let adjustedHours;
     if(isSingleDayHoursNotCounted){
-      const adjustedHours = hours + 1;
+       adjustedHours = hours + 1;
     } else 
     {
-      const adjustedHours = hours;
+       adjustedHours = hours;
     }
 
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
