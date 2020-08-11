@@ -554,7 +554,7 @@ export class BookingDatesFormComponent extends Component {
 
             if (startDate && endDate) {
               const startDateObj = moment(startDate);
-              const endDateObj = moment(endDate);
+              const endDateObj = moment(endDate).add(1,'days');
               let duration = moment.duration(endDateObj.diff(startDateObj));
               quantity = duration.asDays();
             };

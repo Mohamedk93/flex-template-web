@@ -126,6 +126,14 @@ export const daysBetween = (startDate, endDate) => {
   return days;
 };
 
+export const daysBetweenInclusive = (startDate, endDate) => {
+  const days = moment(endDate).add(1,'days').diff(startDate, 'days');
+  if (days < 0) {
+    throw new Error('End date cannot be before start date');
+  }
+  return days;
+};
+
 export const monthsBetween = (startDate, endDate) => {
   const months = moment(endDate).diff(startDate, 'months') + 1;
   if (months < 0) {

@@ -2,7 +2,7 @@ import React from 'react';
 import {FormattedMessage, FormattedHTMLMessage, FormattedDate} from '../../util/reactIntl';
 import moment from 'moment';
 import {propTypes} from '../../util/types';
-import { daysBetween, monthsBetween } from '../../util/dates';
+import { daysBetweenInclusive, monthsBetween } from '../../util/dates';
 
 import css from './BookingBreakdown.css';
 
@@ -40,7 +40,7 @@ const LineItemBookingDays = props => {
   let unitCountMessage = null;
   let count = null;
   if(currentRentalType === 'daily') {
-    count = daysBetween(startDate, endDate);
+    count = daysBetweenInclusive(startDate, endDate);
     unitLabelMessage = (
       <FormattedHTMLMessage id="BookingBreakdown.dayLabel"/>
     );

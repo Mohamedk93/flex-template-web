@@ -29,7 +29,7 @@ import React from 'react';
 import moment from 'moment';
 import Decimal from 'decimal.js';
 import { types as sdkTypes } from '../../util/sdkLoader';
-import { dateFromLocalToAPI, nightsBetween, daysBetween } from '../../util/dates';
+import { dateFromLocalToAPI, nightsBetween, daysBetweenInclusive } from '../../util/dates';
 import { TRANSITION_REQUEST_PAYMENT, TX_TRANSITION_ACTOR_CUSTOMER } from '../../util/transaction';
 import {
   LINE_ITEM_DAY,
@@ -117,16 +117,17 @@ const estimatedTransaction = (
   seatsQuantity,
   officeRoomsQuantity,
   meetingRoomsQuantity,
+  currentRentalType,
 ) => {
 
   const now = new Date();
-  const isNightly = unitType === LINE_ITEM_NIGHT;
-  const isDaily = unitType === LINE_ITEM_DAY;
+  const isNightly =  unitType === LINE_ITEM_NIGHT;
+  const isDaily = unitType === LINE_ITEM_DAY ;
 
   const unitCount = isNightly
     ? nightsBetween(bookingStart, bookingEnd)
     : isDaily
-      ? daysBetween(bookingStart, bookingEnd)
+      ? daysBetweenInclusive(bookingStart, bookingEnd)
       : quantity;
 
   const totalPrice = estimatedTotalPrice(
@@ -307,6 +308,7 @@ const EstimatedBreakdownMaybe = props => {
     seatsQuantity,
     officeRoomsQuantity,
     meetingRoomsQuantity,
+    currentRentalType,
   );
 
   return (

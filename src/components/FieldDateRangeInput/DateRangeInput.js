@@ -222,7 +222,8 @@ class DateRangeInputComponent extends Component {
 
     /* eslint-enable no-unused-vars */
 
-    const isDaily = unitType === LINE_ITEM_DAY;
+    console.log("[Tanawy is here DateRange Input render] checking unitType", unitType);
+    const isDaily = true || unitType === LINE_ITEM_DAY;
     const initialStartMoment = initialDates ? moment(initialDates.startDate) : null;
     const initialEndMoment = initialDates ? moment(initialDates.endDate) : null;
     const startDate =
