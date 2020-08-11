@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import config from '../../config';
 import routeConfiguration from '../../routeConfiguration';
 import { pathByRouteName, findRouteByRouteName } from '../../util/routes';
+import moment from 'moment';
 import {
   propTypes,
   LINE_ITEM_NIGHT,
@@ -423,6 +424,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
 
     console.log("Tanawy is debugging from checkoutPage customPricingParams method end] couponDiscountLineItem", couponDiscountLineItem);
     console.log("Tanawy is debugging bookingstart and booking end",{bookingStart,bookingEnd});
+    window.TanawysTestingTempDate = {bookingStart,BookingEnd,moment};
     return {
       listingId,
       bookingStart,
