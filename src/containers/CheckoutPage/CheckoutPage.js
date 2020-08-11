@@ -424,7 +424,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
 
     console.log("Tanawy is debugging from checkoutPage customPricingParams method end] couponDiscountLineItem", couponDiscountLineItem);
     console.log("Tanawy is debugging bookingstart and booking end",{bookingStart,bookingEnd});
-    window.TanawysTestingTempDate = {bookingStart,BookingEnd,moment};
+    window.TanawysTestingTempDate = {bookingStart,bookingEnd,moment};
     return {
       listingId,
       bookingStart,
