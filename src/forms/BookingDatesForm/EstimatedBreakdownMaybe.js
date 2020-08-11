@@ -121,8 +121,8 @@ const estimatedTransaction = (
 ) => {
 
   const now = new Date();
-  const isNightly =  unitType === LINE_ITEM_NIGHT;
-  const isDaily = unitType === LINE_ITEM_DAY ;
+  const isNightly = false && unitType === LINE_ITEM_NIGHT;
+  const isDaily = currentRentalType === "daily" || unitType === LINE_ITEM_DAY ;
 
   const unitCount = isNightly
     ? nightsBetween(bookingStart, bookingEnd)
