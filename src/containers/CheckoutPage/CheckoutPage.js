@@ -255,6 +255,8 @@ export class CheckoutPageComponent extends Component {
         rentalType,
       }
 
+      console.log("tanawy is debugging checkout initial data load", preliminaryParams); 
+      window.tanawyIsTestingHere = {moment, preliminaryParams};
       // Fetch speculated transaction for showing price in booking breakdown
       // NOTE: if unit type is line-item/units, quantity needs to be added.
       // The way to pass it to checkout page is through pageData.bookingData
