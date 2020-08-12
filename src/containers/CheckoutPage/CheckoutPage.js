@@ -282,7 +282,7 @@ export class CheckoutPageComponent extends Component {
       listingId,
       bookingStart,
       bookingEnd,
-      hours,
+      // hours,
       seatsFee,
       officeRoomsFee,
       meetingRoomsFee,
@@ -293,6 +293,17 @@ export class CheckoutPageComponent extends Component {
       preliminaryParams,
       ...rest
     } = params;
+
+    let hours = params.hours;
+
+    const isSameDay = moment(bookingStart).isSame(moment(bookingEnd),'days');
+    let adjustedBookingEnd;
+    if(isSameDay){
+      adjustedBookingEnd = moment(bookingEnd).add(1,'minute').toDate();
+      hours = 1;
+    } else {
+      adjustedBookingEnd = bookingEnd;
+    }
 
     let seatsFeePriceTotal,
         officeRoomsFeePriceTotal,
@@ -427,13 +438,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
     console.log("Tanawy is debugging from checkoutPage customPricingParams method end] couponDiscountLineItem", couponDiscountLineItem);
     console.log("Tanawy is debugging bookingstart and booking end",{bookingStart,bookingEnd});
     window.TanawysTestingTempDate = {bookingStart,bookingEnd,moment};
-    const isSameDay = moment(bookingStart).isSame(moment(bookingEnd),'days');
-    let adjustedBookingEnd;
-    if(isSameDay){
-      adjustedBookingEnd = moment(bookingEnd).add(1,'days').toDate();
-    } else {
-      adjustedBookingEnd = bookingEnd;
-    }
+    
     return {
       listingId,
       bookingStart,
