@@ -299,7 +299,7 @@ export class CheckoutPageComponent extends Component {
     const isSameDay = moment(bookingStart).isSame(moment(bookingEnd),'days');
     let adjustedBookingEnd;
     if(isSameDay){
-      adjustedBookingEnd = moment(bookingEnd).add(1,'days').toDate();
+      adjustedBookingEnd = moment(bookingEnd).add(5,'minutes').toDate();
       hours = 1;
     } else {
       adjustedBookingEnd = bookingEnd;
@@ -437,7 +437,9 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
 
     console.log("Tanawy is debugging from checkoutPage customPricingParams method end] couponDiscountLineItem", couponDiscountLineItem);
     console.log("Tanawy is debugging bookingstart and booking end",{bookingStart,bookingEnd});
-    window.TanawysTestingTempDate = {bookingStart,bookingEnd,moment};
+    window.TanawysTestingTempDate = {bookingStart,bookingEnd,moment, params:};
+
+
     
     return {
       listingId,
