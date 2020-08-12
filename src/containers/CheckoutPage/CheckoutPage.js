@@ -299,7 +299,7 @@ export class CheckoutPageComponent extends Component {
     const isSameDay = moment(bookingStart).isSame(moment(bookingEnd),'days');
     let adjustedBookingEnd;
     if(isSameDay){
-      adjustedBookingEnd = moment(bookingEnd).add(1,'minute').toDate();
+      adjustedBookingEnd = moment(bookingEnd).add(1,'days').toDate();
       hours = 1;
     } else {
       adjustedBookingEnd = bookingEnd;
