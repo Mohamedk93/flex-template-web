@@ -427,10 +427,17 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
     console.log("Tanawy is debugging from checkoutPage customPricingParams method end] couponDiscountLineItem", couponDiscountLineItem);
     console.log("Tanawy is debugging bookingstart and booking end",{bookingStart,bookingEnd});
     window.TanawysTestingTempDate = {bookingStart,bookingEnd,moment};
+    const isSameDay = moment(bookingStart).isSame(moment(bookingEnd),'days');
+    let adjustedBookingEnd;
+    if(isSameDay){
+      adjustedBookingEnd = moment(bookingEnd).add(1,'days').toDate();
+    } else {
+      adjustedBookingEnd = bookingEnd;
+    }
     return {
       listingId,
       bookingStart,
-      bookingEnd,
+      bookingEnd:adjustedBookingEnd,
       lineItems: [
         ...seatsFeeLineItemMaybe,
         ...officeRoomsFeeLineItemMaybe,
