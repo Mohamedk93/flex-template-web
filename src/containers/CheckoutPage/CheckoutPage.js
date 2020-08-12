@@ -291,6 +291,7 @@ export class CheckoutPageComponent extends Component {
       officeRoomsQuantity,
       meetingRoomsQuantity,
       preliminaryParams,
+      rentalType,
       ...rest
     } = params;
 
@@ -298,11 +299,14 @@ export class CheckoutPageComponent extends Component {
 
     const isSameDay = moment(bookingStart).isSame(moment(bookingEnd),'days');
     let adjustedBookingEnd;
-    if(isSameDay){
+    if(isSameDay && rentalType === "daily"){
       adjustedBookingEnd = moment(bookingEnd).add(5,'minutes').toDate();
       hours = 1;
     } else {
       adjustedBookingEnd = bookingEnd;
+      if(rentalType === "daily"){
+        hours = hours+1;
+      }
     }
 
     let seatsFeePriceTotal,
