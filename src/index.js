@@ -31,7 +31,6 @@ import { fetchCurrentUser } from './ducks/user.duck';
 import routeConfiguration from './routeConfiguration';
 import * as log from './util/log';
 import { LoggingAnalyticsHandler, GoogleAnalyticsHandler } from './analytics/handlers';
-import moment from 'moment';
 
 import './marketplaceIndex.css';
 
@@ -121,7 +120,7 @@ if (typeof window !== 'undefined') {
   require('./util/polyfills');
   render(store, !!window.__PRELOADED_STATE__);
 
-  if (config.dev || true) {
+  if (config.dev) {
     // Expose stuff for the browser REPL
     window.app = {
       config,
@@ -130,7 +129,6 @@ if (typeof window !== 'undefined') {
       store,
       sample,
       routeConfiguration: routeConfiguration(),
-      moment,
     };
   }
 }

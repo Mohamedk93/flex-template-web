@@ -146,8 +146,8 @@ export const TransactionPageComponent = props => {
       confirmPaymentError: null,
     };
 
-    console.log("[tanawy is at transaction page handlign booking request] initial value", initialValues);
-    window.tanawyTransactionTest = initialValues;
+    // console.log("[tanawy is at transaction page handlign booking request] initial value", initialValues);
+    // window.tanawyTransactionTest = initialValues;
 
     redirectToCheckoutPageWithInitialValues(initialValues, currentListing);
   };

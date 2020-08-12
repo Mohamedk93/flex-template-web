@@ -255,8 +255,8 @@ export class CheckoutPageComponent extends Component {
         rentalType,
       }
 
-      console.log("tanawy is debugging checkout initial data load", preliminaryParams); 
-      window.tanawyIsTestingHere = {moment, preliminaryParams};
+      // console.log("tanawy is debugging checkout initial data load", preliminaryParams); 
+      // window.tanawyIsTestingHere = {moment, preliminaryParams};
       // Fetch speculated transaction for showing price in booking breakdown
       // NOTE: if unit type is line-item/units, quantity needs to be added.
       // The way to pass it to checkout page is through pageData.bookingData
@@ -362,9 +362,9 @@ export class CheckoutPageComponent extends Component {
       couponDiscountPriceTotal = couponDiscount ? couponDiscount : 0;
     }
 
-    console.log("[TANAWY IS TESTING FROM CHECKOUTPAGE custompricing method] PROPS", this.props);
-    console.log("[Tanawy is debugging from checkoutPage custompricing method] params", params);
-    console.log("[Tanawy is debugging from checkoutPage custompricing method] couponDiscountPriceTotal", couponDiscountPriceTotal);
+    // console.log("[TANAWY IS TESTING FROM CHECKOUTPAGE custompricing method] PROPS", this.props);
+    // console.log("[Tanawy is debugging from checkoutPage custompricing method] params", params);
+    // console.log("[Tanawy is debugging from checkoutPage custompricing method] couponDiscountPriceTotal", couponDiscountPriceTotal);
 
 // if i reached here and couponDiscountPriceTotal is 0 and promos exist fix pricing
 let isPromoExist = this.props.bookingData && this.props.bookingData.promo;
@@ -439,26 +439,9 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
 
     const couponDiscountLineItemMaybe = couponDiscountLineItem ? [couponDiscountLineItem] : [];
 
-    console.log("Tanawy is debugging from checkoutPage customPricingParams method end] couponDiscountLineItem", couponDiscountLineItem);
-    console.log("Tanawy is debugging bookingstart and booking end",{bookingStart,bookingEnd});
-    window.TanawysTestingTempDate = {bookingStart,bookingEnd,moment, params: {
-      listingId,
-      bookingStart,
-      bookingEnd:adjustedBookingEnd,
-      lineItems: [
-        ...seatsFeeLineItemMaybe,
-        ...officeRoomsFeeLineItemMaybe,
-        ...meetingRoomsFeeLineItemMaybe,
-        ...couponDiscountLineItemMaybe,
-        // TO DO: Need delete from backend
-        {
-          code: unitType,
-          unitPrice: new Money(0, 'USD'),
-          quantity: 0,
-        },
-      ],
-      ...rest,
-    }};
+    // console.log("Tanawy is debugging from checkoutPage customPricingParams method end] couponDiscountLineItem", couponDiscountLineItem);
+    // console.log("Tanawy is debugging bookingstart and booking end",{bookingStart,bookingEnd});
+    
 
 
     
@@ -497,7 +480,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
     // The way to pass it to checkout page is through pageData.bookingData
 
     const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity, rentalType } = bookingData;
-    console.log("Tanawy is debugging from cash submit in checkout page", this.props);
+    // console.log("Tanawy is debugging from cash submit in checkout page", this.props);
 
     const isSingleDayHoursNotCounted = rentalType === "daily" && 
     bookingData.bookingStart && 
@@ -554,7 +537,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
       meetingRoomsQuantity,
     });
 
-    console.log("Tanawy is debugging from cash submit in checkout page before send order request", this.requestParams);
+    // console.log("Tanawy is debugging from cash submit in checkout page before send order request", this.requestParams);
 
     const processAlias = config.cashBookingProcessAlias;
     sendOrderRequest(requestParams, initialMessage, processAlias, rentalType)
@@ -581,7 +564,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
         }
       })
       .catch(() => {
-        console.log("Tanawy is debugging reached a catch in checkout page when sending order with same date");
+        // console.log("Tanawy is debugging reached a catch in checkout page when sending order with same date");
         this.setState({ submitting: false });
       });
   }
@@ -754,7 +737,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
     // stripe.handleCardPayment(stripe, { payment_method: stripePaymentMethodId })
     const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity } = bookingData;
 
-    console.log("[Tanawy is testing from checkoutpage in the container from handlePaymentIntent method] bookingData", bookingData);
+    // console.log("[Tanawy is testing from checkoutpage in the container from handlePaymentIntent method] bookingData", bookingData);
 
     const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
       item => item.code === LINE_ITEM_SEATS_FEE
@@ -1395,7 +1378,7 @@ const mapStateToProps = state => {
     initiateOrderError,
     confirmPaymentError,
   } = state.CheckoutPage;
-  console.log("[Tanawy is debugging pre state in checkout mapstatetoprops]", state.CheckoutPage);
+  // console.log("[Tanawy is debugging pre state in checkout mapstatetoprops]", state.CheckoutPage);
   const { currentUser } = state.user;
   const { handleCardPaymentError, paymentIntent, retrievePaymentIntentError } = state.stripe;
   return {

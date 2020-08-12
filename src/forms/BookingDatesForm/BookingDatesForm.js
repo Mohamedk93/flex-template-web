@@ -329,8 +329,8 @@ export class BookingDatesFormComponent extends Component {
         values.bookingDates.endDate ?
         values.bookingDates.endDate : null;
 
-        console.log("[tanawy is debugging from booking dates form] ",{sdtFinal,edtFinal});
-        window.letmetest = {sdtFinal,edtFinal,moment};
+        // console.log("[tanawy is debugging from booking dates form] ",{sdtFinal,edtFinal});
+        // window.letmetest = {sdtFinal,edtFinal,moment};
 
       if (sdtFinal && edtFinal) {
         const startDateObj = moment(sdtFinal);
@@ -348,8 +348,8 @@ export class BookingDatesFormComponent extends Component {
 
     }
 
-    console.log("\n\n\n[tanawy is debugging from booking dates form 2] \n\n\n",{sdtFinal,edtFinal});
-    window.letmetest = {sdtFinal,edtFinal,moment};
+    // console.log("\n\n\n[tanawy is debugging from booking dates form 2] \n\n\n",{sdtFinal,edtFinal});
+    // window.letmetest = {sdtFinal,edtFinal,moment};
     this.props.onSubmit({
       paymentMethod,
       workspaces,
@@ -858,8 +858,8 @@ export class BookingDatesFormComponent extends Component {
           return (
             <Form
               onSubmit={e => {
-                console.log("\n\n\n[Tanawy says reached here form submit]\n\n\n",this);
-                window.letmetestform = {startDate,endDate,e,handleSubmit,currentRentalType, moment};
+                // console.log("\n\n\n[Tanawy says reached here form submit]\n\n\n",this);
+                // window.letmetestform = {startDate,endDate,e,handleSubmit,currentRentalType, moment};
                 faceBookTrackerSend();
                 googleTagTrackerSend();
                 if (currentRentalType === 'daily') {
@@ -868,7 +868,7 @@ export class BookingDatesFormComponent extends Component {
                     if(isSameDay){
                       endDate = moment(endDate).add(1,'days');
                     }
-                    console.log("[tanawy within booking form submit]",{startDate,endDate});
+                    // console.log("[tanawy within booking form submit]",{startDate,endDate});
                     handleSubmit(e);
                   } else if(!startDate) {
                     e.preventDefault();
