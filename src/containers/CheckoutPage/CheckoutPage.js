@@ -437,7 +437,24 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
 
     console.log("Tanawy is debugging from checkoutPage customPricingParams method end] couponDiscountLineItem", couponDiscountLineItem);
     console.log("Tanawy is debugging bookingstart and booking end",{bookingStart,bookingEnd});
-    window.TanawysTestingTempDate = {bookingStart,bookingEnd,moment, params:};
+    window.TanawysTestingTempDate = {bookingStart,bookingEnd,moment, params: {
+      listingId,
+      bookingStart,
+      bookingEnd:adjustedBookingEnd,
+      lineItems: [
+        ...seatsFeeLineItemMaybe,
+        ...officeRoomsFeeLineItemMaybe,
+        ...meetingRoomsFeeLineItemMaybe,
+        ...couponDiscountLineItemMaybe,
+        // TO DO: Need delete from backend
+        {
+          code: unitType,
+          unitPrice: new Money(0, 'USD'),
+          quantity: 0,
+        },
+      ],
+      ...rest,
+    }};
 
 
     
