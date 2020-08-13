@@ -692,6 +692,99 @@ export class BookingDatesFormComponent extends Component {
             meeting_rooms: meetingRoomsFee ? `(${converter(formatMoney(intl, meetingRoomsFee), currentUser)})` : null,
           };
 
+          // if(window){
+          //   window.tanawyWillTestavails = avails;
+
+          // }
+          let summarizedAvails = {};
+          avails.map(item=> summarizedAvails[item.hours] = [...(summarizedAvails[item.hours]||[]),item.day]);
+          let getConnectedDays = (summarizedHours = {}) => {
+            let operatingHours = Object.keys(summarizedHours);
+            let connectedDaysArray = [];
+            operatingHours.forEach(time=>{
+              let startingDay;
+              let endingDay;
+              let operatingTime;
+              let currentArray = summarizedHours[time];
+              // console.log("Tanawy says from inside operating hours foreach", currentArray);
+              if(currentArray.length === 1){
+                // connectedDaysArray.push({day: currentArray[0], hours: time});
+                connectedDaysArray = [...connectedDaysArray, {day: currentArray[0], hours: time}];
+
+              } else if(currentArray.length !== 0){
+                startingDay = currentArray[0];
+                endingDay = currentArray[0];
+                for(let i=1; i<currentArray.length; i++){
+
+                  switch(currentArray[i]){
+                    case "Monday": 
+                    endingDay = endingDay === "Sunday"? "Monday":endingDay;break;
+                    case "Tuesday": 
+                    endingDay = endingDay === "Monday"? "Tuesday":endingDay;break;
+                    case "Wednesday": 
+                    endingDay = endingDay === "Tuesday"? "Wednesday":endingDay;break;
+                    case "Thursday": 
+                    endingDay = endingDay === "Wednesday"? "Thursday":endingDay;break;
+                    case "Friday":
+                      endingDay = endingDay === "Thursday"? "Friday":endingDay;break;
+                    case "Saturday":
+                      endingDay = endingDay === "Friday"? "Saturday":endingDay;break;
+                    case "Sunday":
+                      endingDay = endingDay === "Saturday"? "Sunday":endingDay;break;
+                    default: break;
+                  }
+                  if(currentArray[i]!==endingDay){
+
+                    if(startingDay === endingDay){
+                      // connectedDaysArray.push({day: `${startingDay}`, hours: time});
+                      connectedDaysArray = [...connectedDaysArray, {day: `${startingDay}`, hours: time}];
+
+
+                    } else {
+
+                      // connectedDaysArray.push({day: `${startingDay} to ${endingDay}`, hours: time});
+                      connectedDaysArray = [...connectedDaysArray, {day: `${startingDay} to ${endingDay}`, hours: time}];
+                    }
+                    startingDay= currentArray[i];
+                    endingDay = currentArray[i];
+
+
+                  }
+
+                }
+                if(startingDay === endingDay){
+                  // connectedDaysArray.push({day: `${startingDay}`, hours: time});
+                  connectedDaysArray = [...connectedDaysArray, {day: `${startingDay}`, hours: time}];
+
+                } else if(startingDay !== currentArray[0]){
+                  // connectedDaysArray.push({day: `${startingDay} to ${endingDay}`, hours: time});
+                  connectedDaysArray = [...connectedDaysArray, {day: `${startingDay} to ${endingDay}`, hours: time}];
+
+                } else{
+                  connectedDaysArray = [...connectedDaysArray, {day: `${startingDay} to ${endingDay}`, hours: time}];
+
+
+                }
+
+              }
+
+
+
+
+            });
+
+            return connectedDaysArray;
+
+
+          }
+
+          // console.log('Tanawy is testing operating hours summary',getConnectedDays(summarizedAvails));
+          if(window){
+
+            window.letmetestoperatinghours = {getConnectedDays,avails,summarizedAvails};
+          }
+
+          avails = avails? getConnectedDays(summarizedAvails):avails;
           const availsView = avails ? (
             <div className={css.availsBox}>
               <h3 className={css.availsTitle}>
