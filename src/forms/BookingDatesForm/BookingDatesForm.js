@@ -784,13 +784,14 @@ export class BookingDatesFormComponent extends Component {
             window.letmetestoperatinghours = {getConnectedDays,avails,summarizedAvails};
           }
 
-          avails = avails? getConnectedDays(summarizedAvails):avails;
+          let summedAvails = avails? getConnectedDays(summarizedAvails):avails;
+
           const availsView = avails ? (
             <div className={css.availsBox}>
               <h3 className={css.availsTitle}>
                 <FormattedMessage id="BookingPanel.availsTitle" />
               </h3>
-              {avails.map((item, i) => {
+              {summedAvails.map((item, i) => {
                 if(currentRentalType === "hourly") {
                   return (
                     <p key={i} className={css.availsItem}>
