@@ -122,6 +122,9 @@ export class CheckoutPageComponent extends Component {
     };
     this.stripe = null;
     console.log("[TANAWY IS TESTING FROM CHECKOUTPAGE CONSTRUCTOR] PROPS", props);
+    if(window){
+      window.lettanawytestcheckout = {props};
+    }
 
     this.onStripeInitialized = this.onStripeInitialized.bind(this);
     this.loadInitialData = this.loadInitialData.bind(this);
