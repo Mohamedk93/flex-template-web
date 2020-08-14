@@ -119,6 +119,8 @@ export class ListingPageComponent extends Component {
 
     const { bookingDates, paymentMethod, rental_type, ...bookingData } = values;
 
+    // console.log("Tanawy is testing values from listing page booking panel",values);
+    // window.letmetestfromlistingpage = {values,moment};
     const initialValues = {
       listing,
       bookingData,
@@ -127,6 +129,7 @@ export class ListingPageComponent extends Component {
       bookingDates: {
         bookingStart: bookingDates.startDate,
         bookingEnd: bookingDates.endDate,
+        ...bookingDates,
       },
       confirmPaymentError: null,
     };

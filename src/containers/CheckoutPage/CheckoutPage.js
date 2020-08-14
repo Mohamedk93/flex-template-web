@@ -303,15 +303,69 @@ export class CheckoutPageComponent extends Component {
     let hours = params.hours;
 
     const isSameDay = moment(bookingStart).isSame(moment(bookingEnd),'days');
+    const isToday = moment(bookingStart).isSame(moment(),'days');
+    const isWithinOperatingHours = (operatingSchedule = [], time)=>{
+      let stdTime = moment(time);
+      const daysArray = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      const dayOfWeek = daysArray[moment(time).day()];
+      const operatingTimeIndex = operatingSchedule.findIndex( item => item.day === dayOfWeek);
+      if(operatingTimeIndex<0){
+        return false;
+      } 
+      const operatingTime = operatingSchedule[operatingTimeIndex].hours;
+      const [startingHourString, endingHourString] = operatingTime.split('-');
+      const startingHour = moment(startingHourString,'hh:mm a');
+      const endingHour = moment(endingHourString,"hh:mm a");
+      let stdTimeHour = moment().hours(stdTime.hour());
+      if(stdTimeHour.isBefore(startingHour) || stdTimeHour.isAfter(endingHour)){
+        return false;
+      }
+
+      return true;
+
+      
+
+
+    };
+    const getOperatingHoursForDate = (operatingSchedule =[], time ) =>{
+
+      let stdTime = moment(time);
+      const daysArray = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      const dayOfWeek = daysArray[moment(time).day()];
+      const operatingTimeIndex = operatingSchedule.findIndex( item => item.day === dayOfWeek);
+      if(operatingTimeIndex<0){
+        return false;
+      } 
+      const operatingTime = operatingSchedule[operatingTimeIndex].hours;
+      const [startingHourString, endingHourString] = operatingTime.split('-');
+      const startingHour = moment(startingHourString,'hh:mm a');
+      const endingHour = moment(endingHourString,"hh:mm a");
+
+      return { startingHour,endingHour}
+
+    }
     let adjustedBookingEnd;
+    let adjustedBookingStart;
     if(isSameDay && rentalType === "daily"){
       if(window){
         console.log("tanawy is testing same day reservation span in checkout page custompricing",{moment,bookingStart,bookingEnd,operatingHours});
         window.tanawyTestoperatingHours = {moment,bookingStart,bookingEnd,operatingHours};
       }
-      adjustedBookingEnd = moment(bookingEnd).add(5,'minutes').toDate();
+      
+      let {startingHour, endingHour} = getOperatingHoursForDate(operatingHours,bookingEnd);
+      if(startingHour && endingHour){
+
+        adjustedBookingStart = moment(bookingStart).hours(startingHour.hour).startOf('hour');
+        adjustedBookingEnd = moment(bookingEnd).hours(endingHour.hour).startOf('hour');
+      } else {
+        adjustedBookingStart = moment(bookingStart).startOf('day').startOf('hour');
+        adjustedBookingEnd = moment(bookingEnd).endOf('day').startOf('hour');
+      }
+      
+      // adjustedBookingEnd = moment(bookingEnd).add(5,'minutes').toDate();
       hours = 1;
     } else {
+      adjustedBookingStart=bookingStart;
       adjustedBookingEnd = bookingEnd;
       if(rentalType === "daily"){
         hours = hours+1;
@@ -456,7 +510,7 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
     
     return {
       listingId,
-      bookingStart,
+      bookingStart:adjustedBookingStart,
       bookingEnd:adjustedBookingEnd,
       lineItems: [
         ...seatsFeeLineItemMaybe,
@@ -1387,7 +1441,7 @@ const mapStateToProps = state => {
     initiateOrderError,
     confirmPaymentError,
   } = state.CheckoutPage;
-  console.log("[Tanawy is debugging pre state in checkout mapstatetoprops]", state.CheckoutPage);
+  // console.log("[Tanawy is debugging pre state in checkout mapstatetoprops]", state.CheckoutPage);
   const { currentUser } = state.user;
   const { handleCardPaymentError, paymentIntent, retrievePaymentIntentError } = state.stripe;
   return {

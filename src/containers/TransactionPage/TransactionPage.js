@@ -146,7 +146,7 @@ export const TransactionPageComponent = props => {
       bookingDates: {
         bookingStart: bookingDates.startDate,
         bookingEnd: bookingDates.endDate,
-        operatingHours: bookingDates.operatingHours,
+        ...bookingDates,
       },
       confirmPaymentError: null,
     };
