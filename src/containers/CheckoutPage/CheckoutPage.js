@@ -1387,7 +1387,7 @@ const mapStateToProps = state => {
     initiateOrderError,
     confirmPaymentError,
   } = state.CheckoutPage;
-  // console.log("[Tanawy is debugging pre state in checkout mapstatetoprops]", state.CheckoutPage);
+  console.log("[Tanawy is debugging pre state in checkout mapstatetoprops]", state.CheckoutPage);
   const { currentUser } = state.user;
   const { handleCardPaymentError, paymentIntent, retrievePaymentIntentError } = state.stripe;
   return {

@@ -161,6 +161,10 @@ export class BookingPanel extends Component {
     // });
 
     const handleSubmit = values => {
+      console.log("Tanawy is debugging from handleSubmit from booking panel", values);
+      if(window){
+        window.tanawytestbookingpanel = values;
+      }
       const selectedSeatsFee =
         values &&
         values.workspaces &&

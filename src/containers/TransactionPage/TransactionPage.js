@@ -134,6 +134,10 @@ export const TransactionPageComponent = props => {
   const handleSubmitBookingRequest = values => {
     const { bookingDates, ...bookingData } = values;
 
+    console.log("[tanawy is debugging from handle submit booking request in transaction page", values);
+    if(window){
+      window.lettanawytestparams = values;
+    }
     const initialValues = {
       listing: currentListing,
       // enquired transaction should be passed to CheckoutPage
