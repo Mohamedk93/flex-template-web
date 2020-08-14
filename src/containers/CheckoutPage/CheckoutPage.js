@@ -353,7 +353,7 @@ export class CheckoutPageComponent extends Component {
       }
       
       let {startingHour, endingHour} = getOperatingHoursForDate(operatingHours,bookingEnd);
-      if(startingHour && endingHour){
+      if(startingHour && endingHour && false){
 
         adjustedBookingStart = moment(bookingStart).hours(startingHour.hour).startOf('hour').toDate();
         adjustedBookingEnd = moment(bookingEnd).hours(endingHour.hour).startOf('hour').toDate();
