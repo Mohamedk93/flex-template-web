@@ -331,7 +331,7 @@ export class CheckoutPageComponent extends Component {
 
       let stdTime = moment(time);
       const daysArray = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-      const dayOfWeek = daysArray[moment(time).day()];
+      const dayOfWeek = daysArray[stdTime.day()];
       const operatingTimeIndex = operatingSchedule.findIndex( item => item.day === dayOfWeek);
       if(operatingTimeIndex<0){
         return false;
@@ -353,10 +353,10 @@ export class CheckoutPageComponent extends Component {
       }
       
       let {startingHour, endingHour} = getOperatingHoursForDate(operatingHours,bookingEnd);
-      if(startingHour && endingHour && false){
+      if(startingHour && endingHour){
 
-        adjustedBookingStart = moment(bookingStart).hours(startingHour.hour).startOf('hour').toDate();
-        adjustedBookingEnd = moment(bookingEnd).hours(endingHour.hour).startOf('hour').toDate();
+        adjustedBookingStart = moment(bookingStart).hours(startingHour.hour()).startOf('hour').toDate();
+        adjustedBookingEnd = moment(bookingEnd).hours(endingHour.hour()).startOf('hour').toDate();
       } else {
         adjustedBookingStart = moment(bookingStart).startOf('day').startOf('hour').toDate();
         adjustedBookingEnd = moment(bookingEnd).endOf('day').startOf('hour').toDate();
