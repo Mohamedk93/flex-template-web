@@ -212,7 +212,7 @@ export class CheckoutPageComponent extends Component {
 
     if (shouldFetchSpeculatedTransaction) {
       const listingId = pageData.listing.id;
-      const { bookingStart, bookingEnd } = pageData.bookingDates;
+      const { bookingStart, bookingEnd, operatingHours } = pageData.bookingDates;
 
       // Convert picked date to date that will be converted on the API as
       // a noon of correct year-month-date combo in UTC
@@ -253,6 +253,7 @@ export class CheckoutPageComponent extends Component {
         meetingRoomsQuantity,
         preliminaryParams: true,
         rentalType,
+        operatingHours,
       }
 
       // console.log("tanawy is debugging checkout initial data load", preliminaryParams); 
@@ -292,6 +293,7 @@ export class CheckoutPageComponent extends Component {
       meetingRoomsQuantity,
       preliminaryParams,
       rentalType,
+      operatingHours,
       ...rest
     } = params;
 
@@ -300,6 +302,10 @@ export class CheckoutPageComponent extends Component {
     const isSameDay = moment(bookingStart).isSame(moment(bookingEnd),'days');
     let adjustedBookingEnd;
     if(isSameDay && rentalType === "daily"){
+      if(window){
+        console.log("tanawy is testing same day reservation span in checkout page custompricing",{moment,bookingStart,bookingEnd,operatingHours});
+        window.tanawyTestoperatingHours = {moment,bookingStart,bookingEnd,operatingHours};
+      }
       adjustedBookingEnd = moment(bookingEnd).add(5,'minutes').toDate();
       hours = 1;
     } else {

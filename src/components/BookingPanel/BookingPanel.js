@@ -338,7 +338,8 @@ export class BookingPanel extends Component {
                 office_rooms_quantity: 1,
                 meeting_rooms_quantity: 1,
                 monthCount: 1,
-                rental_type: rentalTypes[0]
+                rental_type: rentalTypes[0],
+                avails:$avails,
               }}
             />
           ) : null}

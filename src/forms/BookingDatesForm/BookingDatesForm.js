@@ -356,6 +356,7 @@ export class BookingDatesFormComponent extends Component {
       bookingDates: {
         startDate: sdtFinal,
         endDate: edtFinal,
+        operatingHours: this.props.avails,
       },
       bookingDatesWithTimes: {
         dateHourStart: sdtFinal,
