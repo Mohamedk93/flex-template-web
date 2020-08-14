@@ -343,7 +343,7 @@ export class BookingPanel extends Component {
                 meeting_rooms_quantity: 1,
                 monthCount: 1,
                 rental_type: rentalTypes[0],
-                avails:$avails,
+                // avails:$avails,
               }}
             />
           ) : null}
