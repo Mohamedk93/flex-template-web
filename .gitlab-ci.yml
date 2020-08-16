@@ -1,0 +1,43 @@
+stages:
+  - build
+  - deploy
+
+build_stage:
+  image: docker:latest
+  services:
+    - docker:dind
+  tags:
+    - docker
+  stage: build
+  variables:
+    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+    STAGING_ENV: $STAGING_ENV
+  script:
+    - apk add --no-cache curl jq python3 py3-pip git
+    - pip install docutils==0.14
+    - pip install awscli==1.16.201
+    - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+    - cp $STAGING_ENV .env
+    - docker build  -f Dockerfile -t "$ECR_BASE_URL/staging/fe:$CI_COMMIT_SHA"  .
+    - docker push "$ECR_BASE_URL/staging/fe:$CI_COMMIT_SHA"
+  only:
+    - dev
+
+deploy_staging:
+  image: python:3-alpine
+  stage: deploy
+  tags:
+    - docker
+  variables:
+    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+  script:
+    - apk add --no-cache curl jq python3 py3-pip git
+    - pip install ecs-deploy==1.7.0
+    - ecs deploy staging-hotdeskapp staging-hotdeskapp-fe --image staging-hotdeskapp-fe-c $ECR_BASE_URL/staging/fe:$CI_COMMIT_SHA --timeout 3600
+    - echo "new Image was deployed $ECR_BASE_URL/staging/fe:$CI_COMMIT_SHA"
+  only:
+    - dev
