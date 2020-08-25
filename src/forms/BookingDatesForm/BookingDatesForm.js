@@ -1026,7 +1026,7 @@ export class BookingDatesFormComponent extends Component {
                 <option value="">Select payment</option>
                 {stripeConnected ? (<option value="credit card">Credit card</option>) 
                 : (<option value="credit card" disabled>Credit card</option>)}
-                <option value="cash">Cash</option>
+                <option className={stripeConnected?css.paymentMethodSlightGray:undefined} value="cash">Cash</option>
               </FieldSelect>
 
               {currentRentalType === 'hourly' ? (
