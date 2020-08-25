@@ -194,7 +194,6 @@ app.get('*', (req, res) => {
   // make sure that no sensitive data can appear in the prefetched
   // data, let's disable response caching altogether.
   res.set(noCacheHeaders);
-console.error("something went wrong in server side",{dataLoader, url: req.url});
   dataLoader
     .loadData(req.url, sdk)
     .then(preloadedState => {
@@ -239,7 +238,6 @@ console.error("something went wrong in server side",{dataLoader, url: req.url});
     })
     .catch(e => {
       log.error(e, 'server-side-render-failed');
-      res.status(503).json({e});
       res.status(502).send(errorPage);
     });
 });
