@@ -157,55 +157,68 @@ export class BookingDatesFormComponent extends Component {
     this.promos = {
       try100:{
         type:"percentage",
-        value: 100
+        value: 100,
+        cap:50
       },
       garage100:{
         type:"percentage",
-        value: 100
+        value: 100,
+        cap:50
       },
       first50:{
         type:"percentage",
-        value: 50
+        value: 50,
+        cap:50
       },
       cara70:{
         type:"percentage",
-        value: 70
+        value: 70,
+        cap:50
       },
       wahid70:{
         type:"percentage",
-        value: 70
+        value: 70,
+        cap:50
       },
       claudio70:{
         type:"percentage",
-        value: 70
+        value: 70,
+        cap:50
       },
       bcn60:{
         type:"percentage",
-        value: 60
+        value: 60,
+        cap:50
       },
       bellucci50:{
         type:"percentage",
-        value: 50
+        value: 50,
+        cap:50
       },
       monday50:{
         type:"percentage",
-        value: 50
+        value: 50,
+        cap:50
       },
       idea50:{
         type:"percentage",
-        value: 50
+        value: 50,
+        cap:50
       },
       coworkingdays30:{
         type:"percentage",
-        value: 30
+        value: 30,
+        cap:50
       },
       spaceup50:{
         type:"percentage",
-        value: 50
+        value: 50,
+        cap:50
       },
       get25:{
         type:"percentage",
-        value: 25
+        value: 25,
+        cap:50
       }
     };
     this.handleFieldBlur = this.handleFieldBlur.bind(this);
@@ -955,8 +968,8 @@ export class BookingDatesFormComponent extends Component {
               onSubmit={e => {
                 // console.log("\n\n\n[Tanawy says reached here form submit]\n\n\n",this);
                 // window.letmetestform = {startDate,endDate,e,handleSubmit,currentRentalType, moment};
-                faceBookTrackerSend();
-                googleTagTrackerSend();
+                // faceBookSend();
+                // googleTagTracTrackerkerSend();
                 if (currentRentalType === 'daily') {
                   if (startDate && endDate) {
                     let isSameDay = moment(startDate).isSame(moment(endDate,'days'));

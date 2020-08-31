@@ -234,6 +234,7 @@ export class CheckoutPageComponent extends Component {
         officeRoomsQuantity,
         meetingRoomsQuantity,
         rentalType,
+        promo,
       } = pageData.bookingData;
 
       // if(rentalType ==="daily"){
@@ -257,6 +258,7 @@ export class CheckoutPageComponent extends Component {
         preliminaryParams: true,
         rentalType,
         operatingHours,
+        promo,
       }
 
       // console.log("tanawy is debugging checkout initial data load", preliminaryParams); 
@@ -297,6 +299,7 @@ export class CheckoutPageComponent extends Component {
       preliminaryParams,
       rentalType,
       operatingHours,
+      promo,
       ...rest
     } = params;
 
@@ -415,8 +418,8 @@ export class CheckoutPageComponent extends Component {
           meetingRoomsFee.currency)
         : 0;
 
-      couponDiscountPriceTotal = couponDiscount
-      ? new Money( new Decimal(couponDiscountPrice), couponDiscount.currency)
+      couponDiscountPriceTotal = couponDiscount// couponDiscountPrice here
+      ? new Money( new Decimal(couponDiscountPrice>(promo||{}).cap?(promo||{}).cap:couponDiscountPrice), couponDiscount.currency)
       :0;
     } else {
       seatsFeePriceTotal = seatsFee ? seatsFee : 0;
