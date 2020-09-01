@@ -234,6 +234,7 @@ export class CheckoutPageComponent extends Component {
         officeRoomsQuantity,
         meetingRoomsQuantity,
         rentalType,
+        promo,
       } = pageData.bookingData;
 
       // if(rentalType ==="daily"){
@@ -257,6 +258,7 @@ export class CheckoutPageComponent extends Component {
         preliminaryParams: true,
         rentalType,
         operatingHours,
+        promo,
       }
 
       // console.log("tanawy is debugging checkout initial data load", preliminaryParams); 
@@ -297,6 +299,7 @@ export class CheckoutPageComponent extends Component {
       preliminaryParams,
       rentalType,
       operatingHours,
+      promo,
       ...rest
     } = params;
 
@@ -415,8 +418,8 @@ export class CheckoutPageComponent extends Component {
           meetingRoomsFee.currency)
         : 0;
 
-      couponDiscountPriceTotal = couponDiscount
-      ? new Money( new Decimal(couponDiscountPrice), couponDiscount.currency)
+      couponDiscountPriceTotal = couponDiscount// couponDiscountPrice here
+      ? new Money( new Decimal(couponDiscountPrice>(promo||{}).cap?(promo||{}).cap:couponDiscountPrice), couponDiscount.currency)
       :0;
     } else {
       seatsFeePriceTotal = seatsFee ? seatsFee : 0;
@@ -437,11 +440,24 @@ if(couponDiscountPriceTotal === 0 && isPromoExist){
   : (officeRoomsFee)? officeRoomsFee.currency 
   :  (meetingRoomsFee)? meetingRoomsFee.currency : null;
   if(discountCurrency){
+    let couponDiscountInNumber = (new Decimal((seatsFeePriceTotal.amount || 0) *(seatsQuantity || 0))
+    .plus((officeRoomsFeePriceTotal.amount || 0) *(officeRoomsQuantity || 0))
+    .plus((meetingRoomsFeePriceTotal.amount || 0) *(meetingRoomsQuantity || 0))
+    .mul((tempPromo.value || 0)/100).toNumber());
+
+
     let tempCouponDiscount = new Money( new Decimal((seatsFeePriceTotal.amount || 0) *(seatsQuantity || 0))
     .plus((officeRoomsFeePriceTotal.amount || 0) *(officeRoomsQuantity || 0))
     .plus((meetingRoomsFeePriceTotal.amount || 0) *(meetingRoomsQuantity || 0))
     .mul((tempPromo.value || 0)/100)
     , discountCurrency);
+
+    let promoCap = new Decimal(tempPromo.cap).times(100);
+
+    console.log("[tanawy is testing from checkout page before price comparison]",{couponDiscountInNumber,promoCap:promoCap.toNumber()})
+    let isMaxDiscountReached = couponDiscountInNumber > (promoCap.toNumber());
+     tempCouponDiscount = isMaxDiscountReached? new Money( promoCap, discountCurrency)
+    :tempCouponDiscount;
 
     window.TanawysTestingTemp = {
       tempCouponDiscount,

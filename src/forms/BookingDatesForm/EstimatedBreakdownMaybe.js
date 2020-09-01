@@ -142,6 +142,9 @@ const estimatedTransaction = (
   );
   let totalPriceInNumber = convertMoneyToNumber(totalPrice);
   let numericTotalDiscount = new Decimal( totalPriceInNumber * (-1 * ((promo|| {}).value || 0)/100));
+  let maxTotalDiscount = new Decimal(-1*((promo|| {}).cap || 0));
+  // console.log("[tanawy is testing from estimatedBreakdownmaybe mid discount comparison]",{numericTotalDiscount,maxTotalDiscount});
+  numericTotalDiscount = maxTotalDiscount < numericTotalDiscount?maxTotalDiscount:numericTotalDiscount;
   let numerictotalPriceDiscounted = new Decimal(totalPriceInNumber).plus(numericTotalDiscount).times(100);
   numericTotalDiscount = numericTotalDiscount.times(100);
 
