@@ -37,7 +37,7 @@ const converter = (item, currentUser) => {
 }
 
 const LineItemCustomPrices = props => {
-  const { transaction, unitType, intl, currentUser } = props;
+  const { transaction, unitType, intl, currentUser, promo } = props;
   
   const mainLineItems = transaction.attributes.lineItems.filter((item) => {
     return item.code === LINE_ITEM_SEATS_FEE || item.code === LINE_ITEM_OFFICE_ROOMS_FEE || item.code === LINE_ITEM_MEETING_ROOMS_FEE || item.code === LINE_ITEM_COUPON_DISCOUNT
@@ -62,14 +62,22 @@ const LineItemCustomPrices = props => {
       currency
     );
 
+
+    const capValToMoney = new Money(
+      convertUnitToSubUnit(((promo||{}).cap||50),unitDivisor(currency))
+      ,currency
+      );
+
     let formattedTotalPrice = converter(formatMoney(intl, totalPrice), currentUser);
 
+    let formattedUnitCap = capValToMoney?converter(formatMoney(intl,capValToMoney), currentUser):undefined;
+    
     let formattedUnitPrice = converter(formatMoney(intl, item.unitPrice), currentUser);
     
     return (
       <div className={css.lineItem} key={guid()}>
         <span className={css.itemLabel}>
-          <FormattedMessage id={`BookingBreakdown.quantity_${key}`} values={{quantity: quantity.toFixed(), price: formattedUnitPrice}} />
+          <FormattedMessage id={`BookingBreakdown.quantity_${key}`} values={{quantity: quantity.toFixed(), price: formattedUnitPrice, cap: formattedUnitCap}} />
         </span>
         <span className={css.itemValue}>
           {formattedTotalPrice}
