@@ -144,8 +144,20 @@ const estimatedTransaction = (
   let numericTotalDiscount = new Decimal( totalPriceInNumber * (-1 * ((promo|| {}).value || 0)/100));
   let maxTotalDiscount = new Decimal(-1*((promo|| {}).cap || 0));
   // console.log("[tanawy is testing from estimatedBreakdownmaybe mid discount comparison]",{numericTotalDiscount,maxTotalDiscount});
-  numericTotalDiscount = maxTotalDiscount < numericTotalDiscount?maxTotalDiscount:numericTotalDiscount;
-  let numerictotalPriceDiscounted = new Decimal(totalPriceInNumber).plus(numericTotalDiscount).times(100);
+  let isDiscountExceedMax = numericTotalDiscount.lessThan(maxTotalDiscount);
+  let numerictotalPriceDiscounted;
+  // console.log("[tanawy is testing in estimated breakdown maybe condition check max discount exceeded]",{isDiscountExceedMax,promo});
+  if(isDiscountExceedMax && promo){
+    // numericTotalDiscount.;
+    numerictotalPriceDiscounted = new Decimal(totalPriceInNumber).plus(maxTotalDiscount).times(100);
+    numericTotalDiscount = maxTotalDiscount;
+    // console.log("[tanawy is testing in estiated breakdown maybe max discount is exceeded]", numerictotalPriceDiscounted);
+  } else {
+    numerictotalPriceDiscounted = new Decimal(totalPriceInNumber).plus(numericTotalDiscount).times(100);
+    
+  }
+
+  // console.log("[tanawy is testing from estimatedBreakdownmaybe after discount comparison]",{numericTotalDiscount,maxTotalDiscount, });
   numericTotalDiscount = numericTotalDiscount.times(100);
 
   // this line is made to create a copy of the money Class without
@@ -154,7 +166,7 @@ const estimatedTransaction = (
   // totalDiscount = totalPriceDiscounted;
   let totalDiscount = new Money( numericTotalDiscount , unitPrice.currency);
   let totalPriceDiscounted = new Money(numerictotalPriceDiscounted, unitPrice.currency);
-  console.log("[TANAWY IS TESTING from EstimatedBreakdownMaybe]", totalPriceDiscounted);
+  // console.log("[TANAWY IS TESTING from EstimatedBreakdownMaybe]", totalPriceDiscounted);
 // if(totalDiscount && promo){
 //   totalDiscount.amount = totalDiscount.amount * (-1 * (promo.value || 0)/100);
 
@@ -313,6 +325,7 @@ const EstimatedBreakdownMaybe = props => {
     meetingRoomsQuantity,
     currentRentalType,
   );
+  // console.log("[tanawy is debugging estimatedBreakdownmaybe]",tx);
 
   return (
     <BookingBreakdown
