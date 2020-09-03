@@ -63,16 +63,16 @@ export class SearchBox extends Component {
 
   constructor(props) {
     super(props);
-    
+
     this.state = {
       deskType:'',
-      timeScale:'', 
-      address:'', 
+      timeScale:'',
+      address:'',
       bounds:null,
       path: '',
       canRedirect: false};
 
-    
+
     this.handleMobileSearchOpen = this.handleMobileSearchOpen.bind(this);
     this.handleMobileSearchClose = this.handleMobileSearchClose.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -84,7 +84,7 @@ export class SearchBox extends Component {
     this.filterRentalTypes = this.filterRentalTypes.bind(this);
     this.generateSearchWithAddress = this.generateSearchWithAddress.bind(this);
   }
-  
+
 
     handleMobileSearchOpen() {
       redirectToURLWithModalState(this.props, 'mobilesearch');
@@ -118,7 +118,7 @@ export class SearchBox extends Component {
 
     }
 
-  
+
     filterWorkspace(workspacetype) {
       workspacetype = this.state.deskType;
       if(!workspacetype){
@@ -182,7 +182,7 @@ export class SearchBox extends Component {
         }
       }
     }
-  
+
     success(pos) {
       let crd = pos.coords;
       const latlng = {
@@ -194,15 +194,15 @@ export class SearchBox extends Component {
       window.myGeneratedPath = path;
       this.setState({path: path, canRedirect: true});
     }
-  
+
     error(err) {
       const path = 's?address=Cairo%2C%20Cairo%20Governorate%2C%20Egypt&bounds=79.34942401%2C56.31453229%2C-57.56893982%2C-133.52921771'
       this.setState({path: path, canRedirect: true});
       console.warn(`ERROR(${err.code}): ${err.message}`);
     };
-  
+
     generateSearch(coordindates){
-     
+
         return `s?address=&bounds=${coordindates.ne.lat}%2C${coordindates.ne.lng}%2C${coordindates.sw.lat}%2C${coordindates.sw.lng}${this.filterRentalTypes()}${this.filterWorkspace(selectedWorkspace)}`;
 
     };
@@ -216,9 +216,9 @@ export class SearchBox extends Component {
 
     workspaceType(workspace){
       selectedWorkspace= workspace;
-      
+
     }
-  
+
     setDeskType(type){
 
       if(type !== this.state.deskType){
@@ -253,7 +253,7 @@ export class SearchBox extends Component {
           maximumAge: 0
         };
         navigator.geolocation.getCurrentPosition(this.success, this.error, options);
-      
+
 
       } else if(this.state.address !== ""){
         console.log("[Tanawy says location address info is used]",this.state.address);
@@ -308,16 +308,22 @@ export class SearchBox extends Component {
             }
             return cssClass;
           }
-          
+
         }
     return (
     <div className = {css.searchblock}>
       <p className={css.title}>Search Workspaces</p>
-      <span className={css.subtitle}>Book coworking spaces and shared offices worldwide.</span>
+      <div className={css.bookingplan}>
+
+      <span className={css.time}><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" stroke="black" height="24" width="24" x="0"/></g><g><g><g><path d="M4,18v3h3v-3h10v3h3v-6H4V18z M19,10h3v3h-3V10z M2,10h3v3H2V10z M17,13H7V5c0-1.1,0.9-2,2-2h6c1.1,0,2,0.9,2,2V13z"/></g></g></g></svg> </span>
+        <span className={css.label}>Pick a workspace type</span>
+
+      </div>
+
            <p></p>
 
            <div style={(this.state.deskType === "Hotdesk")?{"background-color":"#2ecc72"}:undefined} onClick={()=>this.setDeskType('Hotdesk')} className={(css.hotdeskbutton)}>
-             <span className={css.buttonlabel} >Hotdesk</span>
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg><span className={css.buttonlabel}>Hotdesk</span>
            </div>
 
            <div style={(this.state.deskType === "Meeting Room")?{"background-color":"#2ecc72"}:undefined} onClick={()=>this.setDeskType('Meeting Room')} className={css.meetingroombutton}>
@@ -340,7 +346,7 @@ export class SearchBox extends Component {
       <div className={css.bookingplan}>
       <span className={css.time}><svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 24 24" fill="transparent" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
         <span className={css.label}>How long? (hourly, daily or monthly)</span>
-        
+
       </div>
       <div>
       <div style={(this.state.timeScale === "Hourly")?{"background-color":"#2ecc72"}:undefined} onClick={()=>this.setTimeScale('Hourly')} className={css.hotdeskbutton}>
@@ -400,5 +406,5 @@ SearchBox.propTypes = {
     intl: intlShape.isRequired,
 
   };
- 
+
   export default SearchBox ;

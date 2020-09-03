@@ -26,7 +26,7 @@
     }
   }
   .searchblock {
-    color: #091F2F;
+    color: transparent;
     border-radius: 4px;
     padding: 12px;
     box-sizing: border-box;
@@ -34,11 +34,22 @@
     width: 375px;
     height: 450px;
     overflow: visible;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
   }
+
+  .workspaces {
+    box-sizing: border-box;
+    width: 1556px;
+    height: 123px;
+    overflow: visible;
+    border-radius: 24px;
+    border: 1px solid #B0B0B0;
+  }
+
+
   .searchblock p.title {
     font-weight: 700;
-    margin-bottom: 0px;
+    margin-bottom: 12px;
     width: 277px;
     height: 35px;
     overflow: visible;
@@ -61,6 +72,8 @@
     line-height: 1.2;
     font-weight: 400;
     font-style: normal;
+  text-align: left;
+
   }
 
   .searchblock .hotdeskbutton {
