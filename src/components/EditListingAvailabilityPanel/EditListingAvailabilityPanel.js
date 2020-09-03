@@ -1,13 +1,16 @@
 import React from 'react';
-import { bool, func, object, shape, string } from 'prop-types';
+import {bool, func, object, shape, string} from 'prop-types';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '../../util/reactIntl';
 import { ensureOwnListing } from '../../util/data';
 import { LISTING_STATE_DRAFT } from '../../util/types';
 import { ListingLink } from '../../components';
 import { EditListingAvailabilityForm } from '../../forms';
+import { listingCalculateMinPrice } from '../../components/ListingCard/ListingCard';
 
 import css from './EditListingAvailabilityPanel.css';
+
+const AVAILABILITY_NAME = 'days';
 
 const EditListingAvailabilityPanel = props => {
   const {
@@ -26,44 +29,134 @@ const EditListingAvailabilityPanel = props => {
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureOwnListing(listing);
   const isPublished = currentListing.id && currentListing.attributes.state !== LISTING_STATE_DRAFT;
+  const usersTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const defaultAvailabilityPlan = {
-    type: 'availability-plan/day',
+    type: 'availability-plan/time',
+    timezone: usersTimeZone,
     entries: [
-      { dayOfWeek: 'mon', seats: 1 },
-      { dayOfWeek: 'tue', seats: 1 },
-      { dayOfWeek: 'wed', seats: 1 },
-      { dayOfWeek: 'thu', seats: 1 },
-      { dayOfWeek: 'fri', seats: 1 },
-      { dayOfWeek: 'sat', seats: 1 },
-      { dayOfWeek: 'sun', seats: 1 },
+      {dayOfWeek: 'mon', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'tue', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'wed', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'thu', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'fri', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'sat', seats: 1, startTime: '09:00', endTime: '22:00',},
+      {dayOfWeek: 'sun', seats: 1, startTime: '09:00', endTime: '22:00',},
     ],
   };
   const availabilityPlan = currentListing.attributes.availabilityPlan || defaultAvailabilityPlan;
+  const { publicData } = currentListing.attributes;
+
+  let initialStartTimes = {};
+  availabilityPlan.entries.forEach(function(day) {
+    initialStartTimes[day.dayOfWeek] = day.startTime
+  });
+
+  let initialEndTimes = {};
+  availabilityPlan.entries.forEach(function(day) {
+    initialEndTimes[day.dayOfWeek] = day.endTime
+  });
+
+  let initialWeekdays = [];
+  availabilityPlan.entries.forEach(function(day) {
+    if(day.seats === 1) {
+      initialWeekdays.push(day.dayOfWeek);
+    }
+  });
 
   return (
     <div className={classes}>
       <h1 className={css.title}>
         {isPublished ? (
-          <FormattedMessage
-            id="EditListingAvailabilityPanel.title"
-            values={{ listingTitle: <ListingLink listing={listing} /> }}
-          />
-        ) : (
-          <FormattedMessage id="EditListingAvailabilityPanel.createListingTitle" />
-        )}
+            <FormattedMessage
+              id="EditListingAvailabilityPanel.title"
+              values={{listingTitle: <ListingLink listing={listing}/>}}
+            />
+          ) : (
+            <FormattedMessage id="EditListingAvailabilityPanel.createListingTitle"/>
+          )}
       </h1>
       <EditListingAvailabilityForm
         className={css.form}
+        name={AVAILABILITY_NAME}
         listingId={currentListing.id}
-        initialValues={{ availabilityPlan }}
+        initialValues={{
+          weekdays: initialWeekdays,
+          availabilityPlan,
+          rentals: publicData.rentals,
+
+          mon_startTime: initialStartTimes.mon,
+          tue_startTime: initialStartTimes.tue,
+          wed_startTime: initialStartTimes.wed,
+          thu_startTime: initialStartTimes.thu,
+          fri_startTime: initialStartTimes.fri,
+          sat_startTime: initialStartTimes.sat,
+          sun_startTime: initialStartTimes.sun,
+          mon_endTime: initialEndTimes.mon,
+          tue_endTime: initialEndTimes.tue,
+          wed_endTime: initialEndTimes.wed,
+          thu_endTime: initialEndTimes.thu,
+          fri_endTime: initialEndTimes.fri,
+          sat_endTime: initialEndTimes.sat,
+          sun_endTime: initialEndTimes.sun,
+        }}
         availability={availability}
         availabilityPlan={availabilityPlan}
-        onSubmit={() => {
-          // We save the default availability plan
-          // I.e. this listing is available every night.
-          // Exceptions are handled with live edit through a calendar,
-          // which is visible on this panel.
-          onSubmit({ availabilityPlan });
+        onSubmit={(values) => {
+          const usersTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+          const updatedValues = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map(function (day) {
+            return {
+              dayOfWeek: day,
+              seats: (values.weekdays.indexOf(day) !== -1) ? 1 : 0,
+              // startTime: values[day] ? values[day].startTime : "00:00",
+              // endTime: values[day] ? values[day].endTime : "23:00",
+              startTime: values[day + "_startTime"] ? values[day + "_startTime"] : "00:00",
+              endTime: values[day + "_endTime"] ? values[day + "_endTime"] : "23:00",
+            }
+          });
+
+          const rentalTypes = values.rentals ? values.rentals : [];
+          const rentalTypesBefore = publicData.rentalTypes ? publicData.rentalTypes : [];
+
+          const publicDataDiff = {
+            timezone: usersTimeZone,
+            rentalTypes,
+            workingSchedule: availabilityPlan,
+          }
+
+          let estPublicData = {}
+          Object.assign(estPublicData, publicData);
+          Object.assign(estPublicData, publicDataDiff);
+
+          const shouldRecalculatePrice = !(rentalTypesBefore.length === rentalTypes.length &&
+            rentalTypesBefore.every((el) => {
+              return rentalTypes.indexOf(el) !== -1;
+            })
+          );
+
+          let newPrice = null;
+
+          if (shouldRecalculatePrice) {
+            let calculatedPrice = listingCalculateMinPrice(estPublicData)
+            newPrice = calculatedPrice && calculatedPrice.price;
+          }
+
+          let updateValues = {
+            availabilityPlan: {
+              type: 'availability-plan/time',
+              timezone: usersTimeZone,
+              entries: updatedValues
+            },
+            publicData: publicDataDiff
+          };
+
+          if (newPrice) {
+            Object.assign(updateValues, {
+              price: newPrice
+            })
+          }
+
+          onSubmit(updateValues);
         }}
         onChange={onChange}
         saveActionMsg={submitButtonText}

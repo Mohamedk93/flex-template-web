@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
-import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
 import routeConfiguration from '../../routeConfiguration';
 import {
@@ -123,8 +123,10 @@ export const ManageListingCardComponent = props => {
     onOpenListing,
     onToggleMenu,
     renderSizes,
+    currentUser,
     availabilityEnabled,
   } = props;
+
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureOwnListing(listing);
   const id = currentListing.id.uuid;
@@ -140,7 +142,9 @@ export const ManageListingCardComponent = props => {
     [css.menuItemDisabled]: !!actionsInProgressListingId,
   });
 
-  const { formattedPrice, priceTitle } = priceData(price, intl);
+  let { formattedPrice, priceTitle } = priceData(price, intl);
+
+ 
 
   const hasError = hasOpeningError || hasClosingError;
   const thisListingInProgress =
@@ -164,6 +168,18 @@ export const ManageListingCardComponent = props => {
     : isDaily
     ? 'ManageListingCard.perDay'
     : 'ManageListingCard.perUnit';
+
+  if(currentUser && formattedPrice && currentUser.attributes.profile.protectedData.currency){
+    let currency = currentUser.attributes.profile.protectedData.currency;
+    let rates = currentUser.attributes.profile.protectedData.rates;
+    const result = rates.find(e => e.iso_code == currency);
+    if(result){
+      formattedPrice = formattedPrice.substr(1).replace(/,/g, '');
+      formattedPrice = formattedPrice * result.current_rate;
+      formattedPrice = formattedPrice.toFixed(2);
+      formattedPrice = result.symbol.toString() + formattedPrice;
+    }
+  }
 
   return (
     <div className={classes}>

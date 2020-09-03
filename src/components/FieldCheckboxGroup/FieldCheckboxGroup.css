@@ -26,3 +26,20 @@
     padding: 4px 0;
   }
 }
+
+.label {
+  font-size: 20px;
+}
+
+
+.selectHolder {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hourEnd,
+.hourStart {
+  flex: 0 0 49%;
+  max-width: 49%;
+}

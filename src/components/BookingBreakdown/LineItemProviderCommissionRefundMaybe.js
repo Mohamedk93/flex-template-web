@@ -1,14 +1,14 @@
 import React from 'react';
-import { FormattedMessage, intlShape } from 'react-intl';
-import { formatMoney } from '../../util/currency';
+import { FormattedMessage, intlShape } from '../../util/reactIntl';
+import { formatMoney, converter } from '../../util/currency';
 import { propTypes, LINE_ITEM_PROVIDER_COMMISSION } from '../../util/types';
 
 import css from './BookingBreakdown.css';
 
 const LineItemProviderCommissionRefundMaybe = props => {
-  const { transaction, isProvider, intl } = props;
+  const { transaction, isProvider, intl, currentUser } = props;
 
-  const refund = transaction.attributes.lineItems.find(
+  let refund = transaction.attributes.lineItems.find(
     item => item.code === LINE_ITEM_PROVIDER_COMMISSION && item.reversal
   );
 
@@ -17,7 +17,7 @@ const LineItemProviderCommissionRefundMaybe = props => {
       <span className={css.itemLabel}>
         <FormattedMessage id="BookingBreakdown.refundProviderFee" />
       </span>
-      <span className={css.itemValue}>{formatMoney(intl, refund.lineTotal)}</span>
+      <span className={css.itemValue}>{converter(formatMoney(intl, refund.lineTotal), currentUser)}</span>
     </div>
   ) : null;
 };

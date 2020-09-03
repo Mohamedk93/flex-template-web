@@ -1,0 +1,85 @@
+@import '../../marketplace.css';
+
+.root {
+  display: flex;
+  justify-content: flex-start;
+  position: relative;
+  padding: 4px 0;
+}
+
+.label {
+  width: 150px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.label:hover {
+  color: #000;
+}
+
+.input {
+  border-bottom-color: var(--attentionColor);
+  width: 85px;
+  text-align: center;
+  padding: 0 20px 5px;
+  font-size: 18px;
+}
+
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+
+.inputSuccess {
+  border-bottom-color: var(--successColor);
+}
+
+.inputError {
+  border-bottom-color: var(--failColor);
+}
+
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.quantityInputWrapper {
+  position: relative;
+}
+
+.buttonMinus,
+.buttonPlus,
+.buttonMinusDisabled {
+  position: absolute;
+  background: none;
+  box-shadow: none;
+  border: 0;
+  top: 5px;
+  outline: 0;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+  width: 15px;
+  height: 15px;
+  line-height: 15px;
+}
+.buttonMinusDisabled {
+  pointer-events: none;
+  color: #d2d2d2;
+  cursor: default;
+}
+
+.buttonMinus {
+  left: 0;
+}
+
+.buttonPlus {
+  right: 0;
+}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { array, bool, func, number, object, objectOf, string } from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import merge from 'lodash/merge';
 import { propTypes } from '../../util/types';
@@ -39,6 +39,12 @@ class MainPanel extends Component {
       showAsModalMaxWidth,
       primaryFilters,
       secondaryFilters,
+      searchPoint,
+      currentUser,
+      currencies,
+      quickRents,
+      workspaces,
+      rentals,
     } = this.props;
 
     const isSearchFiltersPanelOpen = !!secondaryFilters && this.state.isSearchFiltersPanelOpen;
@@ -82,6 +88,9 @@ class MainPanel extends Component {
           resultsCount={totalItems}
           searchInProgress={searchInProgress}
           searchListingsError={searchListingsError}
+          quickRents={quickRents}
+          workspaces={workspaces}
+          rentals={rentals}
           onManageDisableScrolling={onManageDisableScrolling}
           {...searchFiltersPanelProps}
           {...primaryFilters}
@@ -100,6 +109,9 @@ class MainPanel extends Component {
           onCloseModal={onCloseModal}
           filterParamNames={filterParamNames}
           selectedFiltersCount={selectedFiltersCount}
+          quickRents={quickRents}
+          workspaces={workspaces}
+          rentals={rentals}
           {...primaryFilters}
           {...secondaryFilters}
         />
@@ -130,6 +142,8 @@ class MainPanel extends Component {
               pagination={listingsAreLoaded ? pagination : null}
               search={searchParamsForPagination}
               setActiveListing={onActivateListing}
+              searchPoint={searchPoint}
+              currentUser={this.props.currentUser}
             />
           </div>
         )}

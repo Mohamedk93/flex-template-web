@@ -1,10 +1,16 @@
 import omit from 'lodash/omit';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import { denormalisedResponseEntities, ensureAvailabilityException } from '../../util/data';
-import { isSameDate, monthIdStringInUTC } from '../../util/dates';
+import { isSameDate, monthIdStringInUTC, PRICING_LOCAL_NAMES } from '../../util/dates';
 import { storableError } from '../../util/errors';
-import { addMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import * as log from '../../util/log';
+import { addMarketplaceEntities } from '../../ducks/marketplaceData.duck';
+import {
+  createStripeAccount,
+  updateStripeAccount,
+  fetchStripeAccount,
+} from '../../ducks/stripeConnectAccount.duck';
+import { fetchCurrentUser } from '../../ducks/user.duck';
 
 const { UUID } = sdkTypes;
 
@@ -138,6 +144,10 @@ export const UPDATE_IMAGE_ORDER = 'app/EditListingPage/UPDATE_IMAGE_ORDER';
 
 export const REMOVE_LISTING_IMAGE = 'app/EditListingPage/REMOVE_LISTING_IMAGE';
 
+export const SAVE_PAYOUT_DETAILS_REQUEST = 'app/EditListingPage/SAVE_PAYOUT_DETAILS_REQUEST';
+export const SAVE_PAYOUT_DETAILS_SUCCESS = 'app/EditListingPage/SAVE_PAYOUT_DETAILS_SUCCESS';
+export const SAVE_PAYOUT_DETAILS_ERROR = 'app/EditListingPage/SAVE_PAYOUT_DETAILS_ERROR';
+
 // ================ Reducer ================ //
 
 const initialState = {
@@ -167,6 +177,8 @@ const initialState = {
   listingDraft: null,
   updatedTab: null,
   updateInProgress: false,
+  payoutDetailsSaveInProgress: false,
+  payoutDetailsSaved: false,
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -208,8 +220,15 @@ export default function reducer(state = initialState, action = {}) {
       };
     case PUBLISH_LISTING_SUCCESS:
       return {
+        ...state,
         redirectToListing: true,
         publishingListing: null,
+        createListingDraftError: null,
+        updateListingError: null,
+        showListingsError: null,
+        uploadImageError: null,
+        createListingDraftInProgress: false,
+        updateInProgress: false,
       };
     case PUBLISH_LISTING_ERROR: {
       // eslint-disable-next-line no-console
@@ -366,6 +385,12 @@ export default function reducer(state = initialState, action = {}) {
 
       return { ...state, images, imageOrder, removedImageIds };
     }
+    case SAVE_PAYOUT_DETAILS_REQUEST:
+      return { ...state, payoutDetailsSaveInProgress: true };
+    case SAVE_PAYOUT_DETAILS_ERROR:
+      return { ...state, payoutDetailsSaveInProgress: false };
+    case SAVE_PAYOUT_DETAILS_SUCCESS:
+      return { ...state, payoutDetailsSaveInProgress: false, payoutDetailsSaved: true };
 
     default:
       return state;
@@ -444,6 +469,10 @@ export const deleteAvailabilityExceptionRequest = requestAction(DELETE_EXCEPTION
 export const deleteAvailabilityExceptionSuccess = successAction(DELETE_EXCEPTION_SUCCESS);
 export const deleteAvailabilityExceptionError = errorAction(DELETE_EXCEPTION_ERROR);
 
+export const savePayoutDetailsRequest = requestAction(SAVE_PAYOUT_DETAILS_REQUEST);
+export const savePayoutDetailsSuccess = successAction(SAVE_PAYOUT_DETAILS_SUCCESS);
+export const savePayoutDetailsError = errorAction(SAVE_PAYOUT_DETAILS_ERROR);
+
 // ================ Thunk ================ //
 
 export function requestShowListing(actionPayload) {
@@ -461,6 +490,19 @@ export function requestShowListing(actionPayload) {
       .catch(e => dispatch(showListingsError(storableError(e))));
   };
 }
+
+export const savePayoutDetails = (values, isUpdateCall) => (dispatch, getState, sdk) => {
+  const upsertThunk = isUpdateCall ? updateStripeAccount : createStripeAccount;
+  dispatch(savePayoutDetailsRequest());
+
+  return dispatch(upsertThunk(values, { expand: true }))
+    .then(response => {
+      dispatch(savePayoutDetailsSuccess());
+      return response;
+    })
+    .catch(() => dispatch(savePayoutDetailsError()));
+};
+
 
 export function requestCreateListingDraft(data) {
   return (dispatch, getState, sdk) => {
@@ -619,6 +661,17 @@ export const requestDeleteAvailabilityException = params => (dispatch, getState,
 // the data to the listing, and marks the tab updated so the UI can
 // display the state.
 export function requestUpdateListing(tab, data) {
+  if(tab === "pricing"){
+    PRICING_LOCAL_NAMES.forEach( name => {
+      localStorage.removeItem(name);
+    })
+    localStorage.removeItem('currentIndex');
+    localStorage.removeItem('mobileButton');
+  }
+
+  if(tab === 'availability'){
+    delete data.price;
+  }
   return (dispatch, getState, sdk) => {
     dispatch(updateListing(data));
     const { id } = data;
@@ -648,19 +701,42 @@ export function requestUpdateListing(tab, data) {
 
 // loadData is run for each tab of the wizard. When editing an
 // existing listing, the listing must be fetched first.
-export function loadData(params) {
-  return dispatch => {
-    dispatch(clearUpdatedTab());
-    const { id, type } = params;
-    if (type === 'new') {
-      // No need to fetch anything when creating a new listing
-      return Promise.resolve(null);
-    }
-    const payload = {
-      id: new UUID(id),
-      include: ['author', 'images'],
-      'fields.image': ['variants.landscape-crop', 'variants.landscape-crop2x'],
-    };
-    return dispatch(requestShowListing(payload));
+export const loadData = params => (dispatch, getState, sdk) => {
+  dispatch(clearUpdatedTab());
+  const { id, type } = params;
+
+  if (type === 'new') {
+    // No need to listing data when creating a new listing
+    return Promise.all([dispatch(fetchCurrentUser())])
+      .then(response => {
+        const currentUser = getState().user.currentUser;
+        if (currentUser && currentUser.stripeAccount) {
+          dispatch(fetchStripeAccount());
+        }
+        return response;
+      })
+      .catch(e => {
+        throw e;
+      });
+  }
+  
+  const payload = {
+    id: new UUID(id),
+    include: ['author', 'images'],
+    'fields.image': ['variants.landscape-crop', 'variants.landscape-crop2x'],
   };
-}
+
+  return Promise.all([dispatch(requestShowListing(payload)), dispatch(fetchCurrentUser())])
+    .then(response => {
+      const currentUser = getState().user.currentUser;
+      if (currentUser && currentUser.stripeAccount) {
+        dispatch(fetchStripeAccount());
+      }
+      return response;
+    })
+    .catch(e => {
+      throw e;
+    });
+};
+
+

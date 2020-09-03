@@ -27,7 +27,7 @@ export const combinedResourceObjects = (oldRes, newRes) => {
     throw new Error('Cannot merge resource objects with different ids or types');
   }
   const attributes = newRes.attributes || oldRes.attributes;
-  const attrs = attributes ? { attributes } : null;
+  const attrs = attributes ? { attributes: { ...attributes } } : null;
   const relationships = combinedRelationships(oldRes.relationships, newRes.relationships);
   const rels = relationships ? { relationships } : null;
   return { id, type, ...attrs, ...rels };
@@ -50,7 +50,8 @@ export const updatedEntities = (oldEntities, apiResponse) => {
 
     entities[type] = entities[type] || {};
     const entity = entities[type][id.uuid];
-    entities[type][id.uuid] = entity ? combinedResourceObjects(entity, current) : current;
+    entities[type][id.uuid] = entity ? combinedResourceObjects({ ...entity }, current) : current;
+
     return entities;
   }, oldEntities);
 
@@ -244,6 +245,37 @@ export const ensureAvailabilityException = availabilityException => {
 };
 
 /**
+ * Create shell objects to ensure that attributes etc. exists.
+ *
+ * @param {Object} stripeCustomer entity from API, which is to be ensured against null values
+ */
+export const ensureStripeCustomer = stripeCustomer => {
+  const empty = { id: null, type: 'stripeCustomer', attributes: {} };
+  return { ...empty, ...stripeCustomer };
+};
+
+/**
+ * Create shell objects to ensure that attributes etc. exists.
+ *
+ * @param {Object} stripeCustomer entity from API, which is to be ensured against null values
+ */
+export const ensurePaymentMethodCard = stripePaymentMethod => {
+  const empty = {
+    id: null,
+    type: 'stripePaymentMethod',
+    attributes: { type: 'stripe-payment-method/card', card: {} },
+  };
+  const cardPaymentMethod = { ...empty, ...stripePaymentMethod };
+
+  if (cardPaymentMethod.attributes.type !== 'stripe-payment-method/card') {
+    throw new Error(`'ensurePaymentMethodCard' got payment method with wrong type.
+      'stripe-payment-method/card' was expected, received ${cardPaymentMethod.attributes.type}`);
+  }
+
+  return cardPaymentMethod;
+};
+
+/**
  * Get the display name of the given user as string. This function handles
  * missing data (e.g. when the user object is still being downloaded),
  * fully loaded users, as well as banned users.
@@ -351,3 +383,33 @@ export const humanizeLineItemCode = code => {
 
   return lowercase.charAt(0).toUpperCase() + lowercase.slice(1);
 };
+
+
+export const COUNTRIES_ARRAY = ['United States',
+                                 'Canada',
+                                 'Austria',
+                                 'Belgium',
+                                 'Czechia',
+                                 'Denmark',
+                                 'Estonia',
+                                 'Finland',
+                                 'France',
+                                 'Germany',
+                                 'Greece',
+                                 'Hungary',
+                                 'Iceland',
+                                 'Italy',
+                                 'Latvia',
+                                 'Liechtenstein',
+                                 'Lithuania',
+                                 'Luxembourg',
+                                 'Malta',
+                                 'Netherlands',
+                                 'Norway',
+                                 'Poland',
+                                 'Portugal',
+                                 'Slovakia',
+                                 'Slovenia',
+                                 'Spain',
+                                 'Sweden',
+                                 'Switzerland']; 

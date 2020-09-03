@@ -282,6 +282,7 @@ class PagedFeed extends Component {
       transition: TRANSITION_ACCEPT,
     });
 
+
     // Last transition timestamp is interleaved between the last two
     // messages.
     const trans4 = createTxTransition({

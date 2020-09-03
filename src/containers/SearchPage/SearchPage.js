@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { array, bool, func, number, oneOf, object, shape, string } from 'prop-types';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl, intlShape } from '../../util/reactIntl';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -33,10 +33,13 @@ import css from './SearchPage.css';
 const RESULT_PAGE_SIZE = 24;
 const MODAL_BREAKPOINT = 768; // Search is in modal on mobile layout
 const SEARCH_WITH_MAP_DEBOUNCE = 300; // Little bit of debounce before search is initiated.
+const mixpanel = require('mixpanel-browser');
 
 export class SearchPageComponent extends Component {
   constructor(props) {
     super(props);
+    mixpanel.init(process.env.REACT_APP_MIXPANNEL_TOKEN);
+    mixpanel.track("search_page");
 
     this.state = {
       isSearchMapOpenOnMobile: props.tab === 'map',
@@ -52,7 +55,16 @@ export class SearchPageComponent extends Component {
   }
 
   filters() {
-    const { categories, amenities, priceFilterConfig, dateRangeFilterConfig } = this.props;
+    const {
+      categories,
+      workspaces,
+      amenities,
+      rentals,
+      quickRents,
+      priceFilterConfig,
+      dateRangeFilterConfig,
+      keywordFilterConfig,
+    } = this.props;
 
     // Note: "category" and "amenities" filters are not actually filtering anything by default.
     // Currently, if you want to use them, we need to manually configure them to be available
@@ -64,9 +76,19 @@ export class SearchPageComponent extends Component {
         paramName: 'pub_category',
         options: categories,
       },
+      workspaceFilter: {
+        paramName: 'pub_workspaces',
+        options: workspaces,
+        config: workspaces,
+      },
       amenitiesFilter: {
         paramName: 'pub_amenities',
         options: amenities,
+      },
+      rentalsFilter: {
+        paramName: 'pub_rentalTypes',
+        options: rentals,
+        config: workspaces,
       },
       priceFilter: {
         paramName: 'price',
@@ -75,6 +97,14 @@ export class SearchPageComponent extends Component {
       dateRangeFilter: {
         paramName: 'dates',
         config: dateRangeFilterConfig,
+      },
+      keywordFilter: {
+        paramName: 'keywords',
+        config: keywordFilterConfig,
+      },
+      quickRentsFitler: {
+        paramName: 'pub_quickRent',
+        config: quickRents,
       },
     };
   }
@@ -133,6 +163,7 @@ export class SearchPageComponent extends Component {
   }
 
   render() {
+
     const {
       intl,
       listings,
@@ -155,6 +186,46 @@ export class SearchPageComponent extends Component {
 
     const filters = this.filters();
 
+    // For distance
+    const locationUrl = this.props.location.search.substring(1);
+    const locationParams = locationUrl ?
+    JSON.parse('{"' + locationUrl.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
+    : null;
+    const searchPoint = null; // TO DO
+
+    // Var1: get coords from google api
+    // if(locationParams.address) {
+    //   const requestUrl = `https://maps.google.com/maps/api/geocode/json?address=${locationParams.address}&key=${config.maps.googleMapsAPIKey}`
+    //   fetch(requestUrl)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //       console.log("data", data);
+    //     })
+    //     .catch(error => {console.log(error)});
+    // }
+
+    // Var2: calculate coords from bounds
+    // if(locationParams) {
+    //   let boundsArray = locationParams.bounds.split(",");
+    //   let bounds = {
+    //     southwest: {lat: parseFloat(boundsArray[2]), lng: parseFloat(boundsArray[3])},
+    //     northeast: {lat: parseFloat(boundsArray[0]), lng: parseFloat(boundsArray[1])}
+    //   };
+    //   if ((bounds.southwest.lng - bounds.northeast.lng > 180) ||
+    //       (bounds.northeast.lng - bounds.southwest.lng > 180)) {
+    //     bounds.southwest.lng += 360;
+    //     bounds.southwest.lng %= 360;
+    //     bounds.northeast.lng += 360;
+    //     bounds.northeast.lng %= 360;
+    //   };
+    //   searchPoint = {
+    //     lat: (bounds.southwest.lat + bounds.northeast.lat)/2,
+    //     lng: (bounds.southwest.lng + bounds.northeast.lng)/2,
+    //   };
+    // }
+
+
+
     // urlQueryParams doesn't contain page specific url params
     // like mapSearch, page or origin (origin depends on config.sortSearchByDistance)
     const urlQueryParams = pickSearchParamsOnly(searchInURL, filters);
@@ -164,7 +235,8 @@ export class SearchPageComponent extends Component {
     const paramsQueryString = stringify(pickSearchParamsOnly(searchParams, filters));
     const searchParamsAreInSync = urlQueryString === paramsQueryString;
 
-    const validQueryParams = validURLParamsForExtendedData(searchInURL, filters);
+    let validQueryParams = validURLParamsForExtendedData(searchInURL, filters);
+   // console.log('validQueryParams ==>', validQueryParams)
 
     const isWindowDefined = typeof window !== 'undefined';
     const isMobileLayout = isWindowDefined && window.innerWidth < MODAL_BREAKPOINT;
@@ -178,7 +250,17 @@ export class SearchPageComponent extends Component {
 
     const { address, bounds, origin } = searchInURL || {};
     const { title, description, schema } = createSearchResultSchema(listings, address, intl);
-
+    //console.log('locationUrl ==>', locationUrl);
+    let regex = /[?&]([^=#]+)=([^&#]*)/g,
+    params = {},
+    match;
+    while (match = regex.exec(locationUrl)) {
+      params[match[1]] = match[2];
+    }
+    const pub_quickRent = params['pub_quickRent']
+    if(pub_quickRent){
+      validQueryParams['pub_quickRent'] = pub_quickRent;
+    }
     // Set topbar class based on if a modal is open in
     // a child component
     const topbarClasses = this.state.isMobileModalOpen
@@ -204,6 +286,7 @@ export class SearchPageComponent extends Component {
           <MainPanel
             urlQueryParams={validQueryParams}
             listings={listings}
+            currentUser={this.props.currentUser}
             searchInProgress={searchInProgress}
             searchListingsError={searchListingsError}
             searchParamsAreInSync={searchParamsAreInSync}
@@ -215,11 +298,15 @@ export class SearchPageComponent extends Component {
             pagination={pagination}
             searchParamsForPagination={parse(location.search)}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
+            quickRents={filters.quickRentsFitler}
             primaryFilters={{
               categoryFilter: filters.categoryFilter,
+              workspaceFilter: filters.workspaceFilter,
               amenitiesFilter: filters.amenitiesFilter,
+              rentalsFilter: filters.rentalsFilter,
               priceFilter: filters.priceFilter,
               dateRangeFilter: filters.dateRangeFilter,
+              keywordFilter: filters.keywordFilter,
             }}
           />
           <ModalInMobile
@@ -241,6 +328,7 @@ export class SearchPageComponent extends Component {
                   location={location}
                   listings={mapListings || []}
                   onMapMoveEnd={this.onMapMoveEnd}
+                  currentUser={this.props.currentUser}
                   onCloseAsModal={() => {
                     onManageDisableScrolling('SearchPage.map', false);
                   }}
@@ -264,9 +352,13 @@ SearchPageComponent.defaultProps = {
   searchParams: {},
   tab: 'listings',
   categories: config.custom.categories,
+  workspaces: config.custom.workspaces,
   amenities: config.custom.amenities,
+  rentals: config.custom.rentals,
+  quickRents: config.custom.quickRents,
   priceFilterConfig: config.custom.priceFilterConfig,
   dateRangeFilterConfig: config.custom.dateRangeFilterConfig,
+  keywordFilterConfig: config.custom.keywordFilterConfig,
   activeListingId: null,
 };
 
@@ -283,7 +375,10 @@ SearchPageComponent.propTypes = {
   searchParams: object,
   tab: oneOf(['filters', 'listings', 'map']).isRequired,
   categories: array,
+  workspaces:array,
   amenities: array,
+  rentals: array,
+  quickRents: object,
   priceFilterConfig: shape({
     min: number.isRequired,
     max: number.isRequired,
@@ -313,6 +408,7 @@ const mapStateToProps = state => {
     searchMapListingIds,
     activeListingId,
   } = state.SearchPage;
+  const { currentUser } = state.user;
   const pageListings = getListingsById(state, currentPageResultIds);
   const mapListings = getListingsById(
     state,
@@ -322,6 +418,7 @@ const mapStateToProps = state => {
   return {
     listings: pageListings,
     mapListings,
+    currentUser,
     pagination,
     scrollingDisabled: isScrollingDisabled(state),
     searchInProgress,
@@ -366,7 +463,7 @@ SearchPage.loadData = (params, search) => {
     page,
     perPage: RESULT_PAGE_SIZE,
     include: ['author', 'images'],
-    'fields.listing': ['title', 'geolocation', 'price'],
+    'fields.listing': ['title', 'geolocation', 'price', 'publicData'],
     'fields.user': ['profile.displayName', 'profile.abbreviatedName'],
     'fields.image': ['variants.landscape-crop', 'variants.landscape-crop2x'],
     'limit.images': 1,

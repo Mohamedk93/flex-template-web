@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '../../util/reactIntl';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import {
   createUser,
@@ -31,7 +31,7 @@ const { UUID } = sdkTypes;
 const noop = () => null;
 
 const categoriesConfig = [{ key: 'cat1', label: 'Cat 1' }, { key: 'cat2', label: 'Cat 2' }];
-
+const workspaceConfig = [{ key: 'workspace1', label: 'Worskapce 1' }, { key: 'workspace2', label: 'Workspace 2' }];
 const amenitiesConfig = [
   { key: 'feat1', label: 'Feat 1' },
   { key: 'feat2', label: 'Feat 2' },
@@ -70,13 +70,15 @@ describe('ListingPage', () => {
       onLoadListing: noop,
       onManageDisableScrolling: noop,
       scrollingDisabled: false,
-      useInitialValues: noop,
+      callSetInitialValues: noop,
       sendVerificationEmailInProgress: false,
       onResendVerificationEmail: noop,
+      onInitializeCardPaymentData: noop,
       sendEnquiryInProgress: false,
       onSendEnquiry: noop,
       categoriesConfig,
       amenitiesConfig,
+      workspaceConfig,
     };
 
     const tree = renderShallow(<ListingPageComponent {...props} />);

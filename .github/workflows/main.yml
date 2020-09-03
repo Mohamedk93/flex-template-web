@@ -1,0 +1,26 @@
+name: Deployment
+on:
+  push:
+    branches:
+      - staging
+      - feat/github_actions
+
+env:
+  USER: ${{ secrets.USER }}
+  HOST: ${{ secrets.HOST }}
+  SERVER_PWD: ${{ secrets.SERVER_PWD }}
+  PORT: ${{ secrets.PORT }}
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+jobs:
+  deploy_stage:
+    name: Deploy Staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt-get update && sudo apt-get install sshpass -y
+      - run: sshpass -p $SERVER_PWD ssh -o StrictHostKeyChecking=no $USER@$HOST -p $PORT 'cd /home/sharetribe/web/hotdesk.roobykon.net/public_html/ && git pull && yarn install && yarn run build && pm2 restart all && pm2 save'
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took

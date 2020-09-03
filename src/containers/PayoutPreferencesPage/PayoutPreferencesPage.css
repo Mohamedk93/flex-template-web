@@ -1,4 +1,4 @@
-@import '../../marketplace.css';
+  @import '../../marketplace.css';
 
 .content {
   @media (--viewportMedium) {

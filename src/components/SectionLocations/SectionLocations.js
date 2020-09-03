@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { lazyLoadWithDimensions } from '../../util/contextHelpers';
 
@@ -8,9 +8,9 @@ import { NamedLink } from '../../components';
 
 import css from './SectionLocations.css';
 
-import helsinkiImage from './images/SF-bayarea.jpg';
-import rovaniemiImage from './images/SF-financialdistrict.jpg';
-import rukaImage from './images/SF-southsf.jpg';
+import helsinkiImage from './images/americas.jpg';
+import rovaniemiImage from './images/Europe.jpg';
+import rukaImage from './images/MEA.jpg';
 
 class LocationImage extends Component {
   render() {
@@ -19,6 +19,9 @@ class LocationImage extends Component {
   }
 }
 const LazyImage = lazyLoadWithDimensions(LocationImage);
+
+const mixpanel = require('mixpanel-browser');
+
 
 const locationLink = (name, image, searchQuery) => {
   const nameText = <span className={css.locationName}>{name}</span>;
@@ -40,30 +43,32 @@ const locationLink = (name, image, searchQuery) => {
 };
 
 const SectionLocations = props => {
-  const { rootClassName, className } = props;
+  const { rootClassName, className, rootLocationClassName } = props;
 
   const classes = classNames(rootClassName || css.root, className);
+  const title = props.location.pathname === '/' ? <FormattedMessage id="SectionLocations.title" /> : <FormattedMessage id="SearchPage.listingsAround" />;
+  const classesLocations = classNames(rootLocationClassName, css.locations || css.locations);
 
   return (
     <div className={classes}>
       <div className={css.title}>
-        <FormattedMessage id="SectionLocations.title" />
+        {title}
       </div>
-      <div className={css.locations}>
+      <div className={classesLocations}>
         {locationLink(
-          'Bay Area',
+          'United States & Canada',
           helsinkiImage,
-          '?address=San%20Francisco%20Bay%20Area%2C%20CA%2C%20USA&bounds=38.8642448%2C-121.20817799999998%2C36.8941549%2C-123.632497'
+          '?address=United%20States&bounds=49.38%2C-66.94%2C25.82%2C-124.38999999999999'
         )}
         {locationLink(
-          'Financial District',
+          'Europe',
           rovaniemiImage,
-          '?address=Financial%20District%2C%20San%20Francisco%2C%20CA%2C%20USA&bounds=37.798916%2C-122.39513650000004%2C37.7866303%2C-122.40704790000001'
+          '?address=Europe&bounds=65%2C55%2C34%2C-11'
         )}
         {locationLink(
-          'South SF',
+          'Middle East & Africa',
           rukaImage,
-          '?address=South%20San%20Francisco%2C%20CA%2C%20USA&bounds=37.6728499%2C-122.22053110000002%2C37.6324597%2C-122.47168399999998'
+          '?address=Middle%20East&bounds=37.60801936%2C58.73156797%2C-10.97046286%2C11.27063047'
         )}
       </div>
     </div>

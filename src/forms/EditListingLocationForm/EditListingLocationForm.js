@@ -2,9 +2,11 @@ import React from 'react';
 import { bool, func, shape, string } from 'prop-types';
 import { compose } from 'redux';
 import { Form as FinalForm } from 'react-final-form';
-import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
+import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
+import config from '../../config';
 import { propTypes } from '../../util/types';
+import LocationMap from "./LocationMap";
 import {
   autocompleteSearchRequired,
   autocompletePlaceSelected,
@@ -13,6 +15,8 @@ import {
 import { Form, LocationAutocompleteInputField, Button, FieldTextInput } from '../../components';
 
 import css from './EditListingLocationForm.css';
+
+const identity = v => v;
 
 export const EditListingLocationFormComponent = props => (
   <FinalForm
@@ -30,6 +34,8 @@ export const EditListingLocationFormComponent = props => (
         updateInProgress,
         fetchErrors,
         values,
+        getLocationPoint,
+        updateMap,
       } = fieldRenderProps;
 
       const titleRequiredMessage = intl.formatMessage({ id: 'EditListingLocationForm.address' });
@@ -43,7 +49,14 @@ export const EditListingLocationFormComponent = props => (
         id: 'EditListingLocationForm.addressNotRecognized',
       });
 
-      const buildingMessage = intl.formatMessage({ id: 'EditListingLocationForm.building' });
+      const optionalText = intl.formatMessage({
+        id: 'EditListingLocationForm.optionalText',
+      });
+
+      const buildingMessage = intl.formatMessage(
+        { id: 'EditListingLocationForm.building' },
+        { optionalText: optionalText }
+      );
       const buildingPlaceholderMessage = intl.formatMessage({
         id: 'EditListingLocationForm.buildingPlaceholder',
       });
@@ -66,6 +79,10 @@ export const EditListingLocationFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
 
+      const googleMapURL = `https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${config.maps.googleMapsAPIKey}`
+
+      const { coords, city, onMarkerDragEnd } = fieldRenderProps;
+
       return (
         <Form className={classes} onSubmit={handleSubmit}>
           {errorMessage}
@@ -76,13 +93,13 @@ export const EditListingLocationFormComponent = props => (
             iconClassName={css.locationAutocompleteInputIcon}
             predictionsClassName={css.predictionsRoot}
             validClassName={css.validLocation}
-            autoFocus
             name="location"
             label={titleRequiredMessage}
             placeholder={addressPlaceholderMessage}
             useDefaultPredictions={false}
-            format={null}
+            format={identity}
             valueFromForm={values.location}
+            getLocationPoint={getLocationPoint}
             validate={composeValidators(
               autocompleteSearchRequired(addressRequiredMessage),
               autocompletePlaceSelected(addressNotRecognizedMessage)
@@ -96,6 +113,17 @@ export const EditListingLocationFormComponent = props => (
             id="building"
             label={buildingMessage}
             placeholder={buildingPlaceholderMessage}
+          />
+
+          <LocationMap
+            googleMapURL
+            loadingElement={<div style={{ height: `100%` }} />}
+            containerElement={<div style={{ height: `400px` }} />}
+            mapElement={<div style={{ height: `100%` }} />}
+
+            coords={coords}
+            onMarkerDragEnd={onMarkerDragEnd}
+            updateMap={updateMap}
           />
 
           <Button

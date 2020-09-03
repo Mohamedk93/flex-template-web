@@ -8,15 +8,17 @@
   /* sticky result summary in mobile */
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 3;
 }
 
 .searchResultSummary {
   @apply --marketplaceH3FontStyles;
   margin-top: 6px;
+  width: 100%;
 
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 
   background-color: var(--matterColorBright);
 
@@ -27,6 +29,8 @@
 
 .buttons {
   display: flex;
+  flex-grow: 1;
+  justify-content: flex-end;
 }
 
 .filtersButton {
@@ -35,6 +39,7 @@
   font-weight: var(--fontWeightBold);
 
   height: 35px;
+  width: auto;
   min-height: 35px;
   padding: 0 18px;
   margin: 0 9px 0 0;
@@ -51,6 +56,7 @@
   padding: 0 18px;
   margin: 0 9px 0 0;
   border-radius: 4px;
+  width: auto;
 }
 
 .mapIcon {
@@ -131,4 +137,16 @@
   background-color: var(--marketplaceColor);
   display: inline-block;
   border-radius: 3px;
+}
+
+.noSearchResultsLocations {
+  padding: 50px 0;
+}
+
+.noSearchResults {
+  margin: 20px 0 10px;
+}
+
+.noSearchResultsList {
+  width: 100%;
 }

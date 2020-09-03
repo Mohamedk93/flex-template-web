@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { intlShape } from 'react-intl';
+import { intlShape } from '../../util/reactIntl';
 import routeConfiguration from '../../routeConfiguration';
 import {
   LISTING_PAGE_PARAM_TYPE_DRAFT,
@@ -13,6 +13,8 @@ import {
   EditListingAvailabilityPanel,
   EditListingDescriptionPanel,
   EditListingFeaturesPanel,
+  EditListingWorkspacePanel,
+  EditListingRentalsPanel,
   EditListingLocationPanel,
   EditListingPhotosPanel,
   EditListingPoliciesPanel,
@@ -24,6 +26,8 @@ import css from './EditListingWizard.css';
 export const AVAILABILITY = 'availability';
 export const DESCRIPTION = 'description';
 export const FEATURES = 'features';
+export const WORKSPACES = 'workspaces';
+export const RENTALS = 'rentals';
 export const POLICY = 'policy';
 export const LOCATION = 'location';
 export const PRICING = 'pricing';
@@ -33,6 +37,8 @@ export const PHOTOS = 'photos';
 export const SUPPORTED_TABS = [
   DESCRIPTION,
   FEATURES,
+  WORKSPACES,
+  RENTALS,
   POLICY,
   LOCATION,
   PRICING,
@@ -94,6 +100,7 @@ const EditListingWizardTab = props => {
     updatedTab,
     updateInProgress,
     intl,
+    currentUser,
   } = props;
 
   const { type } = params;
@@ -105,6 +112,9 @@ const EditListingWizardTab = props => {
   const imageIds = images => {
     return images ? images.map(img => img.imageId || img.id) : null;
   };
+
+  const stripeConnected =
+    currentUser && currentUser.stripeAccount && !!currentUser.stripeAccount.id;
 
   const onCompleteEditListingWizardTab = (tab, updateValues) => {
     // Normalize images for API call
@@ -182,6 +192,34 @@ const EditListingWizardTab = props => {
         />
       );
     }
+    case WORKSPACES: {
+      const submitButtonTranslationKey = isNewListingFlow
+        ? 'EditListingWizard.saveNewWorkspace'
+        : 'EditListingWizard.saveEditWorkspace';
+      return (
+        <EditListingWorkspacePanel
+          {...panelProps(WORKSPACES)}
+          submitButtonText={intl.formatMessage({ id: submitButtonTranslationKey })}
+          onSubmit={values => {
+            onCompleteEditListingWizardTab(tab, values);
+          }}
+        />
+      );
+    }
+    case RENTALS: {
+      const submitButtonTranslationKey = isNewListingFlow
+        ? 'EditListingWizard.saveNewRentals'
+        : 'EditListingWizard.saveEditRentals';
+      return (
+        <EditListingRentalsPanel
+          {...panelProps(RENTALS)}
+          submitButtonText={intl.formatMessage({ id: submitButtonTranslationKey })}
+          onSubmit={values => {
+            onCompleteEditListingWizardTab(tab, values);
+          }}
+        />
+      );
+    }
     case POLICY: {
       const submitButtonTranslationKey = isNewListingFlow
         ? 'EditListingWizard.saveNewPolicies'
@@ -216,6 +254,7 @@ const EditListingWizardTab = props => {
         : 'EditListingWizard.saveEditPricing';
       return (
         <EditListingPricingPanel
+          currentUser={currentUser}
           {...panelProps(PRICING)}
           submitButtonText={intl.formatMessage({ id: submitButtonTranslationKey })}
           onSubmit={values => {

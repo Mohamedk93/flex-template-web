@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { Component } from 'react';
 import { array, arrayOf, bool, func, shape, string, oneOf } from 'prop-types';
-import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -16,7 +16,7 @@ import {
   LISTING_PAGE_PARAM_TYPE_EDIT,
   createSlug,
 } from '../../util/urlHelpers';
-import { formatMoney } from '../../util/currency';
+import { formatMoney, listingMinPrice, convertPrice } from '../../util/currency';
 import { createResourceLocatorString, findRouteByRouteName } from '../../util/routes';
 import {
   ensureListing,
@@ -46,6 +46,8 @@ import SectionImages from './SectionImages';
 import SectionAvatar from './SectionAvatar';
 import SectionHeading from './SectionHeading';
 import SectionDescriptionMaybe from './SectionDescriptionMaybe';
+import SectionWorkspaceMaybe from './SectionWorkspaceMaybe';
+import SectionRentalsMaybe from './SectionRentalsMaybe';
 import SectionFeaturesMaybe from './SectionFeaturesMaybe';
 import SectionReviews from './SectionReviews';
 import SectionHostMaybe from './SectionHostMaybe';
@@ -74,10 +76,12 @@ const categoryLabel = (categories, key) => {
   const cat = categories.find(c => c.key === key);
   return cat ? cat.label : key;
 };
+const mixpanel = require('mixpanel-browser');
 
 export class ListingPageComponent extends Component {
   constructor(props) {
     super(props);
+    mixpanel.init(process.env.REACT_APP_MIXPANNEL_TOKEN);
     const { enquiryModalOpenForListingId, params } = props;
     this.state = {
       pageClassNames: [],
@@ -98,17 +102,34 @@ export class ListingPageComponent extends Component {
       callSetInitialValues,
       onInitializeCardPaymentData,
     } = this.props;
+    mixpanel.track("pre_book_button", {
+      payment_method: values.paymentMethod,
+      workspaces: values.workspaces,
+      start_date: values.bookingDates.startDate.toString(),
+      end_date: values.bookingDates.endDate.toString(),
+      meeting_room_fee: values.meetingRoomsFee,
+      meeting_room_quantity: values.meetingRoomsQuantity,
+      rental_type: values.rentalType,
+      //seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
+      hours: values.hours,
+      raw_data: JSON.stringify(values)
+    });
     const listingId = new UUID(params.id);
     const listing = getListing(listingId);
 
-    const { bookingDates, ...bookingData } = values;
+    const { bookingDates, paymentMethod, rental_type, ...bookingData } = values;
 
+    // console.log("Tanawy is testing values from listing page booking panel",values);
+    // window.letmetestfromlistingpage = {values,moment};
     const initialValues = {
       listing,
       bookingData,
+      paymentMethod,
+      rentalType: rental_type,
       bookingDates: {
         bookingStart: bookingDates.startDate,
         bookingEnd: bookingDates.endDate,
+        ...bookingDates,
       },
       confirmPaymentError: null,
     };
@@ -158,6 +179,18 @@ export class ListingPageComponent extends Component {
     onSendEnquiry(listingId, message.trim())
       .then(txId => {
         this.setState({ enquiryModalOpen: false });
+        mixpanel.track("submit_enquiry_button", {
+          payment_method: values.paymentMethod,
+          workspaces: values.workspaces,
+          start_date: values.bookingDates.startDate.toString(),
+          end_date: values.bookingDates.endDate.toString(),
+          meeting_room_fee: values.meetingRoomsFee,
+          meeting_room_quantity: values.meetingRoomsQuantity,
+          rental_type: values.rentalType,
+          //seats_fee: values.seatsFee.amount + " " + values.seatsFee.currency,
+          hours: values.hours,
+          raw_data: JSON.stringify(values)
+        });
 
         // Redirect to OrderDetailsPage
         history.push(
@@ -190,15 +223,22 @@ export class ListingPageComponent extends Component {
       fetchTimeSlotsError,
       categoriesConfig,
       amenitiesConfig,
+      workspaceConfig,
+      rentalsConfig,
     } = this.props;
 
     const listingId = new UUID(rawParams.id);
     const isPendingApprovalVariant = rawParams.variant === LISTING_PAGE_PENDING_APPROVAL_VARIANT;
     const isDraftVariant = rawParams.variant === LISTING_PAGE_DRAFT_VARIANT;
+    let minPrice = null;
     const currentListing =
       isPendingApprovalVariant || isDraftVariant
         ? ensureOwnListing(getOwnListing(listingId))
         : ensureListing(getListing(listingId));
+
+    if(currentListing && currentListing.id){
+      minPrice = listingMinPrice(currentListing);
+    }
 
     const listingSlug = rawParams.slug || createSlug(currentListing.attributes.title || '');
     const params = { slug: listingSlug, ...rawParams };
@@ -324,7 +364,9 @@ export class ListingPageComponent extends Component {
     // banned or deleted display names for the function
     const authorDisplayName = userDisplayNameAsString(ensuredAuthor, '');
 
-    const { formattedPrice, priceTitle } = priceData(price, intl);
+    let { formattedPrice, priceTitle } = priceData(price, intl);
+
+    formattedPrice = convertPrice(currentUser, minPrice, formattedPrice);
 
     const handleBookingSubmit = values => {
       const isCurrentlyClosed = currentListing.attributes.state === LISTING_STATE_CLOSED;
@@ -417,6 +459,7 @@ export class ListingPageComponent extends Component {
               <div className={css.contentContainer}>
                 <SectionAvatar user={currentAuthor} params={params} />
                 <div className={css.mainContent}>
+
                   <SectionHeading
                     priceTitle={priceTitle}
                     formattedPrice={formattedPrice}
@@ -425,9 +468,13 @@ export class ListingPageComponent extends Component {
                     hostLink={hostLink}
                     showContactUser={showContactUser}
                     onContactUser={this.onContactUser}
+                    publicData={publicData}
                   />
+
                   <SectionDescriptionMaybe description={description} />
                   <SectionFeaturesMaybe options={amenitiesConfig} publicData={publicData} />
+                  <SectionWorkspaceMaybe options={workspaceConfig} publicData={publicData} />
+                  <SectionRentalsMaybe options={rentalsConfig} publicData={publicData} />
                   <SectionRulesMaybe publicData={publicData} />
                   <SectionMapMaybe
                     geolocation={geolocation}
@@ -452,6 +499,7 @@ export class ListingPageComponent extends Component {
                 <BookingPanel
                   className={css.bookingPanel}
                   listing={currentListing}
+                  currentUser={currentUser}
                   isOwnListing={isOwnListing}
                   unitType={unitType}
                   onSubmit={handleBookingSubmit}
@@ -486,6 +534,8 @@ ListingPageComponent.defaultProps = {
   sendEnquiryError: null,
   categoriesConfig: config.custom.categories,
   amenitiesConfig: config.custom.amenities,
+  workspaceConfig: config.custom.workspaces,
+  rentalsConfig: config.custom.rentals,
 };
 
 ListingPageComponent.propTypes = {
@@ -527,6 +577,8 @@ ListingPageComponent.propTypes = {
 
   categoriesConfig: array,
   amenitiesConfig: array,
+  workspaceConfig: array,
+  rentalsConfig: array,
 };
 
 const mapStateToProps = state => {

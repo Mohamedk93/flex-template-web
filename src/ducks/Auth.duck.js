@@ -1,10 +1,12 @@
 import isEmpty from 'lodash/isEmpty';
+import axios from 'axios';
 import { clearCurrentUser, fetchCurrentUser } from './user.duck';
-import { storableError } from '../util/errors';
+import { storableError } from '../util/errors'
+  ;
 import * as log from '../util/log';
 
-const authenticated = authInfo => authInfo && authInfo.grantType === 'refresh_token';
-
+const authenticated = authInfo => authInfo && authInfo.isAnonymous === false;
+const API_URL = process.env.REACT_APP_API_URL;
 // ================ Action types ================ //
 
 export const AUTH_INFO_REQUEST = 'app/Auth/AUTH_INFO_REQUEST';
@@ -31,6 +33,10 @@ export const USER_LOGOUT = 'app/USER_LOGOUT';
 const initialState = {
   isAuthenticated: false,
 
+  // scopes associated with current token
+  authScopes: [],
+
+
   // auth info
   authInfoLoaded: false,
 
@@ -46,14 +52,20 @@ const initialState = {
   signupError: null,
   signupInProgress: false,
 };
-
+const mixpanel = require('mixpanel-browser');
 export default function reducer(state = initialState, action = {}) {
   const { type, payload } = action;
   switch (type) {
     case AUTH_INFO_REQUEST:
       return state;
     case AUTH_INFO_SUCCESS:
-      return { ...state, authInfoLoaded: true, isAuthenticated: authenticated(payload) };
+    return {
+      ...state,
+      authInfoLoaded: true,
+      isAuthenticated: authenticated(payload),
+      authScopes: payload.scopes,
+    };
+
 
     case LOGIN_REQUEST:
       return {
@@ -71,7 +83,7 @@ export default function reducer(state = initialState, action = {}) {
     case LOGOUT_REQUEST:
       return { ...state, logoutInProgress: true, loginError: null, logoutError: null };
     case LOGOUT_SUCCESS:
-      return { ...state, logoutInProgress: false, isAuthenticated: false };
+      return { ...state, logoutInProgress: false, isAuthenticated: false, authScopes: [] };
     case LOGOUT_ERROR:
       return { ...state, logoutInProgress: false, logoutError: payload };
 
@@ -125,6 +137,7 @@ export const authInfo = () => (dispatch, getState, sdk) => {
       // store (i.e. cookies), and should not fail in normal
       // circumstances. If it fails, it's due to a programming
       // error. In that case we mark the operation done and dispatch
+
       // `null` success action that marks the user as unauthenticated.
       log.error(e, 'auth-info-failed');
       dispatch(authInfoSuccess(null));
@@ -143,6 +156,22 @@ export const login = (username, password) => (dispatch, getState, sdk) => {
     .login({ username, password })
     .then(() => dispatch(loginSuccess()))
     .then(() => dispatch(fetchCurrentUser()))
+    .then(() => sdk.currentUser.show()).then((user) => {
+      var data = user.data.data;
+      mixpanel.identify(data.attributes.email);
+      mixpanel.people.set({
+        "$email":  data.attributes.email,
+        "USER_ID": data.id.uuid,
+        "first_name": data.attributes.profile.firstName,
+        "created":data.attributes.createdAt,
+        "last_name": data.attributes.profile.lastName,
+        "verified":data.attributes.emailVerified,
+        "banned" : data.attributes.banned,
+        "currency" : data.attributes.profile.protectedData.currency
+
+      });
+      mixpanel.track("login");
+    })
     .catch(e => dispatch(loginError(storableError(e))));
 };
 
@@ -151,6 +180,12 @@ export const logout = () => (dispatch, getState, sdk) => {
     return Promise.reject(new Error('Login or logout already in progress'));
   }
   dispatch(logoutRequest());
+  sdk.currentUser.show().then((user) => {
+    var data = user.data.data;
+    mixpanel.identify(data.attributes.email);
+    mixpanel.track("logout");
+  });
+
 
   // Note that the thunk does not reject when the logout fails, it
   // just dispatches the logout error action.
@@ -159,6 +194,8 @@ export const logout = () => (dispatch, getState, sdk) => {
     .then(() => {
       // The order of the dispatched actions
       dispatch(logoutSuccess());
+
+      //mixpanel.track("logout", {"$email": sdk.currentUser.email});
       dispatch(clearCurrentUser());
       log.clearUserId();
       dispatch(userLogout());
@@ -173,22 +210,29 @@ export const signup = params => (dispatch, getState, sdk) => {
   dispatch(signupRequest());
   const { email, password, firstName, lastName, ...rest } = params;
 
-  const createUserParams = isEmpty(rest)
-    ? { email, password, firstName, lastName }
-    : { email, password, firstName, lastName, protectedData: { ...rest } };
-
-  // We must login the user if signup succeeds since the API doesn't
-  // do that automatically.
-  return sdk.currentUser
-    .create(createUserParams)
-    .then(() => dispatch(signupSuccess()))
-    .then(() => dispatch(login(email, password)))
-    .catch(e => {
-      dispatch(signupError(storableError(e)));
-      log.error(e, 'signup-failed', {
-        email: params.email,
-        firstName: params.firstName,
-        lastName: params.lastName,
-      });
+  axios.get(`${API_URL}/api/v1/rates`)
+    .then(function (response) {
+      const rates = response.data;
+      const currency = '';
+      let lastRateUpdate = new Date();
+      lastRateUpdate.setDate(lastRateUpdate.getDate() - 2);
+      lastRateUpdate = lastRateUpdate.toDateString();
+      const createUserParams = { email, password, firstName, lastName, protectedData: { lastRateUpdate, rates, currency, ...rest }};
+      return sdk.currentUser
+        .create(createUserParams)
+        .then(() => dispatch(signupSuccess()))
+        .then(() => dispatch(login(email, password)))
+        .catch(e => {
+          dispatch(signupError(storableError(e)));
+          log.error(e, 'signup-failed', {
+            email: params.email,
+            firstName: params.firstName,
+            lastName: params.lastName,
+          });
+        })
+    })
+    .catch(error => {
+      console.log(error)
     });
+
 };

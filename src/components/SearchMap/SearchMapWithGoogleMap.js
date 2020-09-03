@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import invariant from 'invariant';
 import { arrayOf, func, node, number, oneOfType, shape, string } from 'prop-types';
 import isEqual from 'lodash/isEqual';
 import { withGoogleMap, GoogleMap, OverlayView } from 'react-google-maps';
@@ -86,12 +88,46 @@ export const isMapsLibLoaded = () =>
  * https://github.com/tomchentw/react-google-maps/issues/482
  */
 class CustomOverlayView extends OverlayView {
+  onRemove() {
+    this.containerElement.parentNode.removeChild(this.containerElement);
+    //Remove `unmountComponentAtNode` for react version 16
+    //I decided to keep the code here incase React decides not to give out warning when `unmountComponentAtNode` in newer version
+    if (!React.version.match(/^16/)) {
+      ReactDOM.unmountComponentAtNode(this.containerElement);
+    }
+    this.containerElement = null;
+  }
+
+  onAdd() {
+    this.containerElement = document.createElement(`div`);
+    this.containerElement.style.position = `absolute`;
+
+    const { mapPaneName } = this.props;
+    invariant(
+      !!mapPaneName,
+      `OverlayView requires either props.mapPaneName or props.defaultMapPaneName but got %s`,
+      mapPaneName
+    );
+
+    const mapPanes = this.state[OVERLAY_VIEW].getPanes();
+    mapPanes[mapPaneName].appendChild(this.containerElement);
+    this.onPositionElement();
+    this.forceUpdate();
+  }
+
+  render() {
+    if (React.version.match(/^16/) && this.containerElement) {
+      return ReactDOM.createPortal(React.Children.only(this.props.children), this.containerElement);
+    }
+    return false;
+  }
+
   draw() {
     // https://developers.google.com/maps/documentation/javascript/3.exp/reference#MapPanes
     const mapPanes = this.state[OVERLAY_VIEW].getPanes();
     // Add conditional to ensure panes and container exist before drawing
     if (mapPanes && this.containerElement) {
-      super.draw();
+      this.onPositionElement();
     }
   }
 }
@@ -113,12 +149,15 @@ class SearchMapPriceLabelWithOverlay extends Component {
     const currentListing = ensureListing(this.props.listing);
     const nextListing = ensureListing(nextProps.listing);
     const isSameListing = currentListing.id.uuid === nextListing.id.uuid;
+    let cr = true;
+    if(this.props.currentUser && nextProps.currentUser){
+      cr = this.props.currentUser.attributes.profile.protectedData.currency === nextProps.currentUser.attributes.profile.protectedData.currency;
+    }
     const hasSamePrice = currentListing.attributes.price === nextListing.attributes.price;
     const hasSameActiveStatus = this.props.isActive === nextProps.isActive;
     const hasSameRefreshToken =
       this.props.mapComponentRefreshToken === nextProps.mapComponentRefreshToken;
-
-    return !(isSameListing && hasSamePrice && hasSameActiveStatus && hasSameRefreshToken);
+    return !(isSameListing && hasSamePrice && hasSameActiveStatus && hasSameRefreshToken ) || cr;
   }
 
   render() {
@@ -129,6 +168,7 @@ class SearchMapPriceLabelWithOverlay extends Component {
       className,
       listing,
       onListingClicked,
+      currentUser,
       mapComponentRefreshToken,
     } = this.props;
 
@@ -139,6 +179,7 @@ class SearchMapPriceLabelWithOverlay extends Component {
         getPixelPositionOffset={getPixelPositionOffset}
       >
         <SearchMapPriceLabel
+          currentUser={currentUser}
           isActive={isActive}
           className={className}
           listing={listing}
@@ -197,7 +238,8 @@ const priceLabelsInLocations = (
   activeListingId,
   infoCardOpen,
   onListingClicked,
-  mapComponentRefreshToken
+  mapComponentRefreshToken,
+  currentUser
 ) => {
   const listingArraysInLocations = reducedToArray(groupedByCoordinates(listings));
   const priceLabels = listingArraysInLocations.reverse().map(listingArr => {
@@ -218,7 +260,6 @@ const priceLabelsInLocations = (
       // Explicit type change to object literal for Google OverlayViews (geolocation is SDK type)
       const { geolocation } = listing.attributes;
       const latLngLiteral = { lat: geolocation.lat, lng: geolocation.lng };
-
       return (
         <SearchMapPriceLabelWithOverlay
           key={listing.id.uuid}
@@ -229,6 +270,7 @@ const priceLabelsInLocations = (
           listing={listing}
           onListingClicked={onListingClicked}
           mapComponentRefreshToken={mapComponentRefreshToken}
+          currentUser={currentUser}
         />
       );
     }
@@ -258,7 +300,8 @@ const infoCardComponent = (
   infoCardOpen,
   onListingInfoCardClicked,
   createURLToListing,
-  mapComponentRefreshToken
+  mapComponentRefreshToken,
+  currentUser
 ) => {
   const listingsArray = Array.isArray(infoCardOpen) ? infoCardOpen : [infoCardOpen];
 
@@ -284,6 +327,7 @@ const infoCardComponent = (
         listings={listingsArray}
         onListingInfoCardClicked={onListingInfoCardClicked}
         createURLToListing={createURLToListing}
+        currentUser={currentUser}
       />
     </CustomOverlayView>
   );
@@ -306,8 +350,9 @@ const MapWithGoogleMap = withGoogleMap(props => {
     onMapLoad,
     zoom,
     mapComponentRefreshToken,
+    currentUser,
   } = props;
-
+  
   const controlPosition =
     typeof window !== 'undefined' && typeof window.google !== 'undefined'
       ? window.google.maps.ControlPosition.LEFT_TOP
@@ -318,13 +363,15 @@ const MapWithGoogleMap = withGoogleMap(props => {
     activeListingId,
     infoCardOpen,
     onListingClicked,
-    mapComponentRefreshToken
+    mapComponentRefreshToken,
+    currentUser,
   );
   const infoCard = infoCardComponent(
     infoCardOpen,
     onListingInfoCardClicked,
     createURLToListing,
-    mapComponentRefreshToken
+    mapComponentRefreshToken,
+    currentUser,
   );
 
   return (
@@ -365,10 +412,10 @@ class SearchMapWithGoogleMap extends Component {
     this.onIdle = this.onIdle.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!isEqual(this.props.location, nextProps.location)) {
+  componentDidUpdate(prevProps) {
+    if (!isEqual(prevProps.location, this.props.location)) {
       // If no mapSearch url parameter is given, this is original location search
-      const { mapSearch } = parse(nextProps.location.search, {
+      const { mapSearch } = parse(this.props.location.search, {
         latlng: ['origin'],
         latlngBounds: ['bounds'],
       });
@@ -383,8 +430,8 @@ class SearchMapWithGoogleMap extends Component {
       // Do not call fitMapToBounds if bounds are the same.
       // Our bounds are viewport bounds, and fitBounds will try to add margins around those bounds
       // that would result to zoom-loop (bound change -> fitmap -> bounds change -> ...)
-      if (!isEqual(nextProps.bounds, currentBounds) && !this.viewportBounds) {
-        fitMapToBounds(this.map, nextProps.bounds, { padding: 0 });
+      if (!isEqual(this.props.bounds, currentBounds) && !this.viewportBounds) {
+        fitMapToBounds(this.map, this.props.bounds, { padding: 0 });
       }
     }
   }
@@ -428,10 +475,11 @@ class SearchMapWithGoogleMap extends Component {
       }
     }
   }
+  
 
   render() {
-    const { onMapLoad, onMapMoveEnd, ...rest } = this.props;
-    return <MapWithGoogleMap onMapLoad={this.onMapLoad} onIdle={this.onIdle} {...rest} />;
+    const { onMapLoad, onMapMoveEnd, currentUser, ...rest } = this.props;
+    return <MapWithGoogleMap currentUser={currentUser} onMapLoad={this.onMapLoad} onIdle={this.onIdle} {...rest} />;
   }
 }
 

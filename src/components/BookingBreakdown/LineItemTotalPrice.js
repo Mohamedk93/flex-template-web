@@ -1,6 +1,6 @@
 import React from 'react';
 import { bool } from 'prop-types';
-import { FormattedMessage, intlShape } from 'react-intl';
+import { FormattedMessage, intlShape } from '../../util/reactIntl';
 import { formatMoney } from '../../util/currency';
 import { txIsCanceled, txIsDelivered, txIsDeclined } from '../../util/transaction';
 import { propTypes } from '../../util/types';
@@ -8,7 +8,7 @@ import { propTypes } from '../../util/types';
 import css from './BookingBreakdown.css';
 
 const LineItemUnitPrice = props => {
-  const { transaction, isProvider, intl } = props;
+  const { transaction, isProvider, intl, currentUser, promo } = props;
 
   let providerTotalMessageId = 'BookingBreakdown.providerTotalDefault';
   if (txIsDelivered(transaction)) {
@@ -25,16 +25,46 @@ const LineItemUnitPrice = props => {
     <FormattedMessage id="BookingBreakdown.total" />
   );
 
-  const totalPrice = isProvider
+  let totalPrice = isProvider
     ? transaction.attributes.payoutTotal
     : transaction.attributes.payinTotal;
-  const formattedTotalPrice = formatMoney(intl, totalPrice);
 
+  // if(promo && totalPrice){
+
+  //   let discount =  totalPrice.amount  * (promo.value/100);
+  //   console.log("[this is tanawy debugging from LineItemTotalPrice] ", totalPrice);
+  //   totalPrice.amount = totalPrice.amount -  discount;
+  // }
+
+  let formattedTotalPrice = formatMoney(intl, totalPrice);
+  let currency = null;
+  let rates = [];
+  let result = null;
+
+  if(currentUser && currentUser.attributes.profile.protectedData.currency){
+    currency = currentUser.attributes.profile.protectedData.currency;
+    rates = currentUser.attributes.profile.protectedData.rates;
+    result = rates.find(e => e.iso_code == currency);
+  }else{
+    rates = JSON.parse(localStorage.getItem('rates'));
+    currency = localStorage.getItem('currentCode');
+    result = rates.find(e => e.iso_code == currency);
+  }
+  if(result){
+    formattedTotalPrice = formattedTotalPrice.substr(1).replace(/,/g, '');
+    formattedTotalPrice = formattedTotalPrice * result.current_rate;
+    formattedTotalPrice = formattedTotalPrice.toFixed(2);
+    formattedTotalPrice = result.symbol.toString() + formattedTotalPrice;
+
+  }
   return (
-    <div className={css.lineItem}>
-      <div className={css.totalLabel}>{totalLabel}</div>
-      <div className={css.totalPrice}>{formattedTotalPrice}</div>
-    </div>
+    <>
+      <hr className={css.totalDivider} />
+      <div className={css.lineItemTotal}>
+        <div className={css.totalLabel}>{totalLabel}</div>
+        <div className={css.totalPrice}>{formattedTotalPrice}</div>
+      </div>
+    </>
   );
 };
 

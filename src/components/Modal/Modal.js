@@ -11,7 +11,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import { Button, IconClose } from '../../components';
 
 import css from './Modal.css';
@@ -27,21 +27,21 @@ export class ModalComponent extends Component {
 
   componentDidMount() {
     const { id, isOpen, onManageDisableScrolling } = this.props;
-    onManageDisableScrolling(id, isOpen);
-    document.body.addEventListener('keyup', this.handleBodyKeyUp);
+    onManageDisableScrolling(id, isOpen); 
+    document.body.addEventListener('keyup', this.handleBodyKeyUp); 
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { id, isOpen, onManageDisableScrolling } = this.props;
-    if (nextProps.isOpen !== isOpen) {
-      onManageDisableScrolling(id, nextProps.isOpen);
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   const { id, isOpen, onManageDisableScrolling } = prevProps;
+  //   if (this.props.isOpen !== isOpen) {
+  //     onManageDisableScrolling(id, this.props.isOpen); 
+  //   }
+  // }
 
   componentWillUnmount() {
     const { id, onManageDisableScrolling } = this.props;
-    document.body.removeEventListener('keyup', this.handleBodyKeyUp);
-    onManageDisableScrolling(id, false);
+    document.body.removeEventListener('keyup', this.handleBodyKeyUp); 
+    onManageDisableScrolling(id, false); 
   }
 
   handleBodyKeyUp(event) {
@@ -53,7 +53,7 @@ export class ModalComponent extends Component {
 
   handleClose(event) {
     const { id, onClose, onManageDisableScrolling } = this.props;
-    onManageDisableScrolling(id, false);
+    onManageDisableScrolling(id, false); 
     onClose(event);
   }
 

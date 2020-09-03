@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { bool, func, instanceOf, oneOf, shape, string, arrayOf } from 'prop-types';
 import { DateRangePicker, isInclusivelyAfterDay, isInclusivelyBeforeDay } from 'react-dates';
-import { intlShape, injectIntl } from 'react-intl';
+import { intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
 import moment from 'moment';
 import { START_DATE, END_DATE } from '../../util/dates';
@@ -138,12 +138,12 @@ class DateRangeInputComponent extends Component {
     this.onFocusChange = this.onFocusChange.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     // Update focusedInput in case a new value for it is
     // passed in the props. This may occur if the focus
     // is manually set to the date picker.
-    if (nextProps.focusedInput && nextProps.focusedInput !== this.props.focusedInput) {
-      this.setState({ focusedInput: nextProps.focusedInput });
+    if (this.props.focusedInput && this.props.focusedInput !== prevProps.focusedInput) {
+      this.setState({ focusedInput: this.props.focusedInput });
     }
   }
 
@@ -171,6 +171,7 @@ class DateRangeInputComponent extends Component {
       : false;
 
     const startDateAsDate = startDate instanceof moment ? startDate.toDate() : null;
+    
     const endDateAsDate = clearEndDate ? null : pickerEndDateToApiDate(unitType, endDate);
 
     this.setState(() => ({
@@ -218,9 +219,11 @@ class DateRangeInputComponent extends Component {
       timeSlots,
       ...datePickerProps
     } = this.props;
+
     /* eslint-enable no-unused-vars */
 
-    const isDaily = unitType === LINE_ITEM_DAY;
+    console.log("[Tanawy is here DateRange Input render] checking unitType", unitType);
+    const isDaily = true || unitType === LINE_ITEM_DAY;
     const initialStartMoment = initialDates ? moment(initialDates.startDate) : null;
     const initialEndMoment = initialDates ? moment(initialDates.endDate) : null;
     const startDate =
@@ -228,12 +231,15 @@ class DateRangeInputComponent extends Component {
     const endDate =
       apiEndDateToPickerDate(unitType, value ? value.endDate : null) || initialEndMoment;
 
+    const disableBlocking = true;
+
     let isDayBlocked = isDayBlockedFn(
       timeSlots,
       startDate,
       endDate,
       this.state.focusedInput,
-      unitType
+      unitType,
+      disableBlocking
     );
 
     let isOutsideRange = isOutsideRangeFn(
@@ -280,6 +286,7 @@ class DateRangeInputComponent extends Component {
           phrases={{ closeDatePicker: closeDatePickerText, clearDate: clearDateText }}
           isDayBlocked={isDayBlocked}
           isOutsideRange={isOutsideRange}
+          // disabled={"endDate"}
         />
       </div>
     );

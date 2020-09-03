@@ -171,7 +171,7 @@ export const showListing = (listingId, isOwn = false) => (dispatch, getState, sd
 };
 
 export const fetchReviews = listingId => (dispatch, getState, sdk) => {
-  dispatch(fetchReviewsRequest);
+  dispatch(fetchReviewsRequest());
   return sdk.reviews
     .query({
       listing_id: listingId,
@@ -248,7 +248,7 @@ export const sendEnquiry = (listingId, message) => (dispatch, getState, sdk) => 
   dispatch(sendEnquiryRequest());
   const bodyParams = {
     transition: TRANSITION_ENQUIRE,
-    processAlias: config.bookingProcessAlias,
+    processAlias: config.scaBookingProcessAlias,
     params: { listingId },
   };
   return sdk.transactions

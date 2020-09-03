@@ -1,7 +1,7 @@
 import React from 'react';
 import { bool, func, object, string } from 'prop-types';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '../../util/reactIntl';
 import { ensureOwnListing } from '../../util/data';
 import { ListingLink } from '../../components';
 import { LISTING_STATE_DRAFT } from '../../util/types';
@@ -35,23 +35,73 @@ const EditListingDescriptionPanel = props => {
     />
   ) : (
     <FormattedMessage id="EditListingDescriptionPanel.createListingTitle" />
-  );
+    );
+
+
+
+
+  const currency = publicData.currency ? publicData.currency : 'usd';
+  const seats_quantity = publicData.seatsQuantity ? publicData.seatsQuantity : 1;
+  const office_rooms_quantity = publicData.officeRoomsQuantity ? publicData.officeRoomsQuantity : 1;
+  const meeting_rooms_quantity = publicData.meetingRoomsQuantity ? publicData.meetingRoomsQuantity : 1;
+
+  console.log(currency)
 
   return (
     <div className={classes}>
       <h1 className={css.title}>{panelTitle}</h1>
+
+    <p>
+    Adding your workspace is 100% free, and we only earn a 10% commission on successful transactions. There are many benefits and enhanced functions you get when you add your workspace:
+  </p>
+<ul className={css.li}><li>Create a digital experience for your customers without spending any development cost</li>
+<li>Enable online booking of your workspace in a few clicks</li>
+<li>Enable card payments directly to your bank account (certain countries only) or receive the amount in cash</li>
+<li>Automated invoicing upon customer booking</li>
+<li>Booking requests are sent to you for approval before customer confirmation via our App and Website </li>
+<li>You can rent seats, meeting rooms or office rooms </li>
+<li>You can rent your space by the hour, day or month </li>
+</ul>
+<p> Our fee is either directly netted from the amount you receive for card payments, or you can transfer it to us at the end of each month for cash payments.
+ </p>
+
       <EditListingDescriptionForm
         className={css.form}
-        initialValues={{ title, description, category: publicData.category }}
+        initialValues={{
+          title,
+          description,
+          currency: publicData.currency,
+          category: publicData.category,
+          workspaces: publicData.workspaces,
+          seats_quantity,
+          office_rooms_quantity,
+          meeting_rooms_quantity,
+        }}
         saveActionMsg={submitButtonText}
         onSubmit={values => {
-          const { title, description, category } = values;
+          console.log(values)
+          const {
+            title,
+            description,
+            category,
+            currency,
+            workspaces,
+            seats_quantity,
+            office_rooms_quantity,
+            meeting_rooms_quantity,
+          } = values;
           const updateValues = {
             title: title.trim(),
             description,
-            publicData: { category },
+            publicData: {
+              category,
+              currency,
+              workspaces,
+              seatsQuantity: seats_quantity ? parseInt(seats_quantity) : 0,
+              officeRoomsQuantity: office_rooms_quantity ? parseInt(office_rooms_quantity) : 0,
+              meetingRoomsQuantity: meeting_rooms_quantity ? parseInt(meeting_rooms_quantity) : 0,
+            },
           };
-
           onSubmit(updateValues);
         }}
         onChange={onChange}

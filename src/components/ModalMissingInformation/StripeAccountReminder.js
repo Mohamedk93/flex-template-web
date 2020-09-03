@@ -1,22 +1,30 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '../../util/reactIntl';
 import { NamedLink } from '../../components';
+import { IconWarning } from '../../components';
 
 import css from './ModalMissingInformation.css';
 
 const StripeAccountReminder = props => {
-  const { className } = props;
-
+  const { className, stripeDialog } = props;
+  const dialogText = stripeDialog ? (
+    <FormattedMessage id="ModalMissingInformation.missingStripeAccountTextSecond" />
+  ) : (
+    <FormattedMessage id="ModalMissingInformation.missingStripeAccountText" />
+  )
   return (
     <div className={className}>
-      <p className={css.modalTitle}>
+      <div>
+        <IconWarning/>
+      </div>
+      <p className={css.modalTitle2}>
         <FormattedMessage id="ModalMissingInformation.missingStripeAccountTitle" />
       </p>
-      <p className={css.modalMessage}>
+      <p className={css.modalMessage2}>
         <FormattedMessage id="ModalMissingInformation.missingStripeAccountText" />
       </p>
       <div className={css.bottomWrapper}>
-        <NamedLink className={css.reminderModalLinkButton} name="PayoutPreferencesPage">
+        <NamedLink className={css.reminderModalLinkButton} name="StripePayoutPage">
           <FormattedMessage id="ModalMissingInformation.gotoPaymentSettings" />
         </NamedLink>
       </div>

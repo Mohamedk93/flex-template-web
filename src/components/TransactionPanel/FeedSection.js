@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { ActivityFeed } from '../../components';
 
@@ -37,11 +37,11 @@ const FeedSection = props => {
       <h3 className={css.feedHeading}>
         <FormattedMessage id="TransactionPanel.activityHeading" />
       </h3>
-      {initialMessageFailed ? (
-        <p className={css.messageError}>
-          <FormattedMessage id="TransactionPanel.initialMessageFailed" />
-        </p>
-      ) : null}
+      {/*{initialMessageFailed ? (*/}
+        {/*<p className={css.messageError}>*/}
+          {/*<FormattedMessage id="TransactionPanel.initialMessageFailed" />*/}
+        {/*</p>*/}
+      {/*) : null}*/}
       {fetchMessagesError ? (
         <p className={css.messageError}>
           <FormattedMessage id="TransactionPanel.messageLoadingFailed" />

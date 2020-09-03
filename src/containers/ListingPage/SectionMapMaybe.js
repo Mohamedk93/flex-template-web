@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { string } from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { propTypes } from '../../util/types';
 import { obfuscatedCoordinates } from '../../util/maps';
@@ -13,6 +13,12 @@ class SectionMapMaybe extends Component {
   constructor(props) {
     super(props);
     this.state = { isStatic: true };
+  }
+
+  handleMapClick() {
+    const { geolocation } = this.props;
+    const url = `https://www.google.com/maps/search/?api=1&query=${geolocation.lat},${geolocation.lng}`
+    window.open(url, "_blank");
   }
 
   render() {
@@ -39,9 +45,10 @@ class SectionMapMaybe extends Component {
         {this.state.isStatic ? (
           <button
             className={css.map}
-            onClick={() => {
-              this.setState({ isStatic: false });
-            }}
+            // onClick={() => {
+            //   this.setState({ isStatic: false });
+            // }}
+            onClick={() => {this.handleMapClick()}}
           >
             {map}
           </button>

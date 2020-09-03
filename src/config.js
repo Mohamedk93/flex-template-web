@@ -1,6 +1,7 @@
 import * as custom from './marketplace-custom-config.js';
 import defaultLocationSearches from './default-location-searches';
-import { stripePublishableKey, stripeSupportedCountries } from './stripe-config';
+import { stripePublishableKey, stripeCountryDetails } from './stripe-config';
+
 import { currencyConfiguration } from './currency-config';
 
 const env = process.env.REACT_APP_ENV;
@@ -22,6 +23,8 @@ const i18n = {
 // Should search results be ordered by distance to origin.
 // NOTE: If this is set to true add parameter 'origin' to every location in default-location-searches.js
 // Without the 'origin' parameter, search will not work correctly
+// NOTE: Keyword search and ordering search results by distance can't be used at the same time. You can turn keyword
+// search off by changing the keywordFilterConfig parameter active to false in marketplace-custom-config.js
 const sortSearchByDistance = false;
 
 // API supports custom processes to be used in booking process.
@@ -30,7 +33,9 @@ const sortSearchByDistance = false;
 //
 // In a way, 'processAlias' defines which transaction process (or processes)
 // this particular web application is able to handle.
-const bookingProcessAlias = 'preauth-unit-time-booking/release-1';
+
+const cashBookingProcessAlias = 'cash-unit-time-booking/cus-pricing-var-unit';
+const scaBookingProcessAlias = 'sca-preauth-unit-time-booking/cus-pricing-var-unit';
 
 // The transaction line item code for the main unit type in bookings.
 //
@@ -38,7 +43,7 @@ const bookingProcessAlias = 'preauth-unit-time-booking/release-1';
 //
 // Note: translations will use different translation keys for night, day or unit
 // depending on the value chosen.
-const bookingUnitType = 'line-item/night';
+const bookingUnitType = 'line-item/units';
 
 // Should the application fetch available time slots (currently defined as
 // start and end dates) to be shown on listing page.
@@ -90,7 +95,7 @@ const siteTitle = 'Hotdesk';
 const siteTwitterHandle = '@thehotdeskapp';
 
 // Instagram page is used in SEO schema (http://schema.org/Organization)
-const siteInstagramPage = null;
+const siteInstagramPage = 'https://www.instagram.com/hotdesk.app/';
 
 // Facebook page is used in SEO schema (http://schema.org/Organization)
 const siteFacebookPage = 'https://www.facebook.com/hotdeskapp/';
@@ -117,7 +122,7 @@ const maps = {
 
     // Distance in meters for calculating the bounding box around the
     // current location.
-    currentLocationBoundsDistance: 1000,
+    currentLocationBoundsDistance: 10000,
 
     // Example location can be edited in the
     // `default-location-searches.js` file.
@@ -183,7 +188,8 @@ const config = {
   env,
   dev,
   locale,
-  bookingProcessAlias,
+  scaBookingProcessAlias,
+  cashBookingProcessAlias,
   bookingUnitType,
   enableAvailability,
   dayCountAvailableForBooking,
@@ -199,7 +205,7 @@ const config = {
   listingMinimumPriceSubUnits,
   stripe: {
     publishableKey: stripePublishableKey,
-    supportedCountries: stripeSupportedCountries,
+    supportedCountries: stripeCountryDetails,
   },
   canonicalRootURL,
   address: {

@@ -8,6 +8,53 @@
 
     <!--!googleAnalyticsScript-->
 
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PLRB6MX');</script>
+    <!-- End Google Tag Manager -->
+
+    <!-- Hotjar Tracking Code for www.hotdesk-app.com -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:1893034,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+    <!-- End Hotjar -->
+
+  
+
+<!-- App Cues -->
+
+  <!-- Intercom Chat -->
+  <script>
+    window.intercomSettings = {
+      app_id: "zdlfvqzk"
+    };
+  </script>
+
+  <script>
+  // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/zdlfvqzk'
+  (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/zdlfvqzk';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+  </script>
+
+<!-- End Intercom Chat -->
+
+    <!--Mixpanel-->
+    <script>(function(c,a){if(!a.__SV){var b=window;try{var d,m,j,k=b.location,f=k.hash;d=function(a,b){return(m=a.match(RegExp(b+"=([^&]*)")))?m[1]:null};f&&d(f,"state")&&(j=JSON.parse(decodeURIComponent(d(f,"state"))),"mpeditor"===j.action&&(b.sessionStorage.setItem("_mpcehash",f),history.replaceState(j.desiredHash||"",c.title,k.pathname+k.search)))}catch(n){}var l,h;window.mixpanel=a;a._i=[];a.init=function(b,d,g){function c(b,i){var a=i.split(".");2==a.length&&(b=b[a[0]],i=a[1]);b[i]=function(){b.push([i].concat(Array.prototype.slice.call(arguments,
+    0)))}}var e=a;"undefined"!==typeof g?e=a[g]=[]:g="mixpanel";e.people=e.people||[];e.toString=function(b){var a="mixpanel";"mixpanel"!==g&&(a+="."+g);b||(a+=" (stub)");return a};e.people.toString=function(){return e.toString(1)+".people (stub)"};l="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove".split(" ");
+    for(h=0;h<l.length;h++)c(e,l[h]);var f="set set_once union unset remove delete".split(" ");e.get_group=function(){function a(c){b[c]=function(){call2_args=arguments;call2=[c].concat(Array.prototype.slice.call(call2_args,0));e.push([d,call2])}}for(var b={},d=["get_group"].concat(Array.prototype.slice.call(arguments,0)),c=0;c<f.length;c++)a(f[c]);return b};a._i.push([b,d,g])};a.__SV=1.2;b=c.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?
+    MIXPANEL_CUSTOM_LIB_URL:"file:"===c.location.protocol&&"//cdn4.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn4.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn4.mxpnl.com/libs/mixpanel-2-latest.min.js";d=c.getElementsByTagName("script")[0];d.parentNode.insertBefore(b,d)}})(document,window.mixpanel||[]);
+    mixpanel.init("a3320a98be36c497413cd2912dbbe34f", {batch_requests: true})</script>
+    <!-- End Mixpanel -->
+
     <link rel="manifest" href="%PUBLIC_URL%/static/manifest.json">
 
     <!-- Start Favicons from https://realfavicongenerator.net/ -->
@@ -23,6 +70,8 @@
     <!-- End Favicons -->
 
     <!--!link-->
+
+    
 
     <style>
      /**
@@ -40,6 +89,7 @@
              url('https://assets-sharetribecom.sharetribe.com/webfonts/sofiapro/sofiapro-regular-webfont.woff') format('woff');
         font-weight: 400; /* Regular */
         font-style: normal;
+        font-display: swap;
       }
 
       @font-face {
@@ -48,6 +98,7 @@
                url('https://assets-sharetribecom.sharetribe.com/webfonts/sofiapro/sofiapro-medium-webfont.woff') format('woff');
           font-weight: 500; /* Medium */
           font-style: normal;
+          font-display: swap;
       }
 
       @font-face {
@@ -56,6 +107,7 @@
                url('https://assets-sharetribecom.sharetribe.com/webfonts/sofiapro/sofiapro-mediumit-webfont.woff') format('woff');
           font-weight: 500; /* Medium italics */
           font-style: italic;
+          font-display: swap;
       }
 
       @font-face {
@@ -64,6 +116,7 @@
                url('https://assets-sharetribecom.sharetribe.com/webfonts/sofiapro/sofiapro-semibold-webfont.woff') format('woff');
           font-weight: 600; /* SemiBold */
           font-style: normal;
+          font-display: swap;
       }
 
       @font-face {
@@ -72,6 +125,7 @@
                url('https://assets-sharetribecom.sharetribe.com/webfonts/sofiapro/sofiapro-bold-webfont.woff') format('woff');
           font-weight: 700; /* Bold */
           font-style: normal;
+          font-display: swap;
       }
 
     </style>
@@ -87,9 +141,57 @@
     </script>
 
     <link rel="stylesheet" href="%PUBLIC_URL%/static/reactDates.css" />
+
+    <!-- Facebook Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', localStorage.getItem('REACT_APP_FB_PIXEL_ID'));
+      fbq('track', 'PageView');
+    </script>
+
+    <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=804008990041190&ev=PageView&noscript=1(44 B)
+    https://www.facebook.com/tr?id=804008990041190&ev=PageView&noscript=1
+    "
+    /></noscript>
+    <!-- End Facebook Pixel Code -->
+
+
+
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PLRB6MX"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : localStorage.getItem('REACT_APP_FB_APP_ID'),
+          xfbml      : true,
+          version    : 'v5.0'
+        });
+        FB.AppEvents.logPageView();
+      };
+      (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+
     <div id="root"><!--!body--></div>
+    <div id="portal-root"></div>
     <script>
       (function(document){
         // Check if Promise exists in window
@@ -150,11 +252,19 @@
       mapbox-sdk.min.js is included from static folder for CSP purposes.
       We didn't bundle it to the main app since it would unnecessarily slow down initial rendering.
     -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=%REACT_APP_GOOGLE_MAPS_API_KEY%&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=%REACT_APP_GOOGLE_MAPS_API_KEY%&libraries=places,geometry"></script>
     <!--
       If Google Maps is used instead of Mapbox, you need to include Google's script instead:
       <script src="https://maps.googleapis.com/maps/api/js?key=%REACT_APP_GOOGLE_MAPS_API_KEY%&libraries=places"></script>
     -->
+
+    <!--After Update-->
+    <!-- <script src="%PUBLIC_URL%/static/scripts/mapbox/mapbox-sdk.min.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js"></script>
+    <script>
+      window.mapboxgl.accessToken = '%REACT_APP_MAPBOX_ACCESS_TOKEN%';
+    </script> -->
 
     <!--
          Stripe script should be on every page, not just the pages that
@@ -173,5 +283,10 @@
 
          See docs/content-security-policy.md for more information.
     -->
+
+    <!-- App Cues -->
+
+  <script src="//fast.appcues.com/79109.js">
+</script>
   </body>
 </html>

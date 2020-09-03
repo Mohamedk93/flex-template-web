@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { any, arrayOf, bool, func, number, shape, string, oneOfType, object } from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import { IconSpinner } from '../../components';
@@ -322,11 +322,15 @@ class LocationAutocompleteInputImpl extends Component {
           return;
         }
         this.setState({ fetchingPlaceDetails: false });
+
         this.props.input.onChange({
           search: place.address,
           predictions: [],
           selectedPlace: place,
         });
+
+        const coords = place.origin;
+        this.props.handleAutocompleteChange(coords);
       })
       .catch(e => {
         this.setState({ fetchingPlaceDetails: false });

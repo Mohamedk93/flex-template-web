@@ -6,6 +6,18 @@ import moment from 'moment';
 export const START_DATE = 'startDate';
 export const END_DATE = 'endDate';
 
+export const PRICING_LOCAL_NAMES = [
+                              'price_seats_hourly',
+                              'price_seats_daily',
+                              'price_seats_monthly',
+                              'price_office_rooms_hourly',
+                              'price_office_rooms_daily',
+                              'price_office_rooms_monthly',
+                              'price_meeting_rooms_hourly',
+                              'price_meeting_rooms_daily',
+                              'price_meeting_rooms_monthly',
+                            ];
+
 /**
  * Check that the given parameter is a Date object.
  *
@@ -114,6 +126,22 @@ export const daysBetween = (startDate, endDate) => {
   return days;
 };
 
+export const daysBetweenInclusive = (startDate, endDate) => {
+  const days = moment(endDate).add(1,'days').diff(startDate, 'days');
+  if (days < 0) {
+    throw new Error('End date cannot be before start date');
+  }
+  return days;
+};
+
+export const monthsBetween = (startDate, endDate) => {
+  const months = moment(endDate).diff(startDate, 'months') + 1;
+  if (months < 0) {
+    throw new Error('End date cannot be before start date');
+  }
+  return months;
+};
+
 /**
  * Calculate the number of minutes between the given dates
  *
@@ -166,7 +194,10 @@ export const formatDate = (intl, todayString, d) => {
   if (!paramsValid) {
     throw new Error(`Invalid params for formatDate: (${intl}, ${todayString}, ${d})`);
   }
-  const now = moment(intl.now());
+
+  // By default we can use moment() directly but in tests we need to use a specific dates.
+  // fakeIntl used in tests contains now() function wich returns predefined date
+  const now = intl.now ? moment(intl.now()) : moment();
   const formattedTime = intl.formatTime(d);
   let formattedDate;
 
@@ -254,3 +285,75 @@ export const getExclusiveEndDate = dateString => {
     .startOf('day')
     .toDate();
 };
+
+export const formatDateToText = (intl, date) => {
+  return {
+    date: intl.formatDate(date, {
+      month: 'short',
+      day: 'numeric',
+    }),
+    time: intl.formatDate(date, {
+      hour: 'numeric',
+      minute: 'numeric',
+    }),
+    dateAndTime: intl.formatTime(date, {
+      month: 'short',
+      day: 'numeric',
+    }),
+  };
+};
+
+
+export const mainMobileArray = (props) => {
+  const price_seats_hourly          = props.rentalTypes.indexOf('hourly')  !== -1 && props.workspaces.indexOf('seats') !== -1         ? 'price_seats_hourly'          : null;
+  const price_seats_daily           = props.rentalTypes.indexOf('daily')   !== -1 && props.workspaces.indexOf('seats') !== -1         ? 'price_seats_daily'           : null;
+  const price_seats_monthly         = props.rentalTypes.indexOf('monthly') !== -1 && props.workspaces.indexOf('seats') !== -1         ? 'price_seats_monthly'         : null;
+  const price_office_rooms_hourly   = props.rentalTypes.indexOf('hourly')  !== -1 && props.workspaces.indexOf('office_rooms') !== -1  ? 'price_office_rooms_hourly'   : null;
+  const price_office_rooms_daily    = props.rentalTypes.indexOf('daily')   !== -1 && props.workspaces.indexOf('office_rooms') !== -1  ? 'price_office_rooms_daily'    : null;
+  const price_office_rooms_monthly  = props.rentalTypes.indexOf('monthly') !== -1 && props.workspaces.indexOf('office_rooms') !== -1  ? 'price_office_rooms_monthly'  : null;
+  const price_meeting_rooms_hourly  = props.rentalTypes.indexOf('hourly')  !== -1 && props.workspaces.indexOf('meeting_rooms') !== -1 ? 'price_meeting_rooms_hourly'  : null;
+  const price_meeting_rooms_daily   = props.rentalTypes.indexOf('daily')   !== -1 && props.workspaces.indexOf('meeting_rooms') !== -1 ? 'price_meeting_rooms_daily'   : null;
+  const price_meeting_rooms_monthly = props.rentalTypes.indexOf('monthly') !== -1 && props.workspaces.indexOf('meeting_rooms') !== -1 ? 'price_meeting_rooms_monthly' : null;
+  
+  const mobileArray = [
+    price_seats_hourly,         
+    price_seats_daily,          
+    price_seats_monthly,        
+    price_office_rooms_hourly,  
+    price_office_rooms_daily, 
+    price_office_rooms_monthly, 
+    price_meeting_rooms_hourly,
+    price_meeting_rooms_daily,
+    price_meeting_rooms_monthly,
+  ].filter(function(x) {
+    return x !== undefined && x !== null
+  });
+  return mobileArray;
+}
+
+export const setMobileArray = (props) => {
+  const price_seats_hourly          = props.initialValues.price_seats_hourly && props.initialValues.price_seats_hourly.amount > 0 ?          'price_seats_hourly'          : null;
+  const price_seats_daily           = props.initialValues.price_seats_daily && props.initialValues.price_seats_daily.amount > 0 ?           'price_seats_daily'           : null;
+  const price_seats_monthly         = props.initialValues.price_seats_monthly  && props.initialValues.price_seats_monthly.amount > 0 ?         'price_seats_monthly'         : null;
+  const price_office_rooms_hourly   = props.initialValues.price_office_rooms_hourly && props.initialValues.price_office_rooms_hourly.amount > 0 ?   'price_office_rooms_hourly'   : null;
+  const price_office_rooms_daily    = props.initialValues.price_office_rooms_daily && props.initialValues.price_office_rooms_daily.amount > 0 ?    'price_office_rooms_daily'    : null;
+  const price_office_rooms_monthly  = props.initialValues.price_office_rooms_monthly && props.initialValues.price_office_rooms_monthly.amount > 0 ?  'price_office_rooms_monthly'  : null;
+  const price_meeting_rooms_hourly  = props.initialValues.price_meeting_rooms_hourly && props.initialValues.price_meeting_rooms_hourly.amount > 0 ?  'price_meeting_rooms_hourly'  : null;
+  const price_meeting_rooms_daily   = props.initialValues.price_meeting_rooms_daily && props.initialValues.price_meeting_rooms_daily.amount > 0 ?   'price_meeting_rooms_daily'   : null;
+  const price_meeting_rooms_monthly = props.initialValues.price_meeting_rooms_monthly && props.initialValues.price_meeting_rooms_monthly.amount > 0 ? 'price_meeting_rooms_monthly' : null;
+
+  const mobileArray = [
+    price_seats_hourly,         
+    price_seats_daily,          
+    price_seats_monthly,        
+    price_office_rooms_hourly,  
+    price_office_rooms_daily, 
+    price_office_rooms_monthly, 
+    price_meeting_rooms_hourly,
+    price_meeting_rooms_daily,
+    price_meeting_rooms_monthly,
+  ].filter(function(x) {
+    return x !== undefined && x !== null
+  });
+  return mobileArray;
+}

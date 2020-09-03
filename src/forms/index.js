@@ -3,6 +3,9 @@ export { default as ContactDetailsForm } from './ContactDetailsForm/ContactDetai
 export { default as EditListingAvailabilityForm } from './EditListingAvailabilityForm/EditListingAvailabilityForm';
 export { default as EditListingDescriptionForm } from './EditListingDescriptionForm/EditListingDescriptionForm';
 export { default as EditListingFeaturesForm } from './EditListingFeaturesForm/EditListingFeaturesForm';
+export { default as EditListingRentalsForm } from './EditListingRentalsForm/EditListingRentalsForm';
+
+export { default as EditListingWorkspaceForm } from './EditListingWorkspaceForm/EditListingWorkspaceForm';
 export { default as EditListingLocationForm } from './EditListingLocationForm/EditListingLocationForm';
 export { default as EditListingPhotosForm } from './EditListingPhotosForm/EditListingPhotosForm';
 export { default as EditListingPoliciesForm } from './EditListingPoliciesForm/EditListingPoliciesForm';
@@ -15,11 +18,13 @@ export { default as LoginForm } from './LoginForm/LoginForm';
 export { default as PasswordChangeForm } from './PasswordChangeForm/PasswordChangeForm';
 export { default as PasswordRecoveryForm } from './PasswordRecoveryForm/PasswordRecoveryForm';
 export { default as PasswordResetForm } from './PasswordResetForm/PasswordResetForm';
-export { default as PayoutDetailsForm } from './PayoutDetailsForm/PayoutDetailsForm';
+export { default as PaymentMethodsForm } from './PaymentMethodsForm/PaymentMethodsForm';
 export { default as PriceFilterForm } from './PriceFilterForm/PriceFilterForm';
 export { default as ProfileSettingsForm } from './ProfileSettingsForm/ProfileSettingsForm';
 export { default as ReviewForm } from './ReviewForm/ReviewForm';
 export { default as SendMessageForm } from './SendMessageForm/SendMessageForm';
 export { default as SignupForm } from './SignupForm/SignupForm';
 export { default as StripePaymentForm } from './StripePaymentForm/StripePaymentForm';
+export { default as CashPaymentForm } from './CashPaymentForm/CashPaymentForm';
+export { default as StripeConnectAccountForm } from './StripeConnectAccountForm/StripeConnectAccountForm';
 export { default as TopbarSearchForm } from './TopbarSearchForm/TopbarSearchForm';

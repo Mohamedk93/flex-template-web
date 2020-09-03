@@ -13,11 +13,12 @@ import routeConfiguration from '../../routeConfiguration';
  * @param {Object} paramValue Search parameter value
  * @param {Object} filters Filters configuration
  */
-export const validURLParamForExtendedData = (paramName, paramValue, filters) => {
+export const validURLParamForExtendedData = (paramName, paramValueRaw, filters) => {
   const filtersArray = Object.values(filters);
   // resolve configuration for this filter
   const filterConfig = filtersArray.find(f => f.paramName === paramName);
 
+  const paramValue = paramValueRaw.toString();
   const valueArray = paramValue ? paramValue.split(',') : [];
 
   if (filterConfig && valueArray.length > 0) {
@@ -78,6 +79,8 @@ export const validFilterParams = (params, filters) => {
  */
 export const validURLParamsForExtendedData = (params, filters) => {
   const filterParamNames = Object.values(filters).map(f => f.paramName);
+  //console.log('This is params === >', params)
+  //console.log('This is filtes === >', filters)
   const paramEntries = Object.entries(params);
 
   return paramEntries.reduce((validParams, entry) => {

@@ -3,12 +3,18 @@ import config from '../../config';
 import { denormalisedResponseEntities } from '../../util/data';
 import { storableError } from '../../util/errors';
 import {
+  TRANSITION_REQUEST,
+  TRANSITION_ACCEPT_BY_CUSTOMER,
+  TRANSITION_REQUEST_DAILY,
+  TRANSITION_REQUEST_MONTHLY,
   TRANSITION_REQUEST_PAYMENT,
+  TRANSITION_REQUEST_PAYMENT_DAILY,
+  TRANSITION_REQUEST_PAYMENT_MONTHLY,
   TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
   TRANSITION_CONFIRM_PAYMENT,
 } from '../../util/transaction';
 import * as log from '../../util/log';
-import { fetchCurrentUserHasOrdersSuccess } from '../../ducks/user.duck';
+import { fetchCurrentUserHasOrdersSuccess, fetchCurrentUser } from '../../ducks/user.duck';
 
 // ================ Action types ================ //
 
@@ -26,19 +32,27 @@ export const SPECULATE_TRANSACTION_REQUEST = 'app/ListingPage/SPECULATE_TRANSACT
 export const SPECULATE_TRANSACTION_SUCCESS = 'app/ListingPage/SPECULATE_TRANSACTION_SUCCESS';
 export const SPECULATE_TRANSACTION_ERROR = 'app/ListingPage/SPECULATE_TRANSACTION_ERROR';
 
+export const STRIPE_CUSTOMER_REQUEST = 'app/CheckoutPage/STRIPE_CUSTOMER_REQUEST';
+export const STRIPE_CUSTOMER_SUCCESS = 'app/CheckoutPage/STRIPE_CUSTOMER_SUCCESS';
+export const STRIPE_CUSTOMER_ERROR = 'app/CheckoutPage/STRIPE_CUSTOMER_ERROR';
+
 // ================ Reducer ================ //
 
 const initialState = {
   listing: null,
   bookingData: null,
   bookingDates: null,
+  paymentMethod: '',
   speculateTransactionInProgress: false,
   speculateTransactionError: null,
   speculatedTransaction: null,
   transaction: null,
   initiateOrderError: null,
   confirmPaymentError: null,
+  stripeCustomerFetched: false,
 };
+const mixpanel = require('mixpanel-browser');
+
 
 export default function checkoutPageReducer(state = initialState, action = {}) {
   const { type, payload } = action;
@@ -80,8 +94,15 @@ export default function checkoutPageReducer(state = initialState, action = {}) {
     case CONFIRM_PAYMENT_SUCCESS:
       return state;
     case CONFIRM_PAYMENT_ERROR:
-      console.error(payload); // eslint-disable-line no-console
       return { ...state, confirmPaymentError: payload };
+
+    case STRIPE_CUSTOMER_REQUEST:
+      return { ...state, stripeCustomerFetched: false };
+    case STRIPE_CUSTOMER_SUCCESS:
+      return { ...state, stripeCustomerFetched: true };
+    case STRIPE_CUSTOMER_ERROR:
+      console.error(payload); // eslint-disable-line no-console
+      return { ...state, stripeCustomerFetchError: payload };
 
     default:
       return state;
@@ -110,18 +131,16 @@ const initiateOrderError = e => ({
   payload: e,
 });
 
-const confirmPaymentRequest = () => ({ type: CONFIRM_PAYMENT_REQUEST });
-
-const confirmPaymentSuccess = orderId => ({
-  type: CONFIRM_PAYMENT_SUCCESS,
-  payload: orderId,
-});
-
-const confirmPaymentError = e => ({
-  type: CONFIRM_PAYMENT_ERROR,
-  error: true,
-  payload: e,
-});
+ const confirmPaymentRequest = () => ({ type: CONFIRM_PAYMENT_REQUEST })
+ const confirmPaymentSuccess = orderId => ({
+   type: CONFIRM_PAYMENT_SUCCESS,
+   payload: orderId,
+ });
+ const confirmPaymentError = e => ({
+   type: CONFIRM_PAYMENT_ERROR,
+   error: true,
+   payload: e,
+ });
 
 export const speculateTransactionRequest = () => ({ type: SPECULATE_TRANSACTION_REQUEST });
 
@@ -136,10 +155,38 @@ export const speculateTransactionError = e => ({
   payload: e,
 });
 
+export const stripeCustomerRequest = () => ({ type: STRIPE_CUSTOMER_REQUEST });
+export const stripeCustomerSuccess = () => ({ type: STRIPE_CUSTOMER_SUCCESS });
+export const stripeCustomerError = e => ({
+  type: STRIPE_CUSTOMER_ERROR,
+  error: true,
+  payload: e,
+});
+
 /* ================ Thunks ================ */
 
-export const initiateOrder = (orderParams, transactionId) => (dispatch, getState, sdk) => {
+export const initiateOrder = (orderParams, transactionId, processAlias, rentalType) => (dispatch, getState, sdk) => {
   dispatch(initiateOrderRequest());
+
+  let transition;
+  if(processAlias === config.cashBookingProcessAlias) {
+    if(rentalType === 'hourly') {
+      transition = TRANSITION_REQUEST;
+    } else if(rentalType === 'daily') {
+      transition = TRANSITION_REQUEST_DAILY;
+    } else if(rentalType === 'monthly') {
+      transition = TRANSITION_REQUEST_MONTHLY;
+    }
+  } else {
+    if(rentalType === 'hourly') {
+      transition = TRANSITION_REQUEST_PAYMENT;
+    } else if(rentalType === 'daily') {
+      transition = TRANSITION_REQUEST_PAYMENT_DAILY;
+    } else if(rentalType === 'monthly') {
+      transition = TRANSITION_REQUEST_PAYMENT_MONTHLY;
+    }
+  };
+
   const bodyParams = transactionId
     ? {
         id: transactionId,
@@ -147,8 +194,8 @@ export const initiateOrder = (orderParams, transactionId) => (dispatch, getState
         params: orderParams,
       }
     : {
-        processAlias: config.bookingProcessAlias,
-        transition: TRANSITION_REQUEST_PAYMENT,
+        processAlias,
+        transition,
         params: orderParams,
       };
   const queryParams = {
@@ -164,6 +211,26 @@ export const initiateOrder = (orderParams, transactionId) => (dispatch, getState
       const order = entities[0];
       dispatch(initiateOrderSuccess(order));
       dispatch(fetchCurrentUserHasOrdersSuccess(true));
+      // var booking_details = {
+      //     start: order.booking.attributes.start.toString(),
+      //     end: order.booking.attributes.end.toString(),
+      //     seats: order.booking.attributes.seats,
+      //     state: order.booking.attributes.state,
+      //     type: order.booking.type,
+      // };
+      // var provider_details = {
+      //   banned: order.provider.attributes.banned,
+      //     created_at: order.provider.attributes.createdAt.toString(),
+      //     deleted: order.provider.attributes.deleted,
+      //     abbreviated_name: order.provider.attributes.profile.abbreviatedName,
+      //     display_name: order.provider.attributes.profile.displayName
+      // };
+      mixpanel.track("cash_booking", {
+        order_id: order.id,
+        // booking_details:booking_details,
+        // provider_details: provider_details,
+        type: order.type
+      });
       return order;
     })
     .catch(e => {
@@ -179,24 +246,61 @@ export const initiateOrder = (orderParams, transactionId) => (dispatch, getState
     });
 };
 
-export const confirmPayment = orderParams => (dispatch, getState, sdk) => {
+export const acceptTransaction = res => (dispatch, getState, sdk) => {
+  const currentId = res.id !== undefined ? res.id.uuid : res.orderId.uuid
   dispatch(confirmPaymentRequest());
+  return sdk.transactions
+  .transition({id: currentId,
+    transition: TRANSITION_ACCEPT_BY_CUSTOMER,
+    params: {}})
+  .then(res => {
+    const order = res.data.data;
+    dispatch(confirmPaymentSuccess(order.id));
+  })
+  .catch(e => {
+    dispatch(confirmPaymentError(storableError(e)));
+  });
+};
+
+
+
+export const confirmPayment = orderParams => (dispatch, getState, sdk) => {
+  // dispatch(confirmPaymentRequest());
 
   const bodyParams = {
     id: orderParams.transactionId,
     transition: TRANSITION_CONFIRM_PAYMENT,
     params: {},
   };
-
   return sdk.transactions
     .transition(bodyParams)
     .then(response => {
       const order = response.data.data;
       dispatch(confirmPaymentSuccess(order.id));
+      // var booking_details = {
+      //   start: order.booking.attributes.start.toString(),
+      //   end: order.booking.attributes.end.toString(),
+      //   seats: order.booking.attributes.seats,
+      //   state: order.booking.attributes.state,
+      //   type: order.booking.type,
+      // };
+      // var provider_details = {
+      //   banned: order.provider.attributes.banned,
+      //   created_at: order.provider.attributes.createdAt,
+      //   deleted: order.provider.attributes.deleted,
+      //   abbreviated_name: order.provider.attributes.profile.abbreviatedName,
+      //   display_name: order.provider.attributes.profile.displayName
+      // };
+      mixpanel.track("credit_card_booking", {
+        order_id: order.id,
+        // booking_details:booking_details,
+        // provider_details: provider_details,
+        type: order.type
+      });
       return order;
     })
     .catch(e => {
-      dispatch(confirmPaymentError(storableError(e)));
+      // dispatch(confirmPaymentError(storableError(e)));
       const transactionIdMaybe = orderParams.transactionId
         ? { transactionId: orderParams.transactionId.uuid }
         : {};
@@ -242,7 +346,7 @@ export const speculateTransaction = params => (dispatch, getState, sdk) => {
   dispatch(speculateTransactionRequest());
   const bodyParams = {
     transition: TRANSITION_REQUEST_PAYMENT,
-    processAlias: config.bookingProcessAlias,
+    processAlias: config.scaBookingProcessAlias,
     params: {
       ...params,
       cardToken: 'CheckoutPage_speculative_card_token',
@@ -270,5 +374,52 @@ export const speculateTransaction = params => (dispatch, getState, sdk) => {
         bookingEnd,
       });
       return dispatch(speculateTransactionError(storableError(e)));
+    });
+};
+
+export const speculateCashTransaction = params => (dispatch, getState, sdk) => {
+  dispatch(speculateTransactionRequest());
+  const bodyParams = {
+    transition: TRANSITION_REQUEST,
+    processAlias: config.cashBookingProcessAlias,
+    params: {
+      ...params,
+    },
+  };
+  const queryParams = {
+    include: ['booking', 'provider'],
+    expand: true,
+  };
+  return sdk.transactions
+    .initiateSpeculative(bodyParams, queryParams)
+    .then(response => {
+      const entities = denormalisedResponseEntities(response);
+      if (entities.length !== 1) {
+        throw new Error('Expected a resource in the sdk.transactions.initiateSpeculative response');
+      }
+      const tx = entities[0];
+      dispatch(speculateTransactionSuccess(tx));
+    })
+    .catch(e => {
+      const { listingId, bookingStart, bookingEnd } = params;
+      log.error(e, 'speculate-transaction-failed', {
+        listingId: listingId.uuid,
+        bookingStart,
+        bookingEnd,
+      });
+      return dispatch(speculateTransactionError(storableError(e)));
+    });
+};
+
+// StripeCustomer is a relantionship to currentUser
+// We need to fetch currentUser with correct params to include relationship
+export const stripeCustomer = () => (dispatch, getState, sdk) => {
+  dispatch(stripeCustomerRequest());
+  return dispatch(fetchCurrentUser({ include: ['stripeCustomer.defaultPaymentMethod'] }))
+    .then(response => {
+      dispatch(stripeCustomerSuccess());
+    })
+    .catch(e => {
+      dispatch(stripeCustomerError(storableError(e)));
     });
 };

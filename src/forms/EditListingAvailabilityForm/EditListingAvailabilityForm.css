@@ -11,10 +11,15 @@
   flex-direction: column;
 
   padding-top: 1px;
+  border: none;
 }
 
 .title {
   margin-bottom: 24px;
+}
+
+.list {
+  margin: 10px 0 0;
 }
 
 .error {
@@ -25,7 +30,32 @@
   flex-grow: 1;
   position: relative;
   width: 100%;
-  margin-bottom: 24px;
+}
+
+.days {
+  padding: 0;
+  margin-bottom: 15px;
+}
+
+.item {
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.labelHolder {
+  width: 130px;
+  padding-top: 3px;
+  @media (--viewportMedium) {
+    width: 150px; 
+  }
+}
+
+.availLabel {
+  font-size: 20px;
+}
+
+.labelHolder span {
+  font-size: 20px;
 }
 
 .submitButton {
@@ -34,11 +64,27 @@
   flex-shrink: 0;
 }
 
-@media (--viewportMedium) {
-  .root {
-    padding-top: 2px;
-    margin-top: -16px;
+.label {
+  font-size: 20px;
+}
+
+.selectHolder {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hourEnd,
+.hourStart {
+  width: 120px;
+  padding: 0 10px;
+  @media (--viewportMedium) {
+    width: 130px; 
   }
+}
+
+
+@media (--viewportMedium) {
   .title {
     margin-bottom: 32px;
   }
@@ -54,4 +100,18 @@
     width: 241px;
     margin-top: 86px;
   }
+}
+
+.rentalTypesList {
+  margin: 15px 0;
+}
+
+.rentalTypesList span {
+  font-size: 20px;
+}
+
+.weekdaysErrorText {
+  font-size: 16px;
+  color: red;
+  margin: 5px 0 10px;
 }

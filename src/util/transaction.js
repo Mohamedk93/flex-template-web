@@ -14,11 +14,18 @@ import { ensureTransaction } from './data';
 // At this transition a PaymentIntent is created by Marketplace API.
 // After this transition, the actual payment must be made on client-side directly to Stripe.
 export const TRANSITION_REQUEST_PAYMENT = 'transition/request-payment';
+export const TRANSITION_REQUEST_PAYMENT_DAILY = 'transition/request-payment-daily';
+export const TRANSITION_REQUEST_PAYMENT_MONTHLY = 'transition/request-payment-monthly';
+
+export const TRANSITION_REQUEST = 'transition/request';
+export const TRANSITION_REQUEST_DAILY = 'transition/request-daily';
+export const TRANSITION_REQUEST_MONTHLY = 'transition/request-monthly';
 
 // A customer can also initiate a transaction with an enquiry, and
 // then transition that with a request.
 export const TRANSITION_ENQUIRE = 'transition/enquire';
 export const TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY = 'transition/request-payment-after-enquiry';
+export const TRANSITION_REQUEST_AFTER_ENQUIRY  = 'transition/request-after-enquiry';
 
 // Stripe SDK might need to ask 3D security from customer, in a separate front-end step.
 // Therefore we need to make another transition to Marketplace API,
@@ -32,6 +39,7 @@ export const TRANSITION_EXPIRE_PAYMENT = 'transition/expire-payment';
 // When the provider accepts or declines a transaction from the
 // SalePage, it is transitioned with the accept or decline transition.
 export const TRANSITION_ACCEPT = 'transition/accept';
+export const TRANSITION_ACCEPT_BY_CUSTOMER = 'transition/accept-by-customer';
 export const TRANSITION_DECLINE = 'transition/decline';
 
 // The backend automatically expire the transaction.
@@ -108,7 +116,7 @@ const stateDescription = {
   // id is defined only to support Xstate format.
   // However if you have multiple transaction processes defined,
   // it is best to keep them in sync with transaction process aliases.
-  id: 'preauth-with-nightly-booking/release-1',
+  id: 'preauth-unit-time-booking/release-1',
 
   // This 'initial' state is a starting point for new transaction
   initial: STATE_INITIAL,
@@ -118,12 +126,18 @@ const stateDescription = {
     [STATE_INITIAL]: {
       on: {
         [TRANSITION_ENQUIRE]: STATE_ENQUIRY,
+        [TRANSITION_REQUEST]: STATE_PREAUTHORIZED,
+        [TRANSITION_REQUEST_DAILY]: STATE_PREAUTHORIZED,
+        [TRANSITION_REQUEST_MONTHLY]: STATE_PREAUTHORIZED,
         [TRANSITION_REQUEST_PAYMENT]: STATE_PENDING_PAYMENT,
+        [TRANSITION_REQUEST_PAYMENT_DAILY] : STATE_PENDING_PAYMENT,
+        [TRANSITION_REQUEST_PAYMENT_MONTHLY] : STATE_PENDING_PAYMENT,
       },
     },
     [STATE_ENQUIRY]: {
       on: {
         [TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY]: STATE_PENDING_PAYMENT,
+        [TRANSITION_REQUEST_AFTER_ENQUIRY]: STATE_PREAUTHORIZED,
       },
     },
 
@@ -140,6 +154,7 @@ const stateDescription = {
         [TRANSITION_DECLINE]: STATE_DECLINED,
         [TRANSITION_EXPIRE]: STATE_DECLINED,
         [TRANSITION_ACCEPT]: STATE_ACCEPTED,
+        [TRANSITION_ACCEPT_BY_CUSTOMER]: STATE_ACCEPTED,
       },
     },
 
@@ -209,6 +224,7 @@ const getTransitionsToStateFn = stateDesc => state =>
 // Get all the transitions that lead to specified state.
 const getTransitionsToState = getTransitionsToStateFn(stateDescription);
 
+
 // This is needed to fetch transactions that need response from provider.
 // I.e. transactions which provider needs to accept or decline
 export const transitionsToRequested = getTransitionsToState(STATE_PREAUTHORIZED);
@@ -231,8 +247,10 @@ export const txIsPaymentExpired = tx =>
 
 // Note: state name used in Marketplace API docs (and here) is actually preauthorized
 // However, word "requested" is used in many places so that we decided to keep it.
-export const txIsRequested = tx =>
-  getTransitionsToState(STATE_PREAUTHORIZED).includes(txLastTransition(tx));
+export const txIsRequested = tx => {
+  return getTransitionsToState(STATE_PREAUTHORIZED).includes(txLastTransition(tx));
+}
+
 
 export const txIsAccepted = tx =>
   getTransitionsToState(STATE_ACCEPTED).includes(txLastTransition(tx));
@@ -270,7 +288,7 @@ const hasPassedTransition = (transitionName, tx) =>
   !!txTransitions(tx).find(t => t.transition === transitionName);
 
 const hasPassedStateFn = state => tx =>
-  getTransitionsToState(state).filter(t => hasPassedTransition(t, tx)).length > 0;
+getTransitionsToState(state).filter(t => hasPassedTransition(t, tx)).length > 0;
 
 export const txHasBeenAccepted = hasPassedStateFn(STATE_ACCEPTED);
 export const txHasBeenDelivered = hasPassedStateFn(STATE_DELIVERED);

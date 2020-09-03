@@ -32,6 +32,7 @@ const sharetribeSdk = require('sharetribe-flex-sdk');
 const Decimal = require('decimal.js');
 const sitemap = require('express-sitemap');
 const auth = require('./auth');
+const apiRouter = require('./apiRouter');
 const renderer = require('./renderer');
 const dataLoader = require('./dataLoader');
 const fs = require('fs');
@@ -132,6 +133,9 @@ if (!dev) {
   }
 }
 
+// Server-side routes that do not render the application
+app.use('/api', apiRouter);
+
 const noCacheHeaders = {
   'Cache-control': 'no-cache, no-store, must-revalidate',
 };
@@ -190,7 +194,6 @@ app.get('*', (req, res) => {
   // make sure that no sensitive data can appear in the prefetched
   // data, let's disable response caching altogether.
   res.set(noCacheHeaders);
-
   dataLoader
     .loadData(req.url, sdk)
     .then(preloadedState => {
@@ -210,14 +213,15 @@ app.get('*', (req, res) => {
         // authentication.
 
         const token = tokenStore.getToken();
-        const refreshTokenExists = !!token && !!token.refresh_token;
-
-        if (refreshTokenExists) {
-          // If refresh token exists, we assume that client can handle the situation
+        const scopes = !!token && token.scopes;
+      const isAnonymous = !!scopes && scopes.length === 1 && scopes[0] === 'public-read';
+      if (isAnonymous) {
+        res.status(401).send(html);
+      } else {
+        // If the token is associated with other than public-read scopes, we
+        // assume that client can handle the situation
           // TODO: improve by checking if the token is valid (needs an API call)
           res.status(200).send(html);
-        } else {
-          res.status(401).send(html);
         }
       } else if (context.forbidden) {
         res.status(403).send(html);
@@ -234,7 +238,7 @@ app.get('*', (req, res) => {
     })
     .catch(e => {
       log.error(e, 'server-side-render-failed');
-      res.status(500).send(errorPage);
+      res.status(502).send(errorPage);
     });
 });
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
-import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import pickBy from 'lodash/pickBy';
 import classNames from 'classnames';
 import config from '../../config';
@@ -12,12 +12,14 @@ import { createResourceLocatorString, pathByRouteName } from '../../util/routes'
 import { propTypes } from '../../util/types';
 import {
   Button,
+  LimitedAccessBanner,
   Logo,
   Modal,
   ModalMissingInformation,
   NamedLink,
   TopbarDesktop,
   TopbarMobileMenu,
+  HistoryBackButton,
 } from '../../components';
 import { TopbarSearchForm } from '../../forms';
 
@@ -26,6 +28,8 @@ import SearchIcon from './SearchIcon';
 import css from './Topbar.css';
 
 const MAX_MOBILE_SCREEN_WIDTH = 768;
+const mixpanel = require('mixpanel-browser');
+
 
 const redirectToURLWithModalState = (props, modalStateParam) => {
   const { history, location } = props;
@@ -67,6 +71,7 @@ GenericError.propTypes = {
   show: bool.isRequired,
 };
 
+
 class TopbarComponent extends Component {
   constructor(props) {
     super(props);
@@ -76,6 +81,10 @@ class TopbarComponent extends Component {
     this.handleMobileSearchClose = this.handleMobileSearchClose.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
+  }
+
+  state = {
+    showBackButton: false
   }
 
   handleMobileMenuOpen() {
@@ -106,6 +115,8 @@ class TopbarComponent extends Component {
       address: search,
       bounds,
     };
+
+    mixpanel.track("handle_search_submit");
     history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, searchParams));
   }
 
@@ -126,6 +137,18 @@ class TopbarComponent extends Component {
     });
   }
 
+
+
+  componentDidMount() {
+    const matchListing = '/l';
+
+    if(this.props.history.location.pathname.includes(matchListing) && !this.state.showBackButton) {
+      this.setState({
+        showBackButton: true
+      })
+    }
+  }
+
   render() {
     const {
       className,
@@ -134,9 +157,11 @@ class TopbarComponent extends Component {
       mobileRootClassName,
       mobileClassName,
       isAuthenticated,
+      authScopes,
       authInProgress,
       currentUser,
       currentUserHasListings,
+      currentUserHasListingsLocation,
       currentUserHasOrders,
       currentPage,
       notificationCount,
@@ -148,6 +173,8 @@ class TopbarComponent extends Component {
       sendVerificationEmailInProgress,
       sendVerificationEmailError,
       showGenericError,
+      showBackButton,
+      onUpdateUserCurrency,
     } = this.props;
 
     const { mobilemenu, mobilesearch, address, origin, bounds } = parse(location.search, {
@@ -160,11 +187,18 @@ class TopbarComponent extends Component {
     const isMobileLayout = viewport.width < MAX_MOBILE_SCREEN_WIDTH;
     const isMobileMenuOpen = isMobileLayout && mobilemenu === 'open';
     const isMobileSearchOpen = isMobileLayout && mobilesearch === 'open';
+    const updateLocalCurrency = value => {
+      if(typeof window !== 'undefined'){
+        localStorage.setItem('currentCode', value);
+        return onUpdateUserCurrency(null);
+      }
+    };
 
     const mobileMenu = (
       <TopbarMobileMenu
         isAuthenticated={isAuthenticated}
         currentUserHasListings={currentUserHasListings}
+        currentUserHasListingsLocation={currentUserHasListingsLocation}
         currentUser={currentUser}
         onLogout={this.handleLogout}
         notificationCount={notificationCount}
@@ -184,20 +218,57 @@ class TopbarComponent extends Component {
           }
         : null,
     };
+    let currency = '';
+    let rates = null;
 
+    if(currentUser){
+      rates = currentUser.attributes.profile.protectedData.rates;
+      currency = currentUser.attributes.profile.protectedData.currency;
+    }else if(typeof window !== 'undefined'){
+      rates = JSON.parse(localStorage.getItem('rates'));
+      currency = localStorage.getItem('currentCode');
+    }
+
+    const selectCurrency = !rates ? null : (
+      <select
+          className={css.currencySelect}
+          onChange={currentUser ? e => onUpdateUserCurrency(e.target.value) : e => updateLocalCurrency(e.target.value)}
+          >
+              <option value={currency}>
+              {currency}
+              </option>
+              {rates.map(c => (
+                <option key={c.iso_code} value={c.iso_code}>
+                  {c.iso_code}
+                </option>
+              ))}
+            </select>
+    );
     const classes = classNames(rootClassName || css.root, className);
 
     return (
       <div className={classes}>
+      <LimitedAccessBanner
+      isAuthenticated={isAuthenticated}
+      authScopes={authScopes}
+      currentUser={currentUser}
+      onLogout={this.handleLogout}
+      currentPage={currentPage}
+      />
         <div className={classNames(mobileRootClassName || css.container, mobileClassName)}>
-          <Button
-            rootClassName={css.menu}
-            onClick={this.handleMobileMenuOpen}
-            title={intl.formatMessage({ id: 'Topbar.menuIcon' })}
-          >
-            <MenuIcon className={css.menuIcon} />
-            {notificationDot}
-          </Button>
+          <div className={css.menuHolder}>
+            <Button
+              rootClassName={css.menu}
+              onClick={this.handleMobileMenuOpen}
+              title={intl.formatMessage({ id: 'Topbar.menuIcon' })}
+            >
+              <MenuIcon className={css.menuIcon} />
+              {notificationDot}
+            </Button>
+
+               <HistoryBackButton rootClassName={css.listingButton} show={this.state.showBackButton}/>
+
+          </div>
           <NamedLink
             className={css.home}
             name="LandingPage"
@@ -205,6 +276,8 @@ class TopbarComponent extends Component {
           >
             <Logo format="mobile" />
           </NamedLink>
+          {selectCurrency}
+
           <Button
             rootClassName={css.searchMenu}
             onClick={this.handleMobileSearchOpen}
@@ -217,6 +290,7 @@ class TopbarComponent extends Component {
           <TopbarDesktop
             className={desktopClassName}
             currentUserHasListings={currentUserHasListings}
+            currentUserHasListingsLocation={currentUserHasListingsLocation}
             currentUser={currentUser}
             currentPage={currentPage}
             initialSearchFormValues={initialSearchFormValues}
@@ -225,6 +299,8 @@ class TopbarComponent extends Component {
             notificationCount={notificationCount}
             onLogout={this.handleLogout}
             onSearchSubmit={this.handleSubmit}
+            onUpdateUserCurrency={this.props.onUpdateUserCurrency}
+            showBackButton={this.state.showBackButton}
           />
         </div>
         <Modal
@@ -244,7 +320,6 @@ class TopbarComponent extends Component {
         >
           <div className={css.searchContainer}>
             <TopbarSearchForm
-              form="TopbarSearchForm"
               onSubmit={this.handleSubmit}
               initialValues={initialSearchFormValues}
               isMobile
@@ -259,6 +334,7 @@ class TopbarComponent extends Component {
           containerClassName={css.missingInformationModal}
           currentUser={currentUser}
           currentUserHasListings={currentUserHasListings}
+          currentUserHasListingsLocation={currentUserHasListingsLocation}
           currentUserHasOrders={currentUserHasOrders}
           location={location}
           onManageDisableScrolling={onManageDisableScrolling}
@@ -284,9 +360,10 @@ TopbarComponent.defaultProps = {
   currentUserHasOrders: null,
   currentPage: null,
   sendVerificationEmailError: null,
+  authScopes: [],
 };
 
-const { func, number, shape, string } = PropTypes;
+const { array, func, number, shape, string } = PropTypes;
 
 TopbarComponent.propTypes = {
   className: string,
@@ -295,9 +372,11 @@ TopbarComponent.propTypes = {
   mobileRootClassName: string,
   mobileClassName: string,
   isAuthenticated: bool.isRequired,
+  authScopes: array,
   authInProgress: bool.isRequired,
   currentUser: propTypes.currentUser,
   currentUserHasListings: bool.isRequired,
+  currentUserHasListingsLocation: bool,
   currentUserHasOrders: bool,
   currentPage: string,
   notificationCount: number,

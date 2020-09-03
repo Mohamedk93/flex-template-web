@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { object, string, bool, number, func, shape, array } from 'prop-types';
 import classNames from 'classnames';
-import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import { withRouter } from 'react-router-dom';
 import omit from 'lodash/omit';
 
@@ -11,10 +11,13 @@ import { createResourceLocatorString } from '../../util/routes';
 import {
   ModalInMobile,
   Button,
+  KeywordFilter,
   PriceFilter,
   SelectSingleFilter,
   SelectMultipleFilter,
   BookingDateRangeFilter,
+  NamedLink,
+  SectionLocations,
 } from '../../components';
 import { propTypes } from '../../util/types';
 import css from './SearchFiltersMobile.css';
@@ -34,6 +37,7 @@ class SearchFiltersMobileComponent extends Component {
     this.handleSelectMultiple = this.handleSelectMultiple.bind(this);
     this.handlePrice = this.handlePrice.bind(this);
     this.handleDateRange = this.handleDateRange.bind(this);
+    this.handleKeyword = this.handleKeyword.bind(this);
     this.initialValue = this.initialValue.bind(this);
     this.initialValues = this.initialValues.bind(this);
     this.initialPriceRangeValue = this.initialPriceRangeValue.bind(this);
@@ -118,6 +122,15 @@ class SearchFiltersMobileComponent extends Component {
     history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
   }
 
+  handleKeyword(urlParam, keywords) {
+    const { urlQueryParams, history } = this.props;
+    const queryParams = urlParam
+      ? { ...urlQueryParams, [urlParam]: keywords }
+      : omit(urlQueryParams, urlParam);
+
+    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
+  }
+
   // Reset all filter query parameters
   resetAll(e) {
     const { urlQueryParams, history, filterParamNames } = this.props;
@@ -182,10 +195,14 @@ class SearchFiltersMobileComponent extends Component {
       onManageDisableScrolling,
       selectedFiltersCount,
       categoryFilter,
+      workspaceFilter,
       amenitiesFilter,
+      rentalsFilter,
       priceFilter,
       dateRangeFilter,
+      keywordFilter,
       intl,
+      quickRents,
     } = this.props;
 
     const classes = classNames(rootClassName || css.root, className);
@@ -211,6 +228,11 @@ class SearchFiltersMobileComponent extends Component {
     });
     const initialCategory = categoryFilter ? this.initialValue(categoryFilter.paramName) : null;
 
+    const quickRentsLabel =  intl.formatMessage({
+      id: 'SearchFilters.quickRentsLabel',
+    });
+
+
     const categoryFilterElement = categoryFilter ? (
       <SelectSingleFilter
         urlParam={categoryFilter.paramName}
@@ -223,9 +245,27 @@ class SearchFiltersMobileComponent extends Component {
       />
     ) : null;
 
+
+    const workspaceLabel = intl.formatMessage({ id: 'SearchFiltersMobile.workspaceLabel' });
+    const initialWorkspace = this.initialValues(workspaceFilter.paramName);
+    const workspaceFilterElement = workspaceFilter ? (
+      <SelectMultipleFilter
+      id="SearchFiltersMobile.workspaceFilter"
+        name="workspaces"
+        urlParam={workspaceFilter.paramName}
+        label={workspaceLabel}
+        onSubmit={this.handleSelectMultiple}
+        liveEdit
+        options={workspaceFilter.options}
+        initialValues={initialWorkspace}
+      />
+    ) : null;
+
     const amenitiesLabel = intl.formatMessage({ id: 'SearchFiltersMobile.amenitiesLabel' });
 
+
     const initialAmenities = this.initialValues(amenitiesFilter.paramName);
+    const initialQuickRents = this.initialValues('pub_quickRent');
 
     const amenitiesFilterElement = amenitiesFilter ? (
       <SelectMultipleFilter
@@ -239,6 +279,31 @@ class SearchFiltersMobileComponent extends Component {
         initialValues={initialAmenities}
       />
     ) : null;
+   const rentalsLabel = intl.formatMessage({ id: 'SearchFiltersMobile.rentalsLabel' });
+   const initialRentals = this.initialValues(rentalsFilter.paramName);
+   const rentalsFilterElement = rentalsFilter ? (
+    <SelectMultipleFilter
+      id="SearchFiltersMobile.rentalsFilter"
+      name="rentals"
+      urlParam={rentalsFilter.paramName}
+      label={rentalsLabel}
+      onSubmit={this.handleSelectMultiple}
+      liveEdit
+      options={rentalsFilter.options}
+      initialValues={initialRentals}
+    />
+  ) : null;
+    const quickRentsFilter =
+      <SelectMultipleFilter
+        id={'SearchFilters.quickRentsFilter'}
+        name="quickRents"
+        urlParam='pub_quickRent'
+        label={quickRentsLabel}
+        onSubmit={this.handleSelectMultiple}
+        liveEdit
+        options={[{key: "quickRent", label: quickRentsLabel}]}
+        initialValues={initialQuickRents}
+      />
 
     const initialPriceRange = this.initialPriceRangeValue(priceFilter.paramName);
 
@@ -258,7 +323,7 @@ class SearchFiltersMobileComponent extends Component {
     const dateRangeFilterElement =
       dateRangeFilter && dateRangeFilter.config.active ? (
         <BookingDateRangeFilter
-          id="SearchFilters.dateRangeFilter"
+          id="SearchFiltersMobile.dateRangeFilter"
           urlParam={dateRangeFilter.paramName}
           onSubmit={this.handleDateRange}
           liveEdit
@@ -266,21 +331,68 @@ class SearchFiltersMobileComponent extends Component {
           initialValues={initialDateRange}
         />
       ) : null;
+     const initialKeyword = this.initialValue(keywordFilter.paramName);
+    const keywordLabel = intl.formatMessage({
+      id: 'SearchFiltersMobile.keywordLabel',
+    });
+    const keywordFilterElement =
+      keywordFilter && keywordFilter.config.active ? (
+        <KeywordFilter
+          id={'SearchFiltersMobile.keywordFilter'}
+          name="keyword"
+          urlParam={keywordFilter.paramName}
+          label={keywordLabel}
+          onSubmit={this.handleKeyword}
+          liveEdit
+          showAsPopup={false}
+          initialValues={initialKeyword}
+        />
+      ) : null;
+
+    const currentLoc = this.props.location;
+
+    const createNewListing = (
+      <NamedLink className={css.createListingLink} name="NewListingPage">
+        <FormattedMessage id="SearchPage.createListing" />
+      </NamedLink>
+    );
+
+    const monetizeEmptySpace = (
+      <NamedLink className={css.createListingLink} name="NewListingPage">
+        <FormattedMessage id="SearchPage.createListingMonetize" />
+      </NamedLink>
+    );
 
     return (
       <div className={classes}>
         <div className={css.searchResultSummary}>
           {listingsAreLoaded && resultsCount > 0 ? resultsFound : null}
-          {listingsAreLoaded && resultsCount === 0 ? noResults : null}
           {searchInProgress ? loadingResults : null}
-        </div>
-        <div className={css.buttons}>
-          <Button rootClassName={filtersButtonClasses} onClick={this.openFilters}>
-            <FormattedMessage id="SearchFilters.filtersButtonLabel" className={css.mapIconText} />
-          </Button>
-          <div className={css.mapIcon} onClick={onMapIconClick}>
-            <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
+          <div className={css.buttons}>
+            <Button rootClassName={filtersButtonClasses} onClick={this.openFilters}>
+              <FormattedMessage id="SearchFilters.filtersButtonLabel" className={css.mapIconText} />
+            </Button>
+            <div className={css.mapIcon} onClick={onMapIconClick}>
+              <FormattedMessage id="SearchFilters.openMapView" className={css.mapIconText} />
+            </div>
           </div>
+          {listingsAreLoaded && resultsCount === 0 ? (
+            <div>
+            <div className={css.noSearchResults}>
+              <span>
+                <FormattedMessage
+                  id="SearchPage.dontHaveListings"
+                  values={{ createNewListing, monetizeEmptySpace }}
+                />
+              </span>
+            </div>
+            <div className={css.noSearchResultsList}>
+              <div className={css.noSearchResultsLocations}>
+                <SectionLocations location={currentLoc} />
+              </div>
+            </div>
+            </div>
+          ) : null}
         </div>
         <ModalInMobile
           id="SearchFiltersMobile.filters"
@@ -299,9 +411,13 @@ class SearchFiltersMobileComponent extends Component {
           </div>
           {this.state.isFiltersOpenOnMobile ? (
             <div className={css.filtersWrapper}>
+              {keywordFilterElement}
               {categoryFilterElement}
+              {workspaceFilterElement}
               {amenitiesFilterElement}
+              {rentalsFilterElement}
               {priceFilterElement}
+              {quickRentsFilter}
               {dateRangeFilterElement}
             </div>
           ) : null}
@@ -325,7 +441,9 @@ SearchFiltersMobileComponent.defaultProps = {
   selectedFiltersCount: 0,
   filterParamNames: [],
   categoryFilter: null,
+  workspaceFilter: null,
   amenitiesFilter: null,
+  rentalsFilter: null,
   priceFilter: null,
   dateRangeFilter: null,
 };
@@ -345,7 +463,9 @@ SearchFiltersMobileComponent.propTypes = {
   selectedFiltersCount: number,
   filterParamNames: array,
   categoriesFilter: propTypes.filterConfig,
+  workspaceFilter: propTypes.filterConfig,
   amenitiesFilter: propTypes.filterConfig,
+  rentalsFilter: propTypes.filterConfig,
   priceFilter: propTypes.filterConfig,
   dateRangeFilter: propTypes.filterConfig,
 

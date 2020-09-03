@@ -21,6 +21,7 @@
 .priceInput {
   flex-shrink: 0;
   width: 100%;
+  margin: 12px 0;
 }
 
 .submitButton {
@@ -32,4 +33,102 @@
     width: 241px;
     margin-top: 100px;
   }
+}
+
+.priceTableWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.priceHead {
+  display: flex;
+  width: 100%;
+  @media (--viewportMedium) {
+    width: calc(100% - 160px);
+  }
+}
+
+.rentalLables {
+  width: 33%;
+  text-align: center;
+}
+
+.priceTable {
+  width: 100%;
+}
+
+.priceRow {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  @media (--viewportMedium) {
+    flex-direction: row;
+    margin-top: 0;
+  }
+}
+
+.priceLabel {
+  width: 100%;
+  text-align: center;
+  @media (--viewportMedium) {
+    width: 160px;
+    padding-top: 15px;
+    text-align: left;
+  }
+}
+
+.priceFields {
+  display: flex;
+  width: 100%;
+  @media (--viewportMedium) {
+    width: calc(100% - 160px);
+  }
+}
+
+.priceField {
+  width: 33%;
+  padding: 0 5px;
+  text-align: center;
+  @media (--viewportMedium) {
+    padding: 0 20px;
+  }
+}
+
+.priceField input {
+  text-align: center;
+}
+
+.priceField input::placeholder {
+  font-size: 16px;
+}
+
+.priceGeneral {
+  text-align: center;
+  font-size: 25px;
+  margin: 0 0 30px;
+}
+
+.currencyHolder {
+  margin-bottom: 30px;
+}
+
+.currencyName {
+  font-weight: bold;
+  margin: 0 10px;
+}
+
+
+.hideDiv {
+  display: none;
+}
+
+.customSelect{
+  width: 110px;
+}
+
+.quickRent {
+  width: 260px;
+  font-weight: bold;
+  font-size: 30px;
 }

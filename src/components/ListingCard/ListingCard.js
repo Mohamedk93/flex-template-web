@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 import { string, func } from 'prop-types';
-import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { lazyLoadWithDimensions } from '../../util/contextHelpers';
 import { LINE_ITEM_DAY, LINE_ITEM_NIGHT, propTypes } from '../../util/types';
-import { formatMoney } from '../../util/currency';
+import { formatMoney, listingMinPrice, convertPrice } from '../../util/currency';
+
 import { ensureListing, ensureUser } from '../../util/data';
 import { richText } from '../../util/richText';
 import { createSlug } from '../../util/urlHelpers';
 import config from '../../config';
 import { NamedLink, ResponsiveImage } from '../../components';
+import { isMapsLibLoaded } from '../../components/Map/GoogleMap';
+import { IconLightning } from '../../components';
+import { withRouter } from 'react-router-dom';
 
 import css from './ListingCard.css';
 
@@ -41,8 +45,93 @@ class ListingImage extends Component {
 }
 const LazyImage = lazyLoadWithDimensions(ListingImage, { loadAfterInitialRendering: 3000 });
 
+const categoryLabel = (categories, key) => {
+  const cat = categories.find(c => c.key === key);
+  return cat ? cat.label : key;
+};
+
+export const listingAvailablePricesMeta = [
+  {
+    type: 'priceSeatsHourly',
+    unit: 'ListingCard.perHour',
+    rentalType: 'hourly'
+  },
+  {
+    type: 'priceSeatsDaily',
+    unit: 'ListingCard.perDay',
+    rentalType: 'daily'
+  },
+  {
+    type: 'priceSeatsMonthly',
+    unit: 'ListingCard.perMonth',
+    rentalType: 'monthly'
+  },
+  {
+    type: 'priceOfficeRoomsHourly',
+    unit: 'ListingCard.perHour',
+    rentalType: 'hourly'
+  },
+  {
+    type: 'priceOfficeRoomsDaily',
+    unit: 'ListingCard.perDay',
+    rentalType: 'daily'
+  },
+  {
+    type: 'priceOfficeRoomsMonthly',
+    unit: 'ListingCard.perMonth',
+    rentalType: 'monthly'
+  },
+  {
+    type: 'priceMeetingRoomsHourly',
+    unit: 'ListingCard.perHour',
+    rentalType: 'hourly'
+  },
+  {
+    type: 'priceMeetingRoomsDaily',
+    unit: 'ListingCard.perDay',
+    rentalType: 'daily'
+  },
+  {
+    type: 'priceMeetingRoomsMonthly',
+    unit: 'ListingCard.perMonth',
+    rentalType: 'monthly'
+  },
+];
+
+export const listingCalculateMinPrice = (pubData) => {
+  let min_price_meta = listingAvailablePricesMeta.filter((priceItem) => {
+
+    if (!pubData[priceItem.type] || !pubData.rentalTypes) {
+      return false;
+    }
+
+    if (pubData.rentalTypes.indexOf(priceItem.rentalType) !== -1 &&
+      Number(pubData[priceItem.type].amount) > 0) {
+      return true
+    } else {
+      return false
+    }
+  }).sort((a, b) => {
+    let a_val = Number(pubData[a.type] && pubData[a.type].amount);
+    let b_val = Number(pubData[b.type] && pubData[b.type].amount);
+
+    if (a_val === b_val) {
+      return 0;
+    } else if (a_val > b_val) {
+      return 1;
+    } else {
+      return -1;
+    }
+  })[0];
+
+  return min_price_meta && {
+    price: pubData[min_price_meta.type],
+    meta: min_price_meta
+  }
+};
+
 export const ListingCardComponent = props => {
-  const { className, rootClassName, intl, listing, renderSizes, setActiveListing } = props;
+  const { className, rootClassName, intl, listing, renderSizes, setActiveListing, searchPoint, location, currentUser } = props;
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureListing(listing);
   const id = currentListing.id.uuid;
@@ -52,26 +141,68 @@ export const ListingCardComponent = props => {
   const authorName = author.attributes.profile.displayName;
   const firstImage =
     currentListing.images && currentListing.images.length > 0 ? currentListing.images[0] : null;
+  let { formattedPrice, priceTitle } = priceData(price, intl);
+  let minPrice= null;
 
-  const { formattedPrice, priceTitle } = priceData(price, intl);
+  if(currentListing && currentListing.id){
+     minPrice = listingMinPrice(currentListing);
+  }
+
+  formattedPrice = convertPrice(currentUser, minPrice, formattedPrice);
 
   const unitType = config.bookingUnitType;
   const isNightly = unitType === LINE_ITEM_NIGHT;
   const isDaily = unitType === LINE_ITEM_DAY;
 
-  const unitTranslationKey = isNightly
-    ? 'ListingCard.perNight'
-    : isDaily
-    ? 'ListingCard.perDay'
-    : 'ListingCard.perUnit';
+  const { publicData } = currentListing.attributes;
+  const quickRent = publicData.quickRent
+  const city = publicData ? publicData.city : null;
+  const country = publicData ? publicData.country : null;
+
+  const listingGeolocation = currentListing.attributes &&
+  currentListing.attributes.geolocation ?
+  currentListing.attributes.geolocation :null;
+
+  let distance = null;
+  if(isMapsLibLoaded() && listingGeolocation && searchPoint) {
+    let listingPointCoord = new window.google.maps.LatLng(listingGeolocation.lat, listingGeolocation.lng);
+    let searchPointCoord = new window.google.maps.LatLng(searchPoint.lat, searchPoint.lng);
+    distance = (window.google.maps.geometry.spherical.computeDistanceBetween(listingPointCoord, searchPointCoord) / 1000).toFixed(2);
+  };
+
+  let min_price = listingCalculateMinPrice(publicData);
+
+  const unitTranslationKey = min_price && min_price.meta && min_price.meta.unit || 'ListingCard.perHour';
+
+  const locationInfo = city && country ? (
+    <span className={css.authorInfo}>
+      {`${city}, ${country}`}
+    </span>
+  ) : null;
+
+  const distanceInfo = distance ? (
+    <p className={css.locationInfoPar}>
+      {`${distance} km`}
+    </p>
+  ) : null;
+
+  const categories = config.custom.categoriesDefaultName;
+  const category = publicData && publicData.category ? (
+    <span className={css.authorInfo}>
+      {categories[publicData.category]}
+    <span className={css.authorInfo}> • </span>
+    </span>
+  ) : null;
+
 
   return (
-    <NamedLink className={classes} name="ListingPage" params={{ id, slug }}>
+    <NamedLink className={classes} name="ListingPage" to={{state: {prevLocation: location}}} params={{ id, slug }}>
       <div
         className={css.threeToTwoWrapper}
         onMouseEnter={() => setActiveListing(currentListing.id)}
         onMouseLeave={() => setActiveListing(null)}
       >
+
         <div className={css.aspectWrapper}>
           <LazyImage
             rootClassName={css.rootForImage}
@@ -81,6 +212,13 @@ export const ListingCardComponent = props => {
             sizes={renderSizes}
           />
         </div>
+        {quickRent !== undefined && quickRent.length > 0 ?
+          <div className={css.quickRent}>
+            <div>
+              <FormattedMessage id="SearchPage.quickBooking" />
+            </div>
+          </div> : ' '}
+
       </div>
       <div className={css.info}>
         <div className={css.price}>
@@ -98,10 +236,13 @@ export const ListingCardComponent = props => {
               longWordClass: css.longWord,
             })}
           </div>
+
+
           <div className={css.authorInfo}>
-            <FormattedMessage id="ListingCard.hostedBy" values={{ authorName }} />
+            <FormattedMessage id="ListingCard.description" values={{category,locationInfo}} />
           </div>
         </div>
+
       </div>
     </NamedLink>
   );
@@ -126,4 +267,4 @@ ListingCardComponent.propTypes = {
   setActiveListing: func,
 };
 
-export default injectIntl(ListingCardComponent);
+export default withRouter(injectIntl(ListingCardComponent));

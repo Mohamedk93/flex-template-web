@@ -1,6 +1,6 @@
 import React from 'react';
 import { string, arrayOf, bool, func, number } from 'prop-types';
-import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import dropWhile from 'lodash/dropWhile';
 import classNames from 'classnames';
 import { Avatar, InlineTextButton, ReviewRating, UserDisplayName } from '../../components';
@@ -17,6 +17,7 @@ import {
   TRANSITION_REVIEW_1_BY_PROVIDER,
   TRANSITION_REVIEW_2_BY_CUSTOMER,
   TRANSITION_REVIEW_2_BY_PROVIDER,
+  TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
   transitionIsReviewed,
   txIsDelivered,
   txIsInFirstReviewBy,
@@ -123,6 +124,15 @@ const resolveTransitionMessage = (
           values={{ displayName, listingTitle }}
         />
       );
+    case TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY:
+      return isOwnTransition ? (
+          <FormattedMessage id="ActivityFeed.ownTransitionRequest" values={{ listingTitle }} />
+        ) : (
+          <FormattedMessage
+            id="ActivityFeed.transitionRequest"
+            values={{ displayName, listingTitle }}
+          />
+        );
     case TRANSITION_ACCEPT:
       return isOwnTransition ? (
         <FormattedMessage id="ActivityFeed.ownTransitionAccept" />
@@ -147,6 +157,14 @@ const resolveTransitionMessage = (
       // Show the leave a review link if the state is delivered and if the current user is the first to leave a review
       const reviewPeriodJustStarted = txIsDelivered(transaction);
 
+      // Old version: 
+      // const reviewLink =
+      //   reviewPeriodJustStarted || !(reviewPeriodIsOver || userHasLeftAReview) ? (
+      //       <InlineTextButton onClick={onOpenReviewModal}>
+      //         <FormattedMessage id="ActivityFeed.leaveAReview" values={{ displayName }} />
+      //       </InlineTextButton>
+      //     ) : null;
+      // New version: 
       const reviewAsFirstLink = reviewPeriodJustStarted ? (
         <InlineTextButton onClick={onOpenReviewModal}>
           <FormattedMessage id="ActivityFeed.leaveAReview" values={{ displayName }} />

@@ -2,13 +2,15 @@ import React from 'react';
 import { arrayOf, bool, func, shape, string } from 'prop-types';
 import { compose } from 'redux';
 import { Form as FinalForm } from 'react-final-form';
-import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
+import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { propTypes } from '../../util/types';
 import { maxLength, required, composeValidators } from '../../util/validators';
-import { Form, Button, FieldTextInput } from '../../components';
+import { Form, Button, FieldTextInput, FieldCheckboxGroup, FieldCheckboxGroupWithQuantity } from '../../components';
+import config from '../../config';
+import arrayMutators from 'final-form-arrays';
 import CustomCategorySelectFieldMaybe from './CustomCategorySelectFieldMaybe';
-
+import CustomCurrencySelectFieldMaybe from './CustomCurrencySelectFieldMaybe';
 import css from './EditListingDescriptionForm.css';
 
 const TITLE_MAX_LENGTH = 60;
@@ -16,6 +18,22 @@ const TITLE_MAX_LENGTH = 60;
 const EditListingDescriptionFormComponent = props => (
   <FinalForm
     {...props}
+    mutators={{ ...arrayMutators }}
+    validate={values => {
+      const errors = {}
+      const names = config.custom.workspacesDefaultName;
+      const quantityDefault = config.custom.workspacesDefaultQuantity;
+      const workspacesArray = values.workspaces ? values.workspaces : [];
+      workspacesArray.map(function(item){
+        let minQ = 1;
+        let maxQ = quantityDefault[item];
+        let currentQ = values[`${item}_quantity`];
+        if(currentQ > maxQ || currentQ < 1 || !currentQ) {
+          errors[`${item}_quantity`] = `${names[item]} value must be from ${minQ} to ${maxQ}`
+        }
+      });
+      return Object.keys(errors).length ? errors : undefined
+    }}
     render={fieldRenderProps => {
       const {
         categories,
@@ -29,8 +47,10 @@ const EditListingDescriptionFormComponent = props => (
         updated,
         updateInProgress,
         fetchErrors,
+        values,
       } = fieldRenderProps;
 
+      const selectedWorkspaces = values && values.workspaces ? values.workspaces : [];
       const titleMessage = intl.formatMessage({ id: 'EditListingDescriptionForm.title' });
       const titlePlaceholderMessage = intl.formatMessage({
         id: 'EditListingDescriptionForm.titlePlaceholder',
@@ -81,8 +101,22 @@ const EditListingDescriptionFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
 
+      const quantityErrors = [];
+      if(fieldRenderProps.errors.seats_quantity) {
+        quantityErrors.push(fieldRenderProps.errors.seats_quantity)
+      };
+      if(fieldRenderProps.errors.office_rooms_quantity) {
+        quantityErrors.push(fieldRenderProps.errors.office_rooms_quantity)
+      };
+      if(fieldRenderProps.errors.meeting_rooms_quantity) {
+        quantityErrors.push(fieldRenderProps.errors.meeting_rooms_quantity)
+      };
+
       return (
-        <Form className={classes} onSubmit={handleSubmit}>
+        <Form
+          className={classes}
+          onSubmit={handleSubmit}
+        >
           {errorMessageCreateListingDraft}
           {errorMessageUpdateListing}
           {errorMessageShowListing}
@@ -115,6 +149,21 @@ const EditListingDescriptionFormComponent = props => (
             intl={intl}
           />
 
+          <CustomCurrencySelectFieldMaybe
+            id="currency"
+            name="currency"
+            currencies={config.custom.currencies}
+            intl={intl}
+          />
+
+          <FieldCheckboxGroupWithQuantity
+            className={css.workspaces}
+            options={config.custom.workspaces}
+            intl={intl}
+            quantityErrors={quantityErrors}
+            selectedWorkspaces={selectedWorkspaces}
+          />
+
           <Button
             className={css.submitButton}
             type="submit"
@@ -145,6 +194,18 @@ EditListingDescriptionFormComponent.propTypes = {
     updateListingError: propTypes.error,
   }),
   categories: arrayOf(
+    shape({
+      key: string.isRequired,
+      label: string.isRequired,
+    })
+  ),
+  currencies: arrayOf(
+    shape({
+      key: string.isRequired,
+      label: string.isRequired,
+    })
+  ),
+  workspaces: arrayOf(
     shape({
       key: string.isRequired,
       label: string.isRequired,

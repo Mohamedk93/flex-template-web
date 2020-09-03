@@ -12,6 +12,10 @@
 
   /* Clear padding that is set for link elements looking like buttons */
   padding: 0;
+
+  & span {
+    vertical-align: middle;
+  }
 }
 
 .secondaryButtonRoot {
@@ -25,6 +29,11 @@
 
 .inlineTextButtonRoot {
   @apply --marketplaceLinkStyles;
+  padding: 0 24px;
+
+  @media (--viewportMedium) {
+    padding-left: 0;
+  }
 }
 
 .primaryButton {

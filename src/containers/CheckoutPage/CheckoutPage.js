@@ -1,22 +1,36 @@
 import React, { Component } from 'react';
+import Decimal from 'decimal.js';
+import { convertMoneyToNumber } from '../../util/currency';
 import { bool, func, instanceOf, object, oneOfType, shape, string } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import { withRouter } from 'react-router-dom';
 import classNames from 'classnames';
 import config from '../../config';
 import routeConfiguration from '../../routeConfiguration';
 import { pathByRouteName, findRouteByRouteName } from '../../util/routes';
-import { propTypes, LINE_ITEM_NIGHT, LINE_ITEM_DAY } from '../../util/types';
+import moment from 'moment';
+import {
+  propTypes,
+  LINE_ITEM_NIGHT,
+  LINE_ITEM_DAY,
+  DATE_TYPE_DATE,
+  LINE_ITEM_SEATS_FEE,
+  LINE_ITEM_OFFICE_ROOMS_FEE,
+  LINE_ITEM_MEETING_ROOMS_FEE,
+  LINE_ITEM_COUPON_DISCOUNT,
+} from '../../util/types';
 import {
   ensureListing,
   ensureCurrentUser,
   ensureUser,
   ensureTransaction,
   ensureBooking,
+  ensureStripeCustomer,
+  ensurePaymentMethodCard,
 } from '../../util/data';
-import { dateFromLocalToAPI, minutesBetween } from '../../util/dates';
+import { dateFromLocalToAPI, minutesBetween, nightsBetween, daysBetween } from '../../util/dates';
 import { createSlug } from '../../util/urlHelpers';
 import {
   isTransactionInitiateAmountTooLowError,
@@ -37,20 +51,28 @@ import {
   NamedRedirect,
   Page,
   ResponsiveImage,
+  HistoryBackButton,
 } from '../../components';
-import { StripePaymentForm } from '../../forms';
+import { StripePaymentForm, CashPaymentForm } from '../../forms';
 import { isScrollingDisabled } from '../../ducks/UI.duck';
-import { handleCardPayment, retrievePaymentIntent } from '../../ducks/stripe.duck.js';
+import { handleCardPayment, retrievePaymentIntent } from '../../ducks/stripe.duck';
+import { savePaymentMethod } from '../../ducks/paymentMethods.duck';
 
 import {
   initiateOrder,
   setInitialValues,
   speculateTransaction,
+  speculateCashTransaction,
+  stripeCustomer,
   confirmPayment,
+  acceptTransaction,
   sendMessage,
 } from './CheckoutPage.duck';
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
+import { types as sdkTypes } from '../../util/sdkLoader';
 import css from './CheckoutPage.css';
+
+const { Money } = sdkTypes;
 
 const STORAGE_KEY = 'CheckoutPage';
 
@@ -58,9 +80,23 @@ const STORAGE_KEY = 'CheckoutPage';
 // https://stripe.com/docs/payments/payment-intents/status
 const STRIPE_PI_USER_ACTIONS_DONE_STATUSES = ['processing', 'requires_capture', 'succeeded'];
 
+// Payment charge options
+const ONETIME_PAYMENT = 'ONETIME_PAYMENT';
+const PAY_AND_SAVE_FOR_LATER_USE = 'PAY_AND_SAVE_FOR_LATER_USE';
+const USE_SAVED_CARD = 'USE_SAVED_CARD';
+
+const paymentFlow = (selectedPaymentMethod, saveAfterOnetimePayment) => {
+  // Payment mode could be 'replaceCard', but without explicit saveAfterOnetimePayment flag,
+  // we'll handle it as one-time payment
+  return selectedPaymentMethod === 'defaultCard'
+    ? USE_SAVED_CARD
+    : saveAfterOnetimePayment
+    ? PAY_AND_SAVE_FOR_LATER_USE
+    : ONETIME_PAYMENT;
+};
+
 const initializeOrderPage = (initialValues, routes, dispatch) => {
   const OrderPage = findRouteByRouteName('OrderDetailsPage', routes);
-
   // Transaction is already created, but if the initial message
   // sending failed, we tell it to the OrderDetailsPage.
   dispatch(OrderPage.setInitialValues(initialValues));
@@ -82,18 +118,32 @@ export class CheckoutPageComponent extends Component {
       pageData: {},
       dataLoaded: false,
       submitting: false,
+      showBackButton: false,
     };
     this.stripe = null;
+    console.log("[TANAWY IS TESTING FROM CHECKOUTPAGE CONSTRUCTOR] PROPS", props);
+    if(window){
+      window.lettanawytestcheckout = {props};
+    }
 
     this.onStripeInitialized = this.onStripeInitialized.bind(this);
     this.loadInitialData = this.loadInitialData.bind(this);
     this.handlePaymentIntent = this.handlePaymentIntent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCashSubmit = this.handleCashSubmit.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     if (window) {
       this.loadInitialData();
+    }
+
+    const matchListing = '/l';
+
+    if (this.props.history.location.pathname.includes(matchListing) && !this.state.showBackButton) {
+      this.setState({
+        showBackButton: true
+      });
     }
   }
 
@@ -120,8 +170,17 @@ export class CheckoutPageComponent extends Component {
       listing,
       transaction,
       fetchSpeculatedTransaction,
+      fetchStripeCustomer,
       history,
+      paymentMethod,
+      fetchSpeculatedCashTransaction,
     } = this.props;
+
+    // Fetch currentUser with stripeCustomer entity
+    // Note: since there's need for data loading in "componentWillMount" function,
+    //       this is added here instead of loadData static function.
+    fetchStripeCustomer();
+
     // Browser's back navigation should not rewrite data in session store.
     // Action is 'POP' on both history.back() and page refresh cases.
     // Action is 'PUSH' when user has directed through a link
@@ -136,7 +195,7 @@ export class CheckoutPageComponent extends Component {
 
     // NOTE: stored data can be empty if user has already successfully completed transaction.
     const pageData = hasDataInProps
-      ? { bookingData, bookingDates, listing, transaction }
+      ? { bookingData, bookingDates, listing, paymentMethod, transaction }
       : storedData(STORAGE_KEY);
 
     // Check if a booking is already created according to stored data.
@@ -150,35 +209,488 @@ export class CheckoutPageComponent extends Component {
       pageData.bookingData &&
       pageData.bookingDates &&
       pageData.bookingDates.bookingStart &&
+      pageData.paymentMethod &&
       pageData.bookingDates.bookingEnd &&
       !isBookingCreated;
 
     if (shouldFetchSpeculatedTransaction) {
       const listingId = pageData.listing.id;
-      const { bookingStart, bookingEnd } = pageData.bookingDates;
+      const { bookingStart, bookingEnd, operatingHours } = pageData.bookingDates;
 
       // Convert picked date to date that will be converted on the API as
       // a noon of correct year-month-date combo in UTC
       const bookingStartForAPI = dateFromLocalToAPI(bookingStart);
       const bookingEndForAPI = dateFromLocalToAPI(bookingEnd);
 
+      // TODO: add a mean to extract promotion fees and line items from bookingData down here
+      const {
+        hours,
+        seatsFee,
+        officeRoomsFee,
+        meetingRoomsFee,
+        couponDiscount,
+        couponDiscountQuantity,
+        seatsQuantity,
+        officeRoomsQuantity,
+        meetingRoomsQuantity,
+        rentalType,
+        promo,
+      } = pageData.bookingData;
+
+      // if(rentalType ==="daily"){
+      //   const hours = pageData.booking
+      // }
+
+      // TODO: Discount fees should be added here as well once defined
+      const preliminaryParams = {
+        listingId,
+        bookingStart,
+        bookingEnd,
+        hours,
+        seatsFee,
+        officeRoomsFee,
+        meetingRoomsFee,
+        couponDiscount,
+        couponDiscountQuantity,
+        seatsQuantity,
+        officeRoomsQuantity,
+        meetingRoomsQuantity,
+        preliminaryParams: true,
+        rentalType,
+        operatingHours,
+        promo,
+      }
+
+      // console.log("tanawy is debugging checkout initial data load", preliminaryParams); 
+      // window.tanawyIsTestingHere = {moment, preliminaryParams};
       // Fetch speculated transaction for showing price in booking breakdown
       // NOTE: if unit type is line-item/units, quantity needs to be added.
       // The way to pass it to checkout page is through pageData.bookingData
-      fetchSpeculatedTransaction({
-        listingId,
-        bookingStart: bookingStartForAPI,
-        bookingEnd: bookingEndForAPI,
-      });
+      if(paymentMethod === 'credit card') {
+        fetchSpeculatedTransaction(
+          this.customPricingParams(preliminaryParams)
+        );
+      };
+
+      if(paymentMethod === 'cash') {
+        fetchSpeculatedCashTransaction(
+          this.customPricingParams(preliminaryParams)
+        );
+      };
     }
 
     this.setState({ pageData: pageData || {}, dataLoaded: true });
   }
+// TODO : check who calls this function and make sure to pass promo to it
+// for this todo i already added couponDiscount with the full value parsed from the line items
+  customPricingParams(params) {
+    const {
+      listingId,
+      bookingStart,
+      bookingEnd,
+      // hours,
+      seatsFee,
+      officeRoomsFee,
+      meetingRoomsFee,
+      seatsQuantity,
+      couponDiscount,
+      officeRoomsQuantity,
+      meetingRoomsQuantity,
+      preliminaryParams,
+      rentalType,
+      operatingHours,
+      promo,
+      ...rest
+    } = params;
+
+    let hours = params.hours;
+
+    const isSameDay = moment(bookingStart).isSame(moment(bookingEnd),'days');
+    const isToday = moment(bookingStart).isSame(moment(),'days');
+    const isWithinOperatingHours = (operatingSchedule = [], time)=>{
+      let stdTime = moment(time);
+      const daysArray = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      const dayOfWeek = daysArray[moment(time).day()];
+      const operatingTimeIndex = operatingSchedule.findIndex( item => item.day === dayOfWeek);
+      if(operatingTimeIndex<0){
+        return false;
+      } 
+      const operatingTime = operatingSchedule[operatingTimeIndex].hours;
+      const [startingHourString, endingHourString] = operatingTime.split('-');
+      const startingHour = moment(startingHourString,'hh:mm a');
+      const endingHour = moment(endingHourString,"hh:mm a");
+      let stdTimeHour = moment().hours(stdTime.hour());
+      if(stdTimeHour.isBefore(startingHour) || stdTimeHour.isAfter(endingHour)){
+        return false;
+      }
+
+      return true;
+
+      
+
+
+    };
+    const getOperatingHoursForDate = (operatingSchedule =[], time ) =>{
+
+      let stdTime = moment(time);
+      const daysArray = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      const dayOfWeek = daysArray[stdTime.day()];
+      const operatingTimeIndex = operatingSchedule.findIndex( item => item.day === dayOfWeek);
+      if(operatingTimeIndex<0){
+        return false;
+      } 
+      const operatingTime = operatingSchedule[operatingTimeIndex].hours;
+      const [startingHourString, endingHourString] = operatingTime.split('-');
+      const startingHour = moment(startingHourString,'hh:mm a');
+      const endingHour = moment(endingHourString,"hh:mm a");
+
+      return { startingHour,endingHour}
+
+    }
+    let adjustedBookingEnd;
+    let adjustedBookingStart;
+    if(isSameDay && rentalType === "daily"){
+      if(window){
+        console.log("tanawy is testing same day reservation span in checkout page custompricing",{moment,bookingStart,bookingEnd,operatingHours});
+        window.tanawyTestoperatingHours = {moment,bookingStart,bookingEnd,operatingHours};
+      }
+      
+      let {startingHour, endingHour} = getOperatingHoursForDate(operatingHours,bookingEnd);
+      if(startingHour && endingHour){
+
+        adjustedBookingStart = moment(bookingStart).hours(startingHour.hour()).startOf('hour').toDate();
+        adjustedBookingEnd = moment(bookingEnd).hours(endingHour.hour()).startOf('hour').toDate();
+      } else {
+        adjustedBookingStart = moment(bookingStart).startOf('day').startOf('hour').toDate();
+        adjustedBookingEnd = moment(bookingEnd).endOf('day').startOf('hour').toDate();
+      }
+      
+      // adjustedBookingEnd = moment(bookingEnd).add(5,'minutes').toDate();
+      hours = 1;
+    } else {
+      adjustedBookingStart=bookingStart;
+      adjustedBookingEnd = bookingEnd;
+      if(rentalType === "daily"){
+        hours = hours+1;
+      }
+    }
+
+    let seatsFeePriceTotal,
+        officeRoomsFeePriceTotal,
+        meetingRoomsFeePriceTotal,
+        couponDiscountPriceTotal;
+    if(preliminaryParams) {
+      const seatsFeePrice = seatsFee
+        ? convertMoneyToNumber(seatsFee)
+        : 0;
+      const officeRoomsFeePrice = officeRoomsFee
+        ? convertMoneyToNumber(officeRoomsFee)
+        : 0;
+      const meetingRoomsFeePrice = meetingRoomsFee
+        ? convertMoneyToNumber(meetingRoomsFee)
+        : 0;
+      const couponDiscountPrice = couponDiscount
+        ? convertMoneyToNumber(couponDiscount)
+        : 0;
+      const hoursDecimal = hours
+        ? new Decimal(hours)
+        : new Decimal(0);
+
+      seatsFeePriceTotal = seatsFeePrice
+        ? new Money(new Decimal(seatsFeePrice)
+          .mul(hoursDecimal)
+          .mul(100)
+          .toNumber(),
+          seatsFee.currency)
+        : 0;
+      officeRoomsFeePriceTotal = officeRoomsFeePrice
+        ? new Money(new Decimal(officeRoomsFeePrice)
+          .mul(hoursDecimal)
+          .mul(100)
+          .toNumber(),
+          officeRoomsFee.currency)
+        : 0;
+      meetingRoomsFeePriceTotal = meetingRoomsFeePrice
+        ? new Money(new Decimal(meetingRoomsFeePrice)
+          .mul(hoursDecimal)
+          .mul(100)
+          .toNumber(),
+          meetingRoomsFee.currency)
+        : 0;
+
+      couponDiscountPriceTotal = couponDiscount// couponDiscountPrice here
+      ? new Money( new Decimal(couponDiscountPrice>(promo||{}).cap?(promo||{}).cap:couponDiscountPrice), couponDiscount.currency)
+      :0;
+    } else {
+      seatsFeePriceTotal = seatsFee ? seatsFee : 0;
+      officeRoomsFeePriceTotal = officeRoomsFee ? officeRoomsFee : 0;
+      meetingRoomsFeePriceTotal = meetingRoomsFee ? meetingRoomsFee : 0;
+      couponDiscountPriceTotal = couponDiscount ? couponDiscount : 0;
+    }
+
+    // console.log("[TANAWY IS TESTING FROM CHECKOUTPAGE custompricing method] PROPS", this.props);
+    // console.log("[Tanawy is debugging from checkoutPage custompricing method] params", params);
+    // console.log("[Tanawy is debugging from checkoutPage custompricing method] couponDiscountPriceTotal", couponDiscountPriceTotal);
+
+// if i reached here and couponDiscountPriceTotal is 0 and promos exist fix pricing
+let isPromoExist = this.props.bookingData && this.props.bookingData.promo;
+if(couponDiscountPriceTotal === 0 && isPromoExist){
+  let tempPromo = this.props.bookingData.promo;
+  let discountCurrency = (seatsFee)? seatsFee.currency 
+  : (officeRoomsFee)? officeRoomsFee.currency 
+  :  (meetingRoomsFee)? meetingRoomsFee.currency : null;
+  if(discountCurrency){
+    let couponDiscountInNumber = (new Decimal((seatsFeePriceTotal.amount || 0) *(seatsQuantity || 0))
+    .plus((officeRoomsFeePriceTotal.amount || 0) *(officeRoomsQuantity || 0))
+    .plus((meetingRoomsFeePriceTotal.amount || 0) *(meetingRoomsQuantity || 0))
+    .mul((tempPromo.value || 0)/100).toNumber());
+
+
+    let tempCouponDiscount = new Money( new Decimal((seatsFeePriceTotal.amount || 0) *(seatsQuantity || 0))
+    .plus((officeRoomsFeePriceTotal.amount || 0) *(officeRoomsQuantity || 0))
+    .plus((meetingRoomsFeePriceTotal.amount || 0) *(meetingRoomsQuantity || 0))
+    .mul((tempPromo.value || 0)/100)
+    , discountCurrency);
+
+    let promoCap = new Decimal(tempPromo.cap).times(100);
+
+    console.log("[tanawy is testing from checkout page before price comparison]",{couponDiscountInNumber,promoCap:promoCap.toNumber()})
+    let isMaxDiscountReached = couponDiscountInNumber > (promoCap.toNumber());
+     tempCouponDiscount = isMaxDiscountReached? new Money( promoCap, discountCurrency)
+    :tempCouponDiscount;
+
+    window.TanawysTestingTemp = {
+      tempCouponDiscount,
+      seatsFeePriceTotal,
+      seatsQuantity,
+      officeRoomsFeePriceTotal,
+      officeRoomsQuantity,
+      meetingRoomsFeePriceTotal,
+      meetingRoomsQuantity,
+      tempPromo,
+      discountCurrency,
+      Money,
+      Decimal,
+    };
+    
+    couponDiscountPriceTotal = tempCouponDiscount ? tempCouponDiscount : 0;
+
+
+  }
+}
+
+    const unitType = config.bookingUnitType; // TO DO need delete
+
+    const seatsFeeLineItem = seatsFee
+      ? {
+          code: LINE_ITEM_SEATS_FEE,
+          unitPrice: seatsFeePriceTotal,
+          quantity: seatsQuantity,
+        }
+      : null;
+    const seatsFeeLineItemMaybe = seatsFeeLineItem ? [seatsFeeLineItem] : [];
+
+    const officeRoomsFeeLineItem = officeRoomsFee
+      ? {
+          code: LINE_ITEM_OFFICE_ROOMS_FEE,
+          unitPrice: officeRoomsFeePriceTotal,
+          quantity: officeRoomsQuantity,
+        }
+      : null;
+    const officeRoomsFeeLineItemMaybe = officeRoomsFeeLineItem ? [officeRoomsFeeLineItem] : [];
+
+    const meetingRoomsFeeLineItem = meetingRoomsFee
+      ? {
+          code: LINE_ITEM_MEETING_ROOMS_FEE,
+          unitPrice: meetingRoomsFeePriceTotal,
+          quantity: meetingRoomsQuantity,
+        }
+      : null;
+    const meetingRoomsFeeLineItemMaybe = meetingRoomsFeeLineItem ? [meetingRoomsFeeLineItem] : [];
+
+    const couponDiscountLineItem = isPromoExist
+    ? {
+      code : LINE_ITEM_COUPON_DISCOUNT,
+      unitPrice: couponDiscountPriceTotal,
+      quantity: new Decimal(-1),
+    }
+    : null;
+
+    const couponDiscountLineItemMaybe = couponDiscountLineItem ? [couponDiscountLineItem] : [];
+
+    // console.log("Tanawy is debugging from checkoutPage customPricingParams method end] couponDiscountLineItem", couponDiscountLineItem);
+    // console.log("Tanawy is debugging bookingstart and booking end",{bookingStart,bookingEnd});
+    
+
+
+    
+    return {
+      listingId,
+      bookingStart:adjustedBookingStart,
+      bookingEnd:adjustedBookingEnd,
+      lineItems: [
+        ...seatsFeeLineItemMaybe,
+        ...officeRoomsFeeLineItemMaybe,
+        ...meetingRoomsFeeLineItemMaybe,
+        ...couponDiscountLineItemMaybe,
+        // TO DO: Need delete from backend
+        {
+          code: unitType,
+          unitPrice: new Money(0, 'USD'),
+          quantity: 0,
+        },
+      ],
+      ...rest,
+    };
+  }
+
+  handleCashSubmit(values) {
+    if (this.state.submitting) {
+      return;
+    }
+    let resTr = false
+    const quickRent =  this.state.pageData.listing.attributes.publicData.quickRent
+    this.setState({ submitting: true });
+    const initialMessage = '';
+    const { history, sendOrderRequest, speculatedTransaction, dispatch, bookingData } = this.props;
+
+    // Create order aka transaction
+    // NOTE: if unit type is line-item/units, quantity needs to be added.
+    // The way to pass it to checkout page is through pageData.bookingData
+
+    const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity, rentalType } = bookingData;
+    // console.log("Tanawy is debugging from cash submit in checkout page", this.props);
+
+    const isSingleDayHoursNotCounted = rentalType === "daily" && 
+    bookingData.bookingStart && 
+    bookingData.bookingEnd && 
+    bookingData.bookingEnd === bookingData.bookingStart;
+    let adjustedHours;
+    if(isSingleDayHoursNotCounted){
+       adjustedHours = hours + 1;
+    } else 
+    {
+       adjustedHours = hours;
+    }
+
+    const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_SEATS_FEE
+    );
+    const seatsFee = seatsFeeLineItem
+      ? seatsFeeLineItem.unitPrice
+      : null;
+    const officeRoomsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_OFFICE_ROOMS_FEE
+    );
+    const officeRoomsFee = officeRoomsFeeLineItem
+      ? officeRoomsFeeLineItem.unitPrice
+      : null;
+    const meetingRoomsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_MEETING_ROOMS_FEE
+    );
+    const meetingRoomsFee = meetingRoomsFeeLineItem
+      ? meetingRoomsFeeLineItem.unitPrice
+      : null;
+
+    const couponDiscountLineItem = speculatedTransaction.attributes.lineItems.find(
+      item =>  item.code === LINE_ITEM_COUPON_DISCOUNT
+    );
+
+    const couponDiscount = couponDiscountLineItem
+    ? couponDiscountLineItem.unitPrice
+    : null;
+
+    
+    const requestParams = this.customPricingParams({
+      listingId: this.state.pageData.listing.id,
+      bookingStart: speculatedTransaction.booking.attributes.start,
+      bookingEnd: speculatedTransaction.booking.attributes.end,
+
+      hours: adjustedHours,
+      seatsFee,
+      officeRoomsFee,
+      meetingRoomsFee,
+      couponDiscount,
+      seatsQuantity,
+      officeRoomsQuantity,
+      meetingRoomsQuantity,
+    });
+
+    // console.log("Tanawy is debugging from cash submit in checkout page before send order request", this.requestParams);
+
+    const processAlias = config.cashBookingProcessAlias;
+    sendOrderRequest(requestParams, initialMessage, processAlias, rentalType)
+      .then(res => {
+        const { id, messageSuccess } = res;
+        this.setState({ submitting: false });
+        const routes = routeConfiguration();
+        const initialMessageFailedToTransaction = messageSuccess ? null : id;
+        const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: id.uuid });
+        const initialValues = {
+          initialMessageFailedToTransaction,
+        };
+        if(quickRent !== undefined && quickRent.length > 0){
+          this.props.acceptTransaction(res).then(tmp => {
+            initializeOrderPage(initialValues, routes, dispatch);
+            clearData(STORAGE_KEY);
+            history.push(orderDetailsPath);
+          })
+        }
+        else{
+          initializeOrderPage(initialValues, routes, dispatch);
+          clearData(STORAGE_KEY);
+          history.push(orderDetailsPath);
+        }
+      })
+      .catch(() => {
+        // console.log("Tanawy is debugging reached a catch in checkout page when sending order with same date");
+        this.setState({ submitting: false });
+      });
+  }
 
   handlePaymentIntent(handlePaymentParams) {
-    const { onInitiateOrder, onHandleCardPayment, onConfirmPayment, onSendMessage } = this.props;
-    const { pageData, speculatedTransaction, message } = handlePaymentParams;
+    const {
+      currentUser,
+      stripeCustomerFetched,
+      onInitiateOrder,
+      onHandleCardPayment,
+      onConfirmPayment,
+      onSendMessage,
+      onSavePaymentMethod,
+    } = this.props;
+    const {
+      pageData,
+      speculatedTransaction,
+      message,
+      paymentIntent,
+      selectedPaymentMethod,
+      saveAfterOnetimePayment,
+    } = handlePaymentParams;
     const storedTx = ensureTransaction(pageData.transaction);
+
+    const ensuredCurrentUser = ensureCurrentUser(currentUser);
+    const ensuredStripeCustomer = ensureStripeCustomer(ensuredCurrentUser.stripeCustomer);
+    const ensuredDefaultPaymentMethod = ensurePaymentMethodCard(
+      ensuredStripeCustomer.defaultPaymentMethod
+    );
+
+    let createdPaymentIntent = null;
+
+    const hasDefaultPaymentMethod = !!(
+      stripeCustomerFetched &&
+      ensuredStripeCustomer.attributes.stripeCustomerId &&
+      ensuredDefaultPaymentMethod.id
+    );
+    const stripePaymentMethodId = hasDefaultPaymentMethod
+      ? ensuredDefaultPaymentMethod.attributes.stripePaymentMethodId
+      : null;
+
+    const selectedPaymentFlow = paymentFlow(selectedPaymentMethod, saveAfterOnetimePayment);
+
+    const { bookingData, bookingDates, listing } = pageData;
+    const processAlias = config.scaBookingProcessAlias;
+
+    const rentalType = pageData.bookingData.rentalType;
 
     // Step 1: initiate order by requesting payment from Marketplace API
     const fnRequestPayment = fnParams => {
@@ -187,7 +699,7 @@ export class CheckoutPageComponent extends Component {
         storedTx.attributes.protectedData && storedTx.attributes.protectedData.stripePaymentIntents;
 
       // If paymentIntent exists, order has been initiated previously.
-      return hasPaymentIntents ? Promise.resolve(storedTx) : onInitiateOrder(fnParams, storedTx.id);
+      return hasPaymentIntents ? Promise.resolve(storedTx) : onInitiateOrder(fnParams, storedTx.id, processAlias, rentalType);
     };
 
     // Step 2: pay using Stripe SDK
@@ -197,7 +709,6 @@ export class CheckoutPageComponent extends Component {
       const order = ensureTransaction(fnParams);
       if (order.id) {
         // Store order.
-        const { bookingData, bookingDates, listing } = pageData;
         storeData(bookingData, bookingDates, listing, order, STORAGE_KEY);
         this.setState({ pageData: { ...pageData, transaction: order } });
       }
@@ -216,17 +727,26 @@ export class CheckoutPageComponent extends Component {
         : null;
 
       const { stripe, card, billingDetails, paymentIntent } = handlePaymentParams;
+      const stripeElementMaybe = selectedPaymentFlow !== USE_SAVED_CARD ? { card } : {};
+
+      // Note: payment_method could be set here for USE_SAVED_CARD flow.
+      // { payment_method: stripePaymentMethodId }
+      // However, we have set it already on API side, when PaymentIntent was created.
+      const paymentParams =
+        selectedPaymentFlow !== USE_SAVED_CARD
+          ? {
+              payment_method_data: {
+                billing_details: billingDetails,
+              },
+            }
+          : {};
 
       const params = {
         stripePaymentIntentClientSecret,
         orderId: order.id,
         stripe,
-        card,
-        paymentParams: {
-          payment_method_data: {
-            billing_details: billingDetails,
-          },
-        },
+        ...stripeElementMaybe,
+        paymentParams,
       };
 
       // If paymentIntent status is not waiting user action,
@@ -240,11 +760,35 @@ export class CheckoutPageComponent extends Component {
 
     // Step 3: complete order by confirming payment to Marketplace API
     // Parameter should contain { paymentIntent, transactionId } returned in step 2
-    const fnConfirmPayment = onConfirmPayment;
+    const fnConfirmPayment = fnParams => {
+      createdPaymentIntent = fnParams.paymentIntent;
+      return onConfirmPayment(fnParams);
+    };
 
     // Step 4: send initial message
     const fnSendMessage = fnParams => {
       return onSendMessage({ ...fnParams, message });
+    };
+
+    // Step 5: optionally save card as defaultPaymentMethod
+    const fnSavePaymentMethod = fnParams => {
+      const pi = createdPaymentIntent || paymentIntent;
+
+      if (selectedPaymentFlow === PAY_AND_SAVE_FOR_LATER_USE) {
+        return onSavePaymentMethod(ensuredStripeCustomer, pi.payment_method)
+          .then(response => {
+            if (response.errors) {
+              return { ...fnParams, paymentMethodSaved: false };
+            }
+            return { ...fnParams, paymentMethodSaved: true };
+          })
+          .catch(e => {
+            // Real error cases are catched already in paymentMethods page.
+            return { ...fnParams, paymentMethodSaved: false };
+          });
+      } else {
+        return Promise.resolve({ ...fnParams, paymentMethodSaved: true });
+      }
     };
 
     // Here we create promise calls in sequence
@@ -258,18 +802,71 @@ export class CheckoutPageComponent extends Component {
       fnRequestPayment,
       fnHandleCardPayment,
       fnConfirmPayment,
-      fnSendMessage
+      fnSendMessage,
+      fnSavePaymentMethod
     );
 
     // Create order aka transaction
     // NOTE: if unit type is line-item/units, quantity needs to be added.
     // The way to pass it to checkout page is through pageData.bookingData
     const tx = speculatedTransaction ? speculatedTransaction : storedTx;
-    const orderParams = {
+
+    // Note: optionalPaymentParams contains Stripe paymentMethod,
+    // but that can also be passed on Step 2
+    // stripe.handleCardPayment(stripe, { payment_method: stripePaymentMethodId })
+    const { hours, seatsQuantity, officeRoomsQuantity, meetingRoomsQuantity } = bookingData;
+
+    // console.log("[Tanawy is testing from checkoutpage in the container from handlePaymentIntent method] bookingData", bookingData);
+
+    const seatsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_SEATS_FEE
+    );
+    const seatsFee = seatsFeeLineItem
+      ? seatsFeeLineItem.unitPrice
+      : null;
+    const officeRoomsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_OFFICE_ROOMS_FEE
+    );
+    const officeRoomsFee = officeRoomsFeeLineItem
+      ? officeRoomsFeeLineItem.unitPrice
+      : null;
+    const meetingRoomsFeeLineItem = speculatedTransaction.attributes.lineItems.find(
+      item => item.code === LINE_ITEM_MEETING_ROOMS_FEE
+    );
+    const meetingRoomsFee = meetingRoomsFeeLineItem
+      ? meetingRoomsFeeLineItem.unitPrice
+      : null;
+
+      const couponDiscountLineItem = speculatedTransaction.attributes.lineItems.find(
+        item =>  item.code === LINE_ITEM_COUPON_DISCOUNT
+      );
+  
+      const couponDiscount = couponDiscountLineItem
+      ? couponDiscountLineItem.unitPrice
+      : null;
+
+    const optionalPaymentParams =
+      selectedPaymentFlow === USE_SAVED_CARD && hasDefaultPaymentMethod
+        ? { paymentMethod: stripePaymentMethodId }
+        : selectedPaymentFlow === PAY_AND_SAVE_FOR_LATER_USE
+        ? { setupPaymentMethodForSaving: true }
+        : {};
+
+    const orderParams = this.customPricingParams({
       listingId: pageData.listing.id,
       bookingStart: tx.booking.attributes.start,
       bookingEnd: tx.booking.attributes.end,
-    };
+
+      hours,
+      seatsFee,
+      officeRoomsFee,
+      meetingRoomsFee,
+      couponDiscount,
+      seatsQuantity,
+      officeRoomsQuantity,
+      meetingRoomsQuantity,
+      ...optionalPaymentParams,
+    });
 
     return handlePaymentIntentCreation(orderParams);
   }
@@ -281,8 +878,17 @@ export class CheckoutPageComponent extends Component {
     this.setState({ submitting: true });
 
     const { history, speculatedTransaction, currentUser, paymentIntent, dispatch } = this.props;
-    const { card, message, formValues } = values;
-    const { name, addressLine1, addressLine2, postal, city, state, country } = formValues;
+    const { card, message, paymentMethod, formValues } = values;
+    const {
+      name,
+      addressLine1,
+      addressLine2,
+      postal,
+      city,
+      state,
+      country,
+      saveAfterOnetimePayment,
+    } = formValues;
 
     // Billing address is recommended.
     // However, let's not assume that <StripePaymentAddress> data is among formValues.
@@ -306,6 +912,7 @@ export class CheckoutPageComponent extends Component {
       email: ensureCurrentUser(currentUser).attributes.email,
       ...addressMaybe,
     };
+    const quickRent =  this.state.pageData.listing.attributes.publicData.quickRent
 
     const requestPaymentParams = {
       pageData: this.state.pageData,
@@ -315,25 +922,38 @@ export class CheckoutPageComponent extends Component {
       billingDetails,
       message,
       paymentIntent,
+      selectedPaymentMethod: paymentMethod,
+      saveAfterOnetimePayment: !!saveAfterOnetimePayment,
     };
 
     this.handlePaymentIntent(requestPaymentParams)
-      .then(res => {
-        const { orderId, messageSuccess } = res;
-        this.setState({ submitting: false });
-
-        const routes = routeConfiguration();
-        const initialMessageFailedToTransaction = messageSuccess ? null : orderId;
-        const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: orderId.uuid });
-
-        initializeOrderPage({ initialMessageFailedToTransaction }, routes, dispatch);
+    .then(res => {
+      const { orderId, messageSuccess, paymentMethodSaved } = res;
+      this.setState({ submitting: false });
+      const routes = routeConfiguration();
+      const initialMessageFailedToTransaction = messageSuccess ? null : orderId;
+      const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: orderId.uuid });
+      const initialValues = {
+        initialMessageFailedToTransaction,
+        savePaymentMethodFailed: !paymentMethodSaved,
+      };
+      if(quickRent !== undefined && quickRent.length > 0){
+        this.props.acceptTransaction(res).then(tmp => {
+          initializeOrderPage(initialValues, routes, dispatch);
+          clearData(STORAGE_KEY);
+          history.push(orderDetailsPath);
+        })
+      }
+      else{
+        initializeOrderPage(initialValues, routes, dispatch);
         clearData(STORAGE_KEY);
         history.push(orderDetailsPath);
-      })
-      .catch(err => {
-        console.error(err);
-        this.setState({ submitting: false });
-      });
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      this.setState({ submitting: false });
+    });
   }
 
   onStripeInitialized(stripe) {
@@ -374,11 +994,17 @@ export class CheckoutPageComponent extends Component {
       confirmPaymentError,
       intl,
       params,
-      currentUser,
       handleCardPaymentError,
       paymentIntent,
       retrievePaymentIntentError,
+      stripeCustomerFetched,
+      bookingData,
+      paymentMethod,
+      currentUser,
+      showBackButton,
     } = this.props;
+
+    const rentalType = bookingData && bookingData.rentalType ? bookingData.rentalType : null;
 
     // Since the listing data is already given from the ListingPage
     // and stored to handle refreshes, it might not have the possible
@@ -397,6 +1023,34 @@ export class CheckoutPageComponent extends Component {
     const speculatedTransaction = ensureTransaction(speculatedTransactionMaybe, {}, null);
     const currentListing = ensureListing(listing);
     const currentAuthor = ensureUser(currentListing.author);
+
+    const listingTitle = currentListing.attributes.title;
+    const title = intl.formatMessage({ id: 'CheckoutPage.title' }, { listingTitle });
+
+    const pageProps = { title, scrollingDisabled };
+    const topbar = (
+      <div className={css.topbar}>
+        <div className={css.back}>
+          <HistoryBackButton rootClassName={css.checkoutBackButton} show={this.state.showBackButton}/>
+        </div>
+        <NamedLink className={css.home} name="LandingPage">
+          <Logo
+            className={css.logoMobile}
+            title={intl.formatMessage({ id: 'CheckoutPage.goToLandingPage' })}
+            format="mobile"
+          />
+          <Logo
+            className={css.logoDesktop}
+            alt={intl.formatMessage({ id: 'CheckoutPage.goToLandingPage' })}
+            format="desktop"
+          />
+        </NamedLink>
+      </div>
+    );
+
+    if (isLoading) {
+      return <Page {...pageProps}>{topbar}</Page>;
+    }
 
     const isOwnListing =
       currentUser &&
@@ -437,12 +1091,21 @@ export class CheckoutPageComponent extends Component {
           className={css.bookingBreakdown}
           userRole="customer"
           unitType={config.bookingUnitType}
+          currentUser={currentUser}
           transaction={tx}
+          promo={bookingData.promo}
           booking={txBooking}
+          dateType={DATE_TYPE_DATE}
+          currentRentalType={rentalType}
         />
       ) : null;
 
     const isPaymentExpired = checkIsPaymentExpired(existingTransaction);
+    const hasDefaultPaymentMethod = !!(
+      stripeCustomerFetched &&
+      ensureStripeCustomer(currentUser.stripeCustomer).attributes.stripeCustomerId &&
+      ensurePaymentMethodCard(currentUser.stripeCustomer.defaultPaymentMethod).id
+    );
 
     // Allow showing page when currentUser is still being downloaded,
     // but show payment form only when user info is loaded.
@@ -455,9 +1118,6 @@ export class CheckoutPageComponent extends Component {
       !retrievePaymentIntentError &&
       !isPaymentExpired
     );
-
-    const listingTitle = currentListing.attributes.title;
-    const title = intl.formatMessage({ id: 'CheckoutPage.title' }, { listingTitle });
 
     const firstImage =
       currentListing.images && currentListing.images.length > 0 ? currentListing.images[0] : null;
@@ -559,23 +1219,6 @@ export class CheckoutPageComponent extends Component {
       );
     }
 
-    const topbar = (
-      <div className={css.topbar}>
-        <NamedLink className={css.home} name="LandingPage">
-          <Logo
-            className={css.logoMobile}
-            title={intl.formatMessage({ id: 'CheckoutPage.goToLandingPage' })}
-            format="mobile"
-          />
-          <Logo
-            className={css.logoDesktop}
-            alt={intl.formatMessage({ id: 'CheckoutPage.goToLandingPage' })}
-            format="desktop"
-          />
-        </NamedLink>
-      </div>
-    );
-
     const unitType = config.bookingUnitType;
     const isNightly = unitType === LINE_ITEM_NIGHT;
     const isDaily = unitType === LINE_ITEM_DAY;
@@ -594,19 +1237,6 @@ export class CheckoutPageComponent extends Component {
       existingTransaction && existingTransaction.attributes.lastTransition === TRANSITION_ENQUIRE
     );
 
-    const pageProps = { title, scrollingDisabled };
-
-    if (isLoading) {
-      return (
-        <Page {...pageProps}>
-          {topbar}
-          <div className={css.loading}>
-            <FormattedMessage id="CheckoutPage.loadingData" />
-          </div>
-        </Page>
-      );
-    }
-
     // Get first and last name of the current user and use it in the StripePaymentForm to autofill the name field
     const userName =
       currentUser && currentUser.attributes
@@ -622,6 +1252,12 @@ export class CheckoutPageComponent extends Component {
     // e.g. {country: 'FI'}
 
     const initalValuesForStripePayment = { name: userName };
+
+    const bookingTime = "Test text";
+    // const bookingTime = bookingData && bookingData.message[1] ? bookingData.message[1] : null;
+
+    const formTitle = intl.formatMessage({ id: 'EnquiryForm.heading' }, { listingTitle });
+    const quickRent =  listing.attributes.publicData.quickRent
 
     return (
       <Page {...pageProps}>
@@ -642,15 +1278,17 @@ export class CheckoutPageComponent extends Component {
             <div className={css.heading}>
               <h1 className={css.title}>{title}</h1>
               <div className={css.author}>
+              <span className={css.authorName}>
                 <FormattedMessage
                   id="CheckoutPage.hostedBy"
                   values={{ name: currentAuthor.attributes.profile.displayName }}
                 />
+              </span>
               </div>
             </div>
 
             <div className={css.priceBreakdownContainer}>
-              <h3 className={css.priceBreakdownTitle}>
+            <h3 className={css.priceBreakdownTitle}>
                 <FormattedMessage id="CheckoutPage.priceBreakdownTitle" />
               </h3>
               {speculateTransactionErrorMessage}
@@ -669,24 +1307,36 @@ export class CheckoutPageComponent extends Component {
                   />
                 </p>
               ) : null}
-              {showPaymentForm ? (
+              {showPaymentForm && paymentMethod !== 'cash' ?  (
                 <StripePaymentForm
                   className={css.paymentForm}
                   onSubmit={this.handleSubmit}
+                  paymentMethod={paymentMethod}
                   inProgress={this.state.submitting}
                   formId="CheckoutPagePaymentForm"
-                  paymentInfo={intl.formatMessage({ id: 'CheckoutPage.paymentInfo' })}
+                  paymentInfo={intl.formatMessage({ id:  quickRent !== undefined && quickRent.length > 0 ? " " : 'CheckoutPage.paymentInfo' })}
                   authorDisplayName={currentAuthor.attributes.profile.displayName}
                   showInitialMessageInput={showInitialMessageInput}
                   initialValues={initalValuesForStripePayment}
                   initiateOrderError={initiateOrderError}
                   handleCardPaymentError={handleCardPaymentError}
                   confirmPaymentError={confirmPaymentError}
+                  quickRent={quickRent}
                   hasHandledCardPayment={hasPaymentIntentUserActionsDone}
+                  loadingData={!stripeCustomerFetched}
+                  defaultPaymentMethod={
+                    hasDefaultPaymentMethod ? currentUser.stripeCustomer.defaultPaymentMethod : null
+                  }
                   paymentIntent={paymentIntent}
                   onStripeInitialized={this.onStripeInitialized}
                 />
-              ) : null}
+              ) : <CashPaymentForm
+              className={css.enquiryForm}
+              submitButtonWrapperClassName={css.enquirySubmitButtonWrapper}
+              bookingData={bookingData}
+              listing={listing}
+              onSubmit={this.handleCashSubmit}
+          />}
               {isPaymentExpired ? (
                 <p className={css.orderError}>
                   <FormattedMessage
@@ -712,7 +1362,13 @@ export class CheckoutPageComponent extends Component {
             </div>
             <div className={css.detailsHeadings}>
               <h2 className={css.detailsTitle}>{listingTitle}</h2>
-              <p className={css.detailsSubtitle}>{detailsSubTitle}</p>
+              {/* <p classNaame={css.detailsSubtitle}>{detailsSubTitle}</p> */}
+              <p className={css.detailsSubtitle}>
+                <FormattedMessage
+                  id="CheckoutPage.hostedBy"
+                  values={{ name: currentAuthor.attributes.profile.displayName }}
+                />
+              </p>
             </div>
             <h3 className={css.bookingBreakdownTitle}>
               <FormattedMessage id="CheckoutPage.priceBreakdownTitle" />
@@ -731,36 +1387,45 @@ CheckoutPageComponent.defaultProps = {
   confirmPaymentError: null,
   listing: null,
   bookingData: {},
+  paymentMethod: '',
   bookingDates: null,
   speculateTransactionError: null,
   speculatedTransaction: null,
-  transaction: null,
   currentUser: null,
+  transaction: null,
   paymentIntent: null,
 };
 
 CheckoutPageComponent.propTypes = {
   scrollingDisabled: bool.isRequired,
   listing: propTypes.listing,
+  paymentMethod: string,
   bookingData: object,
   bookingDates: shape({
     bookingStart: instanceOf(Date).isRequired,
     bookingEnd: instanceOf(Date).isRequired,
   }),
+  fetchStripeCustomer: func.isRequired,
+  stripeCustomerFetched: bool.isRequired,
   fetchSpeculatedTransaction: func.isRequired,
+  fetchSpeculatedCashTransaction: func.isRequired,
   speculateTransactionInProgress: bool.isRequired,
   speculateTransactionError: propTypes.error,
   speculatedTransaction: propTypes.transaction,
+  initiateOrderError: propTypes.error,
   transaction: propTypes.transaction,
   currentUser: propTypes.currentUser,
   params: shape({
     id: string,
     slug: string,
   }).isRequired,
+  sendOrderRequest: func.isRequired,
+  onConfirmPayment: func.isRequired,
   onInitiateOrder: func.isRequired,
   onHandleCardPayment: func.isRequired,
   onRetrievePaymentIntent: func.isRequired,
-  initiateOrderError: propTypes.error,
+  onSavePaymentMethod: func.isRequired,
+  onSendMessage: func.isRequired,
   confirmPaymentError: propTypes.error,
   // handleCardPaymentError comes from Stripe so that's why we can't expect it to be in a specific form
   handleCardPaymentError: oneOfType([propTypes.error, object]),
@@ -783,6 +1448,8 @@ const mapStateToProps = state => {
     listing,
     bookingData,
     bookingDates,
+    paymentMethod,
+    stripeCustomerFetched,
     speculateTransactionInProgress,
     speculateTransactionError,
     speculatedTransaction,
@@ -790,13 +1457,16 @@ const mapStateToProps = state => {
     initiateOrderError,
     confirmPaymentError,
   } = state.CheckoutPage;
+  // console.log("[Tanawy is debugging pre state in checkout mapstatetoprops]", state.CheckoutPage);
   const { currentUser } = state.user;
   const { handleCardPaymentError, paymentIntent, retrievePaymentIntentError } = state.stripe;
   return {
     scrollingDisabled: isScrollingDisabled(state),
     currentUser,
+    stripeCustomerFetched,
     bookingData,
     bookingDates,
+    paymentMethod,
     speculateTransactionInProgress,
     speculateTransactionError,
     speculatedTransaction,
@@ -812,12 +1482,18 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   dispatch,
-  onInitiateOrder: (params, transactionId) => dispatch(initiateOrder(params, transactionId)),
+  sendOrderRequest: (params, initialMessage, processAlias, rentalType) => dispatch(initiateOrder(params, initialMessage, processAlias, rentalType)),
   fetchSpeculatedTransaction: params => dispatch(speculateTransaction(params)),
+  fetchSpeculatedCashTransaction: params => dispatch(speculateCashTransaction(params)),
+  fetchStripeCustomer: () => dispatch(stripeCustomer()),
+  onInitiateOrder: (params, transactionId, processAlias, rentalType) => dispatch(initiateOrder(params, transactionId, processAlias, rentalType)),
   onRetrievePaymentIntent: params => dispatch(retrievePaymentIntent(params)),
   onHandleCardPayment: params => dispatch(handleCardPayment(params)),
   onConfirmPayment: params => dispatch(confirmPayment(params)),
   onSendMessage: params => dispatch(sendMessage(params)),
+  onSavePaymentMethod: (stripeCustomer, stripePaymentMethodId) =>
+    dispatch(savePaymentMethod(stripeCustomer, stripePaymentMethodId)),
+  acceptTransaction: res => dispatch(acceptTransaction(res))
 });
 
 const CheckoutPage = compose(

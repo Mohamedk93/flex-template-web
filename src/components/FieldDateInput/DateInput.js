@@ -12,7 +12,7 @@ import {
   isInclusivelyBeforeDay,
   isSameDay,
 } from 'react-dates';
-import { intlShape, injectIntl } from 'react-intl';
+import { intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
 import moment from 'moment';
 import config from '../../config';
@@ -110,7 +110,7 @@ const timeSlotEqualsDay = (timeSlot, day) => {
   // Time slots describe available dates by providing a start and
   // an end date which is the following day. In the single date picker
   // the start date is used to represent available dates.
-  const localStartDate = dateFromAPIToLocalNoon(timeSlot.attributes.start);
+  const localStartDate = timeSlot.attributes.start;
 
   const isDay = ensureTimeSlot(timeSlot).attributes.type === TIME_SLOT_DAY;
   return isDay && isSameDay(day, moment(localStartDate));
@@ -128,7 +128,7 @@ class DateInputComponent extends Component {
   }
 
   onDateChange(date) {
-    const selectedDate = date instanceof moment ? date.toDate() : null;
+    const selectedDate = moment.isMoment(date) || date instanceof moment ? date.toDate() : null;
     this.props.onChange({ date: selectedDate });
   }
 
@@ -160,6 +160,7 @@ class DateInputComponent extends Component {
       screenReaderInputMessage,
       useMobileMargins,
       value,
+      focused,
       children,
       render,
       timeSlots,
@@ -197,7 +198,7 @@ class DateInputComponent extends Component {
       <div className={classes}>
         <SingleDatePicker
           {...datePickerProps}
-          focused={this.state.focused}
+          focused={this.state.focused || focused}
           onFocusChange={this.onFocusChange}
           date={date}
           onDateChange={this.onDateChange}

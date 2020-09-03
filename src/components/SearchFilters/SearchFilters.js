@@ -1,7 +1,7 @@
 import React from 'react';
 import { compose } from 'redux';
 import { object, string, bool, number, func, shape } from 'prop-types';
-import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { withRouter } from 'react-router-dom';
 import omit from 'lodash/omit';
@@ -11,6 +11,9 @@ import {
   SelectSingleFilter,
   SelectMultipleFilter,
   PriceFilter,
+  KeywordFilter,
+  SectionLocations,
+  NamedLink,
 } from '../../components';
 import routeConfiguration from '../../routeConfiguration';
 import { parseDateFromISO8601, stringifyDateToISO8601 } from '../../util/dates';
@@ -67,9 +70,13 @@ const SearchFiltersComponent = props => {
     resultsCount,
     searchInProgress,
     categoryFilter,
+    workspaceFilter,
     amenitiesFilter,
+    rentalsFilter,
+    quickRents,
     priceFilter,
     dateRangeFilter,
+    keywordFilter,
     isSearchFiltersPanelOpen,
     toggleSearchFiltersPanel,
     searchFiltersPanelSelectedCount,
@@ -83,25 +90,59 @@ const SearchFiltersComponent = props => {
   const categoryLabel = intl.formatMessage({
     id: 'SearchFilters.categoryLabel',
   });
+  const workspaceLabel = intl.formatMessage({
+    id: 'SearchFilters.workspaceLabel',
+  });
 
   const amenitiesLabel = intl.formatMessage({
     id: 'SearchFilters.amenitiesLabel',
+  });
+  const rentalsLabel = intl.formatMessage({
+    id: 'SearchFilters.rentalsLabel',
+  });
+
+  const keywordLabel = intl.formatMessage({
+    id: 'SearchFilters.keywordLabel',
+  });
+
+  const quickRentsLabel =  intl.formatMessage({
+    id: 'SearchFilters.quickRentsLabel',
+  });
+
+  const quickRentsLabelTitle =  intl.formatMessage({
+    id: 'SearchFilters.quickRentsLabelTitle',
   });
 
   const initialAmenities = amenitiesFilter
     ? initialValues(urlQueryParams, amenitiesFilter.paramName)
     : null;
 
+    const initialRentals = rentalsFilter
+    ? initialValues(urlQueryParams, rentalsFilter.paramName)
+    : null;
+  
+  const initialQuickRents = quickRents
+    ? initialValues(urlQueryParams, quickRents.paramName)
+    : null;
+
   const initialCategory = categoryFilter
     ? initialValue(urlQueryParams, categoryFilter.paramName)
     : null;
-
+    
+  const initialWorkspace = workspaceFilter
+  ? initialValues(urlQueryParams, workspaceFilter.paramName)
+    : null;
+  
   const initialPriceRange = priceFilter
     ? initialPriceRangeValue(urlQueryParams, priceFilter.paramName)
     : null;
 
   const initialDateRange = dateRangeFilter
     ? initialDateRangeValue(urlQueryParams, dateRangeFilter.paramName)
+    : null;
+
+  const initialKeyword = keywordFilter
+    ? initialValue(urlQueryParams, keywordFilter.paramName)
     : null;
 
   const handleSelectOptions = (urlParam, options) => {
@@ -147,6 +188,14 @@ const SearchFiltersComponent = props => {
     history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
   };
 
+  const handleKeyword = (urlParam, values) => {
+    const queryParams = values
+      ? { ...urlQueryParams, [urlParam]: values }
+      : omit(urlQueryParams, urlParam);
+
+    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
+  };
+
   const categoryFilterElement = categoryFilter ? (
     <SelectSingleFilter
       urlParam={categoryFilter.paramName}
@@ -155,6 +204,20 @@ const SearchFiltersComponent = props => {
       showAsPopup
       options={categoryFilter.options}
       initialValue={initialCategory}
+      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
+    />
+  ) : null;
+
+  const workspaceFilterElement = workspaceFilter ? (
+    <SelectMultipleFilter
+    id={'SearchFilters.workspaceFilter'}
+      name="workspaces"
+      urlParam={workspaceFilter.paramName}
+      label={workspaceLabel}
+      onSubmit={handleSelectOptions}
+      showAsPopup
+      options={workspaceFilter.options}
+      initialValues={initialWorkspace}
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
   ) : null;
@@ -172,7 +235,31 @@ const SearchFiltersComponent = props => {
       contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
     />
   ) : null;
-
+  const rentalsFilterElement = rentalsFilter ? (
+    <SelectMultipleFilter
+      id={'SearchFilters.rentalsFilter'}
+      name="rentals"
+      urlParam={rentalsFilter.paramName}
+      label={rentalsLabel}
+      onSubmit={handleSelectOptions}
+      showAsPopup
+      options={rentalsFilter.options}
+      initialValues={initialRentals}
+      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
+    />
+  ) : null;
+  const quickRentsFilter = 
+    <SelectMultipleFilter
+      id={'SearchFilters.quickRentsFilter'}
+      name="quickRents"
+      urlParam='pub_quickRent'
+      label={quickRentsLabelTitle}
+      onSubmit={handleSelectOptions}
+      options={[{key: "quickRent", label: quickRentsLabel}]}
+      initialValues={initialQuickRents}
+      showAsPopup
+      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
+    />
   const priceFilterElement = priceFilter ? (
     <PriceFilter
       id="SearchFilters.priceFilter"
@@ -197,6 +284,20 @@ const SearchFiltersComponent = props => {
       />
     ) : null;
 
+  const keywordFilterElement =
+    keywordFilter && keywordFilter.config.active ? (
+      <KeywordFilter
+        id={'SearchFilters.keywordFilter'}
+        name="keyword"
+        urlParam={keywordFilter.paramName}
+        label={keywordLabel}
+        onSubmit={handleKeyword}
+        showAsPopup
+        initialValues={initialKeyword}
+        contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
+      />
+    ) : null;
+
   const toggleSearchFiltersPanelButtonClasses =
     isSearchFiltersPanelOpen || searchFiltersPanelSelectedCount > 0
       ? css.searchFiltersPanelOpen
@@ -214,13 +315,32 @@ const SearchFiltersComponent = props => {
       />
     </button>
   ) : null;
+
+  const currentLoc = props.location;
+
+  const createNewListing = (
+    <NamedLink className={css.createListingLink} name="NewListingPage">
+      <FormattedMessage id="SearchPage.createListing" />
+    </NamedLink>
+  );
+
+  const monetizeEmptySpace = (
+    <NamedLink className={css.createListingLink} name="NewListingPage">
+      <FormattedMessage id="SearchPage.createListingMonetize" />
+    </NamedLink>
+  );
+
   return (
     <div className={classes}>
       <div className={css.filters}>
         {categoryFilterElement}
+        {workspaceFilterElement}
         {amenitiesFilterElement}
+        {rentalsFilterElement}
         {priceFilterElement}
         {dateRangeFilterElement}
+        {keywordFilterElement}
+        {quickRentsFilter}
         {toggleSearchFiltersPanelButton}
       </div>
 
@@ -234,7 +354,15 @@ const SearchFiltersComponent = props => {
 
       {hasNoResult ? (
         <div className={css.noSearchResults}>
-          <FormattedMessage id="SearchFilters.noResults" />
+          <span>
+            <FormattedMessage
+              id="SearchPage.dontHaveListings"
+              values={{ createNewListing, monetizeEmptySpace }}
+            />
+          </span>
+          <div className={css.noSearchResultsLocations}>
+            <SectionLocations location={currentLoc} rootClassName={css.searchFiltersLocation} rootLocationClassName={css.locations}/>
+          </div>
         </div>
       ) : null}
 
@@ -253,7 +381,9 @@ SearchFiltersComponent.defaultProps = {
   resultsCount: null,
   searchingInProgress: false,
   categoryFilter: null,
+  workspaceFilter: null,
   amenitiesFilter: null,
+  rentalsFilter: null,
   priceFilter: null,
   dateRangeFilter: null,
   isSearchFiltersPanelOpen: false,
@@ -270,7 +400,9 @@ SearchFiltersComponent.propTypes = {
   searchingInProgress: bool,
   onManageDisableScrolling: func.isRequired,
   categoriesFilter: propTypes.filterConfig,
+  workspaceFilter: propTypes.filterConfig,
   amenitiesFilter: propTypes.filterConfig,
+  rentalsFilter: propTypes.filterConfig,
   priceFilter: propTypes.filterConfig,
   dateRangeFilter: propTypes.filterConfig,
   isSearchFiltersPanelOpen: bool,

@@ -13,8 +13,8 @@
 
 // React 16 depends on the collection types Map and Set, as well as requestAnimationFrame.
 // https://reactjs.org/docs/javascript-environment-requirements.html
-import 'core-js/es6/map';
-import 'core-js/es6/set';
+import 'core-js/features/map';
+import 'core-js/features/set';
 import 'raf/polyfill';
 
 import React from 'react';
@@ -58,7 +58,8 @@ const render = (store, shouldHydrate) => {
 
 const setupAnalyticsHandlers = () => {
   let handlers = [];
-
+  var mixpanel = require('mixpanel-browser');
+  mixpanel.init(process.env.REACT_APP_MIXPANNEL_TOKEN);
   // Log analytics page views and events in dev mode
   if (config.dev) {
     handlers.push(new LoggingAnalyticsHandler());
@@ -76,6 +77,7 @@ const setupAnalyticsHandlers = () => {
 if (typeof window !== 'undefined') {
   // set up logger with Sentry DSN client key and environment
   log.setup();
+
 
   const baseUrl = config.sdk.baseUrl ? { baseUrl: config.sdk.baseUrl } : {};
 
@@ -98,6 +100,22 @@ if (typeof window !== 'undefined') {
   });
   const analyticsHandlers = setupAnalyticsHandlers();
   const store = configureStore(initialState, sdk, analyticsHandlers);
+
+  // APPCUES INITIALIZATION  
+  
+          (function(){
+            if(window.Appcues){
+
+              window.Appcues.page();
+              window.Appcues.anonymous();
+            }
+            })();
+
+  // pass facebook client ID
+  localStorage.setItem('REACT_APP_FB_APP_ID', process.env.REACT_APP_FB_APP_ID);
+  localStorage.setItem('REACT_APP_FB_PIXEL_ID', process.env.REACT_APP_FB_PIXEL_ID);
+  localStorage.setItem('REACT_APP_GOOGLE_ANALYTICS_ID', process.env.REACT_APP_GOOGLE_ANALYTICS_ID);
+  localStorage.setItem('REACT_APP_GA_SEND_TO_ID', process.env.REACT_APP_GA_SEND_TO_ID);
 
   require('./util/polyfills');
   render(store, !!window.__PRELOADED_STATE__);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { string } from 'prop-types';
-import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { twitterPageURL } from '../../util/urlHelpers';
 import config from '../../config';
@@ -11,6 +11,7 @@ import {
   Logo,
   ExternalLink,
   NamedLink,
+  FrequentlyAskedQuestions
 } from '../../components';
 
 import css from './Footer.css';
@@ -93,12 +94,12 @@ const Footer = props => {
                   </NamedLink>
                 </li>
                 <li className={css.listItem}>
-                  <NamedLink name="LandingPage" className={css.link}>
-                    <FormattedMessage id="Footer.toFAQPage" />
+                  <NamedLink name="FAQs" className={css.link}>
+                    <FormattedMessage id="Footer.toFrequentlyAskedQuestions" />
                   </NamedLink>
                 </li>
                 <li className={css.listItem}>
-                  <NamedLink name="LandingPage" className={css.link}>
+                  <NamedLink name="AboutPage" to={{ hash: '#contact' }} className={css.link}>
                     <FormattedMessage id="Footer.toHelpPage" />
                   </NamedLink>
                 </li>
@@ -114,14 +115,14 @@ const Footer = props => {
               <div className={css.legalMatters}>
                 <ul className={css.tosAndPrivacy}>
                   <li>
-                    <NamedLink name="TermsOfServicePage" className={css.legalLink}>
+                    <a href="/static/Hotdesk_Terms_of_Service.pdf" className={css.legalLink} target="_blank">
                       <FormattedMessage id="Footer.termsOfUse" />
-                    </NamedLink>
+                    </a>
                   </li>
                   <li>
-                    <NamedLink name="PrivacyPolicyPage" className={css.legalLink}>
+                    <a href="/static/Hotdesk_Privacy_Policy.pdf" className={css.legalLink} target="_blank">
                       <FormattedMessage id="Footer.privacyPolicy" />
-                    </NamedLink>
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -132,12 +133,12 @@ const Footer = props => {
               <FormattedMessage id="Footer.copyright" />
             </NamedLink>
             <div className={css.tosAndPrivacyMobile}>
-              <NamedLink name="PrivacyPolicyPage" className={css.privacy}>
+              <a href="/static/Hotdesk_Privacy_Policy.pdf" className={css.privacy} target="_blank">
                 <FormattedMessage id="Footer.privacy" />
-              </NamedLink>
-              <NamedLink name="TermsOfServicePage" className={css.terms}>
+                </a>
+              <a href="/static/Hotdesk_Terms_of_Service.pdf" className={css.terms} target="_blank">
                 <FormattedMessage id="Footer.terms" />
-              </NamedLink>
+              </a>
             </div>
           </div>
         </div>

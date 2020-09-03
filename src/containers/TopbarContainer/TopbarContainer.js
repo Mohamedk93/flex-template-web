@@ -1,10 +1,10 @@
 import React from 'react';
-import { bool, func, number, object, shape, string } from 'prop-types';
+import { array, bool, func, number, object, shape, string } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { propTypes } from '../../util/types';
-import { sendVerificationEmail, hasCurrentUserErrors } from '../../ducks/user.duck';
+import { sendVerificationEmail, hasCurrentUserErrors, updateUserCurrency } from '../../ducks/user.duck';
 import { logout, authenticationInProgress } from '../../ducks/Auth.duck';
 import { manageDisableScrolling } from '../../ducks/UI.duck';
 import { Topbar } from '../../components';
@@ -16,9 +16,11 @@ export const TopbarContainerComponent = props => {
     currentSearchParams,
     currentUser,
     currentUserHasListings,
+    currentUserHasListingsLocation,
     currentUserHasOrders,
     history,
     isAuthenticated,
+    authScopes,
     hasGenericError,
     location,
     notificationCount,
@@ -27,6 +29,7 @@ export const TopbarContainerComponent = props => {
     sendVerificationEmailInProgress,
     sendVerificationEmailError,
     onResendVerificationEmail,
+    onUpdateUserCurrency,
     ...rest
   } = props;
 
@@ -37,9 +40,11 @@ export const TopbarContainerComponent = props => {
       currentSearchParams={currentSearchParams}
       currentUser={currentUser}
       currentUserHasListings={currentUserHasListings}
+      currentUserHasListingsLocation={currentUserHasListingsLocation}
       currentUserHasOrders={currentUserHasOrders}
       history={history}
       isAuthenticated={isAuthenticated}
+      authScopes={authScopes}
       location={location}
       notificationCount={notificationCount}
       onLogout={onLogout}
@@ -48,6 +53,7 @@ export const TopbarContainerComponent = props => {
       sendVerificationEmailInProgress={sendVerificationEmailInProgress}
       sendVerificationEmailError={sendVerificationEmailError}
       showGenericError={hasGenericError}
+      onUpdateUserCurrency={onUpdateUserCurrency}
       {...rest}
     />
   );
@@ -60,6 +66,7 @@ TopbarContainerComponent.defaultProps = {
   currentUserHasOrders: null,
   notificationCount: 0,
   sendVerificationEmailError: null,
+  authScopes: null,
 };
 
 TopbarContainerComponent.propTypes = {
@@ -68,8 +75,10 @@ TopbarContainerComponent.propTypes = {
   currentSearchParams: object,
   currentUser: propTypes.currentUser,
   currentUserHasListings: bool.isRequired,
+  currentUserHasListingsLocation: bool,
   currentUserHasOrders: bool,
   isAuthenticated: bool.isRequired,
+  authScopes: array,
   notificationCount: number,
   onLogout: func.isRequired,
   onManageDisableScrolling: func.isRequired,
@@ -87,11 +96,12 @@ TopbarContainerComponent.propTypes = {
 
 const mapStateToProps = state => {
   // Topbar needs isAuthenticated
-  const { isAuthenticated, logoutError } = state.Auth;
+  const { isAuthenticated, logoutError, authScopes } = state.Auth;
   // Topbar needs user info.
   const {
     currentUser,
     currentUserHasListings,
+    currentUserHasListingsLocation,
     currentUserHasOrders,
     currentUserNotificationCount: notificationCount,
     sendVerificationEmailInProgress,
@@ -102,9 +112,11 @@ const mapStateToProps = state => {
     authInProgress: authenticationInProgress(state),
     currentUser,
     currentUserHasListings,
+    currentUserHasListingsLocation,
     currentUserHasOrders,
     notificationCount,
     isAuthenticated,
+    authScopes,
     sendVerificationEmailInProgress,
     sendVerificationEmailError,
     hasGenericError,
@@ -116,6 +128,7 @@ const mapDispatchToProps = dispatch => ({
   onManageDisableScrolling: (componentId, disableScrolling) =>
     dispatch(manageDisableScrolling(componentId, disableScrolling)),
   onResendVerificationEmail: () => dispatch(sendVerificationEmail()),
+  onUpdateUserCurrency: params => dispatch(updateUserCurrency(params))
 });
 
 // Note: it is important that the withRouter HOC is **outside** the

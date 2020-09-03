@@ -1,10 +1,13 @@
-import { denormalisedResponseEntities, ensureOwnListing } from '../util/data';
+import { denormalisedResponseEntities, ensureOwnListing, COUNTRIES_ARRAY } from '../util/data';
 import { storableError } from '../util/errors';
 import { transitionsToRequested } from '../util/transaction';
 import { LISTING_STATE_DRAFT } from '../util/types';
 import * as log from '../util/log';
 import { authInfo } from './Auth.duck';
-import { stripeAccountCreateSuccess } from './stripe.duck.js';
+import axios from 'axios';
+import { stripeAccountCreateSuccess } from './stripeConnectAccount.duck';
+import { locationBounds } from '../util/googleMaps';
+
 
 // ================ Action types ================ //
 
@@ -20,6 +23,16 @@ export const FETCH_CURRENT_USER_HAS_LISTINGS_SUCCESS =
   'app/user/FETCH_CURRENT_USER_HAS_LISTINGS_SUCCESS';
 export const FETCH_CURRENT_USER_HAS_LISTINGS_ERROR =
   'app/user/FETCH_CURRENT_USER_HAS_LISTINGS_ERROR';
+
+
+
+export const FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_REQUEST =
+  'app/user/FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_REQUEST';
+export const FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_SUCCESS =
+  'app/user/FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_SUCCESS';
+export const FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_ERROR =
+  'app/user/FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_ERROR';
+
 
 export const FETCH_CURRENT_USER_NOTIFICATIONS_REQUEST =
   'app/user/FETCH_CURRENT_USER_NOTIFICATIONS_REQUEST';
@@ -37,14 +50,31 @@ export const FETCH_CURRENT_USER_HAS_ORDERS_ERROR = 'app/user/FETCH_CURRENT_USER_
 export const SEND_VERIFICATION_EMAIL_REQUEST = 'app/user/SEND_VERIFICATION_EMAIL_REQUEST';
 export const SEND_VERIFICATION_EMAIL_SUCCESS = 'app/user/SEND_VERIFICATION_EMAIL_SUCCESS';
 export const SEND_VERIFICATION_EMAIL_ERROR = 'app/user/SEND_VERIFICATION_EMAIL_ERROR';
+const API_URL = process.env.REACT_APP_API_URL;
 
 // ================ Reducer ================ //
+
+const mergeCurrentUser = (oldCurrentUser, newCurrentUser) => {
+  const { id: oId, type: oType, attributes: oAttr, ...oldRelationships } = oldCurrentUser || {};
+  const { id, type, attributes, ...relationships } = newCurrentUser || {};
+
+  // Passing null will remove currentUser entity.
+  // Only relationships are merged.
+  // TODO figure out if sparse fields handling needs a better handling.
+  return newCurrentUser === null
+    ? null
+    : oldCurrentUser === null
+    ? newCurrentUser
+    : { id, type, attributes, ...oldRelationships, ...relationships };
+};
 
 const initialState = {
   currentUser: null,
   currentUserShowError: null,
   currentUserHasListings: false,
   currentUserHasListingsError: null,
+  currentUserHasListingsLocation: false,
+  currentUserHasListingsLoccationError: null,
   currentUserNotificationCount: 0,
   currentUserNotificationCountError: null,
   currentUserHasOrders: null, // This is not fetched unless unverified emails exist
@@ -59,7 +89,7 @@ export default function reducer(state = initialState, action = {}) {
     case CURRENT_USER_SHOW_REQUEST:
       return { ...state, currentUserShowError: null };
     case CURRENT_USER_SHOW_SUCCESS:
-      return { ...state, currentUser: payload };
+      return { ...state, currentUser: mergeCurrentUser(state.currentUser, payload) };
     case CURRENT_USER_SHOW_ERROR:
       // eslint-disable-next-line no-console
       console.error(payload);
@@ -72,6 +102,8 @@ export default function reducer(state = initialState, action = {}) {
         currentUserShowError: null,
         currentUserHasListings: false,
         currentUserHasListingsError: null,
+        currentUserHasListingsLocation: false,
+        currentUserHasListingsLoccationError: null,
         currentUserNotificationCount: 0,
         currentUserNotificationCountError: null,
       };
@@ -83,6 +115,13 @@ export default function reducer(state = initialState, action = {}) {
     case FETCH_CURRENT_USER_HAS_LISTINGS_ERROR:
       console.error(payload); // eslint-disable-line
       return { ...state, currentUserHasListingsError: payload };
+
+    case FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_REQUEST:
+      return { ...state, currentUserHasListingsLocationError: null };
+    case FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_SUCCESS:
+      return { ...state, currentUserHasListingsLocation: payload.hasListings };
+    case FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_ERROR:
+      return { ...state, currentUserHasListingsLocationError: payload };
 
     case FETCH_CURRENT_USER_NOTIFICATIONS_REQUEST:
       return { ...state, currentUserNotificationCountError: null };
@@ -128,7 +167,7 @@ export default function reducer(state = initialState, action = {}) {
 export const hasCurrentUserErrors = state => {
   const { user } = state;
   return (
-    user.currentUserShowError ||
+    //user.currentUserShowError || need to fix fetchCurrentUser method
     user.currentUserHasListingsError ||
     user.currentUserNotificationCountError ||
     user.currentUserHasOrdersError
@@ -170,6 +209,23 @@ const fetchCurrentUserHasListingsError = e => ({
   error: true,
   payload: e,
 });
+
+
+const fetchCurrentUserHasListingsLocationRequest = () => ({
+  type: FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_REQUEST,
+});
+
+export const fetchCurrentUserHasListingsLocationSuccess = hasListings => ({
+  type: FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_SUCCESS,
+  payload: { hasListings },
+});
+
+const fetchCurrentUserHasListingsLocationError = e => ({
+  type: FETCH_CURRENT_USER_HAS_LISTINGS_LOCATION_ERROR,
+  error: true,
+  payload: e,
+});
+
 
 const fetchCurrentUserNotificationsRequest = () => ({
   type: FETCH_CURRENT_USER_NOTIFICATIONS_REQUEST,
@@ -219,10 +275,12 @@ export const sendVerificationEmailError = e => ({
 
 export const fetchCurrentUserHasListings = () => (dispatch, getState, sdk) => {
   dispatch(fetchCurrentUserHasListingsRequest());
+  dispatch(fetchCurrentUserHasListingsLocationRequest());
   const { currentUser } = getState().user;
 
   if (!currentUser) {
     dispatch(fetchCurrentUserHasListingsSuccess(false));
+    dispatch(fetchCurrentUserHasListingsLocationSuccess(false));
     return Promise.resolve(null);
   }
 
@@ -230,14 +288,17 @@ export const fetchCurrentUserHasListings = () => (dispatch, getState, sdk) => {
     // Since we are only interested in if the user has
     // listings, we only need at most one result.
     page: 1,
-    per_page: 1,
+    per_page: 100,
   };
 
   return sdk.ownListings
     .query(params)
     .then(response => {
       const hasListings = response.data.data && response.data.data.length > 0;
-
+      if(response.data.data && response.data.data.length > 0){
+        let countries = response.data.data.filter(x => COUNTRIES_ARRAY.includes(x.attributes.publicData.country))
+        countries && countries.length > 0 ? dispatch(fetchCurrentUserHasListingsLocationSuccess(true)) : dispatch(fetchCurrentUserHasListingsLocationSuccess(false));
+      }
       const hasPublishedListings =
         hasListings &&
         ensureOwnListing(response.data.data[0]).attributes.state !== LISTING_STATE_DRAFT;
@@ -291,23 +352,82 @@ export const fetchCurrentUserNotifications = () => (dispatch, getState, sdk) => 
     .catch(e => dispatch(fetchCurrentUserNotificationsError(storableError(e))));
 };
 
-export const fetchCurrentUser = () => (dispatch, getState, sdk) => {
+export const updateUserCurrency = (currency = null) => (dispatch, getState, sdk) => {
+  const { isAuthenticated } = getState().Auth;
+  if (!isAuthenticated) {
+    dispatch(currentUserShowSuccess(null));
+    return Promise.resolve({});
+  }
+  if(currency){
+    return sdk.currentUser
+    .updateProfile(
+      { protectedData: { currency } },
+      { expand: true }
+    )
+    .then(response => {
+      const entities = denormalisedResponseEntities(response);
+      if (entities.length !== 1) {
+        throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+      }
+      dispatch(fetchCurrentUserHasListings());
+      dispatch(fetchCurrentUserNotifications());
+      dispatch(authInfo());
+
+      const currentUser = entities[0];
+      log.setUserId(currentUser.id.uuid);
+      dispatch(currentUserShowSuccess(currentUser));  
+      return currentUser;
+    })
+    .catch(e => {
+      throw e;
+    });
+  }
+
+}
+export const GEO_API = 'https://api.ipdata.co?api-key=test'
+
+export const fetchCurrentUser = (params = null) => (dispatch, getState, sdk) => {
   dispatch(currentUserShowRequest());
   const { isAuthenticated } = getState().Auth;
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && typeof window !== 'undefined') {
+    let lastUpdateCurrency = new Date(localStorage.getItem('lastUpdateCurrency'))
+    lastUpdateCurrency.setDate(lastUpdateCurrency.getDate() + 1);
+    if(lastUpdateCurrency < new Date()){
+      axios.get(`${API_URL}/api/v1/rates`)
+        .then(function (response) {
+          const rates = response.data;
+          localStorage.setItem('rates', JSON.stringify(rates));
+          localStorage.setItem('lastUpdateCurrency', new Date);
+          axios.get(GEO_API)
+          .then( response => {
+            const currentCode = response.data.currency.code
+            const result = rates.find(e => e.iso_code == currentCode);
+            const code = result ? result.iso_code : 'USD'
+            localStorage.setItem('currentCode', code)
+          } )
+          .catch( e => {
+            localStorage.setItem('currentCode', 'USD')
+            }
+          )
+        })
+        .catch(e => {
+          throw e;
+        });
+    }
+
     // Make sure current user is null
     dispatch(currentUserShowSuccess(null));
     return Promise.resolve({});
   }
 
-  const params = {
+  const parameters = params || {
     include: ['profileImage', 'stripeAccount'],
     'fields.image': ['variants.square-small', 'variants.square-small2x'],
   };
 
   return sdk.currentUser
-    .show(params)
+    .show(parameters)
     .then(response => {
       const entities = denormalisedResponseEntities(response);
       if (entities.length !== 1) {
@@ -326,6 +446,61 @@ export const fetchCurrentUser = () => (dispatch, getState, sdk) => {
       return currentUser;
     })
     .then(currentUser => {
+      let lastRateUpdate = new Date(currentUser.attributes.profile.protectedData.lastRateUpdate);
+      lastRateUpdate.setDate(lastRateUpdate.getDate() + 1);
+      let currentDate = new Date();
+      if(lastRateUpdate < currentDate){
+        axios.get(`${API_URL}/api/v1/rates`)
+        .then(function (response) {
+          const rates = response.data;
+          lastRateUpdate = currentDate.toDateString();
+          axios.get(GEO_API)
+          .then( response => {
+            const currentCode = response.data.currency.code
+            const result = rates.find(e => e.iso_code == currentCode);
+            let currency = result && !currentUser.attributes.profile.protectedData.currency ? result.iso_code : currentUser.attributes.profile.protectedData.currency
+            currency = currency ? currency : 'USD'; 
+            return sdk.currentUser
+            .updateProfile(
+              { protectedData: { rates,  lastRateUpdate, currency} },
+              { expand: true }
+            )
+            .then(response => {
+              const entities = denormalisedResponseEntities(response);
+              if (entities.length !== 1) {
+                throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+              }
+
+              const currentUser = entities[0];
+              return currentUser;
+            })
+            .catch(e => {
+              throw e;
+            });
+          } )
+          .catch( e => {
+            const currentCode = 'USD'
+            const result = rates.find(e => e.iso_code == currentCode);
+            const currency = result && !currentUser.attributes.profile.protectedData.currency ? result.iso_code : currentUser.attributes.profile.protectedData.currency
+            return sdk.currentUser
+            .updateProfile(
+              { protectedData: { rates,  lastRateUpdate, currency} },
+              { expand: true }
+            )
+            .then(response => {
+              const entities = denormalisedResponseEntities(response);
+              if (entities.length !== 1) {
+                throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+              }
+
+              const currentUser = entities[0];
+              return currentUser;
+            })
+            
+            }
+          )
+        })
+      }
       dispatch(fetchCurrentUserHasListings());
       dispatch(fetchCurrentUserNotifications());
       if (!currentUser.attributes.emailVerified) {
