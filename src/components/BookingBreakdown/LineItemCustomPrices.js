@@ -73,11 +73,13 @@ const LineItemCustomPrices = props => {
     let formattedUnitCap = capValToMoney?converter(formatMoney(intl,capValToMoney), currentUser):undefined;
     
     let formattedUnitPrice = converter(formatMoney(intl, item.unitPrice), currentUser);
-    
+    const promoDiscount = (promo || {}).value;
+
+
     return (
       <div className={css.lineItem} key={guid()}>
         <span className={css.itemLabel}>
-          <FormattedMessage id={`BookingBreakdown.quantity_${key}`} values={{quantity: quantity.toFixed(), price: formattedUnitPrice, cap: formattedUnitCap}} />
+          <FormattedMessage id={`BookingBreakdown.quantity_${key}`} values={{quantity: quantity.toFixed(), price: formattedUnitPrice, cap: formattedUnitCap, discount: promoDiscount}} />
         </span>
         <span className={css.itemValue}>
           {formattedTotalPrice}
