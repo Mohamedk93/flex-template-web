@@ -10,6 +10,7 @@ import { propTypes } from './util/types';
 import * as log from './util/log';
 import { canonicalRoutePath } from './util/routes';
 import routeConfiguration from './routeConfiguration';
+import { isDayBlockedFn } from './components/FieldDateRangeInput/DateRangeInput.helpers';
 
 const mixpanel = require('mixpanel-browser');
 
@@ -96,7 +97,10 @@ class RouteComponentRenderer extends Component {
 
       
       if (pathname !== previousLocation) {
-        window.Appcues.page();
+        if(window && window.Appcues){
+
+          window.Appcues.page();
+        }
 
       }
     // }
@@ -117,7 +121,10 @@ class RouteComponentRenderer extends Component {
     const previousLocation = prevProps.location.pathname;
 
     if (pathname !== previousLocation) {
-      window.Appcues.page();
+      if(window && window.Appcues){
+
+        window.Appcues.page();
+      }
     }
   }
 

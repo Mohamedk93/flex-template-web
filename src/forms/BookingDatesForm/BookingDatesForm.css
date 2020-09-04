@@ -174,3 +174,8 @@
     border-bottom-width: 3px;
   }
 }
+
+
+option.paymentMethodSlightGray {
+  color: #777;
+}

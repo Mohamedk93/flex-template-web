@@ -45,6 +45,7 @@
 
   /* Font */
   @apply --marketplaceH1FontStyles;
+  font-size: 25px !important;
 
   /* Layout */
   margin: 0 24px 0 0;
