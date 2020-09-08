@@ -22,6 +22,10 @@
 .mobileInputRoot {
   width: 100%;
 }
+.searchBoxInputRoot {
+  width: 100%;
+  height: 50px;
+}
 
 .desktopInputRoot {
   height: var(--topbarHeightDesktop);
@@ -31,6 +35,21 @@
   margin-left: 14px;
   margin-right: 12px;
   padding: 7px 0 17px 0;
+
+  /* Borders */
+  border-bottom-width: var(--borderRadiusMobileSearch);
+
+  display: flex;
+  width: 24px;
+  align-self: stretch;
+  background-color: var(--matterColorLight);
+}
+
+
+.searchBoxIcon {
+  margin-left: 14px;
+  margin-right: 12px;
+  padding: 7px 0 4px 0;
 
   /* Borders */
   border-bottom-width: var(--borderRadiusMobileSearch);
@@ -169,6 +188,24 @@
   margin-top: calc(
     var(--topbarHeightDesktop) - var(--TopbarSearchForm_inputHeight) +
       var(--TopbarSearchForm_bottomBorder)
+  );
+  max-width: 434px;
+}
+
+.searchBoxPredictions {
+  position: absolute;
+  width: 100%;
+  padding-bottom: var(--locationAutocompleteBottomPadding);
+  top: 30px;
+  left: 0;
+  background-color: var(--marketplaceColor);
+  border-bottom-left-radius: var(--borderRadius);
+  border-bottom-right-radius: var(--borderRadius);
+  box-shadow: var(--boxShadowPopup);
+  z-index: calc(var(--zIndexPopup) + 1);
+
+  margin-top: calc(
+    var(--topbarHeightDesktop) - var(--TopbarSearchForm_inputHeight)
   );
   max-width: 434px;
 }

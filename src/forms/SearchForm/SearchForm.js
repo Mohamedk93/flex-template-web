@@ -35,7 +35,7 @@ class SearchFormComponent extends Component {
       <FinalForm
         {...this.props}
         render={formRenderProps => {
-          const { rootClassName, className, desktopInputRoot, intl, isMobile } = formRenderProps;
+          const { rootClassName, className, desktopInputRoot, intl, isMobile, isSearchBox } = formRenderProps;
 
           const classes = classNames(rootClassName, className);
           const desktopInputRootClass = desktopInputRoot || css.desktopInputRoot;
@@ -63,10 +63,10 @@ class SearchFormComponent extends Component {
                   const searchInput = { ...restInput, onChange: searchOnChange };
                   return (
                     <LocationAutocompleteInput
-                      className={isMobile ? css.mobileInputRoot : desktopInputRootClass}
-                      iconClassName={isMobile ? css.mobileIcon : css.desktopIcon}
+                      className={isMobile ? css.mobileInputRoot : isSearchBox ? css.searchBoxInputRoot : desktopInputRootClass}
+                      iconClassName={isMobile ? css.mobileIcon : isSearchBox ? css.searchBoxIcon : css.desktopIcon}
                       predictionsClassName={
-                        isMobile ? css.mobilePredictions : css.desktopPredictions
+                        isMobile ? css.mobilePredictions: isSearchBox ? css.searchBoxPredictions : css.desktopPredictions
                       }
                       predictionsAttributionClassName={
                         isMobile ? css.mobilePredictionsAttribution : null

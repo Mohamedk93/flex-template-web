@@ -143,6 +143,7 @@
 .gridContainer {
   display: grid;
   grid-template-columns: auto auto auto;
+  width: 100%;
 }
 
 .gridItem {
@@ -152,5 +153,5 @@
 }
 
 .gridItem2 {
-
+  margin-top: 8%;
 }

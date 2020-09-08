@@ -27,14 +27,15 @@
   }
   .searchblock {
     color: transparent;
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 12px;
     box-sizing: border-box;
     left: 80%;
-    width: 375px;
-    height: 450px;
+    width: 100%;
+    height: 435px;
     overflow: visible;
     background-color: #ffffff;
+
   }
 
   .workspaces {
@@ -48,7 +49,8 @@
 
 
   .searchblock p.title {
-    font-weight: 700;
+    margin-left: 12.5%;
+    font-weight: 600;
     margin-bottom: 12px;
     width: 277px;
     height: 35px;
@@ -61,7 +63,7 @@
     font-style: normal;
   }
 
-  .searchblock span.subtitle {
+  .searchblock p.subtitle {
     width: 353px;
     height: 17px;
     overflow: visible;
@@ -72,7 +74,7 @@
     line-height: 1.2;
     font-weight: 400;
     font-style: normal;
-  text-align: left;
+    text-align: left;
 
   }
 
@@ -81,13 +83,13 @@
     /* Dimensions */
     display: inline-block;
     width: 108px;
-    height: 47px;
+    height: 42px;
     margin-right: 13.5px;
     box-sizing: border-box;
     flex-direction: column;
     overflow: hidden;
     background-color: #ffffff;
-    border-radius: 10px;
+    border-radius: 8px;
     border: none;
     box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
     text-align: center;
@@ -100,7 +102,7 @@
     &:focus {
       outline: none;
       background-color: #2ecc72;
-      color: white;
+      color: white !important;
       box-shadow: var(--boxShadowButton);
       transform: scale(1.1);
       type: "spring";
@@ -120,13 +122,13 @@
 .searchblock .meetingroombutton {
   display: inline-block;
   width: 108px;
-  height: 47px;
+  height: 42px;
   margin-right: 13.5px;
   box-sizing: border-box;
   flex-direction: column;
   overflow: hidden;
   background-color: #ffffff;
-  border-radius: 10px;
+  border-radius: 8px;
   border: none;
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
   text-align: center;
@@ -158,12 +160,12 @@
 .searchblock .privateofficebutton {
   display: inline-block;
   width: 108px;
-  height: 47px;
+  height: 42px;
   box-sizing: border-box;
   flex-direction: column;
   overflow: hidden;
   background-color: #ffffff;
-  border-radius: 10px;
+  border-radius: 8px;
   border: none;
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
   text-align: center;
@@ -193,6 +195,11 @@
   }
 }
 
+.seperator {
+  width: 354px;
+  border-top: 1.25px solid #e8e8e8;
+
+}
 
   .searchblock .area {
     display: block;
@@ -218,10 +225,11 @@
     flex-direction: column;
     box-sizing: border-box;
     width: 354px;
-    height: 47px;
+    height: 39px;
     overflow: visible;
     background-color: #ffffff;
-    border: 0px solid #dbdbdb;
+    border-top: 1.25px solid #e8e8e8;
+    border-radius: 0px;
     margin-bottom: 14px;
     padding-left: 0px;
     padding-top: 11.75px;
@@ -255,11 +263,11 @@
     height: 17px;
     overflow: visible;
     font-family: 'sofiapro', Helvetica, Arial, sans-serif;
-    color: rgba(0, 0, 0, 0.5);
+    color: black;
     font-size: 14px;
     letter-spacing: 0px;
     line-height: 1.2;
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     vertical-align: middle;
   }
@@ -270,10 +278,10 @@
       overflow: visible;
       font-family: 'sofiapro', Helvetica, Arial, sans-serif;
       color: black;
-      font-size: 14px;
+      font-size: 12px;
       letter-spacing: 0px;
       line-height: 42px;
-      font-weight: var(--fontWeightSemiBold);
+      font-weight: 500;
       text-align: center;
       text-indent: 50%;
     }
@@ -464,4 +472,28 @@
           @media (--viewportMedium) {
             max-width: auto;
           }
+
+          .arrowup {
+              border: solid  #4a4a4a;
+              border-width: 0 1px 1px 0;
+              display: inline-block;
+              padding: 3px;
+              float:right;
+              margin: 9px;
+
+              transition: transform .2s ease-in,-webkit-transform .2s ease-in;
+              -webkit-transform: rotate(-135deg);
+            }
+
+           .arrowdown {
+            border: solid   #202020;
+            border-width: 0 2px 2px 0;
+            display: block;
+            padding: 3px;
+            float: right;
+            margin: 9px;
+            transform: rotate(45deg);
+            transition: transform .2s ease-in,-webkit-transform .2s ease-in;
+            }
+
         }
