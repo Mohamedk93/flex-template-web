@@ -128,6 +128,8 @@ export class LandingPageComponent extends Component {
               <SectionHero className={css.hero} history={history} location={location} />
             </div>
             <div className={css.mobileQuickSearch} id="landingPageMobileQuickSearch">
+            <span onClick={(e)=> window.location.replace("/")}
+                className={css.modalExitButton}>&times;</span>
               <SearchBox style="height:fit-content;" history={this.props.history}/>
             </div>
             <div>

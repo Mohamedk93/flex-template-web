@@ -166,3 +166,11 @@
   margin-right: auto;
   overflow: hidden;
 }
+
+.modalExitButton {
+  position: absolute;
+  top: 1rem;
+  right:1rem;
+  font-size:2rem;
+  color:grey;
+}
