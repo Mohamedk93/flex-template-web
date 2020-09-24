@@ -24,8 +24,13 @@ export class SectionHero extends Component {
                     <h2 className={css.heroSubTitle}>
                       <FormattedMessage id="SectionHero.subTitle" />
                     </h2>
+                    <Button onClick={(e)=> window.location.replace("#landingPageMobileQuickSearch")} className={`${css.heroButton} ${css.showButtonWhenNeeded}`}>
+                        <span className={`${css.heroText}`}>
+                          <FormattedMessage id="SectionHero.quickBrowseButton" />
+                        </span>
+                      </Button>
                   </div>
-                  <div className={css.gridItem2}>
+                  <div className={`${css.gridItem2} ${css.hideSearchboxOnSmallScreen}`}>
                     <span><SearchBox history={this.props.history}/></span>
                   </div>
                     </div>

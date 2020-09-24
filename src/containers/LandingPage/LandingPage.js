@@ -127,6 +127,10 @@ export class LandingPageComponent extends Component {
 
               <SectionHero className={css.hero} history={history} location={location} />
             </div>
+            <div className={css.mobileQuickSearch} id="landingPageMobileQuickSearch">
+              <SearchBox style="height:fit-content;" history={this.props.history}/>
+            </div>
+            <div>
             <ul className={css.sections}>
               <li className={css.section}>
                 <div className={css.sectionContentFirstChild}>
@@ -141,6 +145,7 @@ export class LandingPageComponent extends Component {
                 </div>
               </li>
             </ul>
+            </div>
           </LayoutWrapperMain>
           <LayoutWrapperFooter>
             <Footer />

@@ -141,7 +141,7 @@
 }
 
 .gridContainer {
-  display: grid;
+  display: flex;
   grid-template-columns: auto auto auto;
   width: 100%;
 }
@@ -154,4 +154,20 @@
 
 .gridItem2 {
   margin-top: 8%;
+}
+
+.hideSearchboxOnSmallScreen {
+  
+    margin-top: 1rem;
+    @media (max-width: 800px) {
+      display: none;
+    }
+  
+}
+
+.showButtonWhenNeeded {
+  display: none;
+  @media (max-width: 800px) {
+    display: block;
+  }
 }

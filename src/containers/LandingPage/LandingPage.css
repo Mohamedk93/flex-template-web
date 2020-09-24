@@ -128,3 +128,41 @@
     top: calc(-1 * var(--LandingPage_sectionMarginTopLarge));
   }
 }
+
+.mobileQuickSearch {
+  width:100%;
+  display: none;
+  /* margin-top: 1rem; */
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  position: absolute;
+  top:auto;
+  left:auto;
+  z-index: 1;
+  background-color: rgba(0,0,0,.7);
+  
+}
+
+/* .mobileQuickSearch:target,#landingPageMobileQuickSearch > div > p {
+  @media (max-width:400) {
+    font-size: 1.2em !important;
+  }
+} */
+
+.mobileQuickSearch:target {
+  @media (max-width: 800px) {
+    display: block;
+  }
+}
+
+.mobileQuickSearch > div {
+  height: fit-content;
+  width:95%;
+  
+  @media (min-width:400){
+    width:80%;
+  }
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+}

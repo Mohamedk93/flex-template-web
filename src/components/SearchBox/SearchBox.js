@@ -333,6 +333,7 @@ export class SearchBox extends Component {
 
            <p></p>
 
+          <div className={css.selectionButtonContainer}>
            <div style={(this.state.deskType === "Hotdesk")?{"background-color":"#2ecc72"}:undefined} onClick={()=>this.setDeskType('Hotdesk')} className={(css.hotdeskbutton)}>
              <span className={css.buttonlabel}>Hotdesk</span>
            </div>
@@ -342,18 +343,19 @@ export class SearchBox extends Component {
            </div>
 
            <div style={(this.state.deskType === "Office Room")?{"background-color":"#2ecc72"}:undefined} onClick={()=>this.setDeskType('Office Room')} className={css.privateofficebutton}>
-             <span className={css.buttonlabel}>Private Office</span>
+             <span className={css.buttonlabel}>Office Room</span>
            </div>
+          </div>
 
 
 
       <div className={css.bookingplan}>
       <span className={css.time}><svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 24 24" fill="transparent" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
-        <span className={css.label}>How long? (hourly, daily or monthly)</span>
+        <span className={css.label}>How long?</span>
 
       </div>
-      <div>
-      <div style={(this.state.timeScale === "Hourly")?{"background-color":"#2ecc72"}:undefined} onClick={()=>this.setTimeScale('Hourly')} className={css.hotdeskbutton}>
+      <div className={css.selectionButtonContainer}>
+              <div style={(this.state.timeScale === "Hourly")?{"background-color":"#2ecc72"}:undefined} onClick={()=>this.setTimeScale('Hourly')} className={css.hotdeskbutton}>
              <span className={css.buttonlabel} >Hourly</span>
            </div>
 

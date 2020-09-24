@@ -61,6 +61,14 @@
     letter-spacing: 0px;
     line-height: 1.2;
     font-style: normal;
+    @media (max-width:400px){
+      font-size:1.2em;
+    }
+  }
+
+  .selectionButtonContainer {
+    display: flex;
+    flex-direction: row;
   }
 
   .searchblock p.subtitle {
